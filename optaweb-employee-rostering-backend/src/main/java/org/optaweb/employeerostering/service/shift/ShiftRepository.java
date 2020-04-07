@@ -35,6 +35,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
     @Query("select distinct sa from Shift sa" +
             " left join fetch sa.spot s" +
             " left join fetch sa.rotationEmployee re" +
+            " left join fetch sa.originalEmployee oe" +
             " left join fetch sa.employee e" +
             " where sa.tenantId = :tenantId" +
             " order by sa.startDateTime, s.name, e.name")
@@ -43,6 +44,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
     @Query("select distinct sa from Shift sa" +
             " left join fetch sa.spot s" +
             " left join fetch sa.rotationEmployee re" +
+            " left join fetch sa.originalEmployee oe" +
             " left join fetch sa.employee e" +
             " where sa.tenantId = :tenantId" +
             " and sa.endDateTime >= :startDateTime" +
@@ -60,6 +62,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
     @Query("select distinct sa from Shift sa" +
             " left join fetch sa.spot s" +
             " left join fetch sa.rotationEmployee re" +
+            " left join fetch sa.originalEmployee oe" +
             " left join fetch sa.employee e" +
             " where sa.tenantId = :tenantId" +
             " and sa.spot IN :spotSet" +
@@ -73,6 +76,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
     @Query("select distinct sa from Shift sa" +
             " left join fetch sa.spot s" +
             " left join fetch sa.rotationEmployee re" +
+            " left join fetch sa.originalEmployee oe" +
             " left join fetch sa.employee e" +
             " where sa.tenantId = :tenantId" +
             " and sa.employee IN :employeeSet" +

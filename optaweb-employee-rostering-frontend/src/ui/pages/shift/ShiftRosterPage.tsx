@@ -322,7 +322,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               });
             }}
           />
-          <ScoreDisplay score={score} indictmentSummary={indictmentSummary} />
+          <ScoreDisplay score={score} indictmentSummary={indictmentSummary} isSolving={this.props.isSolving} />
           <Actions
             actions={actions}
           />

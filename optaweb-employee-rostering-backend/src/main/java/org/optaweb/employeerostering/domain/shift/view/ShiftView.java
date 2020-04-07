@@ -96,16 +96,17 @@ public class ShiftView extends AbstractPersistable {
 
     public ShiftView(Integer tenantId, Spot spot, LocalDateTime startDateTime, LocalDateTime endDateTime,
                      Employee rotationEmployee) {
-        this(tenantId, spot, startDateTime, endDateTime, null, new ArrayList<>());
+        this(tenantId, spot, startDateTime, endDateTime, null, new ArrayList<>(), null);
     }
 
     public ShiftView(Integer tenantId, Spot spot, LocalDateTime startDateTime, LocalDateTime endDateTime,
-                     Employee rotationEmployee, List<Long> requiredSkillSetIdList) {
+                     Employee rotationEmployee, List<Long> requiredSkillSetIdList, Employee originalEmployee) {
         super(tenantId);
         this.spotId = spot.getId();
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.rotationEmployeeId = (rotationEmployee == null) ? null : rotationEmployee.getId();
+        this.originalEmployeeId = (originalEmployee == null) ? null : originalEmployee.getId();
 
         this.requiredSkillViolationList = null;
         this.shiftEmployeeConflictList = null;

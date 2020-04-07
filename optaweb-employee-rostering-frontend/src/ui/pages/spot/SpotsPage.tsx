@@ -21,7 +21,7 @@ import { spotSelectors, spotOperations } from 'store/spot';
 import { skillSelectors } from 'store/skill';
 import { Spot } from 'domain/Spot';
 import { AppState } from 'store/types';
-import { TextInput, Text, Chip, ChipGroup } from '@patternfly/react-core';
+import { TextInput, Text, Chip, ChipGroup, Button, ButtonVariant } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { Skill } from 'domain/Skill';
 import { Predicate, ReadonlyPartial, Sorter } from 'types';
@@ -30,7 +30,7 @@ import { stringFilter } from 'util/CommonFilters';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
 import { StatefulTypeaheadSelectInput } from 'ui/components/TypeaheadSelectInput';
-import { BiohazardIcon } from '@patternfly/react-icons';
+import { BiohazardIcon, ArrowIcon } from '@patternfly/react-icons';
 
 interface StateProps extends DataTableProps<Spot> {
   tenantId: number;
@@ -73,10 +73,18 @@ export class SpotsPage extends DataTable<Spot, Props> {
 
   displayDataRow(data: Spot): JSX.Element[] {
     return [
-      <span style={{ display: 'grid', gridTemplateColumns: 'min-content 5px 1fr' }}>
+      <span style={{ display: 'grid', gridTemplateColumns: 'min-content 5px max-content min-content' }}>
         {data.covidWard ? <BiohazardIcon /> : <span />}
         <span />
         <Text key={0}>{data.name}</Text>
+        <Button
+          variant={ButtonVariant.link}
+          onClick={() => {
+            this.props.history.push(`/${this.props.tenantId}/adjust?spot=${encodeURIComponent(data.name)}`);
+          }}
+        >
+          <ArrowIcon />
+        </Button>
       </span>,
       <ChipGroup key={1}>
         {data.requiredSkillSet.map(skill => (

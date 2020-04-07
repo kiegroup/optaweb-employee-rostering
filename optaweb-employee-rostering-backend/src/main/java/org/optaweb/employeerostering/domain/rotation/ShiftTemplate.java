@@ -140,7 +140,7 @@ public class ShiftTemplate extends AbstractPersistable {
                                                                zoneId.getRules().getOffset(startDateTime));
         OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime, zoneId.getRules().getOffset(endDateTime));
         Shift shift = new Shift(getTenantId(), getSpot(), startOffsetDateTime, endOffsetDateTime, rotationEmployee,
-                                new HashSet<>(requiredSkillSet));
+                                new HashSet<>(requiredSkillSet), null);
         if (defaultToRotationEmployee) {
             shift.setEmployee(rotationEmployee);
         }

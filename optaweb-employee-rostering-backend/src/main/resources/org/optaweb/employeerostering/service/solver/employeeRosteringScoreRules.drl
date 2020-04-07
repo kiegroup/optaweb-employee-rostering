@@ -287,6 +287,7 @@ end
 rule "Employee is not original employee"
     when
         $shift: Shift(originalEmployee != null,
+                      employee != null,
                       employee != originalEmployee)
     then
         scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());

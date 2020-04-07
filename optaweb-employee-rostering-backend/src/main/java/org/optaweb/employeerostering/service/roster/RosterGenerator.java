@@ -580,7 +580,7 @@ public class RosterGenerator implements ApplicationRunner {
                     boolean defaultToRotationEmployee = date.compareTo(firstDraftDate) < 0;
                     Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
                                                                   zoneId, defaultToRotationEmployee);
-                    shift.setOriginalEmployee(shift.getEmployee());
+                    shift.setOriginalEmployee(shiftTemplate.getRotationEmployee());
                     entityManager.persist(shift);
                     shiftList.add(shift);
                 }

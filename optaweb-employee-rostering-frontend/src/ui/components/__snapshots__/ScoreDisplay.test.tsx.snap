@@ -28,6 +28,7 @@ exports[`ScoreDisplay component should renderCorrectly 1`] = `
             "constraintToScoreImpactMap": Object {},
           }
         }
+        isSolving={true}
         score={
           Object {
             "hardScore": -10,
@@ -80,5 +81,7 @@ exports[`ScoreDisplay component should renderCorrectly 1`] = `
       />
     </Component>
   </Popover>
+  Attempting to resolve hard constraint violations. Possibly running
+      Construction Heuristic, so it may take a while to see changes...
 </span>
 `;

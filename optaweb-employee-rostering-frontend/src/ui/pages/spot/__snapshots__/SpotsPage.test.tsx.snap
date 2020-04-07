@@ -85,7 +85,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     style={
                       Object {
                         "display": "grid",
-                        "gridTemplateColumns": "min-content 5px 1fr",
+                        "gridTemplateColumns": "min-content 5px max-content min-content",
                       }
                     }
                   >
@@ -94,6 +94,17 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     <Text>
                       Spot 1
                     </Text>
+                    <Unknown
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <ArrowIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Unknown>
                   </span>
                 }
               />,
@@ -256,7 +267,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     style={
                       Object {
                         "display": "grid",
-                        "gridTemplateColumns": "min-content 5px 1fr",
+                        "gridTemplateColumns": "min-content 5px max-content min-content",
                       }
                     }
                   >
@@ -270,6 +281,17 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     <Text>
                       Spot 2
                     </Text>
+                    <Unknown
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <ArrowIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Unknown>
                   </span>
                 }
               />,
@@ -596,7 +618,7 @@ exports[`Spots page should render the viewer correctly 1`] = `
       style={
         Object {
           "display": "grid",
-          "gridTemplateColumns": "min-content 5px 1fr",
+          "gridTemplateColumns": "min-content 5px max-content min-content",
         }
       }
     >
@@ -612,6 +634,17 @@ exports[`Spots page should render the viewer correctly 1`] = `
       >
         Spot 2
       </Text>
+      <Component
+        onClick={[Function]}
+        variant="link"
+      >
+        <ArrowIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Component>
     </span>
   </td>
   <td

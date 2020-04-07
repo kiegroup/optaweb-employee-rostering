@@ -39,7 +39,7 @@ export const Navigation = ({ variant, tenantId, location }: NavigationProps) => 
   return (
     <Nav aria-label="Nav">
       <NavList variant={variant}>
-        {['skills', 'wards', 'contracts', 'employees', 'adjust', 'shift', 'availability', 'rotation'].map((link) => {
+        {['skills', 'wards', 'contracts', 'employees', 'availability', 'rotation', 'shift', 'adjust'].map((link) => {
           const itemId = link;
           const path = `/${tenantId}/${itemId}`;
           return (

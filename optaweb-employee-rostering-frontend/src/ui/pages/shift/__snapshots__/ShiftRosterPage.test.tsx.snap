@@ -85,6 +85,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
           "constraintToScoreImpactMap": Object {},
         }
       }
+      isSolving={false}
       score={
         Object {
           "hardScore": 0,
@@ -319,6 +320,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
           "constraintToScoreImpactMap": Object {},
         }
       }
+      isSolving={false}
       score={
         Object {
           "hardScore": 0,
@@ -581,6 +583,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
           "constraintToScoreImpactMap": Object {},
         }
       }
+      isSolving={true}
       score={
         Object {
           "hardScore": 0,

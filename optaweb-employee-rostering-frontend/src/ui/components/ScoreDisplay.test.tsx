@@ -31,7 +31,7 @@ describe('ScoreDisplay component', () => {
       constraintToScoreImpactMap: {},
     };
 
-    const scoreDisplay = shallow(<ScoreDisplay score={score} indictmentSummary={indictmentSummary} />);
+    const scoreDisplay = shallow(<ScoreDisplay score={score} indictmentSummary={indictmentSummary} isSolving />);
     expect(scoreDisplay).toMatchSnapshot();
   });
 });

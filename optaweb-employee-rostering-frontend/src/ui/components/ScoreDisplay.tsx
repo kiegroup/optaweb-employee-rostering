@@ -23,6 +23,7 @@ import { HelpIcon } from '@patternfly/react-icons';
 export interface ScoreDisplayProps {
   score: HardMediumSoftScore;
   indictmentSummary: IndictmentSummary;
+  isSolving: boolean;
 }
 
 const ConstraintMatches: React.FC<ScoreDisplayProps> = props => (
@@ -43,6 +44,7 @@ const ConstraintMatches: React.FC<ScoreDisplayProps> = props => (
 export const ScoreDisplay: React.FC<ScoreDisplayProps> = (props) => {
   const { t } = useTranslation('ScoreDisplay');
   const { hardScore, mediumScore, softScore } = props.score;
+  const { isSolving } = props;
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
@@ -68,6 +70,14 @@ export const ScoreDisplay: React.FC<ScoreDisplayProps> = (props) => {
           <HelpIcon />
         </Button>
       </Popover>
+      {(hardScore < 0 && !isSolving) && 'The schedule is not feasible! There are hard constraint violations!'}
+      {(hardScore < 0 && mediumScore === 0 && isSolving) && 'Attempting to resolve hard constraint violations...'}
+      {(hardScore < 0 && mediumScore < 0 && isSolving)
+      && `Attempting to resolve hard constraint violations. Possibly running
+      Construction Heuristic, so it may take a while to see changes...`}
+      {(hardScore === 0 && mediumScore < 0 && !isSolving) && 'Some shifts are unassigned.'}
+      {(hardScore === 0 && mediumScore < 0 && isSolving) && `Some shifts are unassigned. Possibly running
+      Construction Heuristic, so it may take a while to see changes...`}
     </span>
   );
 };

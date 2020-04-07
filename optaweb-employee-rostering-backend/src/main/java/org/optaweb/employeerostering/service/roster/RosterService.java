@@ -320,6 +320,7 @@ public class RosterService extends AbstractRestService {
                 .stream()
                 .map(ea -> ea.inTimeZone(zoneId))
                 .collect(Collectors.toList());
+
         List<Shift> shiftList = shiftRepository.findAllByTenantId(tenantId)
                 .stream()
                 .map(s -> s.inTimeZone(zoneId))
