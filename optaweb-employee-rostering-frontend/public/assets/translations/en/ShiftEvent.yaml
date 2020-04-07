@@ -18,6 +18,9 @@ noBreaks: 'The Employee "{{employee}}" has three shifts in a row.'
 employeeDoesNotMatchRotationEmployee: The Shift's Employee "{{employee}}" does not
   match the Shift's Rotation Employee "{{rotationEmployee}}".
 
+publishedShiftReassigned: The Shift's is published and its Employee change from
+  "{{originalEmployee}}" to "{{employee}}".
+
 unassignedShift: The Shift is unassigned.
 
 undesiredShiftForEmployee: The Employee "{{employee}}" does not want to work from

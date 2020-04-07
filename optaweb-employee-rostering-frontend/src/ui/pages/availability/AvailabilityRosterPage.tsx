@@ -241,7 +241,12 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
           throw new Error(`Unexpected availability state: ${dayAvailability.state}`);
       }
     }
-    if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
+    if (this.props.rosterState !== null && moment(date).isBefore(moment(moment().startOf('day')))) {
+      if (!className) {
+        style.backgroundColor = '#d3d7cf';
+      }
+      className += ' historic-day';
+    } else if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
       if (!className) {
         style.backgroundColor = 'var(--pf-global--BackgroundColor--300)';
       }

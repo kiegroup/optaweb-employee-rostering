@@ -77,7 +77,7 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     private HardMediumSoftLongScore assignEveryShift = HardMediumSoftLongScore.ofMedium(1);
 
     @ConstraintWeight("Employee is not original employee")
-    private HardMediumSoftLongScore notOriginalEmployee = HardMediumSoftLongScore.ofSoft(100_000_000);
+    private HardMediumSoftLongScore notOriginalEmployee = HardMediumSoftLongScore.ofSoft(100_000_000_000L);
     @ConstraintWeight("Undesired time slot for an employee")
     private HardMediumSoftLongScore undesiredTimeSlot = HardMediumSoftLongScore.ofSoft(20);
     @ConstraintWeight("Desired time slot for an employee")

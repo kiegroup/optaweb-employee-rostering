@@ -20,6 +20,19 @@
 }
 /* End Hack */
 
+.rbc-header.historic-day::before {
+    content: "";
+    font-family: "pficon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-style: normal;
+    font-weight: normal;
+    font-feature-settings: normal;
+    font-variant: normal;
+    text-decoration: none;
+    text-transform: none;
+}
+
 .rbc-header.published-day::before {
     content: " ";
     font-family: "pficon";

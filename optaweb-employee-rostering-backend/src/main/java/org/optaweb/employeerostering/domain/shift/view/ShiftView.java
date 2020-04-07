@@ -40,6 +40,7 @@ import org.optaweb.employeerostering.domain.violation.MaximizeInoculatedEmployee
 import org.optaweb.employeerostering.domain.violation.MigrationBetweenCovidAndNonCovidWardsViolation;
 import org.optaweb.employeerostering.domain.violation.NoBreakViolation;
 import org.optaweb.employeerostering.domain.violation.NonInoculatedEmployeeAssignedToCovidWardViolation;
+import org.optaweb.employeerostering.domain.violation.PublishedShiftReassignedPenalty;
 import org.optaweb.employeerostering.domain.violation.RequiredSkillViolation;
 import org.optaweb.employeerostering.domain.violation.RotationViolationPenalty;
 import org.optaweb.employeerostering.domain.violation.ShiftEmployeeConflict;
@@ -78,6 +79,7 @@ public class ShiftView extends AbstractPersistable {
             maximizeInoculatedEmployeeHoursRewardList;
     private List<MigrationBetweenCovidAndNonCovidWardsViolation>
             migrationBetweenCovidAndNonCovidWardsViolationList;
+    private List<PublishedShiftReassignedPenalty> publishedShiftReassignedPenaltyList;
 
     private HardMediumSoftLongScore indictmentScore;
 
@@ -122,7 +124,7 @@ public class ShiftView extends AbstractPersistable {
     }
 
     public ShiftView(ZoneId zoneId, Shift shift) {
-        this(zoneId, shift, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(zoneId, shift, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     public ShiftView(ZoneId zoneId, Shift shift, List<RequiredSkillViolation> requiredSkillViolationList,
@@ -141,6 +143,7 @@ public class ShiftView extends AbstractPersistable {
                      List<MigrationBetweenCovidAndNonCovidWardsViolation>
                              migrationBetweenCovidAndNonCovidWardsViolationList,
                      List<NoBreakViolation> noBreakViolationList,
+                     List<PublishedShiftReassignedPenalty> publishedShiftReassignedPenaltyList,
                      HardMediumSoftLongScore indictmentScore) {
         super(shift);
         this.spotId = shift.getSpot().getId();
@@ -161,6 +164,7 @@ public class ShiftView extends AbstractPersistable {
         this.rotationViolationPenaltyList = rotationViolationPenaltyList;
         this.unassignedShiftPenaltyList = unassignedShiftPenaltyList;
         this.contractMinutesViolationPenaltyList = contractMinutesViolationPenaltyList;
+        this.publishedShiftReassignedPenaltyList = publishedShiftReassignedPenaltyList;
 
         this.nonInoculatedEmployeeAssignedToCovidWardViolationList = nonInoculatedEmployeeAssignedToCovidWard;
         this.inoculatedEmployeeAssignedOutsideOfCovidWardViolationList = inoculatedEmployeeAssignedOutside;
@@ -367,5 +371,14 @@ public class ShiftView extends AbstractPersistable {
 
     public void setNoBreakViolationList(List<NoBreakViolation> noBreakViolationList) {
         this.noBreakViolationList = noBreakViolationList;
+    }
+
+    public List<PublishedShiftReassignedPenalty> getPublishedShiftReassignedPenaltyList() {
+        return publishedShiftReassignedPenaltyList;
+    }
+
+    public void setPublishedShiftReassignedPenaltyList(
+            List<PublishedShiftReassignedPenalty> publishedShiftReassignedPenaltyList) {
+        this.publishedShiftReassignedPenaltyList = publishedShiftReassignedPenaltyList;
     }
 }

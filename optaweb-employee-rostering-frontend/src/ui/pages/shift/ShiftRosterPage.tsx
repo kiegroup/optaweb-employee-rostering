@@ -181,6 +181,15 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   }
 
   getDayStyle: StyleSupplier<Date> = (date) => {
+    if (this.props.rosterState !== null && moment(date).isBefore(moment().startOf('day'))) {
+      return {
+        className: 'historic-day',
+        style: {
+          backgroundColor: '#d3d7cf',
+        },
+      };
+    }
+
     if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
       return {
         className: 'published-day',

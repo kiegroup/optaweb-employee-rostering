@@ -24,6 +24,7 @@ import {
   BlueprintIcon, EditIcon, TrashIcon, ThumbTackIcon, FileContractIcon, NotesMedicalIcon,
   PeopleCarryIcon, RetweetIcon, ShippingFastIcon, BiohazardIcon, SchoolIcon, CalendarTimesIcon,
   UserFriendsIcon, ExclamationTriangleIcon, UserTimesIcon, UserMinusIcon, UserPlusIcon, AlignCenterIcon,
+  PhoneVolumeIcon,
 } from '@patternfly/react-icons';
 import Color from 'color';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +36,7 @@ export const Indictments: React.FC<Shift> = (shift) => {
   const { t } = useTranslation('ShiftEvent');
   const indictmentList = (
     <List>
+      <PublishedShiftReassignedPenalties {...shift} />
       <RequiredSkillViolations {...shift} />
       <ContractMinutesViolations {...shift} />
       <UnavailableEmployeeViolations {...shift} />
@@ -67,6 +69,7 @@ export const IndictmentIcons: React.FC<Shift> = (shift) => {
   const isPresent = (list?: any[]) => (list && list.length) || null;
   return (
     <div>
+      {isPresent(shift.publishedShiftReassignedPenaltyList) && <PhoneVolumeIcon />}
       {isPresent(shift.contractMinutesViolationPenaltyList) && <FileContractIcon />}
       {isPresent(shift.desiredTimeslotForEmployeeRewardList) && <UserPlusIcon />}
       {isPresent(shift.inoculatedEmployeeAssignedOutsideOfCovidWardViolationList) && <NotesMedicalIcon />}
@@ -82,6 +85,24 @@ export const IndictmentIcons: React.FC<Shift> = (shift) => {
       {isPresent(shift.undesiredTimeslotForEmployeePenaltyList) && <UserMinusIcon />}
       {isPresent(shift.noBreakViolationList) && <AlignCenterIcon />}
     </div>
+  );
+};
+
+export const PublishedShiftReassignedPenalties: React.FC<Shift> = (shift) => {
+  const { t } = useTranslation('ShiftEvent');
+  return (
+    <>
+      {(shift.publishedShiftReassignedPenaltyList || []).map(v => (
+        <li key={v.shift.id}>
+          {t('publishedShiftReassigned', {
+            employee: (v.shift.employee as Employee).name,
+            originalEmployee: (v.shift.originalEmployee as Employee).name,
+          })}
+          <br />
+          {t('penalty', { score: convertHardMediumSoftScoreToString(v.score) })}
+        </li>
+      ))}
+    </>
   );
 };
 
@@ -491,7 +512,10 @@ const ShiftEvent: React.FC<EventProps<Shift>> = props => (
       }}
       >
         {`${props.title} ${props.event.requiredSkillSet.length
-          ? `(${props.event.requiredSkillSet.map(s => s.name).join(', ')})` : ''}`}
+          ? `(${props.event.requiredSkillSet.map(s => s.name).join(', ')})` : ''} ${
+          (props.event.originalEmployee && props.event.employee
+            && props.event.originalEmployee.id !== props.event.employee.id)
+            ? `(was ${props.event.originalEmployee.name})` : ''}`}
       </span>
     </div>
     <IndictmentIcons {...props.event} />

@@ -39,6 +39,7 @@ import org.optaweb.employeerostering.domain.violation.MaximizeInoculatedEmployee
 import org.optaweb.employeerostering.domain.violation.MigrationBetweenCovidAndNonCovidWardsViolation;
 import org.optaweb.employeerostering.domain.violation.NoBreakViolation;
 import org.optaweb.employeerostering.domain.violation.NonInoculatedEmployeeAssignedToCovidWardViolation;
+import org.optaweb.employeerostering.domain.violation.PublishedShiftReassignedPenalty;
 import org.optaweb.employeerostering.domain.violation.RequiredSkillViolation;
 import org.optaweb.employeerostering.domain.violation.RotationViolationPenalty;
 import org.optaweb.employeerostering.domain.violation.ShiftEmployeeConflict;
@@ -106,6 +107,7 @@ public class IndictmentUtils {
                              getMaximizeInoculatedEmployeeHoursRewardList(indictment),
                              getMigrationBetweenCovidAndNonCovidWardsViolationList(indictment),
                              getNoBreakViolationList(indictment),
+                             getPublishedShiftReassignedPenaltyList(indictment),
                              (indictment != null) ?
                                      (HardMediumSoftLongScore) indictment.getScore() : HardMediumSoftLongScore.ZERO);
     }
@@ -301,6 +303,18 @@ public class IndictmentUtils {
                                                                 .filter(o -> o instanceof Long)
                                                                 .findFirst().get(),
                                                         (HardMediumSoftLongScore) cm.getScore()))
+                .collect(Collectors.toList());
+    }
+
+    public List<PublishedShiftReassignedPenalty> getPublishedShiftReassignedPenaltyList(Indictment indictment) {
+        if (indictment == null) {
+            return Collections.emptyList();
+        }
+        return indictment.getConstraintMatchSet().stream()
+                .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
+                        cm.getConstraintName().equals("Employee is not original employee"))
+                .map(cm -> new PublishedShiftReassignedPenalty((Shift) cm.getJustificationList().get(0),
+                                                               (HardMediumSoftLongScore) cm.getScore()))
                 .collect(Collectors.toList());
     }
 }
