@@ -128,6 +128,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
         Array [
           Object {
             "action": [MockFunction],
+            "isDisabled": false,
             "name": "Trans(i18nKey=publish)",
           },
           Object {
@@ -442,6 +443,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
         Array [
           Object {
             "action": [MockFunction],
+            "isDisabled": false,
             "name": "Trans(i18nKey=publish)",
           },
           Object {
@@ -784,6 +786,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
         Array [
           Object {
             "action": [MockFunction],
+            "isDisabled": true,
             "name": "Trans(i18nKey=publish)",
           },
           Object {

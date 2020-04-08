@@ -99,8 +99,8 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         <Button
           variant={ButtonVariant.link}
           onClick={() => {
-            this.props.history.push(`/${this.props.tenantId}/availability?employee=${encodeURIComponent(data.name)}
-            &week=${moment().startOf('week').format('YYYY-MM-DD')}`);
+            this.props.history.push(`/${this.props.tenantId}/availability?employee=${data.name}`
+            + `&week=${moment().startOf('week').format('YYYY-MM-DD')}`);
           }}
         >
           <ArrowIcon />

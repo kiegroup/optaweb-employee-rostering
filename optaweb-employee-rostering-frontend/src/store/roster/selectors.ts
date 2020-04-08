@@ -64,7 +64,7 @@ export const getShiftListForSpot = (state: AppState, spot: Spot): Shift[] => {
       rotationEmployee: (sv.rotationEmployeeId !== null)
         ? employeeSelectors.getEmployeeById(state, sv.rotationEmployeeId) : null,
       employee: (sv.employeeId !== null) ? employeeSelectors.getEmployeeById(state, sv.employeeId) : null,
-    }));
+    })).sort((a, b) => (a.id as number) - (b.id as number));
   }
 
   return [];
@@ -96,7 +96,7 @@ export const getShiftListForEmployee = (state: AppState, employee: Employee): Sh
       employee,
       rotationEmployee: (sv.rotationEmployeeId !== null)
         ? employeeSelectors.getEmployeeById(state, sv.rotationEmployeeId) : null,
-    }));
+    })).sort((a, b) => (a.id as number) - (b.id as number));
   }
 
   return [];

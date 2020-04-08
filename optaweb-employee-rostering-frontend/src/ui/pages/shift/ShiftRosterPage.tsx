@@ -264,7 +264,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     const indictmentSummary: IndictmentSummary = this.props.indictmentSummary
         || { constraintToCountMap: {}, constraintToScoreImpactMap: {} };
     const actions = [
-      { name: t('publish'), action: this.props.publishRoster },
+      { name: t('publish'), action: this.props.publishRoster, isDisabled: this.props.isSolving },
       { name: this.props.isSolving ? t('terminateEarly') : t('schedule'),
         action: this.props.isSolving ? this.props.terminateSolvingRosterEarly : this.props.solveRoster },
       { name: t('refresh'),

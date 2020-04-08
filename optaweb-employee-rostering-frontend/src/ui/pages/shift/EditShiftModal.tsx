@@ -69,10 +69,24 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
     super(props);
 
     this.onSave = this.onSave.bind(this);
-    this.state = {
-      resetCount: 0,
-      editedValue: { ...this.props.shift },
-    };
+    if (this.props.shift) {
+      this.state = {
+        resetCount: 0,
+        editedValue: { ...this.props.shift },
+      };
+    } else {
+      this.state = {
+        resetCount: 0,
+        editedValue: {
+          tenantId: this.props.tenantId,
+          employee: null,
+          originalEmployee: null,
+          requiredSkillSet: [],
+          rotationEmployee: null,
+          pinnedByUser: false,
+        },
+      };
+    }
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {

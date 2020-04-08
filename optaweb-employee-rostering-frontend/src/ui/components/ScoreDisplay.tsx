@@ -18,7 +18,11 @@ import { useTranslation } from 'react-i18next';
 import { HardMediumSoftScore, convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
 import { Chip, Button, ButtonVariant, Popover, List } from '@patternfly/react-core';
 import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
-import { HelpIcon } from '@patternfly/react-icons';
+import {
+  HelpIcon, ExclamationTriangleIcon, UserFriendsIcon, FileContractIcon, UserPlusIcon, PhoneVolumeIcon,
+  CalendarTimesIcon, BiohazardIcon, NotesMedicalIcon, PeopleCarryIcon, RetweetIcon, AlignCenterIcon, SchoolIcon,
+  UserTimesIcon, UserMinusIcon,
+} from '@patternfly/react-icons';
 
 export interface ScoreDisplayProps {
   score: HardMediumSoftScore;
@@ -26,18 +30,104 @@ export interface ScoreDisplayProps {
   isSolving: boolean;
 }
 
+const IndictmentIcon: React.FC<{ indictment: string }> = (props) => {
+  switch (props.indictment) {
+    case 'Assign every shift':
+      return (<ExclamationTriangleIcon />);
+
+    case 'No more than 2 consecutive shifts':
+      return (<AlignCenterIcon />);
+    case 'No overlapping shifts':
+      return (<UserFriendsIcon />);
+    case 'Required skill for a shift':
+      return (<SchoolIcon />);
+    case 'Break between non-consecutive shifts is at least 10 hours':
+      return (<UserFriendsIcon />);
+
+    case 'Daily minutes must not exceed contract maximum':
+      return (<FileContractIcon />);
+    case 'Weekly minutes must not exceed contract maximum':
+      return (<FileContractIcon />);
+    case 'Monthly minutes must not exceed contract maximum':
+      return (<FileContractIcon />);
+    case 'Yearly minutes must not exceed contract maximum':
+      return (<FileContractIcon />);
+
+    case 'Unavailable time slot for an employee':
+      return (<UserTimesIcon />);
+    case 'Undesired time slot for an employee':
+      return (<UserMinusIcon />);
+    case 'Desired time slot for an employee':
+      return (<UserPlusIcon />);
+
+    case 'Employee is not original employee':
+      return (<PhoneVolumeIcon />);
+    case 'Employee is not rotation employee':
+      return (<CalendarTimesIcon />);
+
+    case 'Migration between COVID and non-COVID wards':
+      return (<RetweetIcon />);
+
+    case 'Extreme-risk employee assigned to a COVID ward':
+      return (<BiohazardIcon />);
+    case 'High-risk employee assigned to a COVID ward':
+      return (<BiohazardIcon />);
+    case 'Low-risk employee assigned to a COVID ward':
+      return (<BiohazardIcon />);
+    case 'Moderate-risk employee assigned to a COVID ward':
+      return (<BiohazardIcon />);
+    case 'Inoculated employee outside a COVID ward':
+      return (<NotesMedicalIcon />);
+
+    case 'Maximize inoculated hours':
+      return (<PeopleCarryIcon />);
+    case 'Uniform distribution of inoculated hours':
+      return (<PeopleCarryIcon />);
+
+    default:
+      return (<span />);
+  }
+};
+
+const CONSTRAINTS = ['Assign every shift',
+  'No more than 2 consecutive shifts',
+  'No overlapping shifts',
+  'Required skill for a shift',
+  'Break between non-consecutive shifts is at least 10 hours',
+  'Daily minutes must not exceed contract maximum',
+  'Weekly minutes must not exceed contract maximum',
+  'Monthly minutes must not exceed contract maximum',
+  'Yearly minutes must not exceed contract maximum',
+  'Unavailable time slot for an employee',
+  'Undesired time slot for an employee',
+  'Desired time slot for an employee',
+  'Employee is not original employee',
+  'Employee is not rotation employee',
+  'Migration between COVID and non-COVID wards',
+  'Extreme-risk employee assigned to a COVID ward',
+  'High-risk employee assigned to a COVID ward',
+  'Low-risk employee assigned to a COVID ward',
+  'Moderate-risk employee assigned to a COVID ward',
+  'Inoculated employee outside a COVID ward',
+  'Maximize inoculated hours',
+  'Uniform distribution of inoculated hours',
+];
+
 const ConstraintMatches: React.FC<ScoreDisplayProps> = props => (
   <List>
-    {Object.keys(props.indictmentSummary.constraintToCountMap).sort().map(constraint => (
-      <li>
-        {
-          `${constraint}: ${props.indictmentSummary.constraintToCountMap[constraint]}
+    {Object.keys(props.indictmentSummary.constraintToCountMap)
+      .sort((a, b) => CONSTRAINTS.indexOf(b) - CONSTRAINTS.indexOf(a)).map(constraint => (
+        <li>
+          <IndictmentIcon indictment={constraint} />
+          <span style={{ paddingLeft: '8px' }}>
+            {`${constraint}: ${props.indictmentSummary.constraintToCountMap[constraint]}
                 (Impact: 
                 ${convertHardMediumSoftScoreToString(props.indictmentSummary.constraintToScoreImpactMap[constraint])
-      })`
-        }
-      </li>
-    ))}
+        })`
+            }
+          </span>
+        </li>
+      ))}
   </List>
 );
 
@@ -70,14 +160,10 @@ export const ScoreDisplay: React.FC<ScoreDisplayProps> = (props) => {
           <HelpIcon />
         </Button>
       </Popover>
-      {(hardScore < 0 && !isSolving) && 'The schedule is not feasible! There are hard constraint violations!'}
-      {(hardScore < 0 && mediumScore === 0 && isSolving) && 'Attempting to resolve hard constraint violations...'}
-      {(hardScore < 0 && mediumScore < 0 && isSolving)
-      && `Attempting to resolve hard constraint violations. Possibly running
-      Construction Heuristic, so it may take a while to see changes...`}
+      {(hardScore < 0 && !isSolving) && 'The schedule is currently not feasible.'}
+      {(hardScore < 0 && isSolving) && 'Stand by while resolving hard constraint violations...'}
       {(hardScore === 0 && mediumScore < 0 && !isSolving) && 'Some shifts are unassigned.'}
-      {(hardScore === 0 && mediumScore < 0 && isSolving) && `Some shifts are unassigned. Possibly running
-      Construction Heuristic, so it may take a while to see changes...`}
+      {(hardScore === 0 && mediumScore < 0 && isSolving) && 'Stand by while assigning shifts...'}
     </span>
   );
 };

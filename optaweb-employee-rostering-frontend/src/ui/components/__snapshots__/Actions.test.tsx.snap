@@ -19,6 +19,7 @@ exports[`Actions component should render as all buttons when given enough space 
   <span>
     <Component
       aria-label="Action 1"
+      isDisabled={false}
       key="Action 1"
       onClick={[MockFunction]}
       style={
@@ -31,6 +32,7 @@ exports[`Actions component should render as all buttons when given enough space 
     </Component>
     <Component
       aria-label="Action 2"
+      isDisabled={false}
       key="Action 2"
       onClick={[MockFunction]}
       style={
@@ -43,6 +45,7 @@ exports[`Actions component should render as all buttons when given enough space 
     </Component>
     <Component
       aria-label="Action 3"
+      isDisabled={false}
       key="Action 3"
       onClick={[MockFunction]}
       style={
@@ -77,13 +80,19 @@ exports[`Actions component should render as all dropdown when given no space 1`]
     <Dropdown
       dropdownItems={
         Array [
-          <DropdownItem>
+          <DropdownItem
+            isDisabled={false}
+          >
             Action 1
           </DropdownItem>,
-          <DropdownItem>
+          <DropdownItem
+            isDisabled={false}
+          >
             Action 2
           </DropdownItem>,
-          <DropdownItem>
+          <DropdownItem
+            isDisabled={false}
+          >
             Action 3
           </DropdownItem>,
         ]
@@ -121,6 +130,7 @@ exports[`Actions component should render as both buttons and dropdown when given
   <span>
     <Component
       aria-label="Action 1"
+      isDisabled={false}
       key="Action 1"
       onClick={[MockFunction]}
       style={
@@ -133,6 +143,7 @@ exports[`Actions component should render as both buttons and dropdown when given
     </Component>
     <Component
       aria-label="Action 2"
+      isDisabled={false}
       key="Action 2"
       onClick={[MockFunction]}
       style={
@@ -146,7 +157,9 @@ exports[`Actions component should render as both buttons and dropdown when given
     <Dropdown
       dropdownItems={
         Array [
-          <DropdownItem>
+          <DropdownItem
+            isDisabled={false}
+          >
             Action 3
           </DropdownItem>,
         ]

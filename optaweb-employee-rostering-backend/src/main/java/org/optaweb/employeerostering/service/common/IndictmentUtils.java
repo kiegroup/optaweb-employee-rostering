@@ -54,7 +54,7 @@ public class IndictmentUtils {
 
     private WannabeSolverManager solverManager;
 
-    private static final String CONSTRAINT_MATCH_PACKAGE = "org.optaweb.employeerostering.service.solver";
+    public static final String CONSTRAINT_MATCH_PACKAGE = "org.optaweb.employeerostering.service.solver";
 
     public IndictmentUtils(WannabeSolverManager solverManager) {
         this.solverManager = solverManager;
