@@ -42,6 +42,14 @@ export interface ServerSideExceptionInfo {
   exceptionCause: ServerSideExceptionInfo|null;
 }
 
+export function mapObjectStringMap<F, T>(map: Record<string, F>, mapper: (value: F) => T): Record<string, T> {
+  const out: Record<string, T> = {};
+  // eslint-disable-next-line no-return-assign
+  Object.keys(map).forEach(key => out[key] = mapper(map[key]));
+  return out;
+}
+
+
 export function mapObjectNumberMap<F, T>(map: ObjectNumberMap<F>, mapper: (value: F) => T): ObjectNumberMap<T> {
   const out: ObjectNumberMap<T> = {};
   // eslint-disable-next-line no-return-assign

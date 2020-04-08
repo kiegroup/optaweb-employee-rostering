@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-import { Employee } from './Employee';
-import { RosterState } from './RosterState';
-import { Spot } from './Spot';
-import { HardMediumSoftScore } from './HardMediumSoftScore';
-import { IndictmentSummary } from './indictment/IndictmentSummary';
+import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
 
-export interface RosterView {
-  tenantId: number;
-  startDate: string;
-  endDate: string;
-  score: HardMediumSoftScore;
-  spotList: Spot[];
-  employeeList: Employee[];
-  rosterState: RosterState;
-  indictmentSummary: IndictmentSummary;
+
+export interface IndictmentSummary {
+  constraintToCountMap: Record<string, number>;
+  constraintToScoreImpactMap: Record<string, HardMediumSoftScore>;
 }

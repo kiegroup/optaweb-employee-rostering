@@ -35,6 +35,7 @@ import { MigrationBetweenCovidAndNonCovidWardsViolation }
   from './indictment/MigrationBetweenCovidAndNonCovidWardsViolation';
 import { NonCovidShiftSoonAfterCovidShiftViolation } from './indictment/NonCovidShiftSoonAfterCovidShiftViolation';
 import { NoBreakViolation } from './indictment/NoBreakViolation';
+import { PublishedShiftReassignedPenalty } from './indictment/PublishedShiftReassignedPenalty';
 
 export const shiftToShiftView = (shift: Shift): ShiftView => ({
   id: shift.id,
@@ -84,4 +85,5 @@ export interface ShiftView extends DomainObject {
   migrationBetweenCovidAndNonCovidWardsViolationList?: MigrationBetweenCovidAndNonCovidWardsViolation[];
   nonCovidShiftSoonAfterCovidShiftViolationList?: NonCovidShiftSoonAfterCovidShiftViolation[];
   noBreakViolationList?: NoBreakViolation[];
+  publishedShiftReassignedPenaltyList?: PublishedShiftReassignedPenalty[];
 }

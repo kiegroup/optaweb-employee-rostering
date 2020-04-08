@@ -103,6 +103,10 @@ const mockShiftRoster: ShiftRosterView = {
     mediumScore: 0,
     softScore: 0,
   },
+  indictmentSummary: {
+    constraintToCountMap: {},
+    constraintToScoreImpactMap: {},
+  },
 };
 
 const mockAvailabilityRoster: AvailabilityRosterView = {
@@ -182,6 +186,10 @@ const mockAvailabilityRoster: AvailabilityRosterView = {
     hardScore: 0,
     mediumScore: 0,
     softScore: 0,
+  },
+  indictmentSummary: {
+    constraintToCountMap: {},
+    constraintToScoreImpactMap: {},
   },
 };
 

@@ -155,6 +155,13 @@ public class RosterController {
         rosterService.solveRoster(tenantId);
     }
 
+    @ApiOperation("Start solving the roster in Nondisruptive mode. This will modify the publish" +
+            "schedule to make it feasible with minimal changes.")
+    @PostMapping("/replan")
+    public void replanRoster(@PathVariable @Min(0) Integer tenantId) {
+        rosterService.replanRoster(tenantId);
+    }
+
     @ApiOperation("Stop solving the roster, if it hasn't terminated automatically already")
     @PostMapping("/terminate")
     public void terminateRosterEarly(@PathVariable @Min(0) Integer tenantId) {
@@ -175,5 +182,11 @@ public class RosterController {
     @PostMapping("/publishAndProvision")
     public ResponseEntity<PublishResult> publishAndProvision(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(rosterService.publishAndProvision(tenantId), HttpStatus.OK);
+    }
+
+    @ApiOperation("Updates the original employee to match adjusted schedule; essentially a republish without provision")
+    @PostMapping("/commitChanges")
+    public void commitChanges(@PathVariable @Min(0) Integer tenantId) {
+        rosterService.commitChanges(tenantId);
     }
 }

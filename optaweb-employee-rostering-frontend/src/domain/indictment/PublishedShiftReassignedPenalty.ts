@@ -13,20 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ConstraintMatch } from './ConstraintMatch';
+import { Shift } from '../Shift';
 
-import { Employee } from './Employee';
-import { RosterState } from './RosterState';
-import { Spot } from './Spot';
-import { HardMediumSoftScore } from './HardMediumSoftScore';
-import { IndictmentSummary } from './indictment/IndictmentSummary';
 
-export interface RosterView {
-  tenantId: number;
-  startDate: string;
-  endDate: string;
-  score: HardMediumSoftScore;
-  spotList: Spot[];
-  employeeList: Employee[];
-  rosterState: RosterState;
-  indictmentSummary: IndictmentSummary;
+export interface PublishedShiftReassignedPenalty extends ConstraintMatch {
+  shift: Shift;
 }

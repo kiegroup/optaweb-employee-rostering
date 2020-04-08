@@ -143,6 +143,10 @@ publish:
   title: Published Roster
   message: Published from {{from}} to {{to}}.
 
+commitChanges:
+  title: Committed Changes
+  message: Committed changes to published shifts.
+
 shiftRosterRefresh:
   title: Info
   message: The Shift Roster was refreshed.
@@ -154,7 +158,7 @@ availabilityRosterRefresh:
 resetApplicationSuccessful:
   title: Info
   message: The Application was reset successfully.
-  
+
 editShiftsInShiftRoster:
   title: Edit Shifts in the Shift Roster!
   message:

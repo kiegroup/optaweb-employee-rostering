@@ -25,6 +25,7 @@ import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftL
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.violation.IndictmentSummary;
 
 public class AbstractRosterView {
 
@@ -41,6 +42,7 @@ public class AbstractRosterView {
     @NotNull
     protected RosterState rosterState;
 
+    private IndictmentSummary indictmentSummary;
     private HardMediumSoftLongScore score = null;
 
     @Override
@@ -100,6 +102,14 @@ public class AbstractRosterView {
         this.score = score;
     }
 
+    public IndictmentSummary getIndictmentSummary() {
+        return indictmentSummary;
+    }
+
+    public void setIndictmentSummary(IndictmentSummary indictmentSummary) {
+        this.indictmentSummary = indictmentSummary;
+    }
+
     public RosterState getRosterState() {
         return rosterState;
     }
@@ -107,5 +117,4 @@ public class AbstractRosterView {
     public void setRosterState(RosterState rosterState) {
         this.rosterState = rosterState;
     }
-
 }

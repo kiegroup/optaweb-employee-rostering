@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
 import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaweb.employeerostering.domain.employee.Employee;
@@ -32,11 +33,13 @@ import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.violation.ContractMinutesViolation;
 import org.optaweb.employeerostering.domain.violation.DesiredTimeslotForEmployeeReward;
+import org.optaweb.employeerostering.domain.violation.IndictmentSummary;
 import org.optaweb.employeerostering.domain.violation.InoculatedEmployeeAssignedOutsideOfCovidWardViolation;
 import org.optaweb.employeerostering.domain.violation.MaximizeInoculatedEmployeeHoursReward;
 import org.optaweb.employeerostering.domain.violation.MigrationBetweenCovidAndNonCovidWardsViolation;
 import org.optaweb.employeerostering.domain.violation.NoBreakViolation;
 import org.optaweb.employeerostering.domain.violation.NonInoculatedEmployeeAssignedToCovidWardViolation;
+import org.optaweb.employeerostering.domain.violation.PublishedShiftReassignedPenalty;
 import org.optaweb.employeerostering.domain.violation.RequiredSkillViolation;
 import org.optaweb.employeerostering.domain.violation.RotationViolationPenalty;
 import org.optaweb.employeerostering.domain.violation.ShiftEmployeeConflict;
@@ -51,7 +54,7 @@ public class IndictmentUtils {
 
     private WannabeSolverManager solverManager;
 
-    private static final String CONSTRAINT_MATCH_PACKAGE = "org.optaweb.employeerostering.service.solver";
+    public static final String CONSTRAINT_MATCH_PACKAGE = "org.optaweb.employeerostering.service.solver";
 
     public IndictmentUtils(WannabeSolverManager solverManager) {
         this.solverManager = solverManager;
@@ -62,6 +65,30 @@ public class IndictmentUtils {
             scoreDirector.setWorkingSolution(roster);
             scoreDirector.calculateScore();
             return scoreDirector.getIndictmentMap();
+        }
+    }
+
+    public IndictmentSummary getIndictmentSummaryForRoster(Roster roster) {
+        try (ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector()) {
+            scoreDirector.setWorkingSolution(roster);
+            scoreDirector.calculateScore();
+            Map<String, ConstraintMatchTotal> constraintMatchTotalMap = scoreDirector.getConstraintMatchTotalMap();
+            IndictmentSummary out = new IndictmentSummary();
+            out.setConstraintToCountMap(constraintMatchTotalMap.entrySet().stream()
+                                                .map(e -> e.getValue())
+                                                .collect(Collectors
+                                                                 .toMap(ConstraintMatchTotal::getConstraintName,
+                                                                        ConstraintMatchTotal::getConstraintMatchCount)
+                                                ));
+            out.setConstraintToScoreImpactMap(constraintMatchTotalMap.entrySet().stream()
+                                                      .map(e -> e.getValue())
+                                                      .collect(Collectors
+                                                                       .toMap(ConstraintMatchTotal::getConstraintName,
+                                                                              cmt -> {
+                                                                                  return (HardMediumSoftLongScore) cmt
+                                                                                          .getScore();
+                                                                              })));
+            return out;
         }
     }
 
@@ -80,6 +107,7 @@ public class IndictmentUtils {
                              getMaximizeInoculatedEmployeeHoursRewardList(indictment),
                              getMigrationBetweenCovidAndNonCovidWardsViolationList(indictment),
                              getNoBreakViolationList(indictment),
+                             getPublishedShiftReassignedPenaltyList(indictment),
                              (indictment != null) ?
                                      (HardMediumSoftLongScore) indictment.getScore() : HardMediumSoftLongScore.ZERO);
     }
@@ -275,6 +303,18 @@ public class IndictmentUtils {
                                                                 .filter(o -> o instanceof Long)
                                                                 .findFirst().get(),
                                                         (HardMediumSoftLongScore) cm.getScore()))
+                .collect(Collectors.toList());
+    }
+
+    public List<PublishedShiftReassignedPenalty> getPublishedShiftReassignedPenaltyList(Indictment indictment) {
+        if (indictment == null) {
+            return Collections.emptyList();
+        }
+        return indictment.getConstraintMatchSet().stream()
+                .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
+                        cm.getConstraintName().equals("Employee is not original employee"))
+                .map(cm -> new PublishedShiftReassignedPenalty((Shift) cm.getJustificationList().get(0),
+                                                               (HardMediumSoftLongScore) cm.getScore()))
                 .collect(Collectors.toList());
     }
 }

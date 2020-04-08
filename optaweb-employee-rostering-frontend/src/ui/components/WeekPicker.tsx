@@ -23,6 +23,8 @@ import { Button, ButtonVariant } from '@patternfly/react-core';
 
 export interface WeekPickerProps {
   value: Date;
+  minDate?: Date;
+  maxDate?: Date;
   onChange: (weekStartDate: Date, weekEndDate: Date) => void;
 }
 
@@ -45,11 +47,15 @@ export default class WeekPicker extends React.Component<WeekPickerProps, WeekPic
   }
 
   goToCurrentWeek() {
-    this.props.onChange(getFirstDayInWeek(new Date()), getLastDayInWeek(new Date()));
-    this.setState({ isOpen: false });
+    this.goToWeekContaining(new Date());
   }
 
   goToWeekContaining(date: Date) {
+    if (this.props.minDate && getFirstDayInWeek(date) < getFirstDayInWeek(this.props.minDate)) {
+      this.goToWeekContaining(this.props.minDate);
+    } else if (this.props.maxDate && getLastDayInWeek(date) > getLastDayInWeek(this.props.maxDate)) {
+      this.goToWeekContaining(this.props.maxDate);
+    }
     this.props.onChange(getFirstDayInWeek(date), getLastDayInWeek(date));
     this.setState({ isOpen: false });
   }
@@ -61,6 +67,7 @@ export default class WeekPicker extends React.Component<WeekPickerProps, WeekPic
         <Button
           aria-label="Previous Week"
           variant={ButtonVariant.plain}
+          isDisabled={this.props.minDate && this.props.value <= getFirstDayInWeek(this.props.minDate)}
           onClick={() => this.goToWeekContaining(moment(this.props.value).subtract(1, 'w').toDate())}
         >
           <svg
@@ -93,6 +100,8 @@ export default class WeekPicker extends React.Component<WeekPickerProps, WeekPic
           onClickDay={(value: Date) => this.goToWeekContaining(value)}
           onCalendarOpen={() => this.setState({ isOpen: true })}
           onCalendarClose={() => this.setState({ isOpen: false })}
+          minDate={this.props.minDate}
+          maxDate={this.props.maxDate}
           isOpen={this.state.isOpen}
           clearIcon={<HistoryIcon />}
           required
@@ -100,6 +109,7 @@ export default class WeekPicker extends React.Component<WeekPickerProps, WeekPic
         <Button
           aria-label="Next Week"
           variant={ButtonVariant.plain}
+          isDisabled={this.props.maxDate && this.props.value >= getFirstDayInWeek(this.props.maxDate)}
           onClick={() => this.goToWeekContaining(moment(this.props.value).add(1, 'w').toDate())}
         >
           <svg

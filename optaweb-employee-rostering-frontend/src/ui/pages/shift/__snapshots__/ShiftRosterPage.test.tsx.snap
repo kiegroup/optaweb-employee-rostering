@@ -74,10 +74,18 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
     />
     <WeekPicker
       aria-label="Select Week to View"
+      minDate={2018-07-01T00:00:00.000Z}
       onChange={[Function]}
       value={2018-07-01T00:00:00.000Z}
     />
     <ScoreDisplay
+      indictmentSummary={
+        Object {
+          "constraintToCountMap": Object {},
+          "constraintToScoreImpactMap": Object {},
+        }
+      }
+      isSolving={false}
       score={
         Object {
           "hardScore": 0,
@@ -91,6 +99,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
         Array [
           Object {
             "action": [MockFunction],
+            "isDisabled": false,
             "name": "Trans(i18nKey=publish)",
           },
           Object {
@@ -301,10 +310,18 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
     />
     <WeekPicker
       aria-label="Select Week to View"
+      minDate={2018-07-01T00:00:00.000Z}
       onChange={[Function]}
       value={2018-07-01T00:00:00.000Z}
     />
     <ScoreDisplay
+      indictmentSummary={
+        Object {
+          "constraintToCountMap": Object {},
+          "constraintToScoreImpactMap": Object {},
+        }
+      }
+      isSolving={false}
       score={
         Object {
           "hardScore": 0,
@@ -318,6 +335,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
         Array [
           Object {
             "action": [MockFunction],
+            "isDisabled": false,
             "name": "Trans(i18nKey=publish)",
           },
           Object {
@@ -556,10 +574,18 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
     />
     <WeekPicker
       aria-label="Select Week to View"
+      minDate={2018-07-01T00:00:00.000Z}
       onChange={[Function]}
       value={2018-07-01T00:00:00.000Z}
     />
     <ScoreDisplay
+      indictmentSummary={
+        Object {
+          "constraintToCountMap": Object {},
+          "constraintToScoreImpactMap": Object {},
+        }
+      }
+      isSolving={true}
       score={
         Object {
           "hardScore": 0,
@@ -573,6 +599,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
         Array [
           Object {
             "action": [MockFunction],
+            "isDisabled": true,
             "name": "Trans(i18nKey=publish)",
           },
           Object {

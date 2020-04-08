@@ -86,17 +86,18 @@ public class Shift extends AbstractPersistable {
 
     public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime,
                  Employee rotationEmployee) {
-        this(tenantId, spot, startDateTime, endDateTime, rotationEmployee, new HashSet<>());
+        this(tenantId, spot, startDateTime, endDateTime, rotationEmployee, new HashSet<>(), null);
     }
 
     public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime,
-                 Employee rotationEmployee, Set<Skill> requiredSkillSet) {
+                 Employee rotationEmployee, Set<Skill> requiredSkillSet, Employee originalEmployee) {
         super(tenantId);
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.spot = spot;
         this.rotationEmployee = rotationEmployee;
         this.requiredSkillSet = requiredSkillSet;
+        this.originalEmployee = originalEmployee;
     }
 
     public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot) {
@@ -104,11 +105,11 @@ public class Shift extends AbstractPersistable {
     }
 
     public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot, Employee rotationEmployee) {
-        this(zoneId, shiftView, spot, rotationEmployee, new HashSet<>());
+        this(zoneId, shiftView, spot, rotationEmployee, new HashSet<>(), null);
     }
 
     public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot, Employee rotationEmployee,
-                 Set<Skill> requiredSkillSet) {
+                 Set<Skill> requiredSkillSet, Employee originalEmployee) {
         super(shiftView);
         this.startDateTime = OffsetDateTime.of(shiftView.getStartDateTime(),
                                                zoneId.getRules().getOffset(shiftView.getStartDateTime()));
@@ -118,6 +119,7 @@ public class Shift extends AbstractPersistable {
         this.pinnedByUser = shiftView.isPinnedByUser();
         this.rotationEmployee = rotationEmployee;
         this.requiredSkillSet = requiredSkillSet;
+        this.originalEmployee = originalEmployee;
     }
 
     @Override
@@ -156,7 +158,7 @@ public class Shift extends AbstractPersistable {
     }
 
     private void adjustHourlyCounts(Map<OffsetDateTime, Integer> hourlyCountsMap,
-            Function<Integer, Integer> countAdjuster) {
+                                    Function<Integer, Integer> countAdjuster) {
         long hourCount = getLengthInMinutes();
         OffsetDateTime baseStartDateTime = startDateTime.truncatedTo(ChronoUnit.HOURS);
         for (int hour = 0; hour < hourCount; hour++) {
@@ -254,7 +256,8 @@ public class Shift extends AbstractPersistable {
     }
 
     public Shift inTimeZone(ZoneId zoneId) {
-        Shift out = new Shift(zoneId, new ShiftView(zoneId, this), getSpot(), getRotationEmployee());
+        Shift out = new Shift(zoneId, new ShiftView(zoneId, this), getSpot(), getRotationEmployee(),
+                              getRequiredSkillSet(), getOriginalEmployee());
         out.setEmployee(getEmployee());
         return out;
     }

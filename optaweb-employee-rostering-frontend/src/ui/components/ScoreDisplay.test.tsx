@@ -16,6 +16,7 @@
 import { shallow } from 'enzyme';
 import * as React from 'react';
 import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
+import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
 import { ScoreDisplay } from './ScoreDisplay';
 
 describe('ScoreDisplay component', () => {
@@ -25,7 +26,12 @@ describe('ScoreDisplay component', () => {
       mediumScore: -5,
       softScore: 20,
     };
-    const scoreDisplay = shallow(<ScoreDisplay score={score} />);
+    const indictmentSummary: IndictmentSummary = {
+      constraintToCountMap: {},
+      constraintToScoreImpactMap: {},
+    };
+
+    const scoreDisplay = shallow(<ScoreDisplay score={score} indictmentSummary={indictmentSummary} isSolving />);
     expect(scoreDisplay).toMatchSnapshot();
   });
 });

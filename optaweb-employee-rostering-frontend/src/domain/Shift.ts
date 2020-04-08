@@ -35,6 +35,7 @@ import { MigrationBetweenCovidAndNonCovidWardsViolation }
 import { NonCovidShiftSoonAfterCovidShiftViolation } from './indictment/NonCovidShiftSoonAfterCovidShiftViolation';
 import { Skill } from './Skill';
 import { NoBreakViolation } from './indictment/NoBreakViolation';
+import { PublishedShiftReassignedPenalty } from './indictment/PublishedShiftReassignedPenalty';
 
 export interface Shift extends DomainObject {
   startDateTime: Date;
@@ -60,4 +61,5 @@ export interface Shift extends DomainObject {
   migrationBetweenCovidAndNonCovidWardsViolationList?: MigrationBetweenCovidAndNonCovidWardsViolation[];
   nonCovidShiftSoonAfterCovidShiftViolationList?: NonCovidShiftSoonAfterCovidShiftViolation[];
   noBreakViolationList?: NoBreakViolation[];
+  publishedShiftReassignedPenaltyList?: PublishedShiftReassignedPenalty[];
 }

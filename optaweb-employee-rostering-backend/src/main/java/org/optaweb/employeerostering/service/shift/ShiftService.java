@@ -114,7 +114,7 @@ public class ShiftService extends AbstractRestService {
             validateTenantIdParameter(tenantId, rotationEmployee);
         }
 
-        Long originalEmployeeId = shiftView.getRotationEmployeeId();
+        Long originalEmployeeId = shiftView.getOriginalEmployeeId();
         Employee originalEmployee = null;
         if (originalEmployeeId != null) {
             originalEmployee = employeeRepository
@@ -131,9 +131,8 @@ public class ShiftService extends AbstractRestService {
                 .collect(Collectors.toCollection(HashSet::new));
 
         Shift shift = new Shift(rosterService.getRosterState(tenantId).getTimeZone(), shiftView, spot,
-                                rotationEmployee, requiredSkillSet);
+                                rotationEmployee, requiredSkillSet, originalEmployee);
         shift.setPinnedByUser(shiftView.isPinnedByUser());
-        shift.setOriginalEmployee(originalEmployee);
 
         Long employeeId = shiftView.getEmployeeId();
         if (employeeId != null) {
@@ -174,6 +173,7 @@ public class ShiftService extends AbstractRestService {
         }
 
         oldShift.setRotationEmployee(newShift.getRotationEmployee());
+        oldShift.setOriginalEmployee(newShift.getOriginalEmployee());
         oldShift.setSpot(newShift.getSpot());
         oldShift.setStartDateTime(newShift.getStartDateTime());
         oldShift.setEndDateTime(newShift.getEndDateTime());
