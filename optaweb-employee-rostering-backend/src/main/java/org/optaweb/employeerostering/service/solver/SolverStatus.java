@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.service.solver;
 
+// TODO replace by SolverStatus of optaplanner-core
 public enum SolverStatus {
     SCHEDULED,
     SOLVING,
