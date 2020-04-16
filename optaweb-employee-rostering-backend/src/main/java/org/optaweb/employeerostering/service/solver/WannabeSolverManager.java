@@ -33,22 +33,21 @@ import org.optaweb.employeerostering.service.common.IndictmentUtils;
 import org.optaweb.employeerostering.service.roster.RosterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.ApplicationScope;
 
-// TODO Replace by real SolverManager once it exists in optaplanner-core
+// TODO Replace by the real SolverManager of optaplanner-core
 @ApplicationScope
 @Component
 public class WannabeSolverManager implements ApplicationRunner {
 
-    public static final String SOLVER_CONFIG = "org/optaweb/employeerostering/service/solver/" +
-            "employeeRosteringSolverConfig.xml";
-
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Autowired
     private SolverFactory<Roster> solverFactory;
     private ScoreDirectorFactory<Roster> scoreDirectorFactory;
 
@@ -71,8 +70,7 @@ public class WannabeSolverManager implements ApplicationRunner {
     }
 
     public void setUpSolverFactory() {
-        solverFactory = SolverFactory.createFromXmlResource(SOLVER_CONFIG, WannabeSolverManager.class.getClassLoader());
-        scoreDirectorFactory = solverFactory.buildSolver().getScoreDirectorFactory();
+        scoreDirectorFactory = solverFactory.getScoreDirectorFactory();
     }
 
     public void terminate(Integer tenantId) {
@@ -169,4 +167,5 @@ public class WannabeSolverManager implements ApplicationRunner {
     public ScoreDirector<Roster> getScoreDirector() {
         return scoreDirectorFactory.buildScoreDirector();
     }
+
 }
