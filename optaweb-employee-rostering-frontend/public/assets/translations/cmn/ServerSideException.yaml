@@ -1,4 +1,5 @@
 ---
+serverSideError: 服务器端错误
 ServerSideException:
   entityNotFound: 找不到您请求的对象： {{0}}
   generic: 看来开发人员在某处犯了错误。 请联系他们。
