@@ -187,6 +187,12 @@
                   </excludes>
                 </configuration>
               </execution>
+              <execution>
+                <id>jacoco-generate-report</id>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
             </executions>
           </plugin>
         </plugins>
