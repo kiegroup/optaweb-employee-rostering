@@ -96,7 +96,6 @@
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.13.0",
     "history": "^4.9.0",
-    "husky": "^2.7.0",
     "jest-junit": "^8.0.0",
     "lock-treatment-tool": "^0.4.1",
     "mockdate": "^2.0.3",
@@ -119,11 +118,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run lint && CI=true npm test"
-    }
   },
   "jest": {
     "snapshotSerializers": [
