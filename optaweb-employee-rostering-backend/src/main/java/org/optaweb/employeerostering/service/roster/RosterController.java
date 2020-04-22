@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.service.roster;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -30,6 +31,7 @@ import org.optaweb.employeerostering.domain.roster.view.AvailabilityRosterView;
 import org.optaweb.employeerostering.domain.roster.view.ShiftRosterView;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.service.solver.SolverStatus;
+import org.optaweb.employeerostering.util.ShiftRosterXlsxFileIO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -106,6 +108,24 @@ public class RosterController {
                                                                  @RequestBody @Valid List<Spot> spots) {
         return new ResponseEntity<>(rosterService.getShiftRosterViewFor(tenantId, startDateString, endDateString,
                                                                         spots), HttpStatus.OK);
+    }
+
+    @ApiOperation("Get a shift roster view between two dates for a subset of the spots as an excel file")
+    @GetMapping(value = "/shiftRosterView/excel",
+            produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    public ResponseEntity<byte[]> getShiftRosterViewAsExcel(@PathVariable @Min(0) Integer tenantId,
+                                                            @RequestParam(name = "startDate")
+                                                                    String startDateString,
+                                                            @RequestParam(name = "endDate") String endDateString) {
+        ShiftRosterView shiftRosterView = rosterService.getShiftRosterView(tenantId, null, null,
+                                                                           startDateString, endDateString);
+        try {
+            return new ResponseEntity<>(ShiftRosterXlsxFileIO.getExcelBytesForShiftRoster(shiftRosterView),
+                                        HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>(new byte[]{},
+                                        HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // ************************************************************************
