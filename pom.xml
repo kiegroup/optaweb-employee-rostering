@@ -181,7 +181,7 @@
                   <goal>prepare-agent</goal>
                 </goals>
                 <configuration>
-                  <!-- Append coverage data so a single file defined in the kie-parent -->
+                  <!-- Append coverage data to a single file defined in the kie-parent -->
                   <append>true</append>
                   <destFile>${jacoco.exec.file}</destFile>
                   <propertyName>jacoco.agent.argLine</propertyName>
