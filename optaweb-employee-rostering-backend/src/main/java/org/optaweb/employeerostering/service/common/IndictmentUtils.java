@@ -17,10 +17,10 @@
 package org.optaweb.employeerostering.service.common;
 
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
@@ -49,6 +49,30 @@ import org.optaweb.employeerostering.domain.violation.UndesiredTimeslotForEmploy
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.springframework.stereotype.Component;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.ASSIGN_EVERY_SHIFT;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.BREAK_BETWEEN_NON_CONSECUTIVE_SHIFTS_IS_AT_LEAST_10_HOURS;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.EMPLOYEE_IS_NOT_ORIGINAL_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.EXTREME_RISK_EMPLOYEE_ASSIGNED_TO_A_COVID_WARD;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.HIGH_RISK_EMPLOYEE_ASSIGNED_TO_A_COVID_WARD;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.INOCULATED_EMPLOYEE_OUTSIDE_A_COVID_WARD;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.LOW_RISK_EMPLOYEE_ASSIGNED_TO_A_COVID_WARD;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.MAXIMIZE_INOCULATED_HOURS;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.MIGRATION_BETWEEN_COVID_AND_NON_COVID_WARDS;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.MODERATE_RISK_EMPLOYEE_ASSIGNED_TO_A_COVID_WARD;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.NO_MORE_THAN_2_CONSECUTIVE_SHIFTS;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.NO_OVERLAPPING_SHIFTS;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.REQUIRED_SKILL_FOR_A_SHIFT;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+
 @Component
 public class IndictmentUtils {
 
@@ -74,20 +98,12 @@ public class IndictmentUtils {
             scoreDirector.calculateScore();
             Map<String, ConstraintMatchTotal> constraintMatchTotalMap = scoreDirector.getConstraintMatchTotalMap();
             IndictmentSummary out = new IndictmentSummary();
-            out.setConstraintToCountMap(constraintMatchTotalMap.entrySet().stream()
-                                                .map(e -> e.getValue())
-                                                .collect(Collectors
-                                                                 .toMap(ConstraintMatchTotal::getConstraintName,
-                                                                        ConstraintMatchTotal::getConstraintMatchCount)
-                                                ));
-            out.setConstraintToScoreImpactMap(constraintMatchTotalMap.entrySet().stream()
-                                                      .map(e -> e.getValue())
-                                                      .collect(Collectors
-                                                                       .toMap(ConstraintMatchTotal::getConstraintName,
-                                                                              cmt -> {
-                                                                                  return (HardMediumSoftLongScore) cmt
-                                                                                          .getScore();
-                                                                              })));
+            out.setConstraintToCountMap(constraintMatchTotalMap.values().stream()
+                    .collect(toMap(ConstraintMatchTotal::getConstraintName,
+                            ConstraintMatchTotal::getConstraintMatchCount)));
+            out.setConstraintToScoreImpactMap(constraintMatchTotalMap.values().stream()
+                    .collect(toMap(ConstraintMatchTotal::getConstraintName,
+                            cmt -> (HardMediumSoftLongScore) cmt.getScore())));
             return out;
         }
     }
@@ -117,17 +133,17 @@ public class IndictmentUtils {
         if (indictment == null) {
             return Collections.emptyList();
         }
+        List<String> employeeRiskConstraintNameList = Arrays.asList(LOW_RISK_EMPLOYEE_ASSIGNED_TO_A_COVID_WARD,
+                MODERATE_RISK_EMPLOYEE_ASSIGNED_TO_A_COVID_WARD, HIGH_RISK_EMPLOYEE_ASSIGNED_TO_A_COVID_WARD,
+                EXTREME_RISK_EMPLOYEE_ASSIGNED_TO_A_COVID_WARD);
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        (cm.getConstraintName().equals("Low-risk employee assigned to a COVID ward") ||
-                                cm.getConstraintName().equals("Moderate-risk employee assigned to a COVID ward") ||
-                                cm.getConstraintName().equals("High-risk employee assigned to a COVID ward") ||
-                                cm.getConstraintName().equals("Extreme-risk employee assigned to a COVID ward")))
+                        employeeRiskConstraintNameList.contains(cm.getConstraintName()))
                 .map(cm -> new NonInoculatedEmployeeAssignedToCovidWardViolation((Shift) cm.getJustificationList()
                         .stream()
                         .filter(o -> o instanceof Shift)
                         .findFirst().get(), (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<InoculatedEmployeeAssignedOutsideOfCovidWardViolation>
@@ -137,12 +153,12 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        (cm.getConstraintName().equals("Inoculated employee outside a COVID ward")))
+                        (cm.getConstraintName().equals(INOCULATED_EMPLOYEE_OUTSIDE_A_COVID_WARD)))
                 .map(cm -> new InoculatedEmployeeAssignedOutsideOfCovidWardViolation((Shift) cm.getJustificationList()
                         .stream()
                         .filter(o -> o instanceof Shift)
                         .findFirst().get(), (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<MaximizeInoculatedEmployeeHoursReward>
@@ -152,12 +168,12 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        (cm.getConstraintName().equals("Maximize inoculated hours")))
+                        (cm.getConstraintName().equals(MAXIMIZE_INOCULATED_HOURS)))
                 .map(cm -> new MaximizeInoculatedEmployeeHoursReward((Shift) cm.getJustificationList()
                         .stream()
                         .filter(o -> o instanceof Shift)
                         .findFirst().get(), (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<MigrationBetweenCovidAndNonCovidWardsViolation>
@@ -167,7 +183,7 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Migration between COVID and non-COVID wards"))
+                        cm.getConstraintName().equals(MIGRATION_BETWEEN_COVID_AND_NON_COVID_WARDS))
                 .map(cm -> new MigrationBetweenCovidAndNonCovidWardsViolation(
                         (Shift) cm.getJustificationList().stream()
                                 .filter(s -> s instanceof Shift && ((Shift) s).getSpot().isCovidWard())
@@ -176,7 +192,7 @@ public class IndictmentUtils {
                                 .filter(s -> s instanceof Shift && !((Shift) s).getSpot().isCovidWard())
                                 .findAny().get(),
                         (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<RequiredSkillViolation> getRequiredSkillViolationList(Indictment indictment) {
@@ -185,10 +201,10 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Required skill for a shift"))
+                        cm.getConstraintName().equals(REQUIRED_SKILL_FOR_A_SHIFT))
                 .map(cm -> new RequiredSkillViolation((Shift) cm.getJustificationList().get(0),
                                                       (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<UnavailableEmployeeViolation> getUnavailableEmployeeViolationList(Indictment indictment) {
@@ -197,11 +213,11 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Unavailable time slot for an employee"))
+                        cm.getConstraintName().equals(UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE))
                 .map(cm -> new UnavailableEmployeeViolation((Shift) cm.getJustificationList().get(0),
                                                             (EmployeeAvailability) cm.getJustificationList().get(1),
                                                             (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<DesiredTimeslotForEmployeeReward> getDesiredTimeslotForEmployeeRewardList(Indictment indictment) {
@@ -210,11 +226,11 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Desired time slot for an employee"))
+                        cm.getConstraintName().equals(DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE))
                 .map(cm -> new DesiredTimeslotForEmployeeReward((Shift) cm.getJustificationList().get(0),
                                                                 (EmployeeAvailability) cm.getJustificationList().get(1),
                                                                 (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<UndesiredTimeslotForEmployeePenalty> getUndesiredTimeslotForEmployeePenaltyList(Indictment indictment) {
@@ -223,26 +239,27 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Undesired time slot for an employee"))
+                        cm.getConstraintName().equals(UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE))
                 .map(cm -> new UndesiredTimeslotForEmployeePenalty((Shift) cm.getJustificationList().get(0),
                                                                    (EmployeeAvailability) cm.getJustificationList()
                                                                            .get(1),
                                                                    (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<ShiftEmployeeConflict> getShiftEmployeeConflictList(Indictment indictment) {
         if (indictment == null) {
             return Collections.emptyList();
         }
+        List<String> employeeShiftConstraintNameList =
+                Arrays.asList(BREAK_BETWEEN_NON_CONSECUTIVE_SHIFTS_IS_AT_LEAST_10_HOURS, NO_OVERLAPPING_SHIFTS);
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Break between non-consecutive shifts is at least 10 hours") ||
-                        cm.getConstraintName().equals("No overlapping shifts"))
+                        employeeShiftConstraintNameList.contains(cm.getConstraintName()))
                 .map(cm -> new ShiftEmployeeConflict((Shift) cm.getJustificationList().get(0),
                                                      (Shift) cm.getJustificationList().get(1),
                                                      (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<NoBreakViolation> getNoBreakViolationList(Indictment indictment) {
@@ -251,12 +268,12 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("No more than 2 consecutive shifts"))
+                        cm.getConstraintName().equals(NO_MORE_THAN_2_CONSECUTIVE_SHIFTS))
                 .map(cm -> new NoBreakViolation((Shift) cm.getJustificationList().get(0),
                                                 (Shift) cm.getJustificationList().get(1),
                                                 (Shift) cm.getJustificationList().get(2),
                                                 (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<RotationViolationPenalty> getRotationViolationPenaltyList(Indictment indictment) {
@@ -265,10 +282,10 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Employee is not rotation employee"))
+                        cm.getConstraintName().equals(EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE))
                 .map(cm -> new RotationViolationPenalty((Shift) cm.getJustificationList().get(0),
                                                         (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<UnassignedShiftPenalty> getUnassignedShiftPenaltyList(Indictment indictment) {
@@ -277,10 +294,10 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Assign every shift"))
+                        cm.getConstraintName().equals(ASSIGN_EVERY_SHIFT))
                 .map(cm -> new UnassignedShiftPenalty((Shift) cm.getJustificationList().get(0),
                                                       (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<ContractMinutesViolation> getContractMinutesViolationList(Indictment indictment) {
@@ -288,12 +305,12 @@ public class IndictmentUtils {
             return Collections.emptyList();
         }
         // getJustificationList() was not consistent; sometimes employee was first, other times minutes worked was first
+        List<String> contractMinutesConstraintNameList = Arrays.asList(DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
+                WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM, MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
+                YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM);
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        (cm.getConstraintName().equals("Daily minutes must not exceed contract maximum") ||
-                                cm.getConstraintName().equals("Weekly minutes must not exceed contract maximum") ||
-                                cm.getConstraintName().equals("Monthly minutes must not exceed contract maximum") ||
-                                cm.getConstraintName().equals("Yearly minutes must not exceed contract maximum")))
+                        contractMinutesConstraintNameList.contains(cm.getConstraintName()))
                 .map(cm -> new ContractMinutesViolation((Employee) cm.getJustificationList()
                         .stream()
                         .filter(o -> o instanceof Employee)
@@ -303,7 +320,7 @@ public class IndictmentUtils {
                                                                 .filter(o -> o instanceof Long)
                                                                 .findFirst().get(),
                                                         (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<PublishedShiftReassignedPenalty> getPublishedShiftReassignedPenaltyList(Indictment indictment) {
@@ -312,9 +329,9 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Employee is not original employee"))
+                        cm.getConstraintName().equals(EMPLOYEE_IS_NOT_ORIGINAL_EMPLOYEE))
                 .map(cm -> new PublishedShiftReassignedPenalty((Shift) cm.getJustificationList().get(0),
                                                                (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 }
