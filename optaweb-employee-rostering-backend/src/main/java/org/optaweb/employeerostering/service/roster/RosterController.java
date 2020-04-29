@@ -17,7 +17,10 @@
 package org.optaweb.employeerostering.service.roster;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -31,7 +34,11 @@ import org.optaweb.employeerostering.domain.roster.view.AvailabilityRosterView;
 import org.optaweb.employeerostering.domain.roster.view.ShiftRosterView;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.service.solver.SolverStatus;
+import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.optaweb.employeerostering.util.ShiftRosterXlsxFileIO;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -53,10 +60,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class RosterController {
 
     private final RosterService rosterService;
+    private final SpotRepository spotRepository;
 
-    public RosterController(RosterService rosterService) {
+    public RosterController(RosterService rosterService, SpotRepository spotRepository) {
         this.rosterService = rosterService;
         Assert.notNull(rosterService, "rosterService must not be null.");
+        this.spotRepository = spotRepository;
+        Assert.notNull(spotRepository, "spotRepository must not be null.");
     }
 
     // ************************************************************************
@@ -116,11 +126,23 @@ public class RosterController {
     public ResponseEntity<byte[]> getShiftRosterViewAsExcel(@PathVariable @Min(0) Integer tenantId,
                                                             @RequestParam(name = "startDate")
                                                                     String startDateString,
-                                                            @RequestParam(name = "endDate") String endDateString) {
-        ShiftRosterView shiftRosterView = rosterService.getShiftRosterView(tenantId, null, null,
-                                                                           startDateString, endDateString);
+                                                            @RequestParam(name = "endDate") String endDateString,
+                                                            @RequestParam(name = "spotList") String spotListString) {
+        Set<Long> spotIdSet = Arrays.asList(spotListString.split(",")).stream()
+                .map(Long::parseLong).collect(Collectors.toSet());
+        List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE))
+                .stream().filter(s -> spotIdSet.contains(s.getId()))
+                .collect(Collectors.toList());
+        ShiftRosterView shiftRosterView = rosterService.getShiftRosterViewFor(tenantId, startDateString, endDateString,
+                                                                           spotList);
         try {
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.setContentDisposition(ContentDisposition.builder("attachment")
+                                                  .filename("Roster-" + startDateString + "--" +
+                                                            endDateString + ".xlsx")
+                                                  .build());
             return new ResponseEntity<>(ShiftRosterXlsxFileIO.getExcelBytesForShiftRoster(shiftRosterView),
+                                        responseHeaders,
                                         HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(new byte[]{},

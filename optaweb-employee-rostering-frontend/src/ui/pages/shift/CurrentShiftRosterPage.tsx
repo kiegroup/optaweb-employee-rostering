@@ -40,6 +40,7 @@ import { getPropsFromUrl, setPropsInUrl, UrlProps } from 'util/BookmarkableUtils
 import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
 import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from './ShiftEvent';
 import EditShiftModal from './EditShiftModal';
+import ExportScheduleModal from './ExportScheduleModal';
 
 interface StateProps {
   tenantId: number;
@@ -106,6 +107,7 @@ const mapDispatchToProps: DispatchProps = {
 export type Props = RouteComponentProps & StateProps & DispatchProps & WithTranslation;
 interface State {
   isCreatingOrEditingShift: boolean;
+  isExportingSchedule: boolean;
   selectedShift?: Shift;
   firstLoad: boolean;
 }
@@ -121,6 +123,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     this.getDayStyle = this.getDayStyle.bind(this);
     this.state = {
       isCreatingOrEditingShift: false,
+      isExportingSchedule: false,
       firstLoad: true,
     };
   }
@@ -279,6 +282,14 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             isCreatingOrEditingShift: true,
           });
         } },
+      {
+        name: 'Export to Excel',
+        action: () => {
+          this.setState({
+            isExportingSchedule: true,
+          });
+        }
+      },
     ];
 
     return (
@@ -341,6 +352,14 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             this.setState({ isCreatingOrEditingShift: false });
           }}
           onClose={() => this.setState({ isCreatingOrEditingShift: false })}
+        />
+        <ExportScheduleModal
+          isOpen={this.state.isExportingSchedule}
+          onClose={() => {
+            this.setState({ isExportingSchedule: false });
+          }}
+          defaultFromDate={startDate}
+          defaultToDate={endDate}
         />
         <Schedule<Shift>
           key={this.props.shownSpotList[0].id}
