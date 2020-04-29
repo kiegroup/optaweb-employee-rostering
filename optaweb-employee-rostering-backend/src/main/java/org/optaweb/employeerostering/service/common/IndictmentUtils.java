@@ -53,10 +53,6 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_ASSIGN_EVERY_SHIFT;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_BREAK_BETWEEN_NON_CONSECUTIVE_SHIFTS;
-import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
-import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
-import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_EMPLOYEE_IS_NOT_ORIGINAL_EMPLOYEE;
-import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_EXTREME_RISK_EMPLOYEE;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_HIGH_RISK_EMPLOYEE;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_INOCULATED_EMPLOYEE_OUTSIDE_COVID_WARD;
@@ -64,6 +60,10 @@ import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfig
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_MAXIMIZE_INOCULATED_HOURS;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_MIGRATION_BETWEEN_COVID_AND_NON_COVID_WARDS;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_MODERATE_RISK_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_EMPLOYEE_IS_NOT_ORIGINAL_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_NO_MORE_THAN_2_CONSECUTIVE_SHIFTS;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_NO_OVERLAPPING_SHIFTS;
@@ -76,9 +76,8 @@ import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfig
 @Component
 public class IndictmentUtils {
 
-    private WannabeSolverManager solverManager;
-
     public static final String CONSTRAINT_MATCH_PACKAGE = "org.optaweb.employeerostering.service.solver";
+    private WannabeSolverManager solverManager;
 
     public IndictmentUtils(WannabeSolverManager solverManager) {
         this.solverManager = solverManager;
@@ -110,22 +109,22 @@ public class IndictmentUtils {
 
     public ShiftView getShiftViewWithIndictment(ZoneId zoneId, Shift shift, Indictment indictment) {
         return new ShiftView(zoneId, shift,
-                             getRequiredSkillViolationList(indictment),
-                             getUnavailableEmployeeViolationList(indictment),
-                             getShiftEmployeeConflictList(indictment),
-                             getDesiredTimeslotForEmployeeRewardList(indictment),
-                             getUndesiredTimeslotForEmployeePenaltyList(indictment),
-                             getRotationViolationPenaltyList(indictment),
-                             getUnassignedShiftPenaltyList(indictment),
-                             getContractMinutesViolationList(indictment),
-                             getNonInoculatedEmployeeAssignedToCovidWardViolationList(indictment),
-                             getInoculatedEmployeeAssignedOutsideOfCovidWardViolationList(indictment),
-                             getMaximizeInoculatedEmployeeHoursRewardList(indictment),
-                             getMigrationBetweenCovidAndNonCovidWardsViolationList(indictment),
-                             getNoBreakViolationList(indictment),
-                             getPublishedShiftReassignedPenaltyList(indictment),
-                             (indictment != null) ?
-                                     (HardMediumSoftLongScore) indictment.getScore() : HardMediumSoftLongScore.ZERO);
+                getRequiredSkillViolationList(indictment),
+                getUnavailableEmployeeViolationList(indictment),
+                getShiftEmployeeConflictList(indictment),
+                getDesiredTimeslotForEmployeeRewardList(indictment),
+                getUndesiredTimeslotForEmployeePenaltyList(indictment),
+                getRotationViolationPenaltyList(indictment),
+                getUnassignedShiftPenaltyList(indictment),
+                getContractMinutesViolationList(indictment),
+                getNonInoculatedEmployeeAssignedToCovidWardViolationList(indictment),
+                getInoculatedEmployeeAssignedOutsideOfCovidWardViolationList(indictment),
+                getMaximizeInoculatedEmployeeHoursRewardList(indictment),
+                getMigrationBetweenCovidAndNonCovidWardsViolationList(indictment),
+                getNoBreakViolationList(indictment),
+                getPublishedShiftReassignedPenaltyList(indictment),
+                (indictment != null) ?
+                        (HardMediumSoftLongScore) indictment.getScore() : HardMediumSoftLongScore.ZERO);
     }
 
     public List<NonInoculatedEmployeeAssignedToCovidWardViolation>
@@ -203,7 +202,7 @@ public class IndictmentUtils {
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         cm.getConstraintName().equals(CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT))
                 .map(cm -> new RequiredSkillViolation((Shift) cm.getJustificationList().get(0),
-                                                      (HardMediumSoftLongScore) cm.getScore()))
+                        (HardMediumSoftLongScore) cm.getScore()))
                 .collect(toList());
     }
 
@@ -215,8 +214,8 @@ public class IndictmentUtils {
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         cm.getConstraintName().equals(CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE))
                 .map(cm -> new UnavailableEmployeeViolation((Shift) cm.getJustificationList().get(0),
-                                                            (EmployeeAvailability) cm.getJustificationList().get(1),
-                                                            (HardMediumSoftLongScore) cm.getScore()))
+                        (EmployeeAvailability) cm.getJustificationList().get(1),
+                        (HardMediumSoftLongScore) cm.getScore()))
                 .collect(toList());
     }
 
@@ -228,8 +227,8 @@ public class IndictmentUtils {
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         cm.getConstraintName().equals(CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE))
                 .map(cm -> new DesiredTimeslotForEmployeeReward((Shift) cm.getJustificationList().get(0),
-                                                                (EmployeeAvailability) cm.getJustificationList().get(1),
-                                                                (HardMediumSoftLongScore) cm.getScore()))
+                        (EmployeeAvailability) cm.getJustificationList().get(1),
+                        (HardMediumSoftLongScore) cm.getScore()))
                 .collect(toList());
     }
 
@@ -241,9 +240,9 @@ public class IndictmentUtils {
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         cm.getConstraintName().equals(CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE))
                 .map(cm -> new UndesiredTimeslotForEmployeePenalty((Shift) cm.getJustificationList().get(0),
-                                                                   (EmployeeAvailability) cm.getJustificationList()
-                                                                           .get(1),
-                                                                   (HardMediumSoftLongScore) cm.getScore()))
+                        (EmployeeAvailability) cm.getJustificationList()
+                                .get(1),
+                        (HardMediumSoftLongScore) cm.getScore()))
                 .collect(toList());
     }
 
@@ -257,8 +256,8 @@ public class IndictmentUtils {
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         employeeShiftConstraintNameList.contains(cm.getConstraintName()))
                 .map(cm -> new ShiftEmployeeConflict((Shift) cm.getJustificationList().get(0),
-                                                     (Shift) cm.getJustificationList().get(1),
-                                                     (HardMediumSoftLongScore) cm.getScore()))
+                        (Shift) cm.getJustificationList().get(1),
+                        (HardMediumSoftLongScore) cm.getScore()))
                 .collect(toList());
     }
 
@@ -270,9 +269,9 @@ public class IndictmentUtils {
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         cm.getConstraintName().equals(CONSTRAINT_NO_MORE_THAN_2_CONSECUTIVE_SHIFTS))
                 .map(cm -> new NoBreakViolation((Shift) cm.getJustificationList().get(0),
-                                                (Shift) cm.getJustificationList().get(1),
-                                                (Shift) cm.getJustificationList().get(2),
-                                                (HardMediumSoftLongScore) cm.getScore()))
+                        (Shift) cm.getJustificationList().get(1),
+                        (Shift) cm.getJustificationList().get(2),
+                        (HardMediumSoftLongScore) cm.getScore()))
                 .collect(toList());
     }
 
@@ -284,7 +283,7 @@ public class IndictmentUtils {
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         cm.getConstraintName().equals(CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE))
                 .map(cm -> new RotationViolationPenalty((Shift) cm.getJustificationList().get(0),
-                                                        (HardMediumSoftLongScore) cm.getScore()))
+                        (HardMediumSoftLongScore) cm.getScore()))
                 .collect(toList());
     }
 
@@ -296,7 +295,7 @@ public class IndictmentUtils {
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         cm.getConstraintName().equals(CONSTRAINT_ASSIGN_EVERY_SHIFT))
                 .map(cm -> new UnassignedShiftPenalty((Shift) cm.getJustificationList().get(0),
-                                                      (HardMediumSoftLongScore) cm.getScore()))
+                        (HardMediumSoftLongScore) cm.getScore()))
                 .collect(toList());
     }
 
@@ -305,8 +304,10 @@ public class IndictmentUtils {
             return Collections.emptyList();
         }
         // getJustificationList() was not consistent; sometimes employee was first, other times minutes worked was first
-        List<String> contractMinutesConstraintNameList = Arrays.asList(CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
-                CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM, CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
+        List<String> contractMinutesConstraintNameList = Arrays.asList(
+                CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
+                CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
+                CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                 CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM);
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
@@ -315,11 +316,11 @@ public class IndictmentUtils {
                         .stream()
                         .filter(o -> o instanceof Employee)
                         .findFirst().get(), ContractMinutesViolation.Type.getTypeForViolation(cm.getConstraintName()),
-                                                        (Long) cm.getJustificationList()
-                                                                .stream()
-                                                                .filter(o -> o instanceof Long)
-                                                                .findFirst().get(),
-                                                        (HardMediumSoftLongScore) cm.getScore()))
+                        (Long) cm.getJustificationList()
+                                .stream()
+                                .filter(o -> o instanceof Long)
+                                .findFirst().get(),
+                        (HardMediumSoftLongScore) cm.getScore()))
                 .collect(toList());
     }
 
@@ -331,7 +332,7 @@ public class IndictmentUtils {
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         cm.getConstraintName().equals(CONSTRAINT_EMPLOYEE_IS_NOT_ORIGINAL_EMPLOYEE))
                 .map(cm -> new PublishedShiftReassignedPenalty((Shift) cm.getJustificationList().get(0),
-                                                               (HardMediumSoftLongScore) cm.getScore()))
+                        (HardMediumSoftLongScore) cm.getScore()))
                 .collect(toList());
     }
 }

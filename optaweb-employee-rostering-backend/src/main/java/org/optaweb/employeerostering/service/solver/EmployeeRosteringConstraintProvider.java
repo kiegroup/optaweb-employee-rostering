@@ -33,6 +33,7 @@ import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
 import org.optaplanner.core.api.score.stream.bi.BiConstraintStream;
 import org.optaplanner.core.impl.score.stream.uni.DefaultUniConstraintCollector;
+import org.optaweb.employeerostering.domain.common.DateTimeUtils;
 import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
@@ -43,7 +44,6 @@ import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration
 import static java.time.Duration.between;
 import static org.optaplanner.core.api.score.stream.ConstraintCollectors.sumDuration;
 import static org.optaplanner.core.api.score.stream.Joiners.equal;
-import static org.optaplanner.core.api.score.stream.Joiners.filtering;
 import static org.optaplanner.core.api.score.stream.Joiners.greaterThanOrEqual;
 import static org.optaplanner.core.api.score.stream.Joiners.lessThan;
 import static org.optaplanner.core.api.score.stream.Joiners.lessThanOrEqual;
@@ -102,7 +102,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
         return constraintFactory.from(EmployeeAvailability.class)
                 .filter(employeeAvailability -> employeeAvailability.getState() == employeeAvailabilityState)
                 .join(Shift.class, equal(EmployeeAvailability::getEmployee, Shift::getEmployee))
-                .filter((employeeAvailability, shift) -> doTimeslotsIntersect(
+                .filter((employeeAvailability, shift) -> DateTimeUtils.doTimeslotsIntersect(
                         employeeAvailability.getStartDateTime(), employeeAvailability.getEndDateTime(),
                         shift.getStartDateTime(), shift.getEndDateTime()));
     }
@@ -111,11 +111,6 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
         long minutesOverMaximum = Math.max(current - maximum, 0);
         long hours = minutesOverMaximum / 60;
         return (minutesOverMaximum % 60 == 0) ? hours : hours + 1;
-    }
-
-    private static boolean doTimeslotsIntersect(OffsetDateTime start1, OffsetDateTime end1, OffsetDateTime start2,
-            OffsetDateTime end2) {
-        return !start1.isAfter(end2) && !end1.isBefore(start2);
     }
 
     private static LocalDate extractFirstDayOfWeek(DayOfWeek weekStarting, OffsetDateTime date) {
@@ -230,9 +225,9 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     Constraint noOverlappingShifts(ConstraintFactory constraintFactory) {
         return constraintFactory.fromUniquePair(Shift.class,
                 equal(Shift::getEmployee),
-                lessThanOrEqual(Shift::getStartDateTime),
-                filtering((s1, s2) -> !Objects.equals(s1.getEndDateTime(), s2.getStartDateTime())),
-                filtering(Shift::intersects))
+                lessThanOrEqual(Shift::getStartDateTime))
+                .filter((s1, s2) -> !Objects.equals(s1.getEndDateTime(), s2.getStartDateTime()))
+                .filter(Shift::intersects)
                 .penalizeConfigurableLong(CONSTRAINT_NO_OVERLAPPING_SHIFTS,
                         (s1, s2) -> s2.getLengthInMinutes());
     }
@@ -251,8 +246,8 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     Constraint breakBetweenShiftsIsAtLeastTenHours(ConstraintFactory constraintFactory) {
         return constraintFactory.fromUniquePair(Shift.class,
                 equal(Shift::getEmployee),
-                lessThan(Shift::getEndDateTime, Shift::getStartDateTime),
-                filtering((s1, s2) -> s1.getEndDateTime().until(s2.getStartDateTime(), ChronoUnit.HOURS) < 10))
+                lessThan(Shift::getEndDateTime, Shift::getStartDateTime))
+                .filter((s1, s2) -> s1.getEndDateTime().until(s2.getStartDateTime(), ChronoUnit.HOURS) < 10)
                 .penalizeConfigurableLong(CONSTRAINT_BREAK_BETWEEN_NON_CONSECUTIVE_SHIFTS, (s1, s2) -> {
                     long breakLength = s1.getEndDateTime().until(s2.getStartDateTime(), ChronoUnit.MINUTES);
                     return (10 * 60) - breakLength;
