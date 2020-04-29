@@ -110,6 +110,10 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
             "action": [Function],
             "name": "Trans(i18nKey=createShift)",
           },
+          Object {
+            "action": [Function],
+            "name": "Export to Excel",
+          },
         ]
       }
     />
@@ -120,6 +124,12 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
     onClose={[Function]}
     onDelete={[Function]}
     onSave={[Function]}
+  />
+  <Connect(ExportScheduleModal)
+    defaultFromDate={2018-07-01T00:00:00.000Z}
+    defaultToDate={2018-07-07T23:59:59.999Z}
+    isOpen={false}
+    onClose={[Function]}
   />
   <Schedule
     dayStyle={[Function]}
@@ -339,6 +349,10 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
             "action": [Function],
             "name": "Trans(i18nKey=createShift)",
           },
+          Object {
+            "action": [Function],
+            "name": "Export to Excel",
+          },
         ]
       }
     />
@@ -349,6 +363,12 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
     onClose={[Function]}
     onDelete={[Function]}
     onSave={[Function]}
+  />
+  <Connect(ExportScheduleModal)
+    defaultFromDate={2018-07-01T00:00:00.000Z}
+    defaultToDate={2018-07-07T23:59:59.999Z}
+    isOpen={false}
+    onClose={[Function]}
   />
   <Schedule
     dayStyle={[Function]}
@@ -596,6 +616,10 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
             "action": [Function],
             "name": "Trans(i18nKey=createShift)",
           },
+          Object {
+            "action": [Function],
+            "name": "Export to Excel",
+          },
         ]
       }
     />
@@ -606,6 +630,12 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
     onClose={[Function]}
     onDelete={[Function]}
     onSave={[Function]}
+  />
+  <Connect(ExportScheduleModal)
+    defaultFromDate={2018-07-01T00:00:00.000Z}
+    defaultToDate={2018-07-07T23:59:59.999Z}
+    isOpen={false}
+    onClose={[Function]}
   />
   <Schedule
     dayStyle={[Function]}
