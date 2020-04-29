@@ -37,6 +37,7 @@ import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.entity.PlanningPin;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
+import org.optaweb.employeerostering.domain.common.DateTimeUtils;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
@@ -146,6 +147,10 @@ public class Shift extends AbstractPersistable {
     public boolean hasRequiredSkills() {
         return employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()) &&
                 employee.getSkillProficiencySet().containsAll(requiredSkillSet);
+    }
+
+    public boolean intersects(Shift other) {
+        return DateTimeUtils.doTimeslotsIntersect(startDateTime, endDateTime, other.startDateTime, other.endDateTime);
     }
 
     public static long calculateLoad(Collection<Integer> hourlyCounts) {
