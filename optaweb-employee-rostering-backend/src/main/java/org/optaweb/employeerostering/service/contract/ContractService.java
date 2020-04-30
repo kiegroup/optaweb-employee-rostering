@@ -103,4 +103,19 @@ public class ContractService extends AbstractRestService {
         oldContract.setMaximumMinutesPerYear(newContract.getMaximumMinutesPerYear());
         return contractRepository.save(oldContract);
     }
+
+    @Transactional
+    public Contract getOrCreateDefaultContract(Integer tenantId) {
+        Optional<Contract> defaultContract = contractRepository.findAllByTenantId(tenantId)
+                .stream().filter(contract -> contract.getName().equals("Default Contract"))
+                .findAny();
+        if (defaultContract.isPresent()) {
+            return defaultContract.get();
+        } else {
+            Contract contract = new Contract();
+            contract.setName("Default Contract");
+            contract.setTenantId(tenantId);
+            return contractRepository.save(contract);
+        }
+    }
 }

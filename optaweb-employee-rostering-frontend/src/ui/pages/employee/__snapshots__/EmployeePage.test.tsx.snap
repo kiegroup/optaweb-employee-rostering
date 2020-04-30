@@ -1,7 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Employees page should render correctly with a few employees 1`] = `
-<Fragment>
+<div>
+  <div>
+    <FileUpload
+      id="file"
+      name="file"
+      onChange={[Function]}
+    />
+  </div>
   <Level
     gutter="sm"
     style={
@@ -532,13 +539,20 @@ exports[`Employees page should render correctly with a few employees 1`] = `
     <TableHeader />
     <TableBody />
   </Component>
-</Fragment>
+</div>
 `;
 
 exports[`Employees page should render correctly with no employees 1`] = `
 <EmptyState
   variant="full"
 >
+  <div>
+    <FileUpload
+      id="file"
+      name="file"
+      onChange={[Function]}
+    />
+  </div>
   <EmptyStateIcon
     icon={[Function]}
   />
