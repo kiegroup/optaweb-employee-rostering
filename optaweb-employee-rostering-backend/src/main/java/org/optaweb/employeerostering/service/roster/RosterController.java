@@ -134,13 +134,13 @@ public class RosterController {
                 .stream().filter(s -> spotIdSet.contains(s.getId()))
                 .collect(Collectors.toList());
         ShiftRosterView shiftRosterView = rosterService.getShiftRosterViewFor(tenantId, startDateString, endDateString,
-                                                                           spotList);
+                                                                              spotList);
         try {
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.setContentDisposition(ContentDisposition.builder("attachment")
-                                                  .filename("Roster-" + startDateString + "--" +
-                                                            endDateString + ".xlsx")
-                                                  .build());
+                                                          .filename("Roster-" + startDateString + "--" +
+                                                                            endDateString + ".xlsx")
+                                                          .build());
             return new ResponseEntity<>(ShiftRosterXlsxFileIO.getExcelBytesForShiftRoster(shiftRosterView),
                                         responseHeaders,
                                         HttpStatus.OK);

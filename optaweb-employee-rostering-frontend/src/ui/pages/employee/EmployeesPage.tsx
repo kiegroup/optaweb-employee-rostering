@@ -33,6 +33,7 @@ import {
   EmptyStateBody,
   Button,
   ButtonVariant,
+  FileUpload,
 } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { Skill } from 'domain/Skill';
@@ -72,12 +73,14 @@ export interface DispatchProps {
   addEmployee: typeof employeeOperations.addEmployee;
   updateEmployee: typeof employeeOperations.updateEmployee;
   removeEmployee: typeof employeeOperations.removeEmployee;
+  uploadEmployeeList: typeof employeeOperations.uploadEmployeeList;
 }
 
 const mapDispatchToProps: DispatchProps = {
   addEmployee: employeeOperations.addEmployee,
   updateEmployee: employeeOperations.updateEmployee,
   removeEmployee: employeeOperations.removeEmployee,
+  uploadEmployeeList: employeeOperations.uploadEmployeeList,
 };
 
 export type Props = RouteComponentProps & StateProps & DispatchProps & WithTranslation;
@@ -209,9 +212,23 @@ export class EmployeesPage extends DataTable<Employee, Props> {
   }
 
   render(): JSX.Element {
+    const importElement = (
+      <div>
+        <FileUpload
+          id="file"
+          name="file"
+          onChange={
+            file => {
+              if (typeof file != 'string') {
+                this.props.uploadEmployeeList(file);
+              }
+          }}
+        />
+      </div>);
     if (this.props.contractList.length === 0) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
+          {importElement}
           <EmptyStateIcon icon={CubesIcon} />
           <Trans
             t={this.props.t}
@@ -230,7 +247,12 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         </EmptyState>
       );
     }
-    return super.render();
+    return (
+      <div>
+        {importElement}
+        {super.render()}
+      </div>
+    );
   }
 }
 

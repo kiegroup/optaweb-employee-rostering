@@ -16,7 +16,11 @@
 
 package org.optaweb.employeerostering.service.employee;
 
+import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -26,6 +30,7 @@ import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
+import org.optaweb.employeerostering.util.EmployeeListXlsxFileIO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -38,7 +43,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/employee")
@@ -48,10 +55,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final EmployeeListXlsxFileIO employeeListXlsxFileIO;
 
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, EmployeeListXlsxFileIO employeeListXlsxFileIO) {
         this.employeeService = employeeService;
         Assert.notNull(employeeService, "employeeService must not be null.");
+        this.employeeListXlsxFileIO = employeeListXlsxFileIO;
+        Assert.notNull(employeeListXlsxFileIO, "employeeListXlsxFileIO must not be null.");
     }
 
     // ************************************************************************
@@ -82,6 +92,31 @@ public class EmployeeController {
     public ResponseEntity<Employee> createEmployee(@PathVariable @Min(0) Integer tenantId,
                                                    @RequestBody @Valid EmployeeView employeeView) {
         return new ResponseEntity<>(employeeService.createEmployee(tenantId, employeeView), HttpStatus.OK);
+    }
+
+    @ApiOperation("Import employees from an Excel file")
+    @PostMapping("/import")
+    public ResponseEntity<List<Employee>> addEmployeesFromExcelFile(@PathVariable @Min(0) Integer tenantId,
+                                                                    @RequestParam("file") MultipartFile excelDataFile)
+            throws IOException {
+
+        List<EmployeeView> excelEmployeeList = employeeListXlsxFileIO
+                .getEmployeeListFromExcelFile(tenantId, excelDataFile.getInputStream());
+
+        final Set<String> addedEmployeeSet = new HashSet<>();
+        excelEmployeeList.stream().flatMap(employee -> {
+            if (addedEmployeeSet.contains(employee.getName().toLowerCase())) {
+                // Duplicate Employee; already in the stream
+                return Stream.empty();
+            }
+            // Add employee to the stream
+            addedEmployeeSet.add(employee.getName().toLowerCase());
+            return Stream.of(employee);
+        }).forEach(employee -> {
+            employeeService.createEmployee(tenantId, employee);
+        });
+
+        return getEmployeeList(tenantId);
     }
 
     @ApiOperation("Update an employee")

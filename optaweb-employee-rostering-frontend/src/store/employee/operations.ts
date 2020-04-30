@@ -19,10 +19,16 @@ import { Employee } from 'domain/Employee';
 import { AddAlertAction } from 'store/alert/types';
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
+import * as skillActions from 'store/skill/actions';
+import * as contractActions from 'store/contract/actions';
 import {
   SetEmployeeListLoadingAction, AddEmployeeAction, RemoveEmployeeAction, UpdateEmployeeAction,
   RefreshEmployeeListAction,
 } from './types';
+import { Skill } from 'domain/Skill';
+import { SetSkillListLoadingAction, RefreshSkillListAction } from 'store/skill/types';
+import { Contract } from 'domain/Contract';
+import { RefreshContractListAction, SetContractListLoadingAction } from 'store/contract/types';
 
 export const addEmployee:
 ThunkCommandFactory<Employee, AddAlertAction | AddEmployeeAction> = employee => (dispatch, state, client) => {
@@ -64,5 +70,26 @@ RefreshEmployeeListAction> = () => (dispatch, state, client) => {
   return client.get<Employee[]>(`/tenant/${tenantId}/employee/`).then((employeeList) => {
     dispatch(actions.refreshEmployeeList(employeeList));
     dispatch(actions.setIsEmployeeListLoading(false));
+  });
+};
+
+export const uploadEmployeeList:
+ThunkCommandFactory<File, SetEmployeeListLoadingAction |
+RefreshEmployeeListAction | SetSkillListLoadingAction | RefreshSkillListAction |
+RefreshContractListAction | SetContractListLoadingAction > = file => (dispatch, state, client) => {
+  const tenantId = state().tenantData.currentTenantId;
+  dispatch(actions.setIsEmployeeListLoading(true));
+  dispatch(skillActions.setIsSkillListLoading(true));
+  return client.uploadFile<Employee[]>(`/tenant/${tenantId}/employee/import`, file).then((employeeList) => {
+    return client.get<Skill[]>(`/tenant/${tenantId}/skill/`).then((skillList) => {
+      return client.get<Contract[]>(`/tenant/${tenantId}/contract/`).then((contractList) => {
+        dispatch(skillActions.refreshSkillList(skillList));
+        dispatch(skillActions.setIsSkillListLoading(false));
+        dispatch(contractActions.refreshContractList(contractList));
+        dispatch(contractActions.setIsContractListLoading(false));
+        dispatch(actions.refreshEmployeeList(employeeList));
+        dispatch(actions.setIsEmployeeListLoading(false));
+      });
+    });
   });
 };
