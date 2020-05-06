@@ -30,12 +30,10 @@ import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftL
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaweb.employeerostering.domain.roster.Roster;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
-import org.optaweb.employeerostering.service.roster.RosterService;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertFalse;
@@ -48,22 +46,17 @@ import static org.junit.Assert.assertTrue;
 public class SolverManagerTest {
 
     @Autowired
-    private ThreadPoolTaskExecutor taskExecutor;
-
-    @Autowired
-    private RosterService rosterService;
-
-    @Autowired
     private RosterGenerator rosterGenerator;
+
+    @Autowired
+    protected WannabeSolverManager solverManager;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Test
     public void testSolverManager() throws InterruptedException {
-        WannabeSolverManager solverManager = new WannabeSolverManager(taskExecutor, rosterService);
         solverManager.setUpSolverFactory();
-
         Roster roster = rosterGenerator.generateRoster(10, 7);
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
