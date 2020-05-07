@@ -40,6 +40,7 @@ import org.junit.runner.RunWith;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.termination.TerminationConfig;
 import org.optaplanner.test.impl.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreVerifier;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
@@ -56,7 +57,6 @@ import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
-import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -85,6 +85,9 @@ public class SolverTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private SolverConfig solverConfig;
+
     private final String rosterPathURI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
 
     private ResponseEntity<Void> solveForTenant(Integer tenantId) {
@@ -96,14 +99,12 @@ public class SolverTest {
     }
 
     private SolverFactory<Roster> getSolverFactory() {
-        SolverFactory<Roster> solverFactory = SolverFactory.createFromXmlResource(WannabeSolverManager.SOLVER_CONFIG);
-        solverFactory.getSolverConfig().setTerminationConfig(new TerminationConfig()
-                                                                     .withScoreCalculationCountLimit(10000L));
-        return solverFactory;
+        return SolverFactory.create(solverConfig.copyConfig()
+                .withTerminationConfig(new TerminationConfig().withScoreCalculationCountLimit(10000L)));
     }
 
     private HardMediumSoftLongScoreVerifier<Roster> getScoreVerifier() {
-        return new HardMediumSoftLongScoreVerifier<Roster>(getSolverFactory());
+        return new HardMediumSoftLongScoreVerifier<>(getSolverFactory());
     }
 
     @Test
