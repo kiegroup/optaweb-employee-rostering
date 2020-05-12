@@ -33,27 +33,6 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     @NotNull
     private DayOfWeek weekStartDay = DayOfWeek.MONDAY;
 
-    // COVID-specific constraints
-    @ConstraintWeight("Low-risk employee assigned to a COVID ward")
-    private HardMediumSoftLongScore lowRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(10);
-    @ConstraintWeight("Moderate-risk employee assigned to a COVID ward")
-    private HardMediumSoftLongScore moderateRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(50);
-    @ConstraintWeight("High-risk employee assigned to a COVID ward")
-    private HardMediumSoftLongScore highRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(100);
-    @ConstraintWeight("Extreme-risk employee assigned to a COVID ward")
-    private HardMediumSoftLongScore extremeRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofHard(1);
-    @ConstraintWeight("Inoculated employee outside a COVID ward")
-    private HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWardMatchWeight =
-            HardMediumSoftLongScore.ofSoft(1_000);
-    @ConstraintWeight("Uniform distribution of inoculated hours")
-    private HardMediumSoftLongScore uniformDistributionOfInoculatedHoursMatchWeight =
-            HardMediumSoftLongScore.ofSoft(1);
-    @ConstraintWeight("Maximize inoculated hours")
-    private HardMediumSoftLongScore maximizeInoculatedHoursMatchWeight = HardMediumSoftLongScore.ofSoft(50);
-    @ConstraintWeight("Migration between COVID and non-COVID wards")
-    private HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWardMatchWeight =
-            HardMediumSoftLongScore.ofSoft(100);
-
     @ConstraintWeight("Required skill for a shift")
     private HardMediumSoftLongScore requiredSkill = HardMediumSoftLongScore.ofHard(100);
     @ConstraintWeight("Unavailable time slot for an employee")
@@ -93,81 +72,6 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     public RosterConstraintConfiguration(Integer tenantId, DayOfWeek weekStartDay) {
         super(tenantId);
         this.weekStartDay = weekStartDay;
-    }
-
-    // ************************************************************************
-    // COVID-specific getters and setters
-    // ************************************************************************
-
-    public HardMediumSoftLongScore getLowRiskEmployeeInCovidWardMatchWeight() {
-        return lowRiskEmployeeInCovidWardMatchWeight;
-    }
-
-    public void setLowRiskEmployeeInCovidWardMatchWeight(
-            HardMediumSoftLongScore lowRiskEmployeeInCovidWardMatchWeight) {
-        this.lowRiskEmployeeInCovidWardMatchWeight = lowRiskEmployeeInCovidWardMatchWeight;
-    }
-
-    public HardMediumSoftLongScore getModerateRiskEmployeeInCovidWardMatchWeight() {
-        return moderateRiskEmployeeInCovidWardMatchWeight;
-    }
-
-    public void setModerateRiskEmployeeInCovidWardMatchWeight(
-            HardMediumSoftLongScore moderateRiskEmployeeInCovidWardMatchWeight) {
-        this.moderateRiskEmployeeInCovidWardMatchWeight = moderateRiskEmployeeInCovidWardMatchWeight;
-    }
-
-    public HardMediumSoftLongScore getHighRiskEmployeeInCovidWardMatchWeight() {
-        return highRiskEmployeeInCovidWardMatchWeight;
-    }
-
-    public void setHighRiskEmployeeInCovidWardMatchWeight(
-            HardMediumSoftLongScore highRiskEmployeeInCovidWardMatchWeight) {
-        this.highRiskEmployeeInCovidWardMatchWeight = highRiskEmployeeInCovidWardMatchWeight;
-    }
-
-    public HardMediumSoftLongScore getExtremeRiskEmployeeInCovidWardMatchWeight() {
-        return extremeRiskEmployeeInCovidWardMatchWeight;
-    }
-
-    public void setExtremeRiskEmployeeInCovidWardMatchWeight(
-            HardMediumSoftLongScore extremeRiskEmployeeInCovidWardMatchWeight) {
-        this.extremeRiskEmployeeInCovidWardMatchWeight = extremeRiskEmployeeInCovidWardMatchWeight;
-    }
-
-    public HardMediumSoftLongScore getInoculatedEmployeeOutsideCovidWardMatchWeight() {
-        return inoculatedEmployeeOutsideCovidWardMatchWeight;
-    }
-
-    public void setInoculatedEmployeeOutsideCovidWardMatchWeight(
-            HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWardMatchWeight) {
-        this.inoculatedEmployeeOutsideCovidWardMatchWeight = inoculatedEmployeeOutsideCovidWardMatchWeight;
-    }
-
-    public HardMediumSoftLongScore getUniformDistributionOfInoculatedHoursMatchWeight() {
-        return uniformDistributionOfInoculatedHoursMatchWeight;
-    }
-
-    public void setUniformDistributionOfInoculatedHoursMatchWeight(
-            HardMediumSoftLongScore uniformDistributionOfInoculatedHoursMatchWeight) {
-        this.uniformDistributionOfInoculatedHoursMatchWeight = uniformDistributionOfInoculatedHoursMatchWeight;
-    }
-
-    public HardMediumSoftLongScore getMaximizeInoculatedHoursMatchWeight() {
-        return maximizeInoculatedHoursMatchWeight;
-    }
-
-    public void setMaximizeInoculatedHoursMatchWeight(HardMediumSoftLongScore maximizeInoculatedHoursMatchWeight) {
-        this.maximizeInoculatedHoursMatchWeight = maximizeInoculatedHoursMatchWeight;
-    }
-
-    public HardMediumSoftLongScore getMigrationBetweenCovidAndNonCovidWardMatchWeight() {
-        return migrationBetweenCovidAndNonCovidWardMatchWeight;
-    }
-
-    public void setMigrationBetweenCovidAndNonCovidWardMatchWeight(
-            HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWardMatchWeight) {
-        this.migrationBetweenCovidAndNonCovidWardMatchWeight = migrationBetweenCovidAndNonCovidWardMatchWeight;
     }
 
     // ************************************************************************

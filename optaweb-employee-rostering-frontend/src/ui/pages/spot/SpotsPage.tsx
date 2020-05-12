@@ -29,8 +29,7 @@ import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
-import { StatefulTypeaheadSelectInput } from 'ui/components/TypeaheadSelectInput';
-import { BiohazardIcon, ArrowIcon } from '@patternfly/react-icons';
+import { ArrowIcon } from '@patternfly/react-icons';
 
 interface StateProps extends DataTableProps<Spot> {
   tenantId: number;
@@ -40,7 +39,7 @@ interface StateProps extends DataTableProps<Spot> {
 const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
   ...ownProps,
   title: ownProps.t('spots'),
-  columnTitles: [ownProps.t('name'), ownProps.t('requiredSkillSet'), ownProps.t('covidWard')],
+  columnTitles: [ownProps.t('name'), ownProps.t('requiredSkillSet')],
   tableData: spotSelectors.getSpotList(state),
   skillList: skillSelectors.getSkillList(state),
   tenantId: state.tenantData.currentTenantId,
@@ -73,9 +72,7 @@ export class SpotsPage extends DataTable<Spot, Props> {
 
   displayDataRow(data: Spot): JSX.Element[] {
     return [
-      <span style={{ display: 'grid', gridTemplateColumns: 'min-content 5px max-content min-content' }}>
-        {data.covidWard ? <BiohazardIcon /> : <span />}
-        <span />
+      <span style={{ display: 'grid', gridTemplateColumns: 'max-content min-content' }}>
         <Text key={0}>{data.name}</Text>
         <Button
           variant={ButtonVariant.link}
@@ -93,16 +90,12 @@ export class SpotsPage extends DataTable<Spot, Props> {
           </Chip>
         ))}
       </ChipGroup>,
-      <Text key={2}>
-        {data.covidWard ? 'Yes' : 'No' }
-      </Text>,
     ];
   }
 
   getInitialStateForNewRow(): Partial<Spot> {
     return {
       requiredSkillSet: [],
-      covidWard: false,
     };
   }
 
@@ -123,25 +116,16 @@ export class SpotsPage extends DataTable<Spot, Props> {
         value={data.requiredSkillSet ? data.requiredSkillSet : []}
         onChange={selected => setProperty('requiredSkillSet', selected)}
       />,
-      <StatefulTypeaheadSelectInput
-        key={3}
-        emptyText=""
-        optionToStringMap={isCovid => (isCovid ? 'Ward has COVID-19' : 'Ward does not has COVID-19')}
-        value={data.covidWard}
-        options={[true, false]}
-        onChange={covidWard => setProperty('covidWard', covidWard)}
-      />,
     ];
   }
 
   isDataComplete(editedValue: ReadonlyPartial<Spot>): editedValue is Spot {
     return editedValue.name !== undefined
-      && editedValue.requiredSkillSet !== undefined
-      && editedValue.covidWard !== undefined;
+      && editedValue.requiredSkillSet !== undefined;
   }
 
   isValid(editedValue: Spot): boolean {
-    return editedValue.name.trim().length > 0 && editedValue.covidWard !== undefined;
+    return editedValue.name.trim().length > 0;
   }
 
   getFilter(): (filter: string) => Predicate<Spot> {

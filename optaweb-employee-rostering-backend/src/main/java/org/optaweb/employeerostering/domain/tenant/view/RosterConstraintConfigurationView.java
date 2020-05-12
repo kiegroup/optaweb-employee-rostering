@@ -28,16 +28,6 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
     @NotNull
     private DayOfWeek weekStartDay = DayOfWeek.MONDAY;
 
-    // COVID-specific constraints
-    private HardMediumSoftLongScore lowRiskEmployeeInCovidWard = HardMediumSoftLongScore.ofSoft(1);
-    private HardMediumSoftLongScore moderateRiskEmployeeInCovidWard = HardMediumSoftLongScore.ofSoft(5);
-    private HardMediumSoftLongScore highRiskEmployeeInCovidWard = HardMediumSoftLongScore.ofSoft(10);
-    private HardMediumSoftLongScore extremeRiskEmployeeInCovidWard = HardMediumSoftLongScore.ofHard(1);
-    private HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWard = HardMediumSoftLongScore.ofSoft(1000);
-    private HardMediumSoftLongScore uniformDistributionOfInoculated = HardMediumSoftLongScore.ofSoft(1);
-    private HardMediumSoftLongScore maximizeInoculatedHours = HardMediumSoftLongScore.ofSoft(10);
-    private HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWard = HardMediumSoftLongScore.ofSoft(10);
-
     private HardMediumSoftLongScore requiredSkill = HardMediumSoftLongScore.ofHard(100);
     private HardMediumSoftLongScore unavailableTimeSlot = HardMediumSoftLongScore.ofHard(50);
     private HardMediumSoftLongScore noOverlappingShifts = HardMediumSoftLongScore.ofHard(20);
@@ -63,74 +53,6 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
     public RosterConstraintConfigurationView(Integer tenantId, DayOfWeek weekStartDay) {
         super(tenantId);
         this.weekStartDay = weekStartDay;
-    }
-
-    // ************************************************************************
-    // COVID-specific getters and setters
-    // ************************************************************************
-
-    public HardMediumSoftLongScore getLowRiskEmployeeInCovidWard() {
-        return lowRiskEmployeeInCovidWard;
-    }
-
-    public void setLowRiskEmployeeInCovidWard(HardMediumSoftLongScore lowRiskEmployeeInCovidWard) {
-        this.lowRiskEmployeeInCovidWard = lowRiskEmployeeInCovidWard;
-    }
-
-    public HardMediumSoftLongScore getModerateRiskEmployeeInCovidWard() {
-        return moderateRiskEmployeeInCovidWard;
-    }
-
-    public void setModerateRiskEmployeeInCovidWard(HardMediumSoftLongScore moderateRiskEmployeeInCovidWard) {
-        this.moderateRiskEmployeeInCovidWard = moderateRiskEmployeeInCovidWard;
-    }
-
-    public HardMediumSoftLongScore getHighRiskEmployeeInCovidWard() {
-        return highRiskEmployeeInCovidWard;
-    }
-
-    public void setHighRiskEmployeeInCovidWard(HardMediumSoftLongScore highRiskEmployeeInCovidWard) {
-        this.highRiskEmployeeInCovidWard = highRiskEmployeeInCovidWard;
-    }
-
-    public HardMediumSoftLongScore getExtremeRiskEmployeeInCovidWard() {
-        return extremeRiskEmployeeInCovidWard;
-    }
-
-    public void setExtremeRiskEmployeeInCovidWard(HardMediumSoftLongScore extremeRiskEmployeeInCovidWard) {
-        this.extremeRiskEmployeeInCovidWard = extremeRiskEmployeeInCovidWard;
-    }
-
-    public HardMediumSoftLongScore getInoculatedEmployeeOutsideCovidWard() {
-        return inoculatedEmployeeOutsideCovidWard;
-    }
-
-    public void setInoculatedEmployeeOutsideCovidWard(HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWard) {
-        this.inoculatedEmployeeOutsideCovidWard = inoculatedEmployeeOutsideCovidWard;
-    }
-
-    public HardMediumSoftLongScore getUniformDistributionOfInoculated() {
-        return uniformDistributionOfInoculated;
-    }
-
-    public void setUniformDistributionOfInoculated(HardMediumSoftLongScore uniformDistributionOfInoculated) {
-        this.uniformDistributionOfInoculated = uniformDistributionOfInoculated;
-    }
-
-    public HardMediumSoftLongScore getMaximizeInoculatedHours() {
-        return maximizeInoculatedHours;
-    }
-
-    public void setMaximizeInoculatedHours(HardMediumSoftLongScore maximizeInoculatedHours) {
-        this.maximizeInoculatedHours = maximizeInoculatedHours;
-    }
-
-    public HardMediumSoftLongScore getMigrationBetweenCovidAndNonCovidWard() {
-        return migrationBetweenCovidAndNonCovidWard;
-    }
-
-    public void setMigrationBetweenCovidAndNonCovidWard(HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWard) {
-        this.migrationBetweenCovidAndNonCovidWard = migrationBetweenCovidAndNonCovidWard;
     }
 
     // ************************************************************************

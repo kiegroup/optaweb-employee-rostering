@@ -20,8 +20,7 @@ import { Chip, Button, ButtonVariant, Popover, List } from '@patternfly/react-co
 import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
 import {
   HelpIcon, ExclamationTriangleIcon, UserFriendsIcon, FileContractIcon, UserPlusIcon, PhoneVolumeIcon,
-  CalendarTimesIcon, BiohazardIcon, NotesMedicalIcon, PeopleCarryIcon, RetweetIcon, AlignCenterIcon, SchoolIcon,
-  UserTimesIcon, UserMinusIcon,
+  CalendarTimesIcon, AlignCenterIcon, SchoolIcon, UserTimesIcon, UserMinusIcon,
 } from '@patternfly/react-icons';
 
 export interface ScoreDisplayProps {
@@ -65,25 +64,6 @@ const IndictmentIcon: React.FC<{ indictment: string }> = (props) => {
     case 'Employee is not rotation employee':
       return (<CalendarTimesIcon />);
 
-    case 'Migration between COVID and non-COVID wards':
-      return (<RetweetIcon />);
-
-    case 'Extreme-risk employee assigned to a COVID ward':
-      return (<BiohazardIcon />);
-    case 'High-risk employee assigned to a COVID ward':
-      return (<BiohazardIcon />);
-    case 'Low-risk employee assigned to a COVID ward':
-      return (<BiohazardIcon />);
-    case 'Moderate-risk employee assigned to a COVID ward':
-      return (<BiohazardIcon />);
-    case 'Inoculated employee outside a COVID ward':
-      return (<NotesMedicalIcon />);
-
-    case 'Maximize inoculated hours':
-      return (<PeopleCarryIcon />);
-    case 'Uniform distribution of inoculated hours':
-      return (<PeopleCarryIcon />);
-
     default:
       return (<span />);
   }
@@ -103,14 +83,6 @@ const CONSTRAINTS = ['Assign every shift',
   'Desired time slot for an employee',
   'Employee is not original employee',
   'Employee is not rotation employee',
-  'Migration between COVID and non-COVID wards',
-  'Extreme-risk employee assigned to a COVID ward',
-  'High-risk employee assigned to a COVID ward',
-  'Low-risk employee assigned to a COVID ward',
-  'Moderate-risk employee assigned to a COVID ward',
-  'Inoculated employee outside a COVID ward',
-  'Maximize inoculated hours',
-  'Uniform distribution of inoculated hours',
 ];
 
 const ConstraintMatches: React.FC<ScoreDisplayProps> = props => (

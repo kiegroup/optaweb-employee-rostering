@@ -28,7 +28,7 @@ import { RosterState } from 'domain/RosterState';
 
 import { EmployeeAvailability } from 'domain/EmployeeAvailability';
 import { employeeSelectors } from 'store/employee';
-import { Employee, getIconForCovidRisk } from 'domain/Employee';
+import { Employee } from 'domain/Employee';
 import { availabilityOperations } from 'store/availability';
 import { shiftOperations } from 'store/shift';
 import Schedule, { StyleSupplier } from 'ui/components/calendar/Schedule';
@@ -382,16 +382,6 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             optionToStringMap={employee => employee.name}
             options={this.props.allEmployeeList}
             value={shownEmployee}
-            valueComponent={(props) => {
-              const selectedOption: { value: Employee } = props.data;
-              return (
-                <span style={{ display: 'grid', gridTemplateColumns: 'max-content 5px 1fr' }}>
-                  {getIconForCovidRisk(selectedOption.value.covidRiskType, 'sm')}
-                  <span />
-                  <span>{selectedOption.value.name}</span>
-                </span>
-              );
-            }}
             onChange={(e) => {
               this.onUpdateAvailabilityRoster({
                 ...urlProps,

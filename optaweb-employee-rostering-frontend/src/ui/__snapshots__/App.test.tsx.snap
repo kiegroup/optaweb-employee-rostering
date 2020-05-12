@@ -47,7 +47,7 @@ exports[`App clicking the nav button should show the sidebar 1`] = `
       <Route
         component={[Function]}
         exact={true}
-        path="/:tenantId/wards"
+        path="/:tenantId/spots"
       />
       <Route
         component={[Function]}
@@ -144,7 +144,7 @@ exports[`App clicking the nav button twice should hide the sidebar 1`] = `
       <Route
         component={[Function]}
         exact={true}
-        path="/:tenantId/wards"
+        path="/:tenantId/spots"
       />
       <Route
         component={[Function]}
@@ -241,7 +241,7 @@ exports[`App should render correctly on a desktop 1`] = `
       <Route
         component={[Function]}
         exact={true}
-        path="/:tenantId/wards"
+        path="/:tenantId/spots"
       />
       <Route
         component={[Function]}
@@ -338,7 +338,7 @@ exports[`App should render correctly on a mobile 1`] = `
       <Route
         component={[Function]}
         exact={true}
-        path="/:tenantId/wards"
+        path="/:tenantId/spots"
       />
       <Route
         component={[Function]}

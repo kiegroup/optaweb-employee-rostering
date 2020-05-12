@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
-import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.spot.Spot;
@@ -104,7 +103,7 @@ public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServ
     @Test
     public void shiftCrudTest() {
         ResponseEntity<Spot> spotResponseEntity = addSpot(TENANT_ID, new SpotView(TENANT_ID, "spot",
-                                                                                  Collections.emptySet(), false));
+                                                                                  Collections.emptySet()));
         Spot spot = spotResponseEntity.getBody();
 
         ResponseEntity<Contract> contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "contract"));
@@ -113,8 +112,7 @@ public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServ
         ResponseEntity<Employee> rotationEmployeeResponseEntity = addEmployee(TENANT_ID,
                                                                               new Employee(TENANT_ID,
                                                                                            "rotationEmployee", contract,
-                                                                                           Collections.emptySet(),
-                                                                                           CovidRiskType.INOCULATED));
+                                                                                           Collections.emptySet()));
         Employee rotationEmployee = rotationEmployeeResponseEntity.getBody();
 
         LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);

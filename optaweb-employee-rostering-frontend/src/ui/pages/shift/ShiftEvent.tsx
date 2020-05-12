@@ -18,11 +18,10 @@ import { EventProps } from 'react-big-calendar';
 import { Shift } from 'domain/Shift';
 import { Text, Button, ButtonVariant, List } from '@patternfly/react-core';
 import moment from 'moment';
-import { Employee, getIconForCovidRisk } from 'domain/Employee';
+import { Employee } from 'domain/Employee';
 import { convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
 import {
-  BlueprintIcon, EditIcon, TrashIcon, ThumbTackIcon, FileContractIcon, NotesMedicalIcon,
-  PeopleCarryIcon, RetweetIcon, ShippingFastIcon, BiohazardIcon, SchoolIcon, CalendarTimesIcon,
+  BlueprintIcon, EditIcon, TrashIcon, ThumbTackIcon, FileContractIcon, SchoolIcon, CalendarTimesIcon,
   UserFriendsIcon, ExclamationTriangleIcon, UserTimesIcon, UserMinusIcon, UserPlusIcon, AlignCenterIcon,
   PhoneVolumeIcon,
 } from '@patternfly/react-icons';
@@ -45,11 +44,6 @@ export const Indictments: React.FC<Shift> = (shift) => {
       <RotationViolationPenalties {...shift} />
       <UndesiredTimeslotForEmployeePenalties {...shift} />
       <DesiredTimeslotForEmployeeRewards {...shift} />
-      <InoculatedEmployeeAssignedOutsideOfCovidWardViolations {...shift} />
-      <MaximizeInoculatedEmployeeHoursRewards {...shift} />
-      <MigrationBetweenCovidAndNonCovidWardsViolations {...shift} />
-      <NonCovidShiftSoonAfterCovidShiftViolations {...shift} />
-      <NonInoculatedEmployeeAssignedToCovidWardViolations {...shift} />
       <NoBreaksViolations {...shift} />
     </List>
   );
@@ -72,11 +66,6 @@ export const IndictmentIcons: React.FC<Shift> = (shift) => {
       {isPresent(shift.publishedShiftReassignedPenaltyList) && <PhoneVolumeIcon />}
       {isPresent(shift.contractMinutesViolationPenaltyList) && <FileContractIcon />}
       {isPresent(shift.desiredTimeslotForEmployeeRewardList) && <UserPlusIcon />}
-      {isPresent(shift.inoculatedEmployeeAssignedOutsideOfCovidWardViolationList) && <NotesMedicalIcon />}
-      {isPresent(shift.maximizeInoculatedEmployeeHoursRewardList) && <PeopleCarryIcon />}
-      {isPresent(shift.migrationBetweenCovidAndNonCovidWardsViolationList) && <RetweetIcon />}
-      {isPresent(shift.nonCovidShiftSoonAfterCovidShiftViolationList) && <ShippingFastIcon />}
-      {isPresent(shift.nonInoculatedEmployeeAssignedToCovidWardViolationList) && <BiohazardIcon />}
       {isPresent(shift.requiredSkillViolationList) && <SchoolIcon />}
       {isPresent(shift.rotationViolationPenaltyList) && <CalendarTimesIcon />}
       {isPresent(shift.shiftEmployeeConflictList) && <UserFriendsIcon />}
@@ -294,105 +283,6 @@ export const DesiredTimeslotForEmployeeRewards: React.FC<Shift> = (shift) => {
   );
 };
 
-export const NonInoculatedEmployeeAssignedToCovidWardViolations: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation('ShiftEvent');
-  return (
-    <>
-      {(shift.nonInoculatedEmployeeAssignedToCovidWardViolationList || []).map((v, index) => (
-        <li key={String(index)}>
-          {t('nonInoculatedEmployeeAssignedToCovidWard',
-            {
-              employee: (v.shift.employee as Employee).name,
-              covidRisk: t(`CovidRisk.${(v.shift.employee as Employee).covidRiskType}`),
-              from: moment(v.shift.startDateTime).format('LLL'),
-              to: moment(v.shift.startDateTime).format('LLL'),
-            })
-          }
-          {t('penalty', { score: convertHardMediumSoftScoreToString(v.score) })}
-        </li>
-      ))}
-    </>
-  );
-};
-
-export const InoculatedEmployeeAssignedOutsideOfCovidWardViolations: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation('ShiftEvent');
-  return (
-    <>
-      {(shift.inoculatedEmployeeAssignedOutsideOfCovidWardViolationList || []).map((v, index) => (
-        <li key={String(index)}>
-          {t('inoculatedEmployeeAssignedOutsideOfCovidWard',
-            {
-              employee: (v.shift.employee as Employee).name,
-              from: moment(v.shift.startDateTime).format('LLL'),
-              to: moment(v.shift.startDateTime).format('LLL'),
-            })
-          }
-          {t('penalty', { score: convertHardMediumSoftScoreToString(v.score) })}
-        </li>
-      ))}
-    </>
-  );
-};
-
-export const MaximizeInoculatedEmployeeHoursRewards: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation('ShiftEvent');
-  return (
-    <>
-      {(shift.maximizeInoculatedEmployeeHoursRewardList || []).map((v, index) => (
-        <li key={String(index)}>
-          {t('maximizeInoculatedEmployeeHours',
-            {
-              employee: (v.shift.employee as Employee).name,
-            })
-          }
-          {t('reward', { score: convertHardMediumSoftScoreToString(v.score) })}
-        </li>
-      ))}
-    </>
-  );
-};
-
-export const MigrationBetweenCovidAndNonCovidWardsViolations: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation('ShiftEvent');
-  return (
-    <>
-      {(shift.migrationBetweenCovidAndNonCovidWardsViolationList || []).map((v, index) => (
-        <li key={String(index)}>
-          {t('migrationBetweenCovidAndNonCovidWards',
-            {
-              employee: (v.covidShift.employee as Employee).name,
-              covidWard: v.covidShift.spot.name,
-              nonCovidWard: v.nonCovidShift.spot.name,
-            })
-          }
-          {t('reward', { score: convertHardMediumSoftScoreToString(v.score) })}
-        </li>
-      ))}
-    </>
-  );
-};
-
-export const NonCovidShiftSoonAfterCovidShiftViolations: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation('ShiftEvent');
-  return (
-    <>
-      {(shift.nonCovidShiftSoonAfterCovidShiftViolationList || []).map((v, index) => (
-        <li key={String(index)}>
-          {t('nonCovidShiftSoonAfterCovidShift',
-            {
-              employee: (v.covidShift.employee as Employee).name,
-              covidWard: v.covidShift.spot.name,
-              nonCovidWard: v.nonCovidShift.spot.name,
-            })
-          }
-          {t('reward', { score: convertHardMediumSoftScoreToString(v.score) })}
-        </li>
-      ))}
-    </>
-  );
-};
-
 
 export const NEGATIVE_HARD_SCORE_COLOR = Color('#cc0000');
 export const NEGATIVE_MEDIUM_SCORE_COLOR = Color('#fce94f');
@@ -501,11 +391,6 @@ const ShiftEvent: React.FC<EventProps<Shift>> = props => (
       }}
     >
       {props.event.pinnedByUser && <ThumbTackIcon />}
-      {props.event.employee !== null && (
-        <>
-          {getIconForCovidRisk(props.event.employee.covidRiskType, 'lg')}
-        </>
-      )}
       <span style={{
         writingMode: 'vertical-rl',
         transform: 'rotate(180deg)',

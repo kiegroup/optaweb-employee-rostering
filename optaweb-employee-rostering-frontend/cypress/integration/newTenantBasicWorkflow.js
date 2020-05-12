@@ -98,7 +98,7 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     closeAlerts();
 
     // Create a spot
-    gotoPage('wards');
+    gotoPage('spots');
     cy.get('button').contains('Add').click();
     cy.get('[aria-label="Name"]').type('Required Skill Spot');
     selectValue('Select required skills...', 'New Skill');

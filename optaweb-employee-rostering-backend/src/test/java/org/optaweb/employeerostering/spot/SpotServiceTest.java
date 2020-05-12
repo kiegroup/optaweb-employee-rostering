@@ -99,7 +99,7 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet, false);
+        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         Spot spot = spotService.createSpot(TENANT_ID, spotView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -139,7 +139,7 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet, false);
+        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         Spot spot = spotService.createSpot(TENANT_ID, spotView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -160,7 +160,7 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet, false);
+        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         Spot spot = spotService.createSpot(TENANT_ID, spotView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -196,7 +196,7 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet, false);
+        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         Spot spot = spotService.createSpot(TENANT_ID, spotView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -217,7 +217,7 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet, false);
+        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         String body = (new ObjectMapper()).writeValueAsString(spotView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -245,7 +245,7 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet, false);
+        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         String body = (new ObjectMapper()).writeValueAsString(spotView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -267,10 +267,10 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet, false);
+        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         Spot spot = spotService.createSpot(TENANT_ID, spotView);
 
-        SpotView updatedSpot = new SpotView(TENANT_ID, "updatedSpot", testSkillSet, false);
+        SpotView updatedSpot = new SpotView(TENANT_ID, "updatedSpot", testSkillSet);
         updatedSpot.setId(spot.getId());
         String body = (new ObjectMapper()).writeValueAsString(updatedSpot);
 
@@ -299,10 +299,10 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet, false);
+        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         spotService.createSpot(TENANT_ID, spotView);
 
-        SpotView updatedSpot = new SpotView(TENANT_ID, "updatedSpot", testSkillSet, false);
+        SpotView updatedSpot = new SpotView(TENANT_ID, "updatedSpot", testSkillSet);
         String body = (new ObjectMapper()).writeValueAsString(updatedSpot);
 
         mvc.perform(MockMvcRequestBuilders
@@ -320,7 +320,7 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         String exceptionMessage = "Spot entity with ID (0) not found.";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
-        SpotView spotView = new SpotView(TENANT_ID, "spot", Collections.emptySet(), false);
+        SpotView spotView = new SpotView(TENANT_ID, "spot", Collections.emptySet());
         spotView.setId(0L);
         String body = (new ObjectMapper()).writeValueAsString(spotView);
 
@@ -346,10 +346,10 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet, false);
+        SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         Spot spot = spotService.createSpot(TENANT_ID, spotView);
 
-        SpotView updatedSpot = new SpotView(0, "updatedSpot", testSkillSet, false);
+        SpotView updatedSpot = new SpotView(0, "updatedSpot", testSkillSet);
         updatedSpot.setId(spot.getId());
         String body = (new ObjectMapper()).writeValueAsString(updatedSpot);
 

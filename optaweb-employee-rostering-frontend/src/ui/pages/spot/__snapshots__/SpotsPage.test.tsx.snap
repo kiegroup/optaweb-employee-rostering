@@ -85,12 +85,10 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     style={
                       Object {
                         "display": "grid",
-                        "gridTemplateColumns": "min-content 5px max-content min-content",
+                        "gridTemplateColumns": "max-content min-content",
                       }
                     }
                   >
-                    <span />
-                    <span />
                     <Text>
                       Spot 1
                     </Text>
@@ -141,30 +139,6 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     numChips={3}
                     withToolbar={false}
                   />
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <StatefulTypeaheadSelectInput
-                    emptyText=""
-                    onChange={[Function]}
-                    optionToStringMap={[Function]}
-                    options={
-                      Array [
-                        true,
-                        false,
-                      ]
-                    }
-                    value={false}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    No
-                  </Text>
                 }
               />,
             },
@@ -267,17 +241,10 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     style={
                       Object {
                         "display": "grid",
-                        "gridTemplateColumns": "min-content 5px max-content min-content",
+                        "gridTemplateColumns": "max-content min-content",
                       }
                     }
                   >
-                    <BiohazardIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                    <span />
                     <Text>
                       Spot 2
                     </Text>
@@ -350,30 +317,6 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                       Skill 2
                     </Unknown>
                   </ChipGroup>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <StatefulTypeaheadSelectInput
-                    emptyText=""
-                    onChange={[Function]}
-                    optionToStringMap={[Function]}
-                    options={
-                      Array [
-                        true,
-                        false,
-                      ]
-                    }
-                    value={true}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    Yes
-                  </Text>
                 }
               />,
             },
@@ -589,23 +532,6 @@ exports[`Spots page should render the editor correctly 1`] = `
       }
     />
   </td>
-  <td
-    key="2"
-  >
-    <StatefulTypeaheadSelectInput
-      emptyText=""
-      key="3"
-      onChange={[Function]}
-      optionToStringMap={[Function]}
-      options={
-        Array [
-          true,
-          false,
-        ]
-      }
-      value={true}
-    />
-  </td>
 </tr>
 `;
 
@@ -618,17 +544,10 @@ exports[`Spots page should render the viewer correctly 1`] = `
       style={
         Object {
           "display": "grid",
-          "gridTemplateColumns": "min-content 5px max-content min-content",
+          "gridTemplateColumns": "max-content min-content",
         }
       }
     >
-      <BiohazardIcon
-        color="currentColor"
-        noVerticalAlign={false}
-        size="sm"
-        title={null}
-      />
-      <span />
       <Text
         key="0"
       >
@@ -672,15 +591,6 @@ exports[`Spots page should render the viewer correctly 1`] = `
         Skill 2
       </Component>
     </ChipGroup>
-  </td>
-  <td
-    key="2"
-  >
-    <Text
-      key="2"
-    >
-      Yes
-    </Text>
   </td>
 </tr>
 `;

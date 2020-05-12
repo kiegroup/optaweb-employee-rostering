@@ -166,7 +166,6 @@ const twoSpots: Props = {
     tenantId: 0,
     name: 'Spot 1',
     requiredSkillSet: [],
-    covidWard: false,
   },
   {
     id: 1,
@@ -174,7 +173,6 @@ const twoSpots: Props = {
     tenantId: 0,
     name: 'Spot 2',
     requiredSkillSet: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
-    covidWard: true,
   }],
   skillList: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
   addSpot: jest.fn(),

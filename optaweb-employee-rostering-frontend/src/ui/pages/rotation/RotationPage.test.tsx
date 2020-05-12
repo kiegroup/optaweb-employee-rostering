@@ -232,7 +232,6 @@ const spot: Spot = {
       name: 'Skill',
     },
   ],
-  covidWard: false,
 };
 
 const newSpot: Spot = {
@@ -262,7 +261,6 @@ const employee: Employee = {
     version: 0,
     name: 'Not Required Skill',
   }],
-  covidRiskType: 'INOCULATED',
 };
 
 const shiftTemplate: ShiftTemplate = {

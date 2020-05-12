@@ -82,7 +82,7 @@ public class SpotRestControllerTest extends AbstractEntityRequireTenantRestServi
 
     @Test
     public void spotCrudTest() {
-        SpotView spotView = new SpotView(TENANT_ID, "spot", Collections.emptySet(), false);
+        SpotView spotView = new SpotView(TENANT_ID, "spot", Collections.emptySet());
         ResponseEntity<Spot> postResponse = addSpot(TENANT_ID, spotView);
         assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -90,7 +90,7 @@ public class SpotRestControllerTest extends AbstractEntityRequireTenantRestServi
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
 
-        SpotView updatedSpot = new SpotView(TENANT_ID, "updatedSpot", Collections.emptySet(), false);
+        SpotView updatedSpot = new SpotView(TENANT_ID, "updatedSpot", Collections.emptySet());
         updatedSpot.setId(postResponse.getBody().getId());
         ResponseEntity<Spot> putResponse = updateSpot(TENANT_ID, updatedSpot);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);

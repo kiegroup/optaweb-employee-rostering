@@ -28,7 +28,6 @@ exports[`Rotation Page should render correctly when creating a new shift templat
         options={
           Array [
             Object {
-              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [
@@ -43,7 +42,6 @@ exports[`Rotation Page should render correctly when creating a new shift templat
               "version": 0,
             },
             Object {
-              "covidWard": false,
               "id": 111,
               "name": "New Spot",
               "requiredSkillSet": Array [
@@ -61,7 +59,6 @@ exports[`Rotation Page should render correctly when creating a new shift templat
         }
         value={
           Object {
-            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -153,7 +150,6 @@ exports[`Rotation Page should render correctly when creating a new shift templat
                 "tenantId": 0,
                 "version": 0,
               },
-              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -169,7 +165,6 @@ exports[`Rotation Page should render correctly when creating a new shift templat
             },
             "shiftTemplateDuration": "PT8H",
             "spot": Object {
-              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [
@@ -231,7 +226,6 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
         options={
           Array [
             Object {
-              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [
@@ -246,7 +240,6 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
               "version": 0,
             },
             Object {
-              "covidWard": false,
               "id": 111,
               "name": "New Spot",
               "requiredSkillSet": Array [
@@ -264,7 +257,6 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
         }
         value={
           Object {
-            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -356,7 +348,6 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
-              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -372,7 +363,6 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
             },
             "shiftTemplateDuration": "PT8H",
             "spot": Object {
-              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [

@@ -81,7 +81,8 @@ public class ShiftTemplate extends AbstractPersistable {
     public ShiftTemplate(Integer tenantId, Spot spot,
                          int startDayOffset, LocalTime startTime, int endDayOffset, LocalTime endTime,
                          Employee rotationEmployee) {
-        this(tenantId, spot, startDayOffset, startTime, endDayOffset, endTime, null, Collections.emptySet());
+        this(tenantId, spot, startDayOffset, startTime, endDayOffset, endTime, rotationEmployee,
+             Collections.emptySet());
     }
 
     public ShiftTemplate(Integer tenantId, Spot spot,

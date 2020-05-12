@@ -169,23 +169,6 @@ public class TenantService extends AbstractRestService {
                                                     ") cannot change tenants.");
         }
 
-        oldRosterConstraintConfiguration.setInoculatedEmployeeOutsideCovidWardMatchWeight(
-                rosterConstraintConfigurationView.getInoculatedEmployeeOutsideCovidWard());
-        oldRosterConstraintConfiguration.setLowRiskEmployeeInCovidWardMatchWeight(
-                rosterConstraintConfigurationView.getLowRiskEmployeeInCovidWard());
-        oldRosterConstraintConfiguration.setModerateRiskEmployeeInCovidWardMatchWeight(
-                rosterConstraintConfigurationView.getModerateRiskEmployeeInCovidWard());
-        oldRosterConstraintConfiguration.setHighRiskEmployeeInCovidWardMatchWeight(
-                rosterConstraintConfigurationView.getHighRiskEmployeeInCovidWard());
-        oldRosterConstraintConfiguration.setExtremeRiskEmployeeInCovidWardMatchWeight(
-                rosterConstraintConfigurationView.getExtremeRiskEmployeeInCovidWard());
-        oldRosterConstraintConfiguration.setUniformDistributionOfInoculatedHoursMatchWeight(
-                rosterConstraintConfigurationView.getUniformDistributionOfInoculated());
-        oldRosterConstraintConfiguration.setMaximizeInoculatedHoursMatchWeight(
-                rosterConstraintConfigurationView.getMaximizeInoculatedHours());
-        oldRosterConstraintConfiguration.setMigrationBetweenCovidAndNonCovidWardMatchWeight(
-                rosterConstraintConfigurationView.getMigrationBetweenCovidAndNonCovidWard());
-
         oldRosterConstraintConfiguration.setWeekStartDay(rosterConstraintConfigurationView.getWeekStartDay());
         oldRosterConstraintConfiguration.setRequiredSkill(rosterConstraintConfigurationView.getRequiredSkill());
         oldRosterConstraintConfiguration.setUnavailableTimeSlot(

@@ -102,20 +102,20 @@ updateSkill:
   message: The Skill with id "{{id}}" was successfully updated.
 
 addSpot:
-  title: Successfully added Ward
-  message: The Ward "{{name}}" was successfully added.
+  title: Successfully added Spot
+  message: The Spot "{{name}}" was successfully added.
 
 removeSpot:
-  title: Successfully deleted Ward
-  message: The Ward "{{name}}" was successfully deleted.
+  title: Successfully deleted Spot
+  message: The Spot "{{name}}" was successfully deleted.
 
 removeSpotError:
-  title: Error deleting Ward
-  message: The Ward "{{name}}" could not be deleted.
+  title: Error deleting Spot
+  message: The Spot "{{name}}" could not be deleted.
 
 updateSpot:
-  title: Successfully updated Ward
-  message: The Ward with id "{{id}}" was successfully updated.
+  title: Successfully updated Spot
+  message: The Spot with id "{{id}}" was successfully updated.
 
 addTenant:
   title: Successfully added Tenant

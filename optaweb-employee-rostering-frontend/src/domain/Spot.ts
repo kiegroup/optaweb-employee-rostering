@@ -20,5 +20,4 @@ import { Skill } from './Skill';
 export interface Spot extends DomainObject {
   name: string;
   requiredSkillSet: Skill[];
-  covidWard: boolean;
 }

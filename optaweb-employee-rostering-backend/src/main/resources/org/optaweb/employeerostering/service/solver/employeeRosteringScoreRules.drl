@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.HashMap;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreHolder;
-import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
@@ -38,98 +37,6 @@ import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration
 import org.optaweb.employeerostering.domain.common.DateTimeUtils;
 
 global HardMediumSoftLongScoreHolder scoreHolder;
-
-// ############################################################################
-// COVID-19 constraints
-// ############################################################################
-
-rule "Low-risk employee assigned to a COVID ward"
-    when
-        $shift: Shift(employee != null)
-        $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.LOW)
-        $ward: Spot(this == $shift.spot, isCovidWard() == true)
-    then
-        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
-end
-
-rule "Moderate-risk employee assigned to a COVID ward"
-    when
-        $shift: Shift(employee != null)
-        $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.MODERATE)
-        $ward: Spot(this == $shift.spot, isCovidWard() == true)
-    then
-        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
-end
-
-rule "High-risk employee assigned to a COVID ward"
-    when
-        $shift: Shift(employee != null)
-        $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.HIGH)
-        $ward: Spot(this == $shift.spot, isCovidWard() == true)
-    then
-        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
-end
-
-rule "Extreme-risk employee assigned to a COVID ward"
-    when
-        $shift: Shift(employee != null)
-        $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.EXTREME)
-        $ward: Spot(this == $shift.spot, isCovidWard() == true)
-    then
-        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
-end
-
-// PLANNER-1925 1
-rule "Inoculated employee outside a COVID ward"
-    when
-        $shift: Shift(employee != null, spot.isCovidWard() == false)
-        $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.INOCULATED)
-    then
-        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
-end
-
-// PLANNER-1925 2
-rule "Uniform distribution of inoculated hours"
-    when
-        $allCounts: Collection( size > 0 ) from accumulate(
-            $shift: Shift(employee != null, employee.covidRiskType == CovidRiskType.INOCULATED, spot.isCovidWard() == true),
-            init(
-                Map hours = new HashMap();
-            ), action(
-                $shift.increaseHourlyCounts(hours);
-            ), reverse(
-                $shift.decreaseHourlyCounts(hours);
-            ), result(
-                hours.values()
-            )
-        )
-    then
-        scoreHolder.penalize(kcontext, Shift.calculateLoad($allCounts));
-end
-
-// PLANNER-1925 3, to prevent load balancing from setting loads to zero
-rule "Maximize inoculated hours"
-    when
-        $shift: Shift(employee != null)
-        $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.INOCULATED)
-    then
-        scoreHolder.reward(kcontext, $shift.getLengthInMinutes());
-end
-
-// PLANNER-1926 A
-rule "Migration between COVID and non-COVID wards"
-    when
-        $employee: Employee()
-        $covidShift: Shift(employee == $employee, spot.isCovidWard() == true)
-        $nonCovidShift: Shift(employee == $employee, this != $covidShift,
-            spot.isCovidWard() == false,
-            follows($covidShift))
-        not Shift(employee == $employee, this != $covidShift, this != $nonCovidShift,
-            follows($covidShift),
-            precedes($nonCovidShift))
-    then
-        scoreHolder.penalize(kcontext, $nonCovidShift.getLengthInMinutes());
-end
 
 // ############################################################################
 // Hard constraints

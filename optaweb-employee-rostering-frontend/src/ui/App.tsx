@@ -57,7 +57,7 @@ const App: React.FC = () => {
             component={SkillsPage}
           />
           <Route
-            path="/:tenantId/wards"
+            path="/:tenantId/spots"
             exact
             component={SpotsPage}
           />

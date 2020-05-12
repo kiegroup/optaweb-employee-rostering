@@ -19,7 +19,7 @@ import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTab
 import { employeeSelectors, employeeOperations } from 'store/employee';
 import { contractSelectors } from 'store/contract';
 import { skillSelectors } from 'store/skill';
-import { Employee, getIconForCovidRisk, CovidRiskType } from 'domain/Employee';
+import { Employee } from 'domain/Employee';
 import { AppState } from 'store/types';
 import {
   TextInput,
@@ -60,7 +60,6 @@ const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
     ownProps.t('name'),
     ownProps.t('contract'),
     ownProps.t('skillProficiencies'),
-    ownProps.t('covidRiskType'),
   ],
   tableData: employeeSelectors.getEmployeeList(state),
   skillList: skillSelectors.getSkillList(state),
@@ -114,17 +113,12 @@ export class EmployeesPage extends DataTable<Employee, Props> {
           </Chip>
         ))}
       </ChipGroup>,
-      <span>
-        {getIconForCovidRisk(data.covidRiskType, 'lg')}
-        <Text key={3}>{this.props.t(`CovidRisk.${data.covidRiskType}`)}</Text>
-      </span>,
     ];
   }
 
   getInitialStateForNewRow(): Partial<Employee> {
     return {
       skillProficiencySet: [],
-      covidRiskType: 'LOW',
     };
   }
 
@@ -153,32 +147,13 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         value={data.skillProficiencySet ? data.skillProficiencySet : []}
         onChange={selected => setProperty('skillProficiencySet', selected)}
       />,
-      <StatefulTypeaheadSelectInput
-        key={3}
-        emptyText={this.props.t('enterCovidRisk')}
-        valueComponent={(props) => {
-          const selectedOption: { value: CovidRiskType } = props.data;
-          return (
-            <span style={{ display: 'grid', gridTemplateColumns: 'max-content 5px 1fr' }}>
-              {getIconForCovidRisk(selectedOption.value, 'sm')}
-              <span />
-              <span>{this.props.t(`CovidRisk.${selectedOption.value}`)}</span>
-            </span>
-          );
-        }}
-        optionToStringMap={risk => this.props.t(`CovidRisk.${risk}`)}
-        value={data.covidRiskType}
-        options={['INOCULATED', 'LOW', 'MODERATE', 'HIGH', 'EXTREME']}
-        onChange={covidRisk => setProperty('covidRiskType', covidRisk)}
-      />,
     ];
   }
 
   isDataComplete(editedValue: ReadonlyPartial<Employee>): editedValue is Employee {
     return editedValue.name !== undefined
       && editedValue.contract !== undefined
-      && editedValue.skillProficiencySet !== undefined
-      && editedValue.covidRiskType !== undefined;
+      && editedValue.skillProficiencySet !== undefined;
   }
 
   isValid(editedValue: Employee): boolean {
@@ -188,8 +163,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
   getFilter(): (filter: string) => Predicate<Employee> {
     return stringFilter(employee => employee.name,
       employee => employee.contract.name,
-      employee => employee.skillProficiencySet.map(skill => skill.name),
-      employee => employee.covidRiskType);
+      employee => employee.skillProficiencySet.map(skill => skill.name));
   }
 
   getSorters(): (Sorter<Employee> | null)[] {

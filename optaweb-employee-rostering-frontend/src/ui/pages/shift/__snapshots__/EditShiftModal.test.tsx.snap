@@ -142,7 +142,6 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
         options={
           Array [
             Object {
-              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [
@@ -196,7 +195,6 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
-              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -252,7 +250,6 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
-              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -427,7 +424,6 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
         options={
           Array [
             Object {
-              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [
@@ -481,7 +477,6 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
-              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -537,7 +532,6 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
-              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -721,7 +715,6 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
         options={
           Array [
             Object {
-              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [
@@ -739,7 +732,6 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
         }
         value={
           Object {
-            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -792,7 +784,6 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
                 "tenantId": 0,
                 "version": 0,
               },
-              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -820,7 +811,6 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
               "tenantId": 0,
               "version": 0,
             },
-            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -875,7 +865,6 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
                 "tenantId": 0,
                 "version": 0,
               },
-              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -903,7 +892,6 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
               "tenantId": 0,
               "version": 0,
             },
-            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [

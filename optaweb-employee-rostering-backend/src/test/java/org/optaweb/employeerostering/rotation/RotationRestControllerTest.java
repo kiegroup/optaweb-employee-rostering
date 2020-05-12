@@ -94,7 +94,7 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
     @Test
     public void shiftTemplateCrudTest() {
         ResponseEntity<Spot> spotResponseA = addSpot(TENANT_ID, new SpotView(TENANT_ID, "A",
-                                                                             Collections.emptySet(), false));
+                                                                             Collections.emptySet()));
         Spot spotA = spotResponseA.getBody();
 
         ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spotA.getId(), Duration.ofDays(0),

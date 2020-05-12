@@ -56,7 +56,6 @@ describe('Availability operations', () => {
         name: 'Employee',
         skillProficiencySet: [],
         contract,
-        covidRiskType: 'INOCULATED',
       },
       state: 'DESIRED',
     };
@@ -92,7 +91,6 @@ describe('Availability operations', () => {
         name: 'Employee',
         skillProficiencySet: [],
         contract,
-        covidRiskType: 'INOCULATED',
       },
       state: 'DESIRED',
     };
@@ -127,7 +125,6 @@ describe('Availability operations', () => {
         name: 'Employee',
         skillProficiencySet: [],
         contract,
-        covidRiskType: 'INOCULATED',
       },
       state: 'DESIRED',
     };
@@ -168,7 +165,6 @@ describe('Availability operations', () => {
         name: 'Spot',
         skillProficiencySet: [],
         contract,
-        covidRiskType: 'INOCULATED',
       },
       state: 'DESIRED',
     };
@@ -206,7 +202,6 @@ describe('Availability adapters', () => {
         name: 'Spot',
         skillProficiencySet: [],
         contract,
-        covidRiskType: 'INOCULATED',
       },
       state: 'DESIRED',
     };

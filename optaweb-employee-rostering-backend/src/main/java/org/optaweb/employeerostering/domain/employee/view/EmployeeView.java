@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.contract.Contract;
-import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.skill.Skill;
 
 public class EmployeeView extends AbstractPersistable {
@@ -31,19 +30,16 @@ public class EmployeeView extends AbstractPersistable {
 
     private Set<Skill> skillProficiencySet;
 
-    private CovidRiskType covidRiskType;
-
     @SuppressWarnings("unused")
     public EmployeeView() {
     }
 
     public EmployeeView(Integer tenantId, String name, Contract contract,
-                        Set<Skill> skillProficiencySet, CovidRiskType covidRiskType) {
+                        Set<Skill> skillProficiencySet) {
         super(tenantId);
         this.name = name;
         this.contract = contract;
         this.skillProficiencySet = skillProficiencySet;
-        this.covidRiskType = covidRiskType;
     }
 
     @Override
@@ -77,13 +73,5 @@ public class EmployeeView extends AbstractPersistable {
 
     public void setContract(Contract contract) {
         this.contract = contract;
-    }
-
-    public CovidRiskType getCovidRiskType() {
-        return covidRiskType;
-    }
-
-    public void setCovidRiskType(CovidRiskType covidRiskType) {
-        this.covidRiskType = covidRiskType;
     }
 }

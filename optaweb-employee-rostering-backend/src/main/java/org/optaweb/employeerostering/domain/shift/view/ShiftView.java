@@ -35,11 +35,7 @@ import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.violation.ContractMinutesViolation;
 import org.optaweb.employeerostering.domain.violation.DesiredTimeslotForEmployeeReward;
-import org.optaweb.employeerostering.domain.violation.InoculatedEmployeeAssignedOutsideOfCovidWardViolation;
-import org.optaweb.employeerostering.domain.violation.MaximizeInoculatedEmployeeHoursReward;
-import org.optaweb.employeerostering.domain.violation.MigrationBetweenCovidAndNonCovidWardsViolation;
 import org.optaweb.employeerostering.domain.violation.NoBreakViolation;
-import org.optaweb.employeerostering.domain.violation.NonInoculatedEmployeeAssignedToCovidWardViolation;
 import org.optaweb.employeerostering.domain.violation.PublishedShiftReassignedPenalty;
 import org.optaweb.employeerostering.domain.violation.RequiredSkillViolation;
 import org.optaweb.employeerostering.domain.violation.RotationViolationPenalty;
@@ -71,14 +67,6 @@ public class ShiftView extends AbstractPersistable {
     private List<ContractMinutesViolation> contractMinutesViolationPenaltyList;
     private List<NoBreakViolation> noBreakViolationList;
 
-    private List<NonInoculatedEmployeeAssignedToCovidWardViolation>
-            nonInoculatedEmployeeAssignedToCovidWardViolationList;
-    private List<InoculatedEmployeeAssignedOutsideOfCovidWardViolation>
-            inoculatedEmployeeAssignedOutsideOfCovidWardViolationList;
-    private List<MaximizeInoculatedEmployeeHoursReward>
-            maximizeInoculatedEmployeeHoursRewardList;
-    private List<MigrationBetweenCovidAndNonCovidWardsViolation>
-            migrationBetweenCovidAndNonCovidWardsViolationList;
     private List<PublishedShiftReassignedPenalty> publishedShiftReassignedPenaltyList;
 
     private HardMediumSoftLongScore indictmentScore;
@@ -124,7 +112,7 @@ public class ShiftView extends AbstractPersistable {
     }
 
     public ShiftView(ZoneId zoneId, Shift shift) {
-        this(zoneId, shift, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(zoneId, shift, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     public ShiftView(ZoneId zoneId, Shift shift, List<RequiredSkillViolation> requiredSkillViolationList,
@@ -135,13 +123,6 @@ public class ShiftView extends AbstractPersistable {
                      List<RotationViolationPenalty> rotationViolationPenaltyList,
                      List<UnassignedShiftPenalty> unassignedShiftPenaltyList,
                      List<ContractMinutesViolation> contractMinutesViolationPenaltyList,
-                     List<NonInoculatedEmployeeAssignedToCovidWardViolation>
-                             nonInoculatedEmployeeAssignedToCovidWard,
-                     List<InoculatedEmployeeAssignedOutsideOfCovidWardViolation>
-                             inoculatedEmployeeAssignedOutside,
-                     List<MaximizeInoculatedEmployeeHoursReward> maximizeInoculatedEmployeeHoursRewardList,
-                     List<MigrationBetweenCovidAndNonCovidWardsViolation>
-                             migrationBetweenCovidAndNonCovidWardsViolationList,
                      List<NoBreakViolation> noBreakViolationList,
                      List<PublishedShiftReassignedPenalty> publishedShiftReassignedPenaltyList,
                      HardMediumSoftLongScore indictmentScore) {
@@ -165,11 +146,6 @@ public class ShiftView extends AbstractPersistable {
         this.unassignedShiftPenaltyList = unassignedShiftPenaltyList;
         this.contractMinutesViolationPenaltyList = contractMinutesViolationPenaltyList;
         this.publishedShiftReassignedPenaltyList = publishedShiftReassignedPenaltyList;
-
-        this.nonInoculatedEmployeeAssignedToCovidWardViolationList = nonInoculatedEmployeeAssignedToCovidWard;
-        this.inoculatedEmployeeAssignedOutsideOfCovidWardViolationList = inoculatedEmployeeAssignedOutside;
-        this.maximizeInoculatedEmployeeHoursRewardList = maximizeInoculatedEmployeeHoursRewardList;
-        this.migrationBetweenCovidAndNonCovidWardsViolationList = migrationBetweenCovidAndNonCovidWardsViolationList;
         this.noBreakViolationList = noBreakViolationList;
 
         this.indictmentScore = indictmentScore;
@@ -324,45 +300,6 @@ public class ShiftView extends AbstractPersistable {
     public void setContractMinutesViolationPenaltyList
             (List<ContractMinutesViolation> contractMinutesViolationPenaltyList) {
         this.contractMinutesViolationPenaltyList = contractMinutesViolationPenaltyList;
-    }
-
-    public List<NonInoculatedEmployeeAssignedToCovidWardViolation>
-    getNonInoculatedEmployeeAssignedToCovidWardViolationList() {
-        return nonInoculatedEmployeeAssignedToCovidWardViolationList;
-    }
-
-    public void setNonInoculatedEmployeeAssignedToCovidWardViolationList(
-            List<NonInoculatedEmployeeAssignedToCovidWardViolation> newValue) {
-        this.nonInoculatedEmployeeAssignedToCovidWardViolationList = newValue;
-    }
-
-    public List<InoculatedEmployeeAssignedOutsideOfCovidWardViolation>
-    getInoculatedEmployeeAssignedOutsideOfCovidWardViolationList() {
-        return inoculatedEmployeeAssignedOutsideOfCovidWardViolationList;
-    }
-
-    public void setInoculatedEmployeeAssignedOutsideOfCovidWardViolationList(
-            List<InoculatedEmployeeAssignedOutsideOfCovidWardViolation> newValue) {
-        this.inoculatedEmployeeAssignedOutsideOfCovidWardViolationList = newValue;
-    }
-
-    public List<MaximizeInoculatedEmployeeHoursReward> getMaximizeInoculatedEmployeeHoursRewardList() {
-        return maximizeInoculatedEmployeeHoursRewardList;
-    }
-
-    public void setMaximizeInoculatedEmployeeHoursRewardList(
-            List<MaximizeInoculatedEmployeeHoursReward> maximizeInoculatedEmployeeHoursRewardList) {
-        this.maximizeInoculatedEmployeeHoursRewardList = maximizeInoculatedEmployeeHoursRewardList;
-    }
-
-    public List<MigrationBetweenCovidAndNonCovidWardsViolation>
-    getMigrationBetweenCovidAndNonCovidWardsViolationList() {
-        return migrationBetweenCovidAndNonCovidWardsViolationList;
-    }
-
-    public void setMigrationBetweenCovidAndNonCovidWardsViolationList(
-            List<MigrationBetweenCovidAndNonCovidWardsViolation> migrationBetweenCovidAndNonCovidWardsViolationList) {
-        this.migrationBetweenCovidAndNonCovidWardsViolationList = migrationBetweenCovidAndNonCovidWardsViolationList;
     }
 
     public List<NoBreakViolation> getNoBreakViolationList() {

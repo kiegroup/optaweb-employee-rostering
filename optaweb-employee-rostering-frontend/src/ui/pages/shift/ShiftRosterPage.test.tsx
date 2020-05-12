@@ -358,14 +358,12 @@ const spot: Spot = {
       name: 'Skill',
     },
   ],
-  covidWard: false,
 };
 
 const newSpot: Spot = {
   ...spot,
   id: 111,
   name: 'New Spot',
-  covidWard: false,
 };
 
 const employee: Employee = {
@@ -389,7 +387,6 @@ const employee: Employee = {
     version: 0,
     name: 'Not Required Skill',
   }],
-  covidRiskType: 'INOCULATED',
 };
 
 const shift: Shift = {

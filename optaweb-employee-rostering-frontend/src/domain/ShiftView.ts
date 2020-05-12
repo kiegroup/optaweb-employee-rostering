@@ -26,14 +26,6 @@ import { RotationViolationPenalty } from './indictment/RotationViolationPenalty'
 import { UnassignedShiftPenalty } from './indictment/UnassignedShiftPenalty';
 import { ContractMinutesViolation } from './indictment/ContractMinutesViolation';
 import { ShiftEmployeeConflictViolation } from './indictment/ShiftEmployeeConflictViolation';
-import { NonInoculatedEmployeeAssignedToCovidWardViolation }
-  from './indictment/NonInoculatedEmployeeAssignedToCovidWardViolation';
-import { InoculatedEmployeeAssignedOutsideOfCovidWardViolation }
-  from './indictment/InoculatedEmployeeAssignedOutsideOfCovidWardViolation';
-import { MaximizeInoculatedEmployeeHoursReward } from './indictment/MaximizeInoculatedEmployeeHoursReward';
-import { MigrationBetweenCovidAndNonCovidWardsViolation }
-  from './indictment/MigrationBetweenCovidAndNonCovidWardsViolation';
-import { NonCovidShiftSoonAfterCovidShiftViolation } from './indictment/NonCovidShiftSoonAfterCovidShiftViolation';
 import { NoBreakViolation } from './indictment/NoBreakViolation';
 import { PublishedShiftReassignedPenalty } from './indictment/PublishedShiftReassignedPenalty';
 
@@ -79,11 +71,6 @@ export interface ShiftView extends DomainObject {
   rotationViolationPenaltyList?: RotationViolationPenalty[];
   unassignedShiftPenaltyList?: UnassignedShiftPenalty[];
   contractMinutesViolationPenaltyList?: ContractMinutesViolation[];
-  nonInoculatedEmployeeAssignedToCovidWardViolationList?: NonInoculatedEmployeeAssignedToCovidWardViolation[];
-  inoculatedEmployeeAssignedOutsideOfCovidWardViolationList?: InoculatedEmployeeAssignedOutsideOfCovidWardViolation[];
-  maximizeInoculatedEmployeeHoursRewardList?: MaximizeInoculatedEmployeeHoursReward[];
-  migrationBetweenCovidAndNonCovidWardsViolationList?: MigrationBetweenCovidAndNonCovidWardsViolation[];
-  nonCovidShiftSoonAfterCovidShiftViolationList?: NonCovidShiftSoonAfterCovidShiftViolation[];
   noBreakViolationList?: NoBreakViolation[];
   publishedShiftReassignedPenaltyList?: PublishedShiftReassignedPenalty[];
 }

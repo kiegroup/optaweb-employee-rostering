@@ -46,7 +46,6 @@ describe('Employee operations', () => {
         maximumMinutesPerMonth: null,
         maximumMinutesPerYear: null,
       },
-      covidRiskType: 'INOCULATED',
     };
 
     const mockEmployeeList: Employee[] = [mockEmployee];
@@ -131,7 +130,6 @@ describe('Employee reducers', () => {
       maximumMinutesPerMonth: null,
       maximumMinutesPerYear: null,
     },
-    covidRiskType: 'INOCULATED',
   };
   const updatedEmployee: Employee = {
     tenantId: 0,
@@ -148,7 +146,6 @@ describe('Employee reducers', () => {
       maximumMinutesPerMonth: null,
       maximumMinutesPerYear: null,
     },
-    covidRiskType: 'INOCULATED',
   };
   const deletedEmployee: Employee = {
     tenantId: 0,
@@ -165,7 +162,6 @@ describe('Employee reducers', () => {
       maximumMinutesPerMonth: null,
       maximumMinutesPerYear: null,
     },
-    covidRiskType: 'INOCULATED',
   };
   it('set is loading', () => {
     expect(

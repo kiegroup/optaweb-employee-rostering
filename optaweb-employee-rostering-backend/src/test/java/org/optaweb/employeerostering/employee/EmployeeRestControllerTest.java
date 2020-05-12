@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
-import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
@@ -140,7 +139,7 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
         ResponseEntity<Contract> contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "A"));
         Contract contractA = contractResponseEntity.getBody();
 
-        Employee employee = new Employee(TENANT_ID, "employee", contractA, testSkillSet, CovidRiskType.INOCULATED);
+        Employee employee = new Employee(TENANT_ID, "employee", contractA, testSkillSet);
         ResponseEntity<Employee> postResponse = addEmployee(TENANT_ID, employee);
         assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -149,7 +148,7 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
         assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
 
         Employee updatedEmployee = new Employee(TENANT_ID, "updatedEmployee", contractA,
-                                                testSkillSet, CovidRiskType.INOCULATED);
+                                                testSkillSet);
         updatedEmployee.setId(postResponse.getBody().getId());
         ResponseEntity<Employee> putResponse = updateEmployee(TENANT_ID, updatedEmployee);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -177,8 +176,7 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
         ResponseEntity<Employee> employeeResponseEntity = addEmployee(TENANT_ID,
                                                                       new Employee(TENANT_ID, "employee",
                                                                                    contract,
-                                                                                   Collections.emptySet(),
-                                                                                   CovidRiskType.INOCULATED));
+                                                                                   Collections.emptySet()));
         Employee employee = employeeResponseEntity.getBody();
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);

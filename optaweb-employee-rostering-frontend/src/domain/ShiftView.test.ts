@@ -34,7 +34,6 @@ describe('ShiftView operations', () => {
         version: 0,
         name: 'Spot',
         requiredSkillSet: [],
-        covidWard: false,
       },
       requiredSkillSet: [],
       originalEmployee: null,
@@ -55,7 +54,6 @@ describe('ShiftView operations', () => {
 
         },
         skillProficiencySet: [],
-        covidRiskType: 'INOCULATED',
       },
       rotationEmployee: {
         tenantId: 0,
@@ -74,7 +72,6 @@ describe('ShiftView operations', () => {
 
         },
         skillProficiencySet: [],
-        covidRiskType: 'INOCULATED',
       },
       pinnedByUser: true,
     };
