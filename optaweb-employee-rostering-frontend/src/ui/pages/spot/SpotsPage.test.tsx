@@ -69,7 +69,7 @@ describe('Spots page', () => {
 
   it('should call addSpot on addData', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const spot = { name: 'Spot', requiredSkillSet: [], tenantId: 0, covidWard: false };
+    const spot = { name: 'Spot', requiredSkillSet: [], tenantId: 0 };
     spotsPage.addData(spot);
     expect(twoSpots.addSpot).toBeCalled();
     expect(twoSpots.addSpot).toBeCalledWith(spot);
@@ -77,7 +77,7 @@ describe('Spots page', () => {
 
   it('should call updateSpot on updateData', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const spot = { name: 'Spot', requiredSkillSet: [], tenantId: 0, id: 1, version: 0, covidWard: false };
+    const spot = { name: 'Spot', requiredSkillSet: [], tenantId: 0, id: 1, version: 0 };
     spotsPage.updateData(spot);
     expect(twoSpots.updateSpot).toBeCalled();
     expect(twoSpots.updateSpot).toBeCalledWith(spot);
@@ -85,7 +85,7 @@ describe('Spots page', () => {
 
   it('should call removeSpot on removeData', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const spot = { name: 'Spot', requiredSkillSet: [], tenantId: 0, id: 1, version: 0, covidWard: false };
+    const spot = { name: 'Spot', requiredSkillSet: [], tenantId: 0, id: 1, version: 0 };
     spotsPage.removeData(spot);
     expect(twoSpots.removeSpot).toBeCalled();
     expect(twoSpots.removeSpot).toBeCalledWith(spot);
@@ -120,21 +120,21 @@ describe('Spots page', () => {
     const result2 = spotsPage.isDataComplete(noRequiredSkillSet);
     expect(result2).toEqual(false);
 
-    const completed = { tenantId: 0, name: 'Name', requiredSkillSet: [], covidWard: false };
+    const completed = { tenantId: 0, name: 'Name', requiredSkillSet: [] };
     const result3 = spotsPage.isDataComplete(completed);
     expect(result3).toEqual(true);
   });
 
   it('should treat empty name as invalid', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const components = { tenantId: 0, name: '', requiredSkillSet: [], covidWard: false };
+    const components = { tenantId: 0, name: '', requiredSkillSet: [] };
     const result = spotsPage.isValid(components);
     expect(result).toEqual(false);
   });
 
   it('should treat non-empty name as valid', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const components = { tenantId: 0, name: 'Spot', requiredSkillSet: [], covidWard: false };
+    const components = { tenantId: 0, name: 'Spot', requiredSkillSet: [] };
     const result = spotsPage.isValid(components);
     expect(result).toEqual(true);
   });

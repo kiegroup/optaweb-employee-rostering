@@ -218,7 +218,6 @@ describe('Spot selectors', () => {
           name: 'Skill 1',
         },
       ],
-      covidWard: false,
     });
   });
 
@@ -251,7 +250,6 @@ describe('Spot selectors', () => {
             name: 'Skill 1',
           },
         ],
-        covidWard: false,
       },
       {
         tenantId: 0,
@@ -259,7 +257,6 @@ describe('Spot selectors', () => {
         version: 0,
         name: 'Spot 3',
         requiredSkillSet: [],
-        covidWard: false,
       },
     ]));
     expect(spotList.length).toEqual(2);
@@ -289,7 +286,6 @@ const state: AppState = {
         version: 1,
         name: 'Spot 2',
         requiredSkillSet: [1],
-        covidWard: false,
       }],
       [2312, {
         tenantId: 0,
@@ -297,7 +293,6 @@ const state: AppState = {
         version: 0,
         name: 'Spot 3',
         requiredSkillSet: [],
-        covidWard: false,
       }],
     ]),
   },

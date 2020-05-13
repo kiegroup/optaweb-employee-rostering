@@ -27,10 +27,3 @@ EmployeeAvailabilityState:
   DESIRED: Desired
   UNDESIRED: Undesired
   UNAVAILABLE: Unavailable
-
-CovidRisk:
-  INOCULATED: Inoculated
-  LOW: Low
-  MODERATE: Moderate
-  HIGH: High
-  EXTREME: Extreme

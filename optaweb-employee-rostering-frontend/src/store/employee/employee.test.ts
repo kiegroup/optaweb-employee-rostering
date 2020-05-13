@@ -236,7 +236,6 @@ describe('Employee selectors', () => {
         maximumMinutesPerMonth: 10,
         maximumMinutesPerYear: null,
       },
-      covidRiskType: 'INOCULATED',
     });
   });
 
@@ -284,7 +283,6 @@ describe('Employee selectors', () => {
           maximumMinutesPerMonth: 10,
           maximumMinutesPerYear: null,
         },
-        covidRiskType: 'INOCULATED',
       },
       {
         tenantId: 0,
@@ -302,7 +300,6 @@ describe('Employee selectors', () => {
           maximumMinutesPerMonth: 10,
           maximumMinutesPerYear: null,
         },
-        covidRiskType: 'INOCULATED',
       },
     ]));
     expect(employeeList.length).toEqual(2);
@@ -325,7 +322,6 @@ const state: AppState = {
         name: 'Employee 1',
         skillProficiencySet: [3],
         contract: 1,
-        covidRiskType: 'INOCULATED',
       }],
       [2, {
         tenantId: 0,
@@ -334,7 +330,6 @@ const state: AppState = {
         name: 'Employee 2',
         skillProficiencySet: [],
         contract: 1,
-        covidRiskType: 'INOCULATED',
       }],
     ]),
   },
