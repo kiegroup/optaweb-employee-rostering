@@ -29,7 +29,7 @@ export interface ScoreDisplayProps {
   isSolving: boolean;
 }
 
-const IndictmentIcon: React.FC<{ indictment: string }> = (props) => {
+export const IndictmentIcon: React.FC<{ indictment: string }> = (props) => {
   switch (props.indictment) {
     case 'Assign every shift':
       return (<ExclamationTriangleIcon />);
@@ -85,11 +85,11 @@ const CONSTRAINTS = ['Assign every shift',
   'Employee is not rotation employee',
 ];
 
-const ConstraintMatches: React.FC<ScoreDisplayProps> = props => (
+export const ConstraintMatches: React.FC<{ indictmentSummary: IndictmentSummary }> = props => (
   <List>
     {Object.keys(props.indictmentSummary.constraintToCountMap)
       .sort((a, b) => CONSTRAINTS.indexOf(b) - CONSTRAINTS.indexOf(a)).map(constraint => (
-        <li>
+        <li key={constraint}>
           <IndictmentIcon indictment={constraint} />
           <span style={{ paddingLeft: '8px' }}>
             {`${constraint}: ${props.indictmentSummary.constraintToCountMap[constraint]}

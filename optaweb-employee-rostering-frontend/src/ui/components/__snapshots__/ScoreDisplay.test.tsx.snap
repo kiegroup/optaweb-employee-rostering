@@ -1,6 +1,263 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ScoreDisplay component should renderCorrectly 1`] = `
+exports[`ConstraintMatches component should display each constraint with impact 1`] = `
+<List>
+  <li
+    key="Employee is not rotation employee"
+  >
+    <IndictmentIcon
+      indictment="Employee is not rotation employee"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      Employee is not rotation employee: 13
+                (Impact: 
+                13 Hard)
+    </span>
+  </li>
+  <li
+    key="Employee is not original employee"
+  >
+    <IndictmentIcon
+      indictment="Employee is not original employee"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      Employee is not original employee: 12
+                (Impact: 
+                12 Hard)
+    </span>
+  </li>
+  <li
+    key="Desired time slot for an employee"
+  >
+    <IndictmentIcon
+      indictment="Desired time slot for an employee"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      Desired time slot for an employee: 11
+                (Impact: 
+                11 Hard)
+    </span>
+  </li>
+  <li
+    key="Undesired time slot for an employee"
+  >
+    <IndictmentIcon
+      indictment="Undesired time slot for an employee"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      Undesired time slot for an employee: 10
+                (Impact: 
+                10 Hard)
+    </span>
+  </li>
+  <li
+    key="Unavailable time slot for an employee"
+  >
+    <IndictmentIcon
+      indictment="Unavailable time slot for an employee"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      Unavailable time slot for an employee: 9
+                (Impact: 
+                9 Hard)
+    </span>
+  </li>
+  <li
+    key="Yearly minutes must not exceed contract maximum"
+  >
+    <IndictmentIcon
+      indictment="Yearly minutes must not exceed contract maximum"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      Yearly minutes must not exceed contract maximum: 8
+                (Impact: 
+                8 Hard/3 Soft)
+    </span>
+  </li>
+  <li
+    key="Monthly minutes must not exceed contract maximum"
+  >
+    <IndictmentIcon
+      indictment="Monthly minutes must not exceed contract maximum"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      Monthly minutes must not exceed contract maximum: 7
+                (Impact: 
+                7 Hard)
+    </span>
+  </li>
+  <li
+    key="Weekly minutes must not exceed contract maximum"
+  >
+    <IndictmentIcon
+      indictment="Weekly minutes must not exceed contract maximum"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      Weekly minutes must not exceed contract maximum: 6
+                (Impact: 
+                6 Hard/6 Medium/6 Soft)
+    </span>
+  </li>
+  <li
+    key="Daily minutes must not exceed contract maximum"
+  >
+    <IndictmentIcon
+      indictment="Daily minutes must not exceed contract maximum"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      Daily minutes must not exceed contract maximum: 5
+                (Impact: 
+                5 Hard/5 Soft)
+    </span>
+  </li>
+  <li
+    key="Break between non-consecutive shifts is at least 10 hours"
+  >
+    <IndictmentIcon
+      indictment="Break between non-consecutive shifts is at least 10 hours"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      Break between non-consecutive shifts is at least 10 hours: 4
+                (Impact: 
+                4 Medium/4 Soft)
+    </span>
+  </li>
+  <li
+    key="Required skill for a shift"
+  >
+    <IndictmentIcon
+      indictment="Required skill for a shift"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      Required skill for a shift: 3
+                (Impact: 
+                3 Hard/3 Medium)
+    </span>
+  </li>
+  <li
+    key="No overlapping shifts"
+  >
+    <IndictmentIcon
+      indictment="No overlapping shifts"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      No overlapping shifts: 2
+                (Impact: 
+                2 Soft)
+    </span>
+  </li>
+  <li
+    key="No more than 2 consecutive shifts"
+  >
+    <IndictmentIcon
+      indictment="No more than 2 consecutive shifts"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      No more than 2 consecutive shifts: 1
+                (Impact: 
+                1 Hard)
+    </span>
+  </li>
+  <li
+    key="Assign every shift"
+  >
+    <IndictmentIcon
+      indictment="Assign every shift"
+    />
+    <span
+      style={
+        Object {
+          "paddingLeft": "8px",
+        }
+      }
+    >
+      Assign every shift: 0
+                (Impact: 
+                0)
+    </span>
+  </li>
+</List>
+`;
+
+exports[`ScoreDisplay component should renderCorrectly when closed 1`] = `
 <span>
   <Component
     isReadOnly={true}
@@ -24,8 +281,94 @@ exports[`ScoreDisplay component should renderCorrectly 1`] = `
       <ConstraintMatches
         indictmentSummary={
           Object {
-            "constraintToCountMap": Object {},
-            "constraintToScoreImpactMap": Object {},
+            "constraintToCountMap": Object {
+              "Assign every shift": 0,
+              "Break between non-consecutive shifts is at least 10 hours": 4,
+              "Daily minutes must not exceed contract maximum": 5,
+              "Desired time slot for an employee": 11,
+              "Employee is not original employee": 12,
+              "Employee is not rotation employee": 13,
+              "Monthly minutes must not exceed contract maximum": 7,
+              "No more than 2 consecutive shifts": 1,
+              "No overlapping shifts": 2,
+              "Required skill for a shift": 3,
+              "Unavailable time slot for an employee": 9,
+              "Undesired time slot for an employee": 10,
+              "Weekly minutes must not exceed contract maximum": 6,
+              "Yearly minutes must not exceed contract maximum": 8,
+            },
+            "constraintToScoreImpactMap": Object {
+              "Assign every shift": Object {
+                "hardScore": 0,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "Break between non-consecutive shifts is at least 10 hours": Object {
+                "hardScore": 0,
+                "mediumScore": 4,
+                "softScore": 4,
+              },
+              "Daily minutes must not exceed contract maximum": Object {
+                "hardScore": 5,
+                "mediumScore": 0,
+                "softScore": 5,
+              },
+              "Desired time slot for an employee": Object {
+                "hardScore": 11,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "Employee is not original employee": Object {
+                "hardScore": 12,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "Employee is not rotation employee": Object {
+                "hardScore": 13,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "Monthly minutes must not exceed contract maximum": Object {
+                "hardScore": 7,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "No more than 2 consecutive shifts": Object {
+                "hardScore": 1,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "No overlapping shifts": Object {
+                "hardScore": 0,
+                "mediumScore": 0,
+                "softScore": 2,
+              },
+              "Required skill for a shift": Object {
+                "hardScore": 3,
+                "mediumScore": 3,
+                "softScore": 0,
+              },
+              "Unavailable time slot for an employee": Object {
+                "hardScore": 9,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "Undesired time slot for an employee": Object {
+                "hardScore": 10,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "Weekly minutes must not exceed contract maximum": Object {
+                "hardScore": 6,
+                "mediumScore": 6,
+                "softScore": 6,
+              },
+              "Yearly minutes must not exceed contract maximum": Object {
+                "hardScore": 8,
+                "mediumScore": 0,
+                "softScore": 3,
+              },
+            },
           }
         }
         isSolving={true}
@@ -58,6 +401,177 @@ exports[`ScoreDisplay component should renderCorrectly 1`] = `
     headerContent="Constraint Matches"
     hideOnOutsideClick={true}
     isVisible={false}
+    maxWidth="800px"
+    onHidden={[Function]}
+    onHide={[Function]}
+    onMount={[Function]}
+    onShow={[Function]}
+    onShown={[Function]}
+    position="top"
+    shouldClose={[Function]}
+    tippyProps={Object {}}
+    zIndex={9999}
+  >
+    <Component
+      onClick={[Function]}
+      variant="plain"
+    >
+      <HelpIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+        title={null}
+      />
+    </Component>
+  </Popover>
+  Stand by while resolving hard constraint violations...
+</span>
+`;
+
+exports[`ScoreDisplay component should renderCorrectly when open 1`] = `
+<span>
+  <Component
+    isReadOnly={true}
+  >
+    Trans(i18nKey=hardScore, {"hardScore":-10})
+  </Component>
+  <Component
+    isReadOnly={true}
+  >
+    Trans(i18nKey=mediumScore, {"mediumScore":-5})
+  </Component>
+  <Component
+    isReadOnly={true}
+  >
+    Trans(i18nKey=softScore, {"softScore":20})
+  </Component>
+  <Popover
+    appendTo={[Function]}
+    aria-label=""
+    bodyContent={
+      <ConstraintMatches
+        indictmentSummary={
+          Object {
+            "constraintToCountMap": Object {
+              "Assign every shift": 0,
+              "Break between non-consecutive shifts is at least 10 hours": 4,
+              "Daily minutes must not exceed contract maximum": 5,
+              "Desired time slot for an employee": 11,
+              "Employee is not original employee": 12,
+              "Employee is not rotation employee": 13,
+              "Monthly minutes must not exceed contract maximum": 7,
+              "No more than 2 consecutive shifts": 1,
+              "No overlapping shifts": 2,
+              "Required skill for a shift": 3,
+              "Unavailable time slot for an employee": 9,
+              "Undesired time slot for an employee": 10,
+              "Weekly minutes must not exceed contract maximum": 6,
+              "Yearly minutes must not exceed contract maximum": 8,
+            },
+            "constraintToScoreImpactMap": Object {
+              "Assign every shift": Object {
+                "hardScore": 0,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "Break between non-consecutive shifts is at least 10 hours": Object {
+                "hardScore": 0,
+                "mediumScore": 4,
+                "softScore": 4,
+              },
+              "Daily minutes must not exceed contract maximum": Object {
+                "hardScore": 5,
+                "mediumScore": 0,
+                "softScore": 5,
+              },
+              "Desired time slot for an employee": Object {
+                "hardScore": 11,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "Employee is not original employee": Object {
+                "hardScore": 12,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "Employee is not rotation employee": Object {
+                "hardScore": 13,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "Monthly minutes must not exceed contract maximum": Object {
+                "hardScore": 7,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "No more than 2 consecutive shifts": Object {
+                "hardScore": 1,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "No overlapping shifts": Object {
+                "hardScore": 0,
+                "mediumScore": 0,
+                "softScore": 2,
+              },
+              "Required skill for a shift": Object {
+                "hardScore": 3,
+                "mediumScore": 3,
+                "softScore": 0,
+              },
+              "Unavailable time slot for an employee": Object {
+                "hardScore": 9,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "Undesired time slot for an employee": Object {
+                "hardScore": 10,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "Weekly minutes must not exceed contract maximum": Object {
+                "hardScore": 6,
+                "mediumScore": 6,
+                "softScore": 6,
+              },
+              "Yearly minutes must not exceed contract maximum": Object {
+                "hardScore": 8,
+                "mediumScore": 0,
+                "softScore": 3,
+              },
+            },
+          }
+        }
+        isSolving={true}
+        score={
+          Object {
+            "hardScore": -10,
+            "mediumScore": -5,
+            "softScore": 20,
+          }
+        }
+      />
+    }
+    boundary="viewport"
+    className=""
+    closeBtnAriaLabel="Close"
+    distance={25}
+    enableFlip={true}
+    flipBehavior={
+      Array [
+        "top",
+        "right",
+        "bottom",
+        "left",
+        "top",
+        "right",
+        "bottom",
+      ]
+    }
+    footerContent={null}
+    headerContent="Constraint Matches"
+    hideOnOutsideClick={true}
+    isVisible={true}
     maxWidth="800px"
     onHidden={[Function]}
     onHide={[Function]}
