@@ -283,12 +283,13 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           });
         } },
       {
-        name: 'Export to Excel',
+        name: t('exportToExcel'),
         action: () => {
           this.setState({
             isExportingSchedule: true,
           });
-        }
+        },
+        isDisabled: this.props.isSolving,
       },
     ];
 

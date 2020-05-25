@@ -116,7 +116,8 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
           },
           Object {
             "action": [Function],
-            "name": "Export to Excel",
+            "isDisabled": false,
+            "name": "Trans(i18nKey=exportToExcel)",
           },
         ]
       }
@@ -362,7 +363,8 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
           },
           Object {
             "action": [Function],
-            "name": "Export to Excel",
+            "isDisabled": false,
+            "name": "Trans(i18nKey=exportToExcel)",
           },
         ]
       }
@@ -636,7 +638,8 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
           },
           Object {
             "action": [Function],
-            "name": "Export to Excel",
+            "isDisabled": true,
+            "name": "Trans(i18nKey=exportToExcel)",
           },
         ]
       }
