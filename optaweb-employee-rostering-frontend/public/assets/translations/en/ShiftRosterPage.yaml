@@ -2,6 +2,7 @@
 createShift: Create Shift
 reschedule: Reschedule
 commitChanges: Commit Changes
+exportToExcel: Export to Excel
 noSpots:
   <0>There are no Wards</0>
   <1>
