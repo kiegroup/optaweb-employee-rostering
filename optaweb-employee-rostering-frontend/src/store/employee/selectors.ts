@@ -31,11 +31,21 @@ export const getEmployeeById = (state: AppState, id: number): Employee => {
   };
 };
 
+let oldEmployeeMapById: Map<number, DomainObjectView<Employee>> | null = null;
+let employeeListForOldEmployeeMapById: Employee[] | null = null;
+
 export const getEmployeeList = (state: AppState): Employee[] => {
   if (state.employeeList.isLoading || state.skillList.isLoading || state.contractList.isLoading) {
     return [];
   }
+  if (oldEmployeeMapById === state.employeeList.employeeMapById && employeeListForOldEmployeeMapById !== null) {
+    return employeeListForOldEmployeeMapById;
+  }
+
   const out: Employee[] = [];
   state.employeeList.employeeMapById.forEach((value, key) => out.push(getEmployeeById(state, key)));
+
+  oldEmployeeMapById = state.employeeList.employeeMapById;
+  employeeListForOldEmployeeMapById = out;
   return out;
 };
