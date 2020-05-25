@@ -29,11 +29,21 @@ export const getSpotById = (state: AppState, id: number): Spot => {
   };
 };
 
+let oldSpotMapById: Map<number, DomainObjectView<Spot>> | null = null;
+let spotListForOldSpotMapById: Spot[] | null = null;
+
 export const getSpotList = (state: AppState): Spot[] => {
   if (state.spotList.isLoading || state.skillList.isLoading) {
     return [];
   }
+  if (oldSpotMapById === state.spotList.spotMapById && spotListForOldSpotMapById !== null) {
+    return spotListForOldSpotMapById;
+  }
+
   const out: Spot[] = [];
   state.spotList.spotMapById.forEach((value, key) => out.push(getSpotById(state, key)));
+
+  oldSpotMapById = state.spotList.spotMapById;
+  spotListForOldSpotMapById = out;
   return out;
 };

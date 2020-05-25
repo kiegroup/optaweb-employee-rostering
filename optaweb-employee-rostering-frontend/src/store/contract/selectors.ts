@@ -23,11 +23,21 @@ export const getContractById = (state: AppState, id: number): Contract => {
   return state.contractList.contractMapById.get(id) as Contract;
 };
 
+let oldContractMapById: Map<number, Contract> | null = null;
+let contractListForOldContractMapById: Contract[] | null = null;
+
 export const getContractList = (state: AppState): Contract[] => {
   if (state.contractList.isLoading) {
     return [];
   }
+  if (oldContractMapById === state.contractList.contractMapById && contractListForOldContractMapById !== null) {
+    return contractListForOldContractMapById;
+  }
+
   const out: Contract[] = [];
   state.contractList.contractMapById.forEach((value, key) => out.push(getContractById(state, key)));
+
+  oldContractMapById = state.contractList.contractMapById;
+  contractListForOldContractMapById = out;
   return out;
 };

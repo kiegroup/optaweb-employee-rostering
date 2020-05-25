@@ -128,8 +128,8 @@ public class RosterController {
                                                                     String startDateString,
                                                             @RequestParam(name = "endDate") String endDateString,
                                                             @RequestParam(name = "spotList") String spotListString) {
-        Set<Long> spotIdSet = Arrays.asList(spotListString.split(",")).stream()
-                .map(Long::parseLong).collect(Collectors.toSet());
+        Set<Long> spotIdSet = Arrays.stream(spotListString.split(",")).map(Long::parseLong)
+                .collect(Collectors.toSet());
         List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE))
                 .stream().filter(s -> spotIdSet.contains(s.getId()))
                 .collect(Collectors.toList());

@@ -25,16 +25,16 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 
 interface StateProps {
-    tenantId: number;
-    spotList: Spot[];
-};
+  tenantId: number;
+  spotList: Spot[];
+}
 
 interface OwnProps {
-    isOpen: boolean;
-    onClose: () => void;
-    defaultFromDate: Date;
-    defaultToDate: Date;
-};
+  isOpen: boolean;
+  onClose: () => void;
+  defaultFromDate: Date;
+  defaultToDate: Date;
+}
 
 const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps & OwnProps => ({
   ...ownProps,
@@ -42,86 +42,95 @@ const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps & OwnP
   spotList: spotSelectors.getSpotList(state),
 });
 
-export const ExportScheduleModal : React.FC<StateProps & OwnProps> = props => {
+export const ExportScheduleModal: React.FC<StateProps & OwnProps> = (props) => {
   const { t } = useTranslation('ExportScheduleModal');
-  const [ fromDate, setFromDate ] = React.useState<Date | null>(null);
-  const [ toDate, setToDate ] = React.useState<Date | null>(null);
-  const [ exportedSpots, setExportedSpots ] = React.useState<Spot[]>([]);
-  
+  const [fromDate, setFromDate] = React.useState<Date | null>(null);
+  const [toDate, setToDate] = React.useState<Date | null>(null);
+  const [exportedSpots, setExportedSpots] = React.useState<Spot[]>([]);
+
+  // Work around since useEffect use shallowEquality, and the same date created at different times are not equal
+  const defaultFromDateTime = props.defaultFromDate.getTime();
+  const defaultToDateTime = props.defaultToDate.getTime();
+
   React.useEffect(() => {
     if (props.isOpen) {
-      setFromDate(props.defaultFromDate);
-      setToDate(props.defaultToDate);
+      setFromDate(new Date(defaultFromDateTime));
+      setToDate(new Date(defaultToDateTime));
       setExportedSpots(props.spotList);
     }
-  }, [props.isOpen, props.defaultFromDate, props.defaultToDate, props.spotList]);
-  
-  const spotSet = (exportedSpots.length > 0)? exportedSpots.map(s => `${s.id}`).reduce((prev,next) => `${prev},${next}`) : null;
-  
+  }, [props.isOpen, defaultFromDateTime, defaultToDateTime, props.spotList]);
+
+  const spotSet = (exportedSpots.length > 0) ? exportedSpots.map(s => `${s.id}`)
+    .reduce((prev, next) => `${prev},${next}`) : null;
+
   let exportUrl = '_blank';
   if (spotSet && toDate && fromDate) {
-    exportUrl = `${process.env.REACT_APP_BACKEND_URL}/rest/tenant/${props.tenantId}/roster/shiftRosterView/excel?` +
-                    `startDate=${moment(fromDate as Date).format('YYYY-MM-DD')}&` +
-                    `endDate=${moment(toDate as Date).format('YYYY-MM-DD')}&spotList=${spotSet}`;
+    exportUrl = `${process.env.REACT_APP_BACKEND_URL}/rest/tenant/${props.tenantId}/roster/shiftRosterView/excel?`
+                    + `startDate=${moment(fromDate as Date).format('YYYY-MM-DD')}&`
+                    + `endDate=${moment(toDate as Date).format('YYYY-MM-DD')}&spotList=${spotSet}`;
   }
   const exportSchedule = () => {
     props.onClose();
   };
-  
+
   return (
     <Modal
-      title="Export Schedule"
+      title={t('exportSchedule')}
       isOpen={props.isOpen}
       onClose={props.onClose}
       actions={
-          [
-            <Button
-              aria-label="Close Modal"
-              variant={ButtonVariant.tertiary}
-              key={0}
-              onClick={props.onClose}
-            >
-              {t('close')}
-            </Button>,
-            <a href={exportUrl}
-               className="pf-c-button pf-m-primary"
-               download
-               onClick={exportSchedule}>Export</a>
-          ]
-        }
-        isSmall
+        [
+          <Button
+            aria-label="Close Modal"
+            variant={ButtonVariant.tertiary}
+            key={0}
+            onClick={props.onClose}
+          >
+            {t('close')}
+          </Button>,
+          <a
+            href={exportUrl}
+            className="pf-c-button pf-m-primary"
+            download
+            onClick={exportSchedule}
+          >
+            {t('export')}
+          </a>,
+        ]
+      }
+      isSmall
     >
       <Form id="modal-element" onSubmit={e => e.preventDefault()}>
-          <InputGroup>
-            <Label>From Date</Label>
-            <DatePicker
-              aria-label="From Date"
-              selected={fromDate}
-              onChange={setFromDate}
-            />
-          </InputGroup>
-          <InputGroup>
-            <Label>To Date</Label>
-            <DatePicker
-              aria-label="To Date"
-              selected={toDate}
-              onChange={setToDate}
-            />
-          </InputGroup>
-          <InputGroup>
-            <Label>For Spots</Label>
-            <MultiTypeaheadSelectInput
-              aria-label="For Spots"
-              emptyText="Select Spots..."
-              value={exportedSpots}
-              options={props.spotList}
-              optionToStringMap={spot => spot.name}
-              onChange={setExportedSpots}
-            />
-          </InputGroup>
-        </Form>
+        <InputGroup>
+          <Label>{t('fromDate')}</Label>
+          <DatePicker
+            aria-label={t('fromDate')}
+            selected={fromDate}
+            onChange={setFromDate}
+          />
+        </InputGroup>
+        <InputGroup>
+          <Label>{t('toDate')}</Label>
+          <DatePicker
+            aria-label={t('toDate')}
+            selected={toDate}
+            onChange={setToDate}
+          />
+        </InputGroup>
+        <InputGroup>
+          <Label>{t('forSpots')}</Label>
+          <MultiTypeaheadSelectInput
+            aria-label={t('forSpots')}
+            emptyText={t('selectSpots')}
+            value={exportedSpots}
+            options={props.spotList}
+            optionToStringMap={spot => spot.name}
+            onChange={setExportedSpots}
+          />
+        </InputGroup>
+      </Form>
     </Modal>
-  );  
+  );
 };
 
 export default connect(mapStateToProps)(ExportScheduleModal);

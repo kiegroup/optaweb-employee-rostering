@@ -23,11 +23,22 @@ export const getSkillById = (state: AppState, id: number): Skill => {
   return state.skillList.skillMapById.get(id) as Skill;
 };
 
+
+let oldSkillMapById: Map<number, Skill> | null = null;
+let skillListForOldSkillMapById: Skill[] | null = null;
+
 export const getSkillList = (state: AppState): Skill[] => {
   if (state.skillList.isLoading) {
     return [];
   }
+  if (oldSkillMapById === state.skillList.skillMapById && skillListForOldSkillMapById !== null) {
+    return skillListForOldSkillMapById;
+  }
+
   const out: Skill[] = [];
   state.skillList.skillMapById.forEach((value, key) => out.push(getSkillById(state, key)));
+
+  oldSkillMapById = state.skillList.skillMapById;
+  skillListForOldSkillMapById = out;
   return out;
 };
