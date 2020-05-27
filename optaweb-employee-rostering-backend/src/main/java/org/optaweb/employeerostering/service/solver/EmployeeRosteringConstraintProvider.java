@@ -41,6 +41,7 @@ import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration
 import static java.time.Duration.between;
 import static org.optaplanner.core.api.score.stream.ConstraintCollectors.sumDuration;
 import static org.optaplanner.core.api.score.stream.Joiners.equal;
+import static org.optaplanner.core.api.score.stream.Joiners.greaterThan;
 import static org.optaplanner.core.api.score.stream.Joiners.greaterThanOrEqual;
 import static org.optaplanner.core.api.score.stream.Joiners.lessThan;
 import static org.optaplanner.core.api.score.stream.Joiners.lessThanOrEqual;
@@ -87,10 +88,8 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                 .filter(employeeAvailability -> employeeAvailability.getState() == employeeAvailabilityState)
                 .join(Shift.class,
                         equal(EmployeeAvailability::getEmployee, Shift::getEmployee),
-                        lessThanOrEqual(EmployeeAvailability::getStartDateTime, Shift::getEndDateTime),
-                        greaterThanOrEqual(EmployeeAvailability::getEndDateTime, Shift::getStartDateTime))
-                .filter((availability, shift) ->
-                        !Objects.equals(availability.getEndDateTime(), shift.getStartDateTime()));
+                        lessThan(EmployeeAvailability::getStartDateTime, Shift::getEndDateTime),
+                        greaterThan(EmployeeAvailability::getEndDateTime, Shift::getStartDateTime));
     }
 
     private static UniConstraintStream<Shift> getAssignedShiftConstraintStream(ConstraintFactory constraintFactory) {
@@ -221,11 +220,11 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
         return getAssignedShiftConstraintStream(constraintFactory)
                 .join(Shift.class,
                         equal(Shift::getEmployee),
-                        greaterThanOrEqual(Shift::getStartDateTime),
-                        lessThanOrEqual(Shift::getEndDateTime, Shift::getStartDateTime))
-                .filter((shift, startDuringFirstShift) -> !Objects.equals(shift, startDuringFirstShift))
+                        lessThan(Shift::getStartDateTime, Shift::getEndDateTime),
+                        greaterThan(Shift::getEndDateTime, Shift::getStartDateTime))
+                .filter((shift, otherShift) -> !Objects.equals(shift, otherShift))
                 .penalizeConfigurableLong(CONSTRAINT_NO_OVERLAPPING_SHIFTS,
-                        (shift, startsDuringFirstShift) -> startsDuringFirstShift.getLengthInMinutes());
+                        (shift, otherShift) -> otherShift.getLengthInMinutes());
     }
 
     Constraint noMoreThanTwoConsecutiveShifts(ConstraintFactory constraintFactory) {
