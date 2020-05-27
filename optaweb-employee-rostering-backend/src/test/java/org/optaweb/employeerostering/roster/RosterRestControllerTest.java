@@ -158,6 +158,10 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
     private ResponseEntity<PublishResult> publishAndProvision() {
         return restTemplate.postForEntity(rosterPathURI + "publishAndProvision", null, PublishResult.class, TENANT_ID);
     }
+    
+    private ResponseEntity<Void> commitChanges() {
+        return restTemplate.postForEntity(rosterPathURI + "commitChanges", null, Void.class, TENANT_ID);
+    }
 
     private Spot addSpot(String name) {
         SpotView spotView = new SpotView(TENANT_ID, name, Collections.emptySet());
@@ -441,5 +445,13 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(publishResultResponseEntity.getBody().getPublishedFromDate()).isEqualTo("2000-01-01");
         assertThat(publishResultResponseEntity.getBody().getPublishedToDate()).isEqualTo("2000-01-08");
+    }
+    
+    @Test
+    public void testCommitChanges() {
+        createTestRoster();
+
+        ResponseEntity<Void> commitChangesResponseEntity = commitChanges();
+        assertThat(commitChangesResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }

@@ -241,6 +241,69 @@ describe('Roster operations', () => {
     expect(mockRefreshShiftRoster).toBeCalled();
   });
 
+  it('should dispatch actions and call client on replan roster', async () => {
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, 'refreshShiftRoster')
+      .mockImplementation(() => doNothing);
+    jest.useFakeTimers();
+    const solvingStartTime = moment('2018-01-01', 'YYYY-MM-DD').toDate();
+    MockDate.set(solvingStartTime);
+
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+
+    onPost(`/tenant/${tenantId}/roster/replan`, {}, {});
+    await store.dispatch(rosterOperations.replanRoster());
+    expect(store.getActions()).toEqual([
+      actions.solveRoster(),
+      alert.showInfoMessage('startSolvingRoster', {
+        startSolvingTime: moment(solvingStartTime).format('LLL'),
+      }),
+    ]);
+    expect(client.post).toHaveBeenCalledTimes(1);
+    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/roster/replan`, {});
+
+    jest.advanceTimersByTime(1000);
+    await Promise.resolve(); // hack to wait for the refresh action to finish
+
+    expect(mockRefreshShiftRoster).toBeCalled();
+  });
+
+  it('should dispatch actions and call client on get solver status', async () => {
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, 'refreshShiftRoster')
+      .mockImplementation(() => doNothing);
+    jest.useFakeTimers();
+    const solvingStartTime = moment('2018-01-01', 'YYYY-MM-DD').toDate();
+    MockDate.set(solvingStartTime);
+
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+
+    onGet(`/tenant/${tenantId}/roster/status`, 'SOLVING');
+    await store.dispatch(rosterOperations.getSolverStatus());
+    expect(store.getActions()).toEqual([
+      actions.updateSolverStatus({ solverStatus: 'SOLVING' }),
+    ]);
+    expect(client.get).toHaveBeenCalledTimes(1);
+    expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/roster/status`);
+
+    jest.advanceTimersByTime(1000);
+    await Promise.resolve(); // hack to wait for the refresh action to finish
+
+    expect(mockRefreshShiftRoster).toBeCalled();
+
+    mockRefreshShiftRoster.mockClear();
+    store.clearActions();
+
+    onGet(`/tenant/${tenantId}/roster/status`, 'TERMINATED');
+    await store.dispatch(rosterOperations.getSolverStatus());
+    expect(store.getActions()).toEqual([
+      actions.updateSolverStatus({ solverStatus: 'TERMINATED' }),
+      actions.terminateSolvingRosterEarly(),
+    ]);
+
+    expect(mockRefreshShiftRoster).toBeCalledTimes(1);
+  });
+
   it('should dispatch the last shift roster REST call on refreshShiftRoster', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
@@ -473,6 +536,26 @@ describe('Roster operations', () => {
 
     expect(client.post).toBeCalledTimes(1);
     expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/publishAndProvision`, {});
+
+    expect(mockRefreshShiftRoster).toBeCalled();
+  });
+
+  it('should dispatch actions and call client on commitChanges', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, 'refreshShiftRoster')
+      .mockImplementation(() => doNothing);
+
+    onPost(`/tenant/${tenantId}/roster/commitChanges`, {}, {});
+
+    await store.dispatch(rosterOperations.commitChanges());
+
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage('commitChanges'),
+    ]);
+
+    expect(client.post).toBeCalledTimes(1);
+    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/commitChanges`, {});
 
     expect(mockRefreshShiftRoster).toBeCalled();
   });

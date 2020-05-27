@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaweb.employeerostering.domain.roster.Roster;
+import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,13 +56,36 @@ public class SolverManagerTest {
     private EntityManager entityManager;
 
     @Test
-    public void testSolverManager() throws InterruptedException {
+    public void testSolveRoster() throws InterruptedException {
         solverManager.setUpSolverFactory();
         Roster roster = rosterGenerator.generateRoster(10, 7);
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 30, TimeUnit.SECONDS);
         CountDownLatch solverEndedLatch = solverManager.solve(roster.getTenantId());
+
+        solverEndedLatch.await();
+        ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector();
+        scoreDirector.setWorkingSolution(roster);
+        roster.setScore((HardMediumSoftLongScore) scoreDirector.calculateScore());
+        assertNotNull(roster.getScore());
+        // Due to overconstrained planning, the score is always feasible
+        assertTrue(roster.getScore().isFeasible());
+        assertFalse(roster.getShiftList().isEmpty());
+        assertTrue(roster.getShiftList().stream().anyMatch(s -> s.getEmployee() != null));
+    }
+    
+    @Test
+    public void testReplanRoster() throws InterruptedException {
+        solverManager.setUpSolverFactory();
+        Roster roster = rosterGenerator.generateRoster(1, 7);
+        Shift unassignedShift = roster.getShiftList().stream()
+                .filter(shift -> shift.getEmployee() != null).findFirst().get();
+        unassignedShift.setEmployee(null);
+        
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 5, TimeUnit.SECONDS);
+        CountDownLatch solverEndedLatch = solverManager.replan(roster.getTenantId());
 
         solverEndedLatch.await();
         ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector();
