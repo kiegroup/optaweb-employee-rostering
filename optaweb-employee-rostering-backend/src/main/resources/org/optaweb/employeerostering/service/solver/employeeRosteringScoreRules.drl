@@ -144,9 +144,8 @@ rule "Unavailable time slot for an employee"
                 $startDateTime : startDateTime,
                 $endDateTime : endDateTime)
         Shift(employee == $e,
-            $startDateTime <= endDateTime,
-            $endDateTime >= startDateTime,
-            $endDateTime != startDateTime)
+            $startDateTime < endDateTime,
+            $endDateTime > startDateTime)
     then
         scoreHolder.penalize(kcontext, $availability.getDuration().toMinutes());
 end
@@ -155,8 +154,8 @@ rule "No overlapping shifts"
     when
         $s : Shift(employee != null, $e : employee, $firstStartDateTime: startDateTime, $firstEndDateTime : endDateTime)
         $s2: Shift(employee == $e, this != $s,
-            $firstStartDateTime <= endDateTime,
-            $firstEndDateTime >= startDateTime)
+            $firstStartDateTime < endDateTime,
+            $firstEndDateTime > startDateTime)
     then
         scoreHolder.penalize(kcontext, $s2.getLengthInMinutes());
 end
@@ -288,9 +287,8 @@ rule "Undesired time slot for an employee"
                 $startDateTime : startDateTime,
                 $endDateTime : endDateTime)
         Shift(employee == $e,
-            $startDateTime <= endDateTime,
-            $endDateTime >= startDateTime,
-            $endDateTime != startDateTime)
+                $startDateTime < endDateTime,
+                $endDateTime > startDateTime)
     then
         scoreHolder.penalize(kcontext, $availability.getDuration().toMinutes());
 end
@@ -303,9 +301,8 @@ rule "Desired time slot for an employee"
                 $startDateTime : startDateTime,
                 $endDateTime : endDateTime)
         Shift(employee == $e,
-            $startDateTime <= endDateTime,
-            $endDateTime >= startDateTime,
-            $endDateTime != startDateTime)
+                $startDateTime < endDateTime,
+                $endDateTime > startDateTime)
     then
         scoreHolder.reward(kcontext, $availability.getDuration().toMinutes());
 end
