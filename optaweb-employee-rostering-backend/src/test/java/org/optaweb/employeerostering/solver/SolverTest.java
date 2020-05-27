@@ -71,6 +71,18 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_ASSIGN_EVERY_SHIFT;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_BREAK_BETWEEN_NON_CONSECUTIVE_SHIFTS;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_NO_MORE_THAN_2_CONSECUTIVE_SHIFTS;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -81,6 +93,7 @@ public class SolverTest {
     private static final LocalDate START_DATE = LocalDate.of(2019, 5, 13);
     private static final RosterConstraintConfiguration ROSTER_CONSTRAINT_CONFIGURATION =
             new RosterConstraintConfiguration();
+    private static final String ROSTER_PATH_URI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -88,14 +101,8 @@ public class SolverTest {
     @Autowired
     private SolverConfig solverConfig;
 
-    private final String rosterPathURI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
-
-    private ResponseEntity<Void> solveForTenant(Integer tenantId) {
-        return restTemplate.postForEntity(rosterPathURI + "solve", null, Void.class, tenantId);
-    }
-
     private ResponseEntity<Void> terminateSolver(Integer tenantId) {
-        return restTemplate.postForEntity(rosterPathURI + "terminate", null, Void.class, tenantId);
+        return restTemplate.postForEntity(ROSTER_PATH_URI + "terminate", null, Void.class, tenantId);
     }
 
     private SolverFactory<Roster> getSolverFactory() {
@@ -153,18 +160,18 @@ public class SolverTest {
         skill.setId(idGenerator.getAndIncrement());
 
         Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
-                                          CovidRiskType.INOCULATED);
+                CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
 
         Employee employeeB = new Employee(TENANT_ID, "Bill", contract, Collections.singleton(skill),
-                                          CovidRiskType.INOCULATED);
+                CovidRiskType.INOCULATED);
         employeeB.setId(idGenerator.getAndIncrement());
 
         Spot spotA = new Spot(TENANT_ID, "Spot", Collections.singleton(skill), false);
         spotA.setId(idGenerator.getAndIncrement());
 
         OffsetDateTime firstDateTime = OffsetDateTime.of(rosterState.getFirstPublishedDate().atTime(9, 0),
-                                                         ZoneOffset.UTC);
+                ZoneOffset.UTC);
         ShiftBuilder shiftBuilder = new ShiftBuilder(idGenerator)
                 .forSpot(spotA)
                 .startingAtDate(firstDateTime)
@@ -185,11 +192,11 @@ public class SolverTest {
 
         roster = solver.solve(roster);
         assertTrue(roster.getShiftList().stream()
-                           .filter(s -> !rosterState.isDraft(s))
-                           .allMatch(s -> s.getEmployee().equals(employeeA)));
+                .filter(s -> !rosterState.isDraft(s))
+                .allMatch(s -> s.getEmployee().equals(employeeA)));
         assertTrue(roster.getShiftList().stream()
-                           .filter(rosterState::isDraft)
-                           .allMatch(s -> s.getEmployee().equals(employeeB)));
+                .filter(rosterState::isDraft)
+                .allMatch(s -> s.getEmployee().equals(employeeB)));
     }
 
     private void testContractConstraint(ContractField contractField) {
@@ -206,7 +213,7 @@ public class SolverTest {
 
         Contract contract = contractField.getContract(idGenerator);
         Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
-                                          CovidRiskType.INOCULATED);
+                CovidRiskType.INOCULATED);
 
         employeeA.setId(idGenerator.getAndIncrement());
         Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet(), false);
@@ -284,7 +291,7 @@ public class SolverTest {
 
         Contract contract = getDefaultContract(idGenerator);
         Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
-                                          CovidRiskType.INOCULATED);
+                CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
 
         OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
@@ -332,7 +339,7 @@ public class SolverTest {
         Contract contract = getDefaultContract(idGenerator);
 
         Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
-                                          CovidRiskType.INOCULATED);
+                CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
 
         Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet(), false);
@@ -344,7 +351,7 @@ public class SolverTest {
         shift.setEmployee(employeeA);
 
         EmployeeAvailability availability = new EmployeeAvailability(TENANT_ID, employeeA, firstDateTime,
-                                                                     firstDateTime.plusHours(9));
+                firstDateTime.plusHours(9));
         availability.setId(idGenerator.getAndIncrement());
         availability.setState(availabilityState);
 
@@ -417,7 +424,7 @@ public class SolverTest {
         Contract contract = getDefaultContract(idGenerator);
 
         Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
-                                          CovidRiskType.INOCULATED);
+                CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
 
         Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet(), false);
@@ -476,7 +483,7 @@ public class SolverTest {
         Contract contract = getDefaultContract(idGenerator);
 
         Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
-                                          CovidRiskType.INOCULATED);
+                CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
 
         Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet(), false);
@@ -545,7 +552,7 @@ public class SolverTest {
         Contract contract = getDefaultContract(idGenerator);
 
         Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
-                                          CovidRiskType.INOCULATED);
+                CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
 
         Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet(), false);
@@ -604,10 +611,10 @@ public class SolverTest {
 
         Contract contract = getDefaultContract(idGenerator);
         Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
-                                          CovidRiskType.INOCULATED);
+                CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
         Employee rotationEmployee = new Employee(TENANT_ID, "Anna", contract, Collections.emptySet(),
-                                                 CovidRiskType.INOCULATED);
+                CovidRiskType.INOCULATED);
         rotationEmployee.setId(idGenerator.getAndIncrement());
 
         OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
@@ -660,8 +667,8 @@ public class SolverTest {
         final int ROTATION_LENGTH = 7;
 
         RosterState rosterState = new RosterState(TENANT_ID, PUBLISH_NOTICE, START_DATE.minusDays(PUBLISH_NOTICE),
-                                                  PUBLISH_LENGTH, DRAFT_LENGTH, ROTATION_OFFSET, ROTATION_LENGTH,
-                                                  START_DATE.minusDays(2 * PUBLISH_NOTICE), ZoneId.systemDefault());
+                PUBLISH_LENGTH, DRAFT_LENGTH, ROTATION_OFFSET, ROTATION_LENGTH,
+                START_DATE.minusDays(2 * PUBLISH_NOTICE), ZoneId.systemDefault());
         rosterState.setId(idGenerator.getAndIncrement());
         return rosterState;
     }
@@ -679,65 +686,67 @@ public class SolverTest {
         return ROSTER_CONSTRAINT_CONFIGURATION;
     }
 
+    // FIXME Constraint name and weight are already coupled in RosterConstraintConfiguration.
+    //  This information should be read from OptaPlanner, not re-assembled here.
     private enum Constraints {
-        REQUIRED_SKILL_FOR_A_SHIFT("Required skill for a shift",
+        REQUIRED_SKILL_FOR_A_SHIFT(CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT,
                 ROSTER_CONSTRAINT_CONFIGURATION.getRequiredSkill().negate()),
-        UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE("Unavailable time slot for an employee",
+        UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE,
                 ROSTER_CONSTRAINT_CONFIGURATION.getUnavailableTimeSlot().negate()),
-        NO_MORE_THAN_2_CONSECUTIVE_SHIFTS("No more than 2 consecutive shifts",
+        NO_MORE_THAN_2_CONSECUTIVE_SHIFTS(CONSTRAINT_NO_MORE_THAN_2_CONSECUTIVE_SHIFTS,
                 ROSTER_CONSTRAINT_CONFIGURATION.getNoMoreThan2ConsecutiveShifts().negate()),
-        BREAKS_AT_LEAST_10_HOURS("Break between non-consecutive shifts is at least 10 hours",
+        BREAKS_AT_LEAST_10_HOURS(CONSTRAINT_BREAK_BETWEEN_NON_CONSECUTIVE_SHIFTS,
                 ROSTER_CONSTRAINT_CONFIGURATION.getBreakBetweenNonConsecutiveShiftsAtLeast10Hours().negate()),
-        DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Daily minutes must not exceed contract maximum",
+        DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                 ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumDailyMinutes().negate()),
-        WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Weekly minutes must not exceed contract maximum",
+        WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                 ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumWeeklyMinutes().negate()),
-        MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Monthly minutes must not exceed contract maximum",
+        MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                 ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumMonthlyMinutes().negate()),
-        YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Yearly minutes must not exceed contract maximum",
+        YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                 ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumYearlyMinutes().negate()),
-        ASSIGN_EVERY_SHIFT("Assign every shift",
+        ASSIGN_EVERY_SHIFT(CONSTRAINT_ASSIGN_EVERY_SHIFT,
                 ROSTER_CONSTRAINT_CONFIGURATION.getAssignEveryShift().negate()),
-        UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Undesired time slot for an employee",
+        UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE,
                 ROSTER_CONSTRAINT_CONFIGURATION.getUndesiredTimeSlot().negate()),
-        DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Desired time slot for an employee",
+        DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE,
                 ROSTER_CONSTRAINT_CONFIGURATION.getDesiredTimeSlot()),
-        EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE("Employee is not rotation employee",
+        EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE(CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE,
                 ROSTER_CONSTRAINT_CONFIGURATION.getNotRotationEmployee().negate());
 
         String constraintName;
         HardMediumSoftLongScore constraintWeight;
 
-        private Constraints(String constraintName, HardMediumSoftLongScore constraintWeight) {
+        Constraints(String constraintName, HardMediumSoftLongScore constraintWeight) {
             this.constraintName = constraintName;
             this.constraintWeight = constraintWeight;
         }
 
         public void verifyNumOfInstances(HardMediumSoftLongScoreVerifier<Roster> scoreVerifier, Roster roster,
-                                         int numOfInstances) {
+                int numOfInstances) {
             scoreVerifier.assertHardWeight(constraintName, constraintWeight.getHardScore() * numOfInstances, roster);
             scoreVerifier.assertMediumWeight(constraintName, constraintWeight.getMediumScore() * numOfInstances,
-                                             roster);
+                    roster);
             scoreVerifier.assertSoftWeight(constraintName, constraintWeight.getSoftScore() * numOfInstances, roster);
         }
     }
 
     private enum ContractField {
         DAILY(Constraints.DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM, 2 * 60, null, null, null,
-              Duration.ofHours(6), Duration.ofDays(1)),
+                Duration.ofHours(6), Duration.ofDays(1)),
         WEEKLY(Constraints.WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM, null, 2 * 60, null, null,
-               Duration.ofDays(1), Duration.ofDays(7)),
+                Duration.ofDays(1), Duration.ofDays(7)),
         MONTHLY(Constraints.MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM, null, null, 2 * 60, null,
                 Duration.ofDays(7), Duration.ofDays(31)),
         ANNUALLY(Constraints.YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM, null, null, null, 2 * 60,
-                 Duration.ofDays(31), Duration.ofDays(366));
+                Duration.ofDays(31), Duration.ofDays(366));
 
         Constraints constraint;
         Integer dailyHours, weeklyHours, monthlyHours, yearlyHours;
         Duration timeBetweenShifts, periodLength;
 
-        private ContractField(Constraints constraint, Integer dailyHours, Integer weeklyHours, Integer monthlyHours,
-                              Integer yearlyHours, Duration timeBetweenShifts, Duration periodLength) {
+        ContractField(Constraints constraint, Integer dailyHours, Integer weeklyHours, Integer monthlyHours,
+                Integer yearlyHours, Duration timeBetweenShifts, Duration periodLength) {
             this.constraint = constraint;
             this.dailyHours = dailyHours;
             this.weeklyHours = weeklyHours;
@@ -753,7 +762,7 @@ public class SolverTest {
 
         public Contract getContract(AtomicLong idGenerator) {
             Contract out = new Contract(TENANT_ID, "Contract", dailyHours, weeklyHours, monthlyHours,
-                                        yearlyHours);
+                    yearlyHours);
             out.setId(idGenerator.getAndIncrement());
             return out;
         }
