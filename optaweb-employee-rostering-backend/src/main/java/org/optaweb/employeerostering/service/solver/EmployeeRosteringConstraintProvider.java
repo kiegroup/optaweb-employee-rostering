@@ -88,7 +88,9 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                 .join(Shift.class,
                         equal(EmployeeAvailability::getEmployee, Shift::getEmployee),
                         lessThanOrEqual(EmployeeAvailability::getStartDateTime, Shift::getEndDateTime),
-                        greaterThanOrEqual(EmployeeAvailability::getEndDateTime, Shift::getStartDateTime));
+                        greaterThanOrEqual(EmployeeAvailability::getEndDateTime, Shift::getStartDateTime))
+                .filter((availability, shift) ->
+                        !Objects.equals(availability.getEndDateTime(), shift.getStartDateTime()));
     }
 
     private static UniConstraintStream<Shift> getAssignedShiftConstraintStream(ConstraintFactory constraintFactory) {
@@ -219,12 +221,11 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
         return getAssignedShiftConstraintStream(constraintFactory)
                 .join(Shift.class,
                         equal(Shift::getEmployee),
-                        lessThanOrEqual(Shift::getStartDateTime),
-                        lessThanOrEqual(Shift::getStartDateTime, Shift::getEndDateTime),
-                        greaterThanOrEqual(Shift::getEndDateTime, Shift::getStartDateTime))
-                .filter((s1, s2) -> !Objects.equals(s1, s2))
-                .filter((s1, s2) -> !Objects.equals(s1.getEndDateTime(), s2.getStartDateTime()))
-                .penalizeConfigurableLong(CONSTRAINT_NO_OVERLAPPING_SHIFTS, (s1, s2) -> s2.getLengthInMinutes());
+                        greaterThanOrEqual(Shift::getStartDateTime),
+                        lessThanOrEqual(Shift::getEndDateTime, Shift::getStartDateTime))
+                .filter((shift, startDuringFirstShift) -> !Objects.equals(shift, startDuringFirstShift))
+                .penalizeConfigurableLong(CONSTRAINT_NO_OVERLAPPING_SHIFTS,
+                        (shift, startsDuringFirstShift) -> startsDuringFirstShift.getLengthInMinutes());
     }
 
     Constraint noMoreThanTwoConsecutiveShifts(ConstraintFactory constraintFactory) {

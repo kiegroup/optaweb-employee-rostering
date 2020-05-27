@@ -32,11 +32,6 @@ public class DateTimeUtils {
                                            zoneId.getRules().getOffset(dateTime.toInstant()));
     }
 
-    public static boolean doTimeslotsIntersect(OffsetDateTime start1, OffsetDateTime end1, OffsetDateTime start2,
-                                               OffsetDateTime end2) {
-        return !start1.isAfter(end2) && !end1.isBefore(start2);
-    }
-
     public static boolean sameWeek(DayOfWeek weekStarting, OffsetDateTime dateTime1, OffsetDateTime dateTime2) {
         // ISO-8601 weeks begin on Monday, so we shift dates that begin on weekStarting to Monday
         // To get a week numbering system that use weekStarting instead of Monday

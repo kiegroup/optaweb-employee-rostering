@@ -144,24 +144,19 @@ rule "Unavailable time slot for an employee"
                 $startDateTime : startDateTime,
                 $endDateTime : endDateTime)
         Shift(employee == $e,
-              DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime, startDateTime, endDateTime))
+            $startDateTime <= endDateTime,
+            $endDateTime >= startDateTime,
+            $endDateTime != startDateTime)
     then
         scoreHolder.penalize(kcontext, $availability.getDuration().toMinutes());
 end
 
 rule "No overlapping shifts"
     when
-        $s : Shift(
-                employee != null,
-                $e : employee,
-                $firstStartDateTime: startDateTime,
-                $firstEndDateTime : endDateTime)
-        $s2: Shift(
-                employee == $e,
-                this != $s,
-                $firstStartDateTime <= startDateTime,
-                $firstEndDateTime != startDateTime,
-                DateTimeUtils.doTimeslotsIntersect($firstStartDateTime, $firstEndDateTime, startDateTime, endDateTime))
+        $s : Shift(employee != null, $e : employee, $firstStartDateTime: startDateTime, $firstEndDateTime : endDateTime)
+        $s2: Shift(employee == $e, this != $s,
+            $firstStartDateTime <= endDateTime,
+            $firstEndDateTime >= startDateTime)
     then
         scoreHolder.penalize(kcontext, $s2.getLengthInMinutes());
 end
@@ -293,7 +288,9 @@ rule "Undesired time slot for an employee"
                 $startDateTime : startDateTime,
                 $endDateTime : endDateTime)
         Shift(employee == $e,
-              DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime, startDateTime, endDateTime))
+            $startDateTime <= endDateTime,
+            $endDateTime >= startDateTime,
+            $endDateTime != startDateTime)
     then
         scoreHolder.penalize(kcontext, $availability.getDuration().toMinutes());
 end
@@ -306,7 +303,9 @@ rule "Desired time slot for an employee"
                 $startDateTime : startDateTime,
                 $endDateTime : endDateTime)
         Shift(employee == $e,
-              DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime, startDateTime, endDateTime))
+            $startDateTime <= endDateTime,
+            $endDateTime >= startDateTime,
+            $endDateTime != startDateTime)
     then
         scoreHolder.reward(kcontext, $availability.getDuration().toMinutes());
 end
