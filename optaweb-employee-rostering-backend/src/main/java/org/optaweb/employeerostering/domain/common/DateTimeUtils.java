@@ -17,10 +17,8 @@
 package org.optaweb.employeerostering.domain.common;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.OffsetTime;
 import java.time.ZoneId;
 import java.time.temporal.IsoFields;
 
@@ -37,11 +35,6 @@ public class DateTimeUtils {
     public static boolean doTimeslotsIntersect(OffsetDateTime start1, OffsetDateTime end1, OffsetDateTime start2,
                                                OffsetDateTime end2) {
         return !start1.isAfter(end2) && !end1.isBefore(start2);
-    }
-
-    public static boolean doTimeslotsIntersect(LocalDate date, OffsetTime start1, OffsetTime end1,
-                                               OffsetDateTime start2, OffsetDateTime end2) {
-        return doTimeslotsIntersect(start1.atDate(date), end1.atDate(date), start2, end2);
     }
 
     public static boolean sameWeek(DayOfWeek weekStarting, OffsetDateTime dateTime1, OffsetDateTime dateTime2) {

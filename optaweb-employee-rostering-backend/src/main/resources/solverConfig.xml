@@ -2,5 +2,6 @@
 <solver>
   <scoreDirectorFactory>
     <scoreDrl>org/optaweb/employeerostering/service/solver/employeeRosteringScoreRules.drl</scoreDrl>
+    <!--<constraintProviderClass>org.optaweb.employeerostering.service.solver.EmployeeRosteringConstraintProvider</constraintProviderClass>-->
   </scoreDirectorFactory>
 </solver>
