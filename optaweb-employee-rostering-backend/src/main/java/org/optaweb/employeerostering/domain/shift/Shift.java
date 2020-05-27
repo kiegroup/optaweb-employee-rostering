@@ -19,11 +19,9 @@ package org.optaweb.employeerostering.domain.shift;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -46,13 +44,12 @@ import org.optaweb.employeerostering.domain.spot.Spot;
 @PlanningEntity(movableEntitySelectionFilter = MovableShiftFilter.class)
 public class Shift extends AbstractPersistable {
 
+    private final AtomicLong lengthInMinutes = new AtomicLong(-1);
     @ManyToOne
     private Employee rotationEmployee;
-
     @NotNull
     @ManyToOne
     private Spot spot;
-
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "ShiftRequiredSkillSet",
@@ -60,12 +57,10 @@ public class Shift extends AbstractPersistable {
             inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id")
     )
     private Set<Skill> requiredSkillSet;
-
     @NotNull
     private OffsetDateTime startDateTime;
     @NotNull
     private OffsetDateTime endDateTime;
-
     @PlanningPin
     private boolean pinnedByUser = false;
 
@@ -85,12 +80,12 @@ public class Shift extends AbstractPersistable {
     }
 
     public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime,
-                 Employee rotationEmployee) {
+            Employee rotationEmployee) {
         this(tenantId, spot, startDateTime, endDateTime, rotationEmployee, new HashSet<>(), null);
     }
 
     public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime,
-                 Employee rotationEmployee, Set<Skill> requiredSkillSet, Employee originalEmployee) {
+            Employee rotationEmployee, Set<Skill> requiredSkillSet, Employee originalEmployee) {
         super(tenantId);
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
@@ -109,12 +104,12 @@ public class Shift extends AbstractPersistable {
     }
 
     public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot, Employee rotationEmployee,
-                 Set<Skill> requiredSkillSet, Employee originalEmployee) {
+            Set<Skill> requiredSkillSet, Employee originalEmployee) {
         super(shiftView);
         this.startDateTime = OffsetDateTime.of(shiftView.getStartDateTime(),
-                                               zoneId.getRules().getOffset(shiftView.getStartDateTime()));
+                zoneId.getRules().getOffset(shiftView.getStartDateTime()));
         this.endDateTime = OffsetDateTime.of(shiftView.getEndDateTime(),
-                                             zoneId.getRules().getOffset(shiftView.getEndDateTime()));
+                zoneId.getRules().getOffset(shiftView.getEndDateTime()));
         this.spot = spot;
         this.pinnedByUser = shiftView.isPinnedByUser();
         this.rotationEmployee = rotationEmployee;
@@ -135,8 +130,14 @@ public class Shift extends AbstractPersistable {
         return !endDateTime.isAfter(other.startDateTime);
     }
 
-    public long getLengthInMinutes() {
-        return startDateTime.until(endDateTime, ChronoUnit.MINUTES);
+    public long getLengthInMinutes() { // Thread-safe cache.
+        long currentLengthInMinutes = lengthInMinutes.get();
+        if (currentLengthInMinutes >= 0) {
+            return currentLengthInMinutes;
+        }
+        long newLengthInMinutes = startDateTime.until(endDateTime, ChronoUnit.MINUTES);
+        lengthInMinutes.set(newLengthInMinutes);
+        return newLengthInMinutes;
     }
 
     public boolean isMoved() {
@@ -146,45 +147,6 @@ public class Shift extends AbstractPersistable {
     public boolean hasRequiredSkills() {
         return employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()) &&
                 employee.getSkillProficiencySet().containsAll(requiredSkillSet);
-    }
-
-    public static long calculateLoad(Collection<Integer> hourlyCounts) {
-        long sumSquares = 0;
-        for (int hourlyCount : hourlyCounts) {
-            sumSquares += hourlyCount * hourlyCount;
-        }
-        long squareRootOfSums = Math.round(Math.sqrt(sumSquares) * 1000);
-        return squareRootOfSums;
-    }
-
-    private void adjustHourlyCounts(Map<OffsetDateTime, Integer> hourlyCountsMap,
-                                    Function<Integer, Integer> countAdjuster) {
-        long hourCount = getLengthInMinutes();
-        OffsetDateTime baseStartDateTime = startDateTime.truncatedTo(ChronoUnit.HOURS);
-        for (int hour = 0; hour < hourCount; hour++) {
-            OffsetDateTime actualHour = baseStartDateTime.plusHours(hour);
-            hourlyCountsMap.compute(actualHour, (k, count) -> countAdjuster.apply(count));
-        }
-    }
-
-    public void increaseHourlyCounts(Map<OffsetDateTime, Integer> hourlyCountsMap) {
-        adjustHourlyCounts(hourlyCountsMap, count -> {
-            if (count == null) {
-                return 1;
-            } else {
-                return count + 1;
-            }
-        });
-    }
-
-    public void decreaseHourlyCounts(Map<OffsetDateTime, Integer> hourlyCountsMap) {
-        adjustHourlyCounts(hourlyCountsMap, count -> {
-            if (count < 2) {
-                return null;
-            } else {
-                return count - 1;
-            }
-        });
     }
 
     // ************************************************************************
@@ -205,6 +167,7 @@ public class Shift extends AbstractPersistable {
 
     public void setStartDateTime(OffsetDateTime startDateTime) {
         this.startDateTime = startDateTime;
+        this.lengthInMinutes.set(-1);
     }
 
     public OffsetDateTime getEndDateTime() {
@@ -213,6 +176,7 @@ public class Shift extends AbstractPersistable {
 
     public void setEndDateTime(OffsetDateTime endDateTime) {
         this.endDateTime = endDateTime;
+        this.lengthInMinutes.set(-1);
     }
 
     public boolean isPinnedByUser() {
@@ -257,7 +221,7 @@ public class Shift extends AbstractPersistable {
 
     public Shift inTimeZone(ZoneId zoneId) {
         Shift out = new Shift(zoneId, new ShiftView(zoneId, this), getSpot(), getRotationEmployee(),
-                              getRequiredSkillSet(), getOriginalEmployee());
+                getRequiredSkillSet(), getOriginalEmployee());
         out.setEmployee(getEmployee());
         return out;
     }
