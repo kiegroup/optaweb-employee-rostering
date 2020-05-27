@@ -70,6 +70,18 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_ASSIGN_EVERY_SHIFT;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_BREAK_BETWEEN_NON_CONSECUTIVE_SHIFTS;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_NO_MORE_THAN_2_CONSECUTIVE_SHIFTS;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -80,6 +92,7 @@ public class SolverTest {
     private static final LocalDate START_DATE = LocalDate.of(2019, 5, 13);
     private static final RosterConstraintConfiguration ROSTER_CONSTRAINT_CONFIGURATION =
             new RosterConstraintConfiguration();
+    private static final String ROSTER_PATH_URI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -94,7 +107,7 @@ public class SolverTest {
     }
 
     private ResponseEntity<Void> terminateSolver(Integer tenantId) {
-        return restTemplate.postForEntity(rosterPathURI + "terminate", null, Void.class, tenantId);
+        return restTemplate.postForEntity(ROSTER_PATH_URI + "terminate", null, Void.class, tenantId);
     }
 
     private SolverFactory<Roster> getSolverFactory() {
@@ -668,30 +681,32 @@ public class SolverTest {
         return ROSTER_CONSTRAINT_CONFIGURATION;
     }
 
+    // FIXME Constraint name and weight are already coupled in RosterConstraintConfiguration.
+    //  This information should be read from OptaPlanner, not re-assembled here.
     private enum Constraints {
-        REQUIRED_SKILL_FOR_A_SHIFT("Required skill for a shift",
+        REQUIRED_SKILL_FOR_A_SHIFT(CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT,
                 ROSTER_CONSTRAINT_CONFIGURATION.getRequiredSkill().negate()),
-        UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE("Unavailable time slot for an employee",
+        UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE,
                 ROSTER_CONSTRAINT_CONFIGURATION.getUnavailableTimeSlot().negate()),
-        NO_MORE_THAN_2_CONSECUTIVE_SHIFTS("No more than 2 consecutive shifts",
+        NO_MORE_THAN_2_CONSECUTIVE_SHIFTS(CONSTRAINT_NO_MORE_THAN_2_CONSECUTIVE_SHIFTS,
                 ROSTER_CONSTRAINT_CONFIGURATION.getNoMoreThan2ConsecutiveShifts().negate()),
-        BREAKS_AT_LEAST_10_HOURS("Break between non-consecutive shifts is at least 10 hours",
+        BREAKS_AT_LEAST_10_HOURS(CONSTRAINT_BREAK_BETWEEN_NON_CONSECUTIVE_SHIFTS,
                 ROSTER_CONSTRAINT_CONFIGURATION.getBreakBetweenNonConsecutiveShiftsAtLeast10Hours().negate()),
-        DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Daily minutes must not exceed contract maximum",
+        DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                 ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumDailyMinutes().negate()),
-        WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Weekly minutes must not exceed contract maximum",
+        WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                 ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumWeeklyMinutes().negate()),
-        MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Monthly minutes must not exceed contract maximum",
+        MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                 ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumMonthlyMinutes().negate()),
-        YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Yearly minutes must not exceed contract maximum",
+        YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                 ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumYearlyMinutes().negate()),
-        ASSIGN_EVERY_SHIFT("Assign every shift",
+        ASSIGN_EVERY_SHIFT(CONSTRAINT_ASSIGN_EVERY_SHIFT,
                 ROSTER_CONSTRAINT_CONFIGURATION.getAssignEveryShift().negate()),
-        UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Undesired time slot for an employee",
+        UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE,
                 ROSTER_CONSTRAINT_CONFIGURATION.getUndesiredTimeSlot().negate()),
-        DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Desired time slot for an employee",
+        DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE,
                 ROSTER_CONSTRAINT_CONFIGURATION.getDesiredTimeSlot()),
-        EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE("Employee is not rotation employee",
+        EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE(CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE,
                 ROSTER_CONSTRAINT_CONFIGURATION.getNotRotationEmployee().negate());
 
         String constraintName;
