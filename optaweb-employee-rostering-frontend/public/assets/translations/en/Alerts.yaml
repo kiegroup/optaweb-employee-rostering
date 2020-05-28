@@ -168,6 +168,14 @@ generic:
   title: Exception
   message: "{{message}}"
 
+badFileType:
+  title: Unsupported File Type
+  message: "Only the following file types are supported: {{fileTypes}}"
+
+importSuccessful:
+  title: Data Imported Successfully
+  message: Data was imported sucessfully.
+
 exception:
   title: Server Exception
   message: "<0>See Stack Trace.</0>"
