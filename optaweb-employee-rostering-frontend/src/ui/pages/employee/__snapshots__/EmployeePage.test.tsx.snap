@@ -4,6 +4,11 @@ exports[`Employees page should render correctly with a few employees 1`] = `
 <div>
   <div>
     <FileUpload
+      dropzoneProps={
+        Object {
+          "accept": ".xlsx",
+        }
+      }
       id="file"
       name="file"
       onChange={[Function]}
@@ -646,6 +651,11 @@ exports[`Employees page should render correctly with no employees 1`] = `
 >
   <div>
     <FileUpload
+      dropzoneProps={
+        Object {
+          "accept": ".xlsx",
+        }
+      }
       id="file"
       name="file"
       onChange={[Function]}

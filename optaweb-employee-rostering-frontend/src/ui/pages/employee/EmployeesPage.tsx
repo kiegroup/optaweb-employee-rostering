@@ -17,6 +17,7 @@
 import * as React from 'react';
 import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
 import { employeeSelectors, employeeOperations } from 'store/employee';
+import { alert } from 'store/alert';
 import { contractSelectors } from 'store/contract';
 import { skillSelectors } from 'store/skill';
 import { Employee, getIconForCovidRisk, CovidRiskType } from 'domain/Employee';
@@ -74,6 +75,7 @@ export interface DispatchProps {
   updateEmployee: typeof employeeOperations.updateEmployee;
   removeEmployee: typeof employeeOperations.removeEmployee;
   uploadEmployeeList: typeof employeeOperations.uploadEmployeeList;
+  showErrorMessage: typeof alert.showErrorMessage;
 }
 
 const mapDispatchToProps: DispatchProps = {
@@ -81,6 +83,7 @@ const mapDispatchToProps: DispatchProps = {
   updateEmployee: employeeOperations.updateEmployee,
   removeEmployee: employeeOperations.removeEmployee,
   uploadEmployeeList: employeeOperations.uploadEmployeeList,
+  showErrorMessage: alert.showErrorMessage,
 };
 
 export type Props = RouteComponentProps & StateProps & DispatchProps & WithTranslation;
@@ -217,10 +220,17 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         <FileUpload
           id="file"
           name="file"
+          dropzoneProps={{
+            accept: '.xlsx',
+          }}
           onChange={
             (file) => {
-              if (typeof file !== 'string') {
+              if (file instanceof File) {
                 this.props.uploadEmployeeList(file);
+              } else {
+                // If a file with the wrong file extension is selected,
+                // file is the empty string instead of a File object
+                this.props.showErrorMessage('badFileType', { fileTypes: 'Excel (.xlsx)' });
               }
             }}
         />
