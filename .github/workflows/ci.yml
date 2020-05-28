@@ -2,6 +2,9 @@ name: CI
 
 on: [push, pull_request]
 
+env:
+  SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+
 jobs:
   os-java:
     name: OS x Java
