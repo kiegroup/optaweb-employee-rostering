@@ -74,7 +74,7 @@ RefreshEmployeeListAction> = () => (dispatch, state, client) => {
 };
 
 export const uploadEmployeeList:
-ThunkCommandFactory<File, SetEmployeeListLoadingAction |
+ThunkCommandFactory<File, AddAlertAction | SetEmployeeListLoadingAction |
 RefreshEmployeeListAction | SetSkillListLoadingAction | RefreshSkillListAction |
 RefreshContractListAction | SetContractListLoadingAction > = file => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
@@ -83,6 +83,7 @@ RefreshContractListAction | SetContractListLoadingAction > = file => (dispatch, 
   return client.uploadFile<Employee[]>(`/tenant/${tenantId}/employee/import`, file)
     .then(employeeList => client.get<Skill[]>(`/tenant/${tenantId}/skill/`)
       .then(skillList => client.get<Contract[]>(`/tenant/${tenantId}/contract/`).then((contractList) => {
+        dispatch(alert.showSuccessMessage('importSuccessful'));
         dispatch(skillActions.refreshSkillList(skillList));
         dispatch(skillActions.setIsSkillListLoading(false));
         dispatch(contractActions.refreshContractList(contractList));
