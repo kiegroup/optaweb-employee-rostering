@@ -225,6 +225,7 @@ const noEmployees: Props = {
   addEmployee: jest.fn(),
   updateEmployee: jest.fn(),
   removeEmployee: jest.fn(),
+  uploadEmployeeList: jest.fn(),
   ...getRouterProps('/contacts', {}),
 };
 
@@ -296,5 +297,6 @@ const twoEmployees: Props = {
   addEmployee: jest.fn(),
   updateEmployee: jest.fn(),
   removeEmployee: jest.fn(),
+  uploadEmployeeList: jest.fn(),
   ...getRouterProps('/employees', {}),
 };

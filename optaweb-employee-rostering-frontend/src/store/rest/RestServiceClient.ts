@@ -47,7 +47,7 @@ export default class RestServiceClient {
   post<T>(url: string, params: any): Promise<T> {
     return this.restClient.post<T>(url, params).then(this.handleResponse);
   }
-  
+
   uploadFile<T>(url: string, file: File): Promise<T> {
     const data = new FormData();
     data.append('file', file);
