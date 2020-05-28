@@ -218,13 +218,14 @@ export class EmployeesPage extends DataTable<Employee, Props> {
           id="file"
           name="file"
           onChange={
-            file => {
-              if (typeof file != 'string') {
+            (file) => {
+              if (typeof file !== 'string') {
                 this.props.uploadEmployeeList(file);
               }
-          }}
+            }}
         />
-      </div>);
+      </div>
+    );
     if (this.props.contractList.length === 0) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
