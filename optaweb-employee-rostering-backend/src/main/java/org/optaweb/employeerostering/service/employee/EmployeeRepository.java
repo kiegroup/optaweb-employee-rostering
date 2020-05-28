@@ -34,6 +34,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "order by LOWER(e.name)")
     List<Employee> findAllByTenantId(@Param("tenantId") Integer tenantId, Pageable pageable);
 
+    @Query("select e from Employee e " +
+            "where e.tenantId = :tenantId and e.name = :name")
+    Employee findEmployeeByName(@Param("tenantId") Integer tenantId, @Param("name") String name);
+
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from Employee e where e.tenantId = :tenantId")
     void deleteForTenant(@Param("tenantId") Integer tenantId);

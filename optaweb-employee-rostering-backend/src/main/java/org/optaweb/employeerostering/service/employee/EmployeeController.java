@@ -56,12 +56,16 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
     private final EmployeeListXlsxFileIO employeeListXlsxFileIO;
+    private final EmployeeRepository employeeRepository;
 
-    public EmployeeController(EmployeeService employeeService, EmployeeListXlsxFileIO employeeListXlsxFileIO) {
+    public EmployeeController(EmployeeService employeeService, EmployeeRepository employeeRepository,
+                              EmployeeListXlsxFileIO employeeListXlsxFileIO) {
         this.employeeService = employeeService;
         Assert.notNull(employeeService, "employeeService must not be null.");
         this.employeeListXlsxFileIO = employeeListXlsxFileIO;
         Assert.notNull(employeeListXlsxFileIO, "employeeListXlsxFileIO must not be null.");
+        this.employeeRepository = employeeRepository;
+        Assert.notNull(employeeRepository, "employeeRepository must not be null");
     }
 
     // ************************************************************************
@@ -113,7 +117,16 @@ public class EmployeeController {
             addedEmployeeSet.add(employee.getName().toLowerCase());
             return Stream.of(employee);
         }).forEach(employee -> {
-            employeeService.createEmployee(tenantId, employee);
+            Employee oldEmployee = employeeRepository.findEmployeeByName(tenantId, employee.getName());
+            if (oldEmployee != null) {
+                employee.setContract(oldEmployee.getContract());
+                employee.setCovidRiskType(oldEmployee.getCovidRiskType());
+                employee.setId(oldEmployee.getId());
+                employee.setVersion(oldEmployee.getVersion());
+                employeeService.updateEmployee(tenantId, employee);
+            } else {
+                employeeService.createEmployee(tenantId, employee);
+            }
         });
 
         return getEmployeeList(tenantId);
