@@ -58,7 +58,7 @@ export default class RestServiceClient {
       throw err;
     });
   }
-  
+
   uploadFile<T>(url: string, file: File): Promise<T> {
     const data = new FormData();
     data.append('file', file);
