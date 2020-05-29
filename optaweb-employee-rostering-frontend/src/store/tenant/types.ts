@@ -22,7 +22,11 @@ export enum ActionType {
   ADD_TENANT = 'ADD_TENANT',
   REMOVE_TENANT = 'REMOVE_TENANT',
   REFRESH_TENANT_LIST = 'REFRESH_TENANT_LIST',
-  REFRESH_SUPPORTED_TIMEZONES = 'REFRESH_SUPPORTED_TIMEZONES'
+  REFRESH_SUPPORTED_TIMEZONES = 'REFRESH_SUPPORTED_TIMEZONES',
+}
+
+export enum ConnectionActionType {
+  SET_CONNECTED_ACTION = 'SET_CONNECTED_ACTION'
 }
 
 export interface ChangeTenantAction extends Action<ActionType.CHANGE_TENANT> {
@@ -45,6 +49,12 @@ export interface RefreshTenantListAction extends Action<ActionType.REFRESH_TENAN
 export interface RefreshSupportedTimezoneListAction extends Action<ActionType.REFRESH_SUPPORTED_TIMEZONES> {
   readonly timezoneList: string[];
 }
+
+export interface SetConnectedAction extends Action<ConnectionActionType.SET_CONNECTED_ACTION> {
+  readonly isConnected: boolean;
+}
+
+export type ConnectAction = SetConnectedAction;
 
 // TODO: Add roster parameterization (somewhere)
 

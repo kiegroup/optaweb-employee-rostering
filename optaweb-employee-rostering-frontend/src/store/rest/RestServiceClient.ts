@@ -20,10 +20,13 @@ import { alert } from 'store/alert';
 import { ServerSideExceptionInfo, BasicObject } from 'types';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppState } from 'store/types';
+import { Store } from 'redux';
 
 const typeJsonRegex = new RegExp('application/json.*');
 export default class RestServiceClient {
   restClient: AxiosInstance;
+
+  store: Store<AppState> | null;
 
   dispatch: ThunkDispatch<AppState, any, any> | null;
 
@@ -33,11 +36,16 @@ export default class RestServiceClient {
       validateStatus: () => true,
     });
     this.dispatch = null;
+    this.store = null;
     this.handleResponse = this.handleResponse.bind(this);
   }
 
   setDispatch(dispatch: ThunkDispatch<AppState, any, any>) {
     this.dispatch = dispatch;
+  }
+
+  setStore(store: Store<AppState>) {
+    this.store = store;
   }
 
   get<T>(url: string): Promise<T> {
@@ -61,8 +69,10 @@ export default class RestServiceClient {
     if (res.status >= 200 && res.status <= 300) {
       return Promise.resolve(res.data);
     }
-    if (this.dispatch !== null) {
-      if (typeJsonRegex.test(res.headers['content-type'])) {
+    if (this.dispatch !== null && this.store !== null) {
+      if (!this.store.getState().isConnected) {
+        // Do nothing
+      } else if (typeJsonRegex.test(res.headers['content-type'])) {
         this.dispatch(alert.showServerError(res.data as unknown as ServerSideExceptionInfo & BasicObject));
       } else {
         this.dispatch(alert.showServerErrorMessage(res.statusText));
@@ -70,6 +80,6 @@ export default class RestServiceClient {
       return Promise.reject(res.status);
     }
 
-    throw Error('Dispatch was not passed to RestServiceClient');
+    throw Error('Dispatch or Store was not passed to RestServiceClient');
   }
 }

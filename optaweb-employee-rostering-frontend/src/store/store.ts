@@ -23,7 +23,7 @@ import thunk from 'redux-thunk';
 import axios from 'axios';
 import RestServiceClient from './rest';
 import { AppState } from './types';
-import tenantReducer from './tenant';
+import tenantReducer, { connectionReducer } from './tenant';
 import skillReducer from './skill/reducers';
 import spotReducer from './spot/reducers';
 import contractReducer from './contract/reducers';
@@ -64,6 +64,7 @@ export function configureStore(
     availabilityRoster: availabilityRosterReducer,
     solverState: solverReducer,
     alerts: alertReducer,
+    isConnected: connectionReducer,
   });
 
   /* if (process.env.NODE_ENV !== 'production' && module.hot) {
@@ -77,5 +78,6 @@ export function configureStore(
   );
 
   restServiceClient.setDispatch(store.dispatch);
+  restServiceClient.setStore(store);
   return store;
 }

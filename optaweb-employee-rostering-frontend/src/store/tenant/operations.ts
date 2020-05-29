@@ -36,7 +36,7 @@ import { RouteComponentProps } from 'react-router';
 import { setTenantIdInUrl } from 'util/BookmarkableUtils';
 import {
   ChangeTenantAction, RefreshTenantListAction, RefreshSupportedTimezoneListAction,
-  AddTenantAction, RemoveTenantAction,
+  AddTenantAction, RemoveTenantAction, SetConnectedAction,
 } from './types';
 import * as actions from './actions';
 import { ThunkCommandFactory } from '../types';
@@ -58,7 +58,14 @@ function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<an
     dispatch(contractOperations.refreshContractList()),
     dispatch(employeeOperations.refreshEmployeeList()),
     dispatch(shiftTemplateOperations.refreshShiftTemplateList()),
-  ]);
+  ]).then(() => {
+    dispatch(actions.setConnectionStatus(true));
+  }).catch(() => {
+    dispatch(actions.setConnectionStatus(false));
+    setTimeout(() => {
+      dispatch(refreshTenantList());
+    }, 1000);
+  });
 }
 
 export const changeTenant: ThunkCommandFactory<{ tenantId: number; routeProps: RouteComponentProps },
@@ -70,7 +77,7 @@ ChangeTenantAction> = params => (dispatch) => {
 };
 
 export const refreshTenantList:
-ThunkCommandFactory<void, RefreshTenantListAction> = () => (dispatch, state, client) => (
+ThunkCommandFactory<void, RefreshTenantListAction | SetConnectedAction> = () => (dispatch, state, client) => (
   client.get<Tenant[]>('/tenant/').then((tenantList) => {
     const { currentTenantId } = state().tenantData;
     if (tenantList.filter(tenant => tenant.id === currentTenantId).length !== 0) {
@@ -82,6 +89,11 @@ ThunkCommandFactory<void, RefreshTenantListAction> = () => (dispatch, state, cli
       dispatch(actions.refreshTenantList({ tenantList, currentTenantId: 0 }));
     }
     refreshData(dispatch);
+  }).catch(() => {
+    dispatch(actions.setConnectionStatus(false));
+    setTimeout(() => {
+      dispatch(refreshTenantList());
+    }, 1000);
   }));
 
 export const addTenant:

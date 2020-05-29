@@ -17,10 +17,15 @@
 import { Tenant } from 'domain/Tenant';
 import { ActionFactory } from '../types';
 import {
-  ActionType, ChangeTenantAction, RefreshTenantListAction, AddTenantAction,
-  RefreshSupportedTimezoneListAction,
+  ActionType, ConnectionActionType, ChangeTenantAction, RefreshTenantListAction,
+  AddTenantAction, RefreshSupportedTimezoneListAction, SetConnectedAction,
   RemoveTenantAction,
 } from './types';
+
+export const setConnectionStatus: ActionFactory<boolean, SetConnectedAction> = isConnected => ({
+  type: ConnectionActionType.SET_CONNECTED_ACTION,
+  isConnected,
+});
 
 export const changeTenant: ActionFactory<number, ChangeTenantAction> = newTenantId => ({
   type: ActionType.CHANGE_TENANT,

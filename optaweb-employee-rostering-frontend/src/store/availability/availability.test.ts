@@ -300,4 +300,5 @@ const state: AppState = {
   solverState: {
     solverStatus: 'TERMINATED',
   },
+  isConnected: true,
 };

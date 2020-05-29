@@ -15,13 +15,15 @@
  */
 
 import { withElement, withoutElement } from 'util/ImmutableCollectionOperations';
-import { ActionType, TenantData, TenantAction } from './types';
+import { ActionType, TenantData, TenantAction, ConnectAction, ConnectionActionType } from './types';
 
 const initialState: TenantData = {
   currentTenantId: 0,
   tenantList: [],
   timezoneList: [],
 };
+
+const initialConnectionState = true;
 
 const tenantReducer = (state = initialState, action: TenantAction): TenantData => {
   switch (action.type) {
@@ -40,6 +42,15 @@ const tenantReducer = (state = initialState, action: TenantAction): TenantData =
     case ActionType.REFRESH_SUPPORTED_TIMEZONES: {
       return { ...state, timezoneList: action.timezoneList };
     }
+    default:
+      return state;
+  }
+};
+
+export const connectionReducer = (state = initialConnectionState, action: ConnectAction): boolean => {
+  switch (action.type) {
+    case ConnectionActionType.SET_CONNECTED_ACTION:
+      return action.isConnected;
     default:
       return state;
   }

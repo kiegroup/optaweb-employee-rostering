@@ -70,4 +70,5 @@ export interface AppState {
   readonly availabilityRoster: CurrentAvailabilityRoster;
   readonly solverState: CurrentSolverState;
   readonly alerts: AlertList;
+  readonly isConnected: boolean;
 }

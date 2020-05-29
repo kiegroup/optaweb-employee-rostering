@@ -1,0 +1,3 @@
+cannotConnect: Cannot Connect
+cannotConnectMsg:
+  Please check your network connection. When connection is available the application will be functional again.

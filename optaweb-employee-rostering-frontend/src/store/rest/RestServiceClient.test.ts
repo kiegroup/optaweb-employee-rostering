@@ -16,8 +16,10 @@
 import { alert } from 'store/alert';
 import { AxiosStatic } from 'axios';
 import { ServerSideExceptionInfo, BasicObject } from 'types';
-import RestServiceClient from './RestServiceClient';
+import { mockStore } from 'store/mockStore';
 
+
+const RestServiceClient = jest.requireActual('./RestServiceClient').default;
 const mockGet = jest.fn();
 const mockPost = jest.fn();
 const mockPut = jest.fn();
@@ -40,6 +42,7 @@ beforeEach(() => {
   mockDelete.mockClear();
   mockCreate.mockClear();
 });
+
 
 describe('Rest Service Client', () => {
   it('Should call axios constructor with correct arguments', () => {
@@ -167,6 +170,7 @@ describe('Rest Service Client', () => {
     const restServiceClient = new RestServiceClient(baseURL, axios);
     const data = 'Error';
     restServiceClient.setDispatch(dispatch);
+    restServiceClient.setStore(connectedStore);
     const errorStatus = 'I am a teapot';
     const response = {
       status: 404,
@@ -195,6 +199,7 @@ describe('Rest Service Client', () => {
       exceptionCause: null,
     };
     restServiceClient.setDispatch(dispatch);
+    restServiceClient.setStore(connectedStore);
     const errorStatus = 'I am a teapot';
     const response = {
       status: 404,
@@ -208,6 +213,36 @@ describe('Rest Service Client', () => {
     await expect(restServiceClient.handleResponse(response)).rejects.toEqual(404);
     expect(dispatch).toBeCalledWith(alert.showServerError(data));
   });
+
+  it('Should reject the promise on failure and not show an alert of exception if it has not connected yet',
+    async () => {
+      const dispatch = jest.fn();
+
+      const baseURL = '/rest';
+      const restServiceClient = new RestServiceClient(baseURL, axios);
+      const data: ServerSideExceptionInfo & BasicObject = {
+        i18nKey: 'key',
+        stackTrace: [],
+        exceptionMessage: 'Hi',
+        messageParameters: [],
+        exceptionClass: 'Clazz',
+        exceptionCause: null,
+      };
+      restServiceClient.setDispatch(dispatch);
+      restServiceClient.setStore(unconnectedStore);
+      const errorStatus = 'I am a teapot';
+      const response = {
+        status: 404,
+        data,
+        statusText: errorStatus,
+        headers: {
+          'content-type': 'application/json;charset=utf-8',
+        },
+        config: {},
+      };
+      await expect(restServiceClient.handleResponse(response)).rejects.toEqual(404);
+      expect(dispatch).not.toBeCalled();
+    });
 
   it('Should throw an Error if dispatch is not set', async () => {
     const baseURL = '/rest';
@@ -225,6 +260,102 @@ describe('Rest Service Client', () => {
       headers: {},
       config: {},
     };
-    await expect(() => restServiceClient.handleResponse(response)).toThrow();
+    expect(() => restServiceClient.handleResponse(response)).toThrow();
   });
 });
+
+const connectedStore = mockStore({
+  tenantData: {
+    currentTenantId: 0,
+    tenantList: [],
+    timezoneList: ['America/Toronto'],
+  },
+  employeeList: {
+    isLoading: false,
+    employeeMapById: new Map(),
+  },
+  contractList: {
+    isLoading: false,
+    contractMapById: new Map(),
+  },
+  spotList: {
+    isLoading: false,
+    spotMapById: new Map(),
+  },
+  skillList: {
+    isLoading: false,
+    skillMapById: new Map(),
+  },
+  shiftTemplateList: {
+    isLoading: false,
+    shiftTemplateMapById: new Map(),
+  },
+  rosterState: {
+    isLoading: true,
+    rosterState: null,
+  },
+  shiftRoster: {
+    isLoading: true,
+    shiftRosterView: null,
+  },
+  availabilityRoster: {
+    isLoading: true,
+    availabilityRosterView: null,
+  },
+  solverState: {
+    isSolving: false,
+  },
+  alerts: {
+    alertList: [],
+    idGeneratorIndex: 0,
+  },
+  isConnected: true,
+}).store;
+
+const unconnectedStore = mockStore({
+  tenantData: {
+    currentTenantId: 0,
+    tenantList: [],
+    timezoneList: ['America/Toronto'],
+  },
+  employeeList: {
+    isLoading: false,
+    employeeMapById: new Map(),
+  },
+  contractList: {
+    isLoading: false,
+    contractMapById: new Map(),
+  },
+  spotList: {
+    isLoading: false,
+    spotMapById: new Map(),
+  },
+  skillList: {
+    isLoading: false,
+    skillMapById: new Map(),
+  },
+  shiftTemplateList: {
+    isLoading: false,
+    shiftTemplateMapById: new Map(),
+  },
+  rosterState: {
+    isLoading: true,
+    rosterState: null,
+  },
+  shiftRoster: {
+    isLoading: true,
+    shiftRosterView: null,
+  },
+  availabilityRoster: {
+    isLoading: true,
+    availabilityRosterView: null,
+  },
+  solverState: {
+    isSolving: false,
+  },
+  alerts: {
+    alertList: [],
+    idGeneratorIndex: 0,
+  },
+  isConnected: false,
+}).store;
