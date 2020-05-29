@@ -3,7 +3,7 @@ name: CI
 on: [push, pull_request]
 
 env:
-  SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+  SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
 
 jobs:
   os-java:
@@ -23,7 +23,7 @@ jobs:
         run: mvn -B install -Prun-code-coverage -Dintegration-tests=true
       - name: Run SonarCloud analysis
         if: matrix.java == 11
-        run: mvn -B sonar:sonar -Psonarcloud-analysis
+        run: mvn -B sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=kiegroup -Dsonar.projectKey=optaweb-employee-rostering -Dsonar.java.source=8
       # check that git working tree is clean after running npm install via a frontend-maven-plugin
       # the git command returns 1 and fails the build if there are any uncommitted changes
       - name: Check for clean working tree
