@@ -481,4 +481,5 @@ const state: AppState = {
     alertList: [],
     idGeneratorIndex: 0,
   },
+  isConnected: true,
 };

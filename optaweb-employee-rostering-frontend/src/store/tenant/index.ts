@@ -15,8 +15,8 @@
  */
 
 import * as tenantOperations from './operations';
-import reducer from './reducers';
+import reducer, { connectionReducer } from './reducers';
 
-export { tenantOperations };
+export { tenantOperations, connectionReducer };
 
 export default reducer;

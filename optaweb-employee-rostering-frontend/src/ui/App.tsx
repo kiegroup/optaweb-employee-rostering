@@ -27,6 +27,7 @@ import {
   EmployeesPage, RotationPage, CurrentShiftRosterPage,
 } from './pages';
 import Navigation from './header/Navigation';
+import { ConnectionStatus } from './components/ConnectionStatus';
 
 const App: React.FC = () => {
   const [isNavExpanded, setNavExpanded] = useState(false);
@@ -40,6 +41,7 @@ const App: React.FC = () => {
       sidebar={<PageSidebar isNavOpen={isNavExpanded} nav={<Navigation variant="default" />} />}
     >
       <Background />
+      <ConnectionStatus />
       <PageSection
         style={{
           position: 'relative',

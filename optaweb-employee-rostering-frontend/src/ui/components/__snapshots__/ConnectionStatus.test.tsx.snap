@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConnectionStatus component should render correctly when connected 1`] = `
+<Modal
+  actions={Array []}
+  appendTo={<body />}
+  ariaDescribedById=""
+  className=""
+  hideTitle={false}
+  isFooterLeftAligned={false}
+  isLarge={false}
+  isOpen={false}
+  isSmall={true}
+  onClose={[Function]}
+  showClose={true}
+  title="Trans(i18nKey=cannotConnect)"
+>
+  <TextContent>
+    <Text
+      component="h3"
+    >
+      <UnpluggedIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+        title={null}
+      />
+      Trans(i18nKey=cannotConnectMsg)
+    </Text>
+  </TextContent>
+</Modal>
+`;
+
+exports[`ConnectionStatus component should render correctly when not connected 1`] = `
+<Modal
+  actions={Array []}
+  appendTo={<body />}
+  ariaDescribedById=""
+  className=""
+  hideTitle={false}
+  isFooterLeftAligned={false}
+  isLarge={false}
+  isOpen={true}
+  isSmall={true}
+  onClose={[Function]}
+  showClose={true}
+  title="Trans(i18nKey=cannotConnect)"
+>
+  <TextContent>
+    <Text
+      component="h3"
+    >
+      <UnpluggedIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+        title={null}
+      />
+      Trans(i18nKey=cannotConnectMsg)
+    </Text>
+  </TextContent>
+</Modal>
+`;

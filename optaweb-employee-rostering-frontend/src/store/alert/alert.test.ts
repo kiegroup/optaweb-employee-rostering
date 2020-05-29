@@ -208,4 +208,5 @@ const state: AppState = {
     }],
     idGeneratorIndex: 1,
   },
+  isConnected: true,
 };

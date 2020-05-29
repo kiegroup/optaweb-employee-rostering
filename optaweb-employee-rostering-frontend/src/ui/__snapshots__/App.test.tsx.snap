@@ -26,6 +26,7 @@ exports[`App clicking the nav button should show the sidebar 1`] = `
   skipToContent={null}
 >
   <Background />
+  <ConnectionStatus />
   <PageSection
     style={
       Object {
@@ -123,6 +124,7 @@ exports[`App clicking the nav button twice should hide the sidebar 1`] = `
   skipToContent={null}
 >
   <Background />
+  <ConnectionStatus />
   <PageSection
     style={
       Object {
@@ -220,6 +222,7 @@ exports[`App should render correctly on a desktop 1`] = `
   skipToContent={null}
 >
   <Background />
+  <ConnectionStatus />
   <PageSection
     style={
       Object {
@@ -317,6 +320,7 @@ exports[`App should render correctly on a mobile 1`] = `
   skipToContent={null}
 >
   <Background />
+  <ConnectionStatus />
   <PageSection
     style={
       Object {

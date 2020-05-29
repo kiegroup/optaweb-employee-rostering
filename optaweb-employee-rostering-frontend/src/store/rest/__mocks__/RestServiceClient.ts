@@ -15,18 +15,40 @@
  */
 import { getAnswers, postAnswers, putAnswers, deleteAnswers } from 'store/rest/RestTestUtils';
 
-export const mockGet = jest.fn().mockImplementation(url => Promise.resolve(
-  getAnswers.get(url),
-));
-export const mockPost = jest.fn().mockImplementation((url, params) => Promise.resolve(
-  postAnswers.get(url + JSON.stringify(params)),
-));
-export const mockPut = jest.fn().mockImplementation((url, params) => Promise.resolve(
-  putAnswers.get(url + JSON.stringify(params)),
-));
-export const mockDelete = jest.fn().mockImplementation(url => Promise.resolve(
-  deleteAnswers.get(url),
-));
+export const mockGet = jest.fn().mockImplementation((url) => {
+  const response = getAnswers.get(url);
+  if (response instanceof Error) {
+    return Promise.reject(response);
+  }
+  return Promise.resolve(response);
+});
+
+export const mockPost = jest.fn().mockImplementation((url, params) => {
+  const response = postAnswers.get(url + JSON.stringify(params));
+  if (response instanceof Error) {
+    return Promise.reject(response);
+  }
+
+  return Promise.resolve(response);
+});
+
+export const mockPut = jest.fn().mockImplementation((url, params) => {
+  const response = putAnswers.get(url + JSON.stringify(params));
+  if (response instanceof Error) {
+    return Promise.reject(response);
+  }
+
+  return Promise.resolve(response);
+});
+
+export const mockDelete = jest.fn().mockImplementation((url) => {
+  const response = deleteAnswers.get(url);
+  if (response instanceof Error) {
+    return Promise.reject(response);
+  }
+  return Promise.resolve(response);
+});
+
 
 const mock = jest.fn().mockImplementation(() => ({
   get: mockGet,
