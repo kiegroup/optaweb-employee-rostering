@@ -181,17 +181,14 @@
                   <goal>prepare-agent</goal>
                 </goals>
                 <configuration>
+                  <!-- Append coverage data to a single file defined in the kie-parent -->
+                  <append>true</append>
+                  <destFile>${jacoco.exec.file}</destFile>
                   <propertyName>jacoco.agent.argLine</propertyName>
                   <excludes>
                     <exclude>*Lexer</exclude>
                   </excludes>
                 </configuration>
-              </execution>
-              <execution>
-                <id>jacoco-generate-report</id>
-                <goals>
-                  <goal>report</goal>
-                </goals>
               </execution>
             </executions>
           </plugin>
