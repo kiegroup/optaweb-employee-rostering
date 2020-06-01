@@ -36,7 +36,7 @@ import { RouteComponentProps } from 'react-router';
 import { setTenantIdInUrl } from 'util/BookmarkableUtils';
 import {
   ChangeTenantAction, RefreshTenantListAction, RefreshSupportedTimezoneListAction,
-  AddTenantAction, RemoveTenantAction, SetConnectedAction,
+  AddTenantAction, RemoveTenantAction,
 } from './types';
 import * as actions from './actions';
 import { ThunkCommandFactory } from '../types';
@@ -58,14 +58,7 @@ function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<an
     dispatch(contractOperations.refreshContractList()),
     dispatch(employeeOperations.refreshEmployeeList()),
     dispatch(shiftTemplateOperations.refreshShiftTemplateList()),
-  ]).then(() => {
-    dispatch(actions.setConnectionStatus(true));
-  }).catch(() => {
-    dispatch(actions.setConnectionStatus(false));
-    setTimeout(() => {
-      dispatch(refreshTenantList());
-    }, 1000);
-  });
+  ]);
 }
 
 export const changeTenant: ThunkCommandFactory<{ tenantId: number; routeProps: RouteComponentProps },
@@ -76,24 +69,38 @@ ChangeTenantAction> = params => (dispatch) => {
   return refreshData(dispatch);
 };
 
+
+let pollForTenantListTimeout: number | null = null;
 export const refreshTenantList:
-ThunkCommandFactory<void, RefreshTenantListAction | SetConnectedAction> = () => (dispatch, state, client) => (
+ThunkCommandFactory<void, RefreshTenantListAction | any> = () => (dispatch, state, client) => (
   client.get<Tenant[]>('/tenant/').then((tenantList) => {
     const { currentTenantId } = state().tenantData;
     if (tenantList.filter(tenant => tenant.id === currentTenantId).length !== 0) {
       dispatch(actions.refreshTenantList({ tenantList, currentTenantId }));
+      refreshData(dispatch);
     } else if (tenantList.length > 0) {
       dispatch(actions.refreshTenantList({ tenantList, currentTenantId: tenantList[0].id as number }));
+      refreshData(dispatch);
     } else {
       // TODO: this case occurs iff there are no tenants; need a special screen for that
-      dispatch(actions.refreshTenantList({ tenantList, currentTenantId: 0 }));
+      // Tenant Id cannot be negative, so use -1 as a special value to signal no tenant to abort
+      // operations that happen automatically (namely roster fetches)
+      dispatch(actions.refreshTenantList({ tenantList, currentTenantId: -1 }));
+      dispatch(rosterActions.setShiftRosterIsLoading(true));
+      dispatch(rosterActions.setAvailabilityRosterIsLoading(true));
+      dispatch(rosterActions.setRosterStateIsLoading(true));
+      dispatch(skillActions.setIsSkillListLoading(true));
+      dispatch(spotActions.setIsSpotListLoading(true));
+      dispatch(contractActions.setIsContractListLoading(true));
+      dispatch(employeeActions.setIsEmployeeListLoading(true));
+      dispatch(shiftTemplateActions.setIsShiftTemplateListLoading(true));
+      if (pollForTenantListTimeout === null) {
+        pollForTenantListTimeout = window.setTimeout(() => {
+          pollForTenantListTimeout = null;
+          dispatch(refreshTenantList());
+        }, 1000);
+      }
     }
-    refreshData(dispatch);
-  }).catch(() => {
-    dispatch(actions.setConnectionStatus(false));
-    setTimeout(() => {
-      dispatch(refreshTenantList());
-    }, 1000);
   }));
 
 export const addTenant:

@@ -217,6 +217,39 @@ describe('Roster operations', () => {
     expect(mockRefreshShiftRoster).toBeCalled();
   });
 
+  it('should not dispatch actions or call client if tenantId is negative', async () => {
+    const { store, client } = mockStore({ tenantData: { currentTenantId: -1, tenantList: [], timezoneList: [] } });
+    const pagination = {
+      pageNumber: 0,
+      itemsPerPage: 10,
+    };
+    const fromDate = new Date();
+    const toDate = new Date();
+
+    const rosterSlice = {
+      pagination,
+      fromDate,
+      toDate,
+    };
+
+    await store.dispatch(rosterOperations.getAvailabilityRoster(rosterSlice));
+    await store.dispatch(rosterOperations.getInitialAvailabilityRoster());
+    await store.dispatch(rosterOperations.getCurrentAvailabilityRoster(pagination));
+    await store.dispatch(rosterOperations.getAvailabilityRosterFor({ ...rosterSlice, employeeList: [] }));
+
+    await store.dispatch(rosterOperations.getShiftRoster(rosterSlice));
+    await store.dispatch(rosterOperations.getInitialShiftRoster());
+    await store.dispatch(rosterOperations.getCurrentShiftRoster(pagination));
+    await store.dispatch(rosterOperations.getShiftRosterFor({ ...rosterSlice, spotList: [] }));
+
+    await flushPromises();
+
+    expect(client.get).not.toBeCalled();
+    expect(client.post).not.toBeCalled();
+    expect(client.delete).not.toBeCalled();
+    expect(client.put).not.toBeCalled();
+  });
+
   it('should dispatch actions and call client on terminate solving roster', async () => {
     const solvingEndTime = moment('2018-01-01', 'YYYY-MM-DD').toDate();
     MockDate.set(solvingEndTime);

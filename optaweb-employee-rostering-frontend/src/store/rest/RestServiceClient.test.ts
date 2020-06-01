@@ -16,7 +16,8 @@
 import { alert } from 'store/alert';
 import { AxiosStatic } from 'axios';
 import { ServerSideExceptionInfo, BasicObject } from 'types';
-import { mockStore } from 'store/mockStore';
+import { setConnectionStatus } from 'store/tenant/actions';
+import * as tenantOperations from 'store/tenant/operations';
 
 
 const RestServiceClient = jest.requireActual('./RestServiceClient').default;
@@ -76,6 +77,21 @@ describe('Rest Service Client', () => {
     expect(handleResponseSpy).toBeCalledWith(response);
   });
 
+  it('Should call errorHandler if axios.get fails', async () => {
+    const baseURL = '/rest';
+    const restServiceClient = new RestServiceClient(baseURL, axios);
+    const targetURL = '/endpoint';
+    const handleErrorSpy = jest.spyOn(restServiceClient, 'handleError');
+    const axiosError = { isAxiosError: false };
+    const response = new Promise((res, reject) => { reject(axiosError); });
+    mockGet.mockReturnValue(response);
+    try {
+      await restServiceClient.get(targetURL);
+    } catch (error) {
+      expect(handleErrorSpy).toBeCalledWith(axiosError);
+    }
+  });
+
   it('Should call axios.post on post', async () => {
     const baseURL = '/rest';
     const restServiceClient = new RestServiceClient(baseURL, axios);
@@ -99,6 +115,22 @@ describe('Rest Service Client', () => {
     expect(mockPost).toBeCalledWith('/endpoint', data);
     expect(handleResponseSpy).toBeCalledWith(response);
   });
+
+  it('Should call errorHandler if axios.post fails', async () => {
+    const baseURL = '/rest';
+    const restServiceClient = new RestServiceClient(baseURL, axios);
+    const targetURL = '/endpoint';
+    const handleErrorSpy = jest.spyOn(restServiceClient, 'handleError');
+    const axiosError = { isAxiosError: false };
+    const response = new Promise((res, reject) => { reject(axiosError); });
+    mockPost.mockReturnValue(response);
+    try {
+      await restServiceClient.post(targetURL);
+    } catch (error) {
+      expect(handleErrorSpy).toBeCalledWith(axiosError);
+    }
+  });
+
 
   it('Should call axios.put on put', async () => {
     const baseURL = '/rest';
@@ -124,6 +156,22 @@ describe('Rest Service Client', () => {
     expect(handleResponseSpy).toBeCalledWith(response);
   });
 
+  it('Should call errorHandler if axios.put fails', async () => {
+    const baseURL = '/rest';
+    const restServiceClient = new RestServiceClient(baseURL, axios);
+    const targetURL = '/endpoint';
+    const handleErrorSpy = jest.spyOn(restServiceClient, 'handleError');
+    const axiosError = { isAxiosError: false };
+    const response = new Promise((res, reject) => { reject(axiosError); });
+    mockPut.mockReturnValue(response);
+    try {
+      await restServiceClient.put(targetURL);
+    } catch (error) {
+      expect(handleErrorSpy).toBeCalledWith(axiosError);
+    }
+  });
+
+
   it('Should call axios.delete on delete', async () => {
     const baseURL = '/rest';
     const restServiceClient = new RestServiceClient(baseURL, axios);
@@ -143,6 +191,22 @@ describe('Rest Service Client', () => {
     expect(mockDelete).toBeCalledWith('/endpoint');
     expect(handleResponseSpy).toBeCalledWith(response);
   });
+
+  it('Should call errorHandler if axios.delete fails', async () => {
+    const baseURL = '/rest';
+    const restServiceClient = new RestServiceClient(baseURL, axios);
+    const targetURL = '/endpoint';
+    const handleErrorSpy = jest.spyOn(restServiceClient, 'handleError');
+    const axiosError = { isAxiosError: false };
+    const response = new Promise((res, reject) => { reject(axiosError); });
+    mockDelete.mockReturnValue(response);
+    try {
+      await restServiceClient.delete(targetURL);
+    } catch (error) {
+      expect(handleErrorSpy).toBeCalledWith(axiosError);
+    }
+  });
+
 
   it('Should resolves to the value on success', async () => {
     const baseURL = '/rest';
@@ -170,7 +234,6 @@ describe('Rest Service Client', () => {
     const restServiceClient = new RestServiceClient(baseURL, axios);
     const data = 'Error';
     restServiceClient.setDispatch(dispatch);
-    restServiceClient.setStore(connectedStore);
     const errorStatus = 'I am a teapot';
     const response = {
       status: 404,
@@ -187,7 +250,6 @@ describe('Rest Service Client', () => {
 
   it('Should reject the promise on failure and show an alert of exception if JSON', async () => {
     const dispatch = jest.fn();
-
     const baseURL = '/rest';
     const restServiceClient = new RestServiceClient(baseURL, axios);
     const data: ServerSideExceptionInfo & BasicObject = {
@@ -199,7 +261,6 @@ describe('Rest Service Client', () => {
       exceptionCause: null,
     };
     restServiceClient.setDispatch(dispatch);
-    restServiceClient.setStore(connectedStore);
     const errorStatus = 'I am a teapot';
     const response = {
       status: 404,
@@ -214,35 +275,38 @@ describe('Rest Service Client', () => {
     expect(dispatch).toBeCalledWith(alert.showServerError(data));
   });
 
-  it('Should reject the promise on failure and not show an alert of exception if it has not connected yet',
-    async () => {
-      const dispatch = jest.fn();
+  it('Should set connected to false and refresh tenant list every second if a call failed', async () => {
+    const dispatch = jest.fn();
+    const refreshTenantListSpy = jest.spyOn(tenantOperations, 'refreshTenantList');
+    refreshTenantListSpy.mockImplementation(() => Promise.resolve() as any);
+    jest.useFakeTimers();
 
-      const baseURL = '/rest';
-      const restServiceClient = new RestServiceClient(baseURL, axios);
-      const data: ServerSideExceptionInfo & BasicObject = {
-        i18nKey: 'key',
-        stackTrace: [],
-        exceptionMessage: 'Hi',
-        messageParameters: [],
-        exceptionClass: 'Clazz',
-        exceptionCause: null,
-      };
-      restServiceClient.setDispatch(dispatch);
-      restServiceClient.setStore(unconnectedStore);
-      const errorStatus = 'I am a teapot';
-      const response = {
-        status: 404,
-        data,
-        statusText: errorStatus,
-        headers: {
-          'content-type': 'application/json;charset=utf-8',
-        },
-        config: {},
-      };
-      await expect(restServiceClient.handleResponse(response)).rejects.toEqual(404);
-      expect(dispatch).not.toBeCalled();
-    });
+    const baseURL = '/rest';
+    const restServiceClient = new RestServiceClient(baseURL, axios);
+    const axiosError = { isAxiosError: true };
+    restServiceClient.setDispatch(dispatch);
+    restServiceClient.handleError(axiosError);
+    restServiceClient.handleError(axiosError);
+    expect(dispatch).toBeCalledTimes(1);
+    expect(dispatch).toBeCalledWith(setConnectionStatus(false));
+    dispatch.mockClear();
+    jest.advanceTimersByTime(1000);
+    expect(dispatch).toBeCalledTimes(1);
+    expect(refreshTenantListSpy).toBeCalled();
+
+    dispatch.mockClear();
+    refreshTenantListSpy.mockClear();
+
+    restServiceClient.handleError(axiosError);
+    expect(dispatch).toBeCalledTimes(1);
+    expect(dispatch).toBeCalledWith(setConnectionStatus(false));
+    dispatch.mockClear();
+
+    jest.advanceTimersByTime(1000);
+    expect(dispatch).toBeCalledTimes(1);
+    expect(refreshTenantListSpy).toBeCalled();
+  });
+
 
   it('Should throw an Error if dispatch is not set', async () => {
     const baseURL = '/rest';
@@ -263,99 +327,3 @@ describe('Rest Service Client', () => {
     expect(() => restServiceClient.handleResponse(response)).toThrow();
   });
 });
-
-const connectedStore = mockStore({
-  tenantData: {
-    currentTenantId: 0,
-    tenantList: [],
-    timezoneList: ['America/Toronto'],
-  },
-  employeeList: {
-    isLoading: false,
-    employeeMapById: new Map(),
-  },
-  contractList: {
-    isLoading: false,
-    contractMapById: new Map(),
-  },
-  spotList: {
-    isLoading: false,
-    spotMapById: new Map(),
-  },
-  skillList: {
-    isLoading: false,
-    skillMapById: new Map(),
-  },
-  shiftTemplateList: {
-    isLoading: false,
-    shiftTemplateMapById: new Map(),
-  },
-  rosterState: {
-    isLoading: true,
-    rosterState: null,
-  },
-  shiftRoster: {
-    isLoading: true,
-    shiftRosterView: null,
-  },
-  availabilityRoster: {
-    isLoading: true,
-    availabilityRosterView: null,
-  },
-  solverState: {
-    isSolving: false,
-  },
-  alerts: {
-    alertList: [],
-    idGeneratorIndex: 0,
-  },
-  isConnected: true,
-}).store;
-
-const unconnectedStore = mockStore({
-  tenantData: {
-    currentTenantId: 0,
-    tenantList: [],
-    timezoneList: ['America/Toronto'],
-  },
-  employeeList: {
-    isLoading: false,
-    employeeMapById: new Map(),
-  },
-  contractList: {
-    isLoading: false,
-    contractMapById: new Map(),
-  },
-  spotList: {
-    isLoading: false,
-    spotMapById: new Map(),
-  },
-  skillList: {
-    isLoading: false,
-    skillMapById: new Map(),
-  },
-  shiftTemplateList: {
-    isLoading: false,
-    shiftTemplateMapById: new Map(),
-  },
-  rosterState: {
-    isLoading: true,
-    rosterState: null,
-  },
-  shiftRoster: {
-    isLoading: true,
-    shiftRosterView: null,
-  },
-  availabilityRoster: {
-    isLoading: true,
-    availabilityRosterView: null,
-  },
-  solverState: {
-    isSolving: false,
-  },
-  alerts: {
-    alertList: [],
-    idGeneratorIndex: 0,
-  },
-  isConnected: false,
-}).store;

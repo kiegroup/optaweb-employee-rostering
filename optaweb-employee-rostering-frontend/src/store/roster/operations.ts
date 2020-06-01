@@ -123,6 +123,9 @@ function refresh(dispatch: ThunkDispatch<AppState, RestServiceClient, any>) {
 export const solveRoster:
 ThunkCommandFactory<void, AddAlertAction | SolveRosterAction> = () => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
+  if (tenantId < 0) {
+    return Promise.resolve();
+  }
   return client.post(`/tenant/${tenantId}/roster/solve`, {}).then(() => {
     const solvingStartTime: number = new Date().getTime();
     dispatch(actions.solveRoster());
@@ -168,8 +171,8 @@ ThunkCommandFactory<void, AddAlertAction | UpdateSolverStatusAction> = () => (di
 
 export const getInitialShiftRoster:
 ThunkCommandFactory<void, ShiftRosterViewAction> = () => (dispatch, state) => {
-  const { rosterState } = state().rosterState;
-  if (rosterState !== null) {
+  const { rosterState, isLoading } = state().rosterState;
+  if (rosterState !== null && !isLoading) {
     const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
     const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
     const spotList = spotSelectors.getSpotList(state());
@@ -191,8 +194,8 @@ ThunkCommandFactory<void, ShiftRosterViewAction> = () => (dispatch, state) => {
 
 export const getInitialAvailabilityRoster:
 ThunkCommandFactory<void, AvailabilityRosterViewAction> = () => (dispatch, state) => {
-  const { rosterState } = state().rosterState;
-  if (rosterState !== null) {
+  const { rosterState, isLoading } = state().rosterState;
+  if (rosterState !== null && !isLoading) {
     const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
     const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
     const employeeList = employeeSelectors.getEmployeeList(state());
@@ -232,6 +235,9 @@ export const getRosterState:
 ThunkCommandFactory<void, SetRosterStateIsLoadingAction | SetRosterStateAction> = () => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
   dispatch(actions.setRosterStateIsLoading(true));
+  if (tenantId < 0) {
+    return Promise.resolve();
+  }
   return client.get<RosterState>(`/tenant/${tenantId}/roster/state`).then((newRosterState) => {
     dispatch(actions.setRosterState({
       ...newRosterState,
@@ -308,6 +314,9 @@ function convertKindaAvailabilityRosterViewToAvailabilityRosterView(
 export const getCurrentShiftRoster: ThunkCommandFactory<PaginationData,
 SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = pagination => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
+  if (tenantId < 0) {
+    return Promise.resolve();
+  }
   dispatch(actions.setShiftRosterIsLoading(true));
   lastCalledShiftRoster = getCurrentShiftRoster;
   lastCalledShiftRosterArgs = pagination;
@@ -322,6 +331,9 @@ SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = pagination => (dispa
 export const getShiftRoster: ThunkCommandFactory<RosterSliceInfo & { pagination: PaginationData },
 SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = params => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
+  if (tenantId < 0) {
+    return Promise.resolve();
+  }
   const fromDateAsString = serializeLocalDate(params.fromDate);
   const toDateAsString = serializeLocalDate(moment(params.toDate).add(1, 'day').toDate());
   dispatch(actions.setShiftRosterIsLoading(true));
@@ -339,6 +351,9 @@ SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = params => (dispatch,
 export const getShiftRosterFor: ThunkCommandFactory<RosterSliceInfo & { spotList: Spot[] },
 SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = params => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
+  if (tenantId < 0) {
+    return Promise.resolve();
+  }
   const fromDateAsString = serializeLocalDate(params.fromDate);
   const toDateAsString = serializeLocalDate(moment(params.toDate).add(1, 'day').toDate());
   dispatch(actions.setShiftRosterIsLoading(true));
@@ -355,6 +370,9 @@ SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = params => (dispatch,
 export const getCurrentAvailabilityRoster: ThunkCommandFactory<PaginationData,
 SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = pagination => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
+  if (tenantId < 0) {
+    return Promise.resolve();
+  }
   dispatch(actions.setAvailabilityRosterIsLoading(true));
   lastCalledAvailabilityRoster = getCurrentAvailabilityRoster;
   lastCalledAvailabilityRosterArgs = pagination;
@@ -371,6 +389,9 @@ SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = pagina
 export const getAvailabilityRoster: ThunkCommandFactory<RosterSliceInfo & { pagination: PaginationData },
 SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = params => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
+  if (tenantId < 0) {
+    return Promise.resolve();
+  }
   const fromDateAsString = serializeLocalDate(params.fromDate);
   const toDateAsString = serializeLocalDate(moment(params.toDate).add(1, 'day').toDate());
   dispatch(actions.setAvailabilityRosterIsLoading(true));
@@ -390,6 +411,9 @@ SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = params
 export const getAvailabilityRosterFor: ThunkCommandFactory<RosterSliceInfo & { employeeList: Employee[] },
 SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = params => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
+  if (tenantId < 0) {
+    return Promise.resolve();
+  }
   const fromDateAsString = serializeLocalDate(params.fromDate);
   const toDateAsString = serializeLocalDate(moment(params.toDate).add(1, 'day').toDate());
   dispatch(actions.setAvailabilityRosterIsLoading(true));
