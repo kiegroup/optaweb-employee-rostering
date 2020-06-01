@@ -78,6 +78,5 @@ export function configureStore(
   );
 
   restServiceClient.setDispatch(store.dispatch);
-  restServiceClient.setStore(store);
   return store;
 }

@@ -104,7 +104,6 @@ describe('Tenant operations', () => {
 
       expect(store.getActions()).toEqual(expect.arrayContaining([
         actions.refreshTenantList({ currentTenantId: 1, tenantList: mockTenantList }),
-        actions.setConnectionStatus(true),
         ...loadingActions,
       ]));
 
@@ -118,6 +117,31 @@ describe('Tenant operations', () => {
       expect(mockRefreshEmployeeList).toBeCalled();
       expect(mockRefreshRosterState).toBeCalled();
       expect(mockRefreshShiftTemplateList).toBeCalled();
+    });
+
+  it('should dispatch actions and change tenant to -1 when tenant list is empty',
+    async () => {
+      const { store, client } = mockStore(state);
+      const mockTenantList: Tenant[] = [];
+      onGet('/tenant/', mockTenantList);
+
+      await store.dispatch(tenantOperations.refreshTenantList());
+      await flushPromises();
+
+      expect(store.getActions()).toEqual(expect.arrayContaining([
+        actions.refreshTenantList({ currentTenantId: -1, tenantList: [] }),
+        ...loadingActions,
+      ]));
+
+      expect(client.get).toHaveBeenCalledTimes(1);
+      expect(client.get).toHaveBeenCalledWith('/tenant/');
+
+      expect(mockRefreshSkillList).not.toBeCalled();
+      expect(mockRefreshSpotList).not.toBeCalled();
+      expect(mockRefreshContractList).not.toBeCalled();
+      expect(mockRefreshEmployeeList).not.toBeCalled();
+      expect(mockRefreshRosterState).not.toBeCalled();
+      expect(mockRefreshShiftTemplateList).not.toBeCalled();
     });
 
   it('should dispatch actions and not change tenant when current tenant is in refreshed tenant list',
@@ -147,7 +171,6 @@ describe('Tenant operations', () => {
 
       expect(store.getActions()).toEqual(expect.arrayContaining([
         actions.refreshTenantList({ currentTenantId: 0, tenantList: mockTenantList }),
-        actions.setConnectionStatus(true),
         ...loadingActions,
       ]));
 
@@ -161,26 +184,6 @@ describe('Tenant operations', () => {
       expect(mockRefreshEmployeeList).toBeCalled();
       expect(mockRefreshRosterState).toBeCalled();
       expect(mockRefreshShiftTemplateList).toBeCalled();
-    });
-
-  it('should dispatch actions and set connected to false if refreshTenantList fails',
-    async () => {
-      const { store } = mockStore(state);
-      onGet('/tenant/', new Error());
-
-      await store.dispatch(tenantOperations.refreshTenantList());
-      await flushPromises();
-
-      expect(store.getActions()).toEqual(expect.arrayContaining([
-        actions.setConnectionStatus(false),
-      ]));
-
-      expect(mockRefreshSkillList).not.toBeCalled();
-      expect(mockRefreshSpotList).not.toBeCalled();
-      expect(mockRefreshContractList).not.toBeCalled();
-      expect(mockRefreshEmployeeList).not.toBeCalled();
-      expect(mockRefreshRosterState).not.toBeCalled();
-      expect(mockRefreshShiftTemplateList).not.toBeCalled();
     });
 
   it('should change the tenant and refresh all lists on change tenant', async () => {
