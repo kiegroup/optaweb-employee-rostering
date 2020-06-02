@@ -58,6 +58,7 @@ public class WannabeSolverManager implements ApplicationRunner {
 
     private ConcurrentMap<Integer, SolverStatus> tenantIdToSolverStateMap = new ConcurrentHashMap<>();
     private ConcurrentMap<Integer, Solver<Roster>> tenantIdToSolverMap = new ConcurrentHashMap<>();
+    private ConcurrentMap<Integer, Roster> tenantIdToBestSolutionMap = new ConcurrentHashMap<>();
 
     public WannabeSolverManager(ThreadPoolTaskExecutor taskExecutor, RosterService rosterService) {
         this.taskExecutor = taskExecutor;
@@ -134,6 +135,7 @@ public class WannabeSolverManager implements ApplicationRunner {
                     if (event.isEveryProblemFactChangeProcessed()) {
                         logger.info("  New best solution found for tenantId ({}).", tenantId);
                         Roster newBestRoster = event.getNewBestSolution();
+                        tenantIdToBestSolutionMap.put(tenantId, newBestRoster);
                         // TODO if this throws an OptimisticLockingException, does it kill the solver?
                         rosterService.updateShiftsOfRoster(newBestRoster);
                     }
@@ -156,8 +158,7 @@ public class WannabeSolverManager implements ApplicationRunner {
     }
 
     public Roster getRoster(final Integer tenantId) {
-        Solver<Roster> solver = tenantIdToSolverMap.get(tenantId);
-        return solver == null ? null : solver.getBestSolution();
+        return tenantIdToBestSolutionMap.get(tenantId);
     }
 
     public SolverStatus getSolverStatus(final Integer tenantId) {

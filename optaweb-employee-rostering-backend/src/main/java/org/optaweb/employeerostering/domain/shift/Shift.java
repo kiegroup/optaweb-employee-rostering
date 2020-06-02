@@ -43,7 +43,7 @@ import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 
 @Entity
-@PlanningEntity(movableEntitySelectionFilter = MovableShiftFilter.class)
+@PlanningEntity(pinningFilter = PinningShiftFilter.class)
 public class Shift extends AbstractPersistable {
 
     @ManyToOne
