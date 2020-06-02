@@ -1,0 +1,26 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  os-java:
+    name: OS x Java
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        # TODO: update each time a new major Java version is released.
+        java: [8, 11, 14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      # http.keepAlive and maven.wagon.http.pool are used to help stabilize network connection in virtual hosts
+      - name: Build with Maven
+        run: mvn -B install -Dintegration-tests=true -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false
+      # check that git working tree is clean after running npm install via a frontend-maven-plugin
+      # the git command returns 1 and fails the build if there are any uncommitted changes
+      - name: Check for clean working tree
+        run: git diff HEAD --exit-code
