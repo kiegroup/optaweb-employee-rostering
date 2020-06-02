@@ -152,6 +152,18 @@
 
   <profiles>
     <profile>
+      <!-- Skip Sonar plugin execution if SONARCLOUD_TOKEN is not set. -->
+      <id>skipSonar</id>
+      <activation>
+        <property>
+          <name>!env.SONARCLOUD_TOKEN</name>
+        </property>
+      </activation>
+      <properties>
+        <sonar.skip>true</sonar.skip>
+      </properties>
+    </profile>
+    <profile>
       <!--
         TODO: For moving the coverage measurement from Travis to Jenkins, add the repository name to
         SONARCLOUD_ENABLED_REPOSITORIES in
