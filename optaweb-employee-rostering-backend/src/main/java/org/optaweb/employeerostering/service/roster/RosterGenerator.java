@@ -32,7 +32,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -391,6 +393,7 @@ public class RosterGenerator implements ApplicationRunner {
 
     /**
      * For benchmark only
+     *
      * @param entityManager never null
      */
     public RosterGenerator(EntityManager entityManager) {
@@ -467,7 +470,7 @@ public class RosterGenerator implements ApplicationRunner {
                                                          contractList, skillList);
         List<ShiftTemplate> shiftTemplateList = createShiftTemplateList(generatorType, tenantId,
                                                                         rosterState, spotList,
-                                                                        employeeList);
+                                                                        employeeList, skillList);
         List<Shift> shiftList = createShiftList(generatorType, tenantId, rosterConstraintConfiguration,
                                                 rosterState, spotList, shiftTemplateList);
         List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(
@@ -480,7 +483,7 @@ public class RosterGenerator implements ApplicationRunner {
     @Transactional
     public Roster generateRoster(int spotListSize, int lengthInDays) {
         ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
-        return generateRoster(spotListSize, lengthInDays, factoryAssemblyGeneratorType, zoneId);
+        return generateRoster(spotListSize, lengthInDays, hospitalGeneratorType, zoneId);
     }
 
     @Transactional
@@ -511,8 +514,8 @@ public class RosterGenerator implements ApplicationRunner {
                 .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
                 .plusDays(publishNotice);
         rosterState.setFirstDraftDate(firstDraftDate);
-        // publishLength is read-only and set to 7 days
-        //rosterState.setPublishLength(7);
+        // publishLength is read-only and set to 1 day
+        //rosterState.setPublishLength(1);
         rosterState.setDraftLength(14);
         rosterState.setUnplannedRotationOffset(0);
         rosterState.setRotationLength(generatorType.rotationLength);
@@ -525,8 +528,9 @@ public class RosterGenerator implements ApplicationRunner {
 
     @Transactional
     public List<Skill> createSkillList(GeneratorType generatorType, Integer tenantId, int size) {
-        List<Skill> skillList = new ArrayList<>(size);
+        List<Skill> skillList = new ArrayList<>(size + 3);
         generatorType.skillNameGenerator.predictMaximumSizeAndReset(size);
+
         for (int i = 0; i < size; i++) {
             String name = generatorType.skillNameGenerator.generateNextValue();
             Skill skill = new Skill(tenantId, name);
@@ -540,9 +544,13 @@ public class RosterGenerator implements ApplicationRunner {
     public List<Spot> createSpotList(GeneratorType generatorType, Integer tenantId, int size, List<Skill> skillList) {
         List<Spot> spotList = new ArrayList<>(size);
         generatorType.spotNameGenerator.predictMaximumSizeAndReset(size);
+
         for (int i = 0; i < size; i++) {
             String name = generatorType.spotNameGenerator.generateNextValue();
-            Set<Skill> requiredSkillSet = new HashSet<>(extractRandomSubList(skillList, 0.5, 0.9, 1.0));
+            Set<Skill> requiredSkillSet = new HashSet<>(extractRandomSubList(
+                    skillList,
+                    0.5, 0.9, 1.0));
+
             Spot spot = new Spot(tenantId, name, requiredSkillSet);
             entityManager.persist(spot);
             spotList.add(spot);
@@ -592,18 +600,25 @@ public class RosterGenerator implements ApplicationRunner {
                                                        Integer tenantId,
                                                        RosterState rosterState,
                                                        List<Spot> spotList,
-                                                       List<Employee> employeeList) {
+                                                       List<Employee> employeeList,
+                                                       List<Skill> skillList) {
         int rotationLength = rosterState.getRotationLength();
         List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength *
                                                                         generatorType.timeslotRangeList.size());
-        List<Employee> remainingEmployeeList = employeeList.stream()
-                .filter((e) -> e.getContract().getMaximumMinutesPerWeek() == null)
-                .collect(Collectors.toCollection(ArrayList::new));
-        for (Spot spot : spotList) {
-            List<Employee> rotationEmployeeList = remainingEmployeeList.stream()
-                    .filter(employee -> employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()))
-                    .limit(generatorType.rotationEmployeeListSize).collect(toList());
-            remainingEmployeeList.removeAll(rotationEmployeeList);
+        List<Employee> remainingEmployeeList = new ArrayList<>(employeeList);
+        Consumer<Spot> createShiftTemplatesForWard = (spot) -> {
+            // Use if we take advantage of the additional skills for shifts feature
+            final Function<Predicate<Employee>, List<Employee>> findEmployees = p -> {
+                List<Employee> out = remainingEmployeeList.stream()
+                        .filter(employee -> employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()) &&
+                                employee.getContract().getMaximumMinutesPerWeek() == null &&
+                                p.test(employee))
+                        .limit(generatorType.rotationEmployeeListSize).collect(toList());
+                remainingEmployeeList.removeAll(out);
+                return out;
+            };
+
+            List<Employee> rotationEmployeeList = findEmployees.apply(t -> true);
             // For every day in the rotation (independent of publishLength and draftLength)
             for (int startDayOffset = 0; startDayOffset < rotationLength; startDayOffset++) {
                 // Fill the offset day with shift templates
@@ -632,8 +647,9 @@ public class RosterGenerator implements ApplicationRunner {
                                             timeslotRangesIndex + ").");
                         }
                         // There might be less employees than we need (overconstrained planning)
-                        Employee rotationEmployee = rotationEmployeeIndex >= rotationEmployeeList.size() ? null :
+                        Employee rotationEmployee = (rotationEmployeeIndex >= rotationEmployeeList.size()) ? null :
                                 rotationEmployeeList.get(rotationEmployeeIndex);
+
                         ShiftTemplate shiftTemplate = new ShiftTemplate(tenantId, spot, startDayOffset, startTime,
                                                                         endDayOffset, endTime, rotationEmployee);
                         entityManager.persist(shiftTemplate);
@@ -641,7 +657,8 @@ public class RosterGenerator implements ApplicationRunner {
                     }
                 }
             }
-        }
+        };
+        spotList.stream().forEach(createShiftTemplatesForWard);
         return shiftTemplateList;
     }
 
@@ -672,6 +689,9 @@ public class RosterGenerator implements ApplicationRunner {
                     boolean defaultToRotationEmployee = date.compareTo(firstDraftDate) < 0;
                     Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
                                                                   zoneId, defaultToRotationEmployee);
+                    if (date.compareTo(firstDraftDate) < 0) {
+                        shift.setOriginalEmployee(shiftTemplate.getRotationEmployee());
+                    }
                     entityManager.persist(shift);
                     shiftList.add(shift);
                 }

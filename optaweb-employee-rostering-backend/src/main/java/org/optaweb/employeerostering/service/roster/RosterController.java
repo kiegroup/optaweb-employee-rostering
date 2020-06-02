@@ -29,6 +29,7 @@ import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.roster.view.AvailabilityRosterView;
 import org.optaweb.employeerostering.domain.roster.view.ShiftRosterView;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.service.solver.SolverStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -154,10 +155,23 @@ public class RosterController {
         rosterService.solveRoster(tenantId);
     }
 
+    @ApiOperation("Start solving the roster in Nondisruptive mode. This will modify the publish" +
+            "schedule to make it feasible with minimal changes.")
+    @PostMapping("/replan")
+    public void replanRoster(@PathVariable @Min(0) Integer tenantId) {
+        rosterService.replanRoster(tenantId);
+    }
+
     @ApiOperation("Stop solving the roster, if it hasn't terminated automatically already")
     @PostMapping("/terminate")
     public void terminateRosterEarly(@PathVariable @Min(0) Integer tenantId) {
         rosterService.terminateRosterEarly(tenantId);
+    }
+
+    @ApiOperation("Get the status of the Solver")
+    @GetMapping("/status")
+    public ResponseEntity<SolverStatus> getSolverStatus(@PathVariable @Min(0) Integer tenantId) {
+        return new ResponseEntity<>(rosterService.getSolverStatus(tenantId), HttpStatus.OK);
     }
 
     // ************************************************************************
@@ -168,5 +182,11 @@ public class RosterController {
     @PostMapping("/publishAndProvision")
     public ResponseEntity<PublishResult> publishAndProvision(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(rosterService.publishAndProvision(tenantId), HttpStatus.OK);
+    }
+
+    @ApiOperation("Updates the original employee to match adjusted schedule; essentially a republish without provision")
+    @PostMapping("/commitChanges")
+    public void commitChanges(@PathVariable @Min(0) Integer tenantId) {
+        rosterService.commitChanges(tenantId);
     }
 }

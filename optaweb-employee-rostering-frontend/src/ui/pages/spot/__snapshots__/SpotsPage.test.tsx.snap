@@ -81,9 +81,29 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                 }
                 isEditing={false}
                 viewer={
-                  <Text>
-                    Spot 1
-                  </Text>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridTemplateColumns": "max-content min-content",
+                      }
+                    }
+                  >
+                    <Text>
+                      Spot 1
+                    </Text>
+                    <Unknown
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <ArrowIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Unknown>
+                  </span>
                 }
               />,
             },
@@ -217,9 +237,29 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                 }
                 isEditing={false}
                 viewer={
-                  <Text>
-                    Spot 2
-                  </Text>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridTemplateColumns": "max-content min-content",
+                      }
+                    }
+                  >
+                    <Text>
+                      Spot 2
+                    </Text>
+                    <Unknown
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <ArrowIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Unknown>
+                  </span>
                 }
               />,
             },
@@ -500,11 +540,31 @@ exports[`Spots page should render the viewer correctly 1`] = `
   <td
     key="0"
   >
-    <Text
-      key="0"
+    <span
+      style={
+        Object {
+          "display": "grid",
+          "gridTemplateColumns": "max-content min-content",
+        }
+      }
     >
-      Spot 2
-    </Text>
+      <Text
+        key="0"
+      >
+        Spot 2
+      </Text>
+      <Component
+        onClick={[Function]}
+        variant="link"
+      >
+        <ArrowIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Component>
+    </span>
   </td>
   <td
     key="1"

@@ -30,13 +30,6 @@ import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 @ConstraintConfiguration(constraintPackage = "org.optaweb.employeerostering.service.solver")
 public class RosterConstraintConfiguration extends AbstractPersistable {
 
-    // TODO: Is 999 a reasonable max for the weights?
-    @NotNull
-    private Integer undesiredTimeSlotWeight = 100;
-    @NotNull
-    private Integer desiredTimeSlotWeight = 10;
-    @NotNull
-    private Integer rotationEmployeeMatchWeight = 500;
     @NotNull
     private DayOfWeek weekStartDay = DayOfWeek.MONDAY;
 
@@ -44,10 +37,12 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     private HardMediumSoftLongScore requiredSkill = HardMediumSoftLongScore.ofHard(100);
     @ConstraintWeight("Unavailable time slot for an employee")
     private HardMediumSoftLongScore unavailableTimeSlot = HardMediumSoftLongScore.ofHard(50);
-    @ConstraintWeight("At most one shift assignment per day per employee")
-    private HardMediumSoftLongScore oneShiftPerDay = HardMediumSoftLongScore.ofHard(10);
-    @ConstraintWeight("No 2 shifts within 10 hours from each other")
-    private HardMediumSoftLongScore noShiftsWithinTenHours = HardMediumSoftLongScore.ofHard(1);
+    @ConstraintWeight("No overlapping shifts")
+    private HardMediumSoftLongScore noOverlappingShifts = HardMediumSoftLongScore.ofHard(20);
+    @ConstraintWeight("No more than 2 consecutive shifts")
+    private HardMediumSoftLongScore noMoreThan2ConsecutiveShifts = HardMediumSoftLongScore.ofHard(10);
+    @ConstraintWeight("Break between non-consecutive shifts is at least 10 hours")
+    private HardMediumSoftLongScore breakBetweenNonConsecutiveShiftsAtLeast10Hours = HardMediumSoftLongScore.ofHard(1);
     @ConstraintWeight("Daily minutes must not exceed contract maximum")
     private HardMediumSoftLongScore contractMaximumDailyMinutes = HardMediumSoftLongScore.ofHard(1);
     @ConstraintWeight("Weekly minutes must not exceed contract maximum")
@@ -60,55 +55,28 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     @ConstraintWeight("Assign every shift")
     private HardMediumSoftLongScore assignEveryShift = HardMediumSoftLongScore.ofMedium(1);
 
+    @ConstraintWeight("Employee is not original employee")
+    private HardMediumSoftLongScore notOriginalEmployee = HardMediumSoftLongScore.ofSoft(100_000_000_000L);
     @ConstraintWeight("Undesired time slot for an employee")
-    private HardMediumSoftLongScore undesiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore undesiredTimeSlot = HardMediumSoftLongScore.ofSoft(20);
     @ConstraintWeight("Desired time slot for an employee")
-    private HardMediumSoftLongScore desiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore desiredTimeSlot = HardMediumSoftLongScore.ofSoft(10);
     @ConstraintWeight("Employee is not rotation employee")
-    private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ofSoft(50);
 
     @SuppressWarnings("unused")
     public RosterConstraintConfiguration() {
         super(-1);
     }
 
-    public RosterConstraintConfiguration(Integer tenantId,
-                                         Integer undesiredTimeSlotWeight, Integer desiredTimeSlotWeight,
-                                         Integer rotationEmployeeMatchWeight, DayOfWeek weekStartDay) {
+    public RosterConstraintConfiguration(Integer tenantId, DayOfWeek weekStartDay) {
         super(tenantId);
-        this.undesiredTimeSlotWeight = undesiredTimeSlotWeight;
-        this.desiredTimeSlotWeight = desiredTimeSlotWeight;
-        this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
         this.weekStartDay = weekStartDay;
     }
 
     // ************************************************************************
     // Simple getters and setters
     // ************************************************************************
-
-    public Integer getUndesiredTimeSlotWeight() {
-        return undesiredTimeSlotWeight;
-    }
-
-    public void setUndesiredTimeSlotWeight(Integer undesiredTimeSlotWeight) {
-        this.undesiredTimeSlotWeight = undesiredTimeSlotWeight;
-    }
-
-    public Integer getDesiredTimeSlotWeight() {
-        return desiredTimeSlotWeight;
-    }
-
-    public void setDesiredTimeSlotWeight(Integer desiredTimeSlotWeight) {
-        this.desiredTimeSlotWeight = desiredTimeSlotWeight;
-    }
-
-    public Integer getRotationEmployeeMatchWeight() {
-        return rotationEmployeeMatchWeight;
-    }
-
-    public void setRotationEmployeeMatchWeight(Integer rotationEmployeeMatchWeight) {
-        this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
-    }
 
     public DayOfWeek getWeekStartDay() {
         return weekStartDay;
@@ -134,20 +102,29 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
         this.unavailableTimeSlot = unavailableTimeSlot;
     }
 
-    public HardMediumSoftLongScore getOneShiftPerDay() {
-        return oneShiftPerDay;
+    public HardMediumSoftLongScore getNoOverlappingShifts() {
+        return noOverlappingShifts;
     }
 
-    public void setOneShiftPerDay(HardMediumSoftLongScore oneShiftPerDay) {
-        this.oneShiftPerDay = oneShiftPerDay;
+    public void setNoOverlappingShifts(HardMediumSoftLongScore noOverlappingShifts) {
+        this.noOverlappingShifts = noOverlappingShifts;
     }
 
-    public HardMediumSoftLongScore getNoShiftsWithinTenHours() {
-        return noShiftsWithinTenHours;
+    public HardMediumSoftLongScore getNoMoreThan2ConsecutiveShifts() {
+        return noMoreThan2ConsecutiveShifts;
     }
 
-    public void setNoShiftsWithinTenHours(HardMediumSoftLongScore noShiftsWithinTenHours) {
-        this.noShiftsWithinTenHours = noShiftsWithinTenHours;
+    public void setNoMoreThan2ConsecutiveShifts(HardMediumSoftLongScore noMoreThan2ConsecutiveShifts) {
+        this.noMoreThan2ConsecutiveShifts = noMoreThan2ConsecutiveShifts;
+    }
+
+    public HardMediumSoftLongScore getBreakBetweenNonConsecutiveShiftsAtLeast10Hours() {
+        return breakBetweenNonConsecutiveShiftsAtLeast10Hours;
+    }
+
+    public void setBreakBetweenNonConsecutiveShiftsAtLeast10Hours(
+            HardMediumSoftLongScore breakBetweenNonConsecutiveShiftsAtLeast10Hours) {
+        this.breakBetweenNonConsecutiveShiftsAtLeast10Hours = breakBetweenNonConsecutiveShiftsAtLeast10Hours;
     }
 
     public HardMediumSoftLongScore getContractMaximumDailyMinutes() {
@@ -188,6 +165,14 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
 
     public void setAssignEveryShift(HardMediumSoftLongScore assignEveryShift) {
         this.assignEveryShift = assignEveryShift;
+    }
+
+    public HardMediumSoftLongScore getNotOriginalEmployee() {
+        return notOriginalEmployee;
+    }
+
+    public void setNotOriginalEmployee(HardMediumSoftLongScore notOriginalEmployee) {
+        this.notOriginalEmployee = notOriginalEmployee;
     }
 
     public HardMediumSoftLongScore getUndesiredTimeSlot() {

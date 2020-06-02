@@ -303,6 +303,8 @@ const baseShift: Shift = {
   startDateTime: moment('2018-07-01T09:00').toDate(),
   endDateTime: moment('2018-07-01T17:00').toDate(),
   spot,
+  requiredSkillSet: [],
+  originalEmployee: null,
   employee,
   rotationEmployee: {
     ...employee,

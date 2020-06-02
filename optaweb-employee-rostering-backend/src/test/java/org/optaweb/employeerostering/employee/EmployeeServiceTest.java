@@ -85,15 +85,6 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         return contractService.createContract(tenantId, contractView);
     }
 
-    private EmployeeAvailabilityView createEmployeeAvailability(Integer tenantId, Employee employee,
-                                                                LocalDateTime startDateTime, LocalDateTime endDateTime,
-                                                                EmployeeAvailabilityState state) {
-        EmployeeAvailabilityView employeeAvailabilityView = new EmployeeAvailabilityView(tenantId, employee,
-                                                                                         startDateTime, endDateTime,
-                                                                                         state);
-        return employeeService.createEmployeeAvailability(tenantId, employeeAvailabilityView);
-    }
-
     @Before
     public void setup() {
         createTestTenant();

@@ -19,7 +19,7 @@ import { Button, DropdownItem, Dropdown, KebabToggle } from '@patternfly/react-c
 import { withSize, SizeMeProps } from 'react-sizeme';
 
 export interface Props {
-  actions: { name: string; action: () => void }[];
+  actions: { name: string; action: () => void; isDisabled?: boolean }[];
 }
 
 export const Actions: FC<Props & SizeMeProps> = ({ actions, size }) => {
@@ -41,7 +41,7 @@ export const Actions: FC<Props & SizeMeProps> = ({ actions, size }) => {
   const actionsInDropdown = actions.filter((a, index) => index >= firstElementThatCannotFitIndex);
 
   const dropdownItems = actionsInDropdown.map(a => (
-    <DropdownItem key={a.name}>
+    <DropdownItem key={a.name} isDisabled={a.isDisabled || false}>
       {a.name}
     </DropdownItem>
   ));
@@ -58,6 +58,7 @@ export const Actions: FC<Props & SizeMeProps> = ({ actions, size }) => {
             style={{ margin: '5px' }}
             aria-label={a.name}
             onClick={a.action}
+            isDisabled={a.isDisabled || false}
           >
             {a.name}
           </Button>

@@ -20,7 +20,11 @@ import { Text, Button, ButtonVariant, List } from '@patternfly/react-core';
 import moment from 'moment';
 import { Employee } from 'domain/Employee';
 import { convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
-import { BlueprintIcon, EditIcon, TrashIcon, ThumbTackIcon } from '@patternfly/react-icons';
+import {
+  BlueprintIcon, EditIcon, TrashIcon, ThumbTackIcon, FileContractIcon, SchoolIcon, CalendarTimesIcon,
+  UserFriendsIcon, ExclamationTriangleIcon, UserTimesIcon, UserMinusIcon, UserPlusIcon, AlignCenterIcon,
+  PhoneVolumeIcon,
+} from '@patternfly/react-icons';
 import Color from 'color';
 import { useTranslation } from 'react-i18next';
 
@@ -31,6 +35,7 @@ export const Indictments: React.FC<Shift> = (shift) => {
   const { t } = useTranslation('ShiftEvent');
   const indictmentList = (
     <List>
+      <PublishedShiftReassignedPenalties {...shift} />
       <RequiredSkillViolations {...shift} />
       <ContractMinutesViolations {...shift} />
       <UnavailableEmployeeViolations {...shift} />
@@ -39,6 +44,7 @@ export const Indictments: React.FC<Shift> = (shift) => {
       <RotationViolationPenalties {...shift} />
       <UndesiredTimeslotForEmployeePenalties {...shift} />
       <DesiredTimeslotForEmployeeRewards {...shift} />
+      <NoBreaksViolations {...shift} />
     </List>
   );
 
@@ -49,6 +55,42 @@ export const Indictments: React.FC<Shift> = (shift) => {
     <>
       <Text>{t('indictments')}</Text>
       {indictmentList}
+    </>
+  );
+};
+
+export const IndictmentIcons: React.FC<Shift> = (shift) => {
+  const isPresent = (list?: any[]) => (list && list.length) || null;
+  return (
+    <div>
+      {isPresent(shift.publishedShiftReassignedPenaltyList) && <PhoneVolumeIcon />}
+      {isPresent(shift.contractMinutesViolationPenaltyList) && <FileContractIcon />}
+      {isPresent(shift.desiredTimeslotForEmployeeRewardList) && <UserPlusIcon />}
+      {isPresent(shift.requiredSkillViolationList) && <SchoolIcon />}
+      {isPresent(shift.rotationViolationPenaltyList) && <CalendarTimesIcon />}
+      {isPresent(shift.shiftEmployeeConflictList) && <UserFriendsIcon />}
+      {isPresent(shift.unassignedShiftPenaltyList) && <ExclamationTriangleIcon />}
+      {isPresent(shift.unavailableEmployeeViolationList) && <UserTimesIcon />}
+      {isPresent(shift.undesiredTimeslotForEmployeePenaltyList) && <UserMinusIcon />}
+      {isPresent(shift.noBreakViolationList) && <AlignCenterIcon />}
+    </div>
+  );
+};
+
+export const PublishedShiftReassignedPenalties: React.FC<Shift> = (shift) => {
+  const { t } = useTranslation('ShiftEvent');
+  return (
+    <>
+      {(shift.publishedShiftReassignedPenaltyList || []).map(v => (
+        <li key={v.shift.id}>
+          {t('publishedShiftReassigned', {
+            employee: (v.shift.employee as Employee).name,
+            originalEmployee: (v.shift.originalEmployee as Employee).name,
+          })}
+          <br />
+          {t('penalty', { score: convertHardMediumSoftScoreToString(v.score) })}
+        </li>
+      ))}
     </>
   );
 };
@@ -129,8 +171,8 @@ export const UnavailableEmployeeViolations: React.FC<Shift> = (shift) => {
 };
 
 // NOTE: ShiftEmployeeConflict refer to indictments from two constraints:
-// - "At most one shift assignment per day per employee"
-// - "No 2 shifts within 10 hours from each other"
+// - "No overlapping shifts"
+// - "Break between non-consecutive shifts is at least 10 hours"
 export const ShiftEmployeeConflictViolations: React.FC<Shift> = (shift) => {
   const { t } = useTranslation('ShiftEvent');
   return (
@@ -144,6 +186,23 @@ export const ShiftEmployeeConflictViolations: React.FC<Shift> = (shift) => {
               : moment(v.leftShift.startDateTime).format('LT'),
             to: (v.leftShift.id === shift.id) ? moment(v.rightShift.endDateTime).format('LT')
               : moment(v.leftShift.endDateTime).format('LT'),
+          })}
+          <br />
+          {t('penalty', { score: convertHardMediumSoftScoreToString(v.score) })}
+        </li>
+      ))}
+    </>
+  );
+};
+
+export const NoBreaksViolations: React.FC<Shift> = (shift) => {
+  const { t } = useTranslation('ShiftEvent');
+  return (
+    <>
+      {(shift.noBreakViolationList || []).map((v, index) => (
+        <li key={String(index)}>
+          {t('noBreaks', {
+            employee: (v.firstShift.employee as Employee).name,
           })}
           <br />
           {t('penalty', { score: convertHardMediumSoftScoreToString(v.score) })}
@@ -224,30 +283,25 @@ export const DesiredTimeslotForEmployeeRewards: React.FC<Shift> = (shift) => {
   );
 };
 
-export const NEGATIVE_HARD_SCORE_COLOR = Color('rgb(139, 0, 0)', 'rgb');
-export const NEGATIVE_MEDIUM_SCORE_COLOR = Color('rgb(245, 193, 46)', 'rgb');
-export const NEGATIVE_SOFT_SCORE_COLOR = Color('rgb(209, 209, 209)', 'rgb');
-export const ZERO_SCORE_COLOR = Color('rgb(207, 231, 205)', 'rgb');
-export const POSITIVE_SOFT_SCORE_COLOR = Color('rgb(63, 156, 53)', 'rgb');
+
+export const NEGATIVE_HARD_SCORE_COLOR = Color('#cc0000');
+export const NEGATIVE_MEDIUM_SCORE_COLOR = Color('#fce94f');
+export const NEGATIVE_SOFT_SCORE_COLOR = Color('#fcaf3e');
+export const ZERO_SCORE_COLOR = Color('#eeeeec');
+export const POSITIVE_SOFT_SCORE_COLOR = Color('#73d216');
 
 export function getShiftColor(shift: Shift): string {
   if (shift.indictmentScore !== undefined && shift.indictmentScore.hardScore < 0) {
-    const fromColor = NEGATIVE_HARD_SCORE_COLOR;
-    const toColor = NEGATIVE_MEDIUM_SCORE_COLOR;
-    return fromColor.mix(toColor, (20 + shift.indictmentScore.hardScore) / 100).hex();
+    return NEGATIVE_HARD_SCORE_COLOR.hex();
   }
   if (shift.indictmentScore !== undefined && shift.indictmentScore.mediumScore < 0) {
     return NEGATIVE_MEDIUM_SCORE_COLOR.hex();
   }
   if (shift.indictmentScore !== undefined && shift.indictmentScore.softScore < 0) {
-    const fromColor = NEGATIVE_MEDIUM_SCORE_COLOR;
-    const toColor = NEGATIVE_SOFT_SCORE_COLOR;
-    return fromColor.mix(toColor, (20 + shift.indictmentScore.softScore) / 100).hex();
+    return NEGATIVE_SOFT_SCORE_COLOR.hex();
   }
   if (shift.indictmentScore !== undefined && shift.indictmentScore.softScore > 0) {
-    const fromColor = ZERO_SCORE_COLOR;
-    const toColor = POSITIVE_SOFT_SCORE_COLOR;
-    return fromColor.mix(toColor, (20 + shift.indictmentScore.softScore) / 100).hex();
+    return POSITIVE_SOFT_SCORE_COLOR.hex();
   }
 
   // Zero score
@@ -322,13 +376,34 @@ const ShiftPopupBody: React.FC<Shift> = (shift) => {
 const ShiftEvent: React.FC<EventProps<Shift>> = props => (
   <span
     style={{
-      display: 'flex',
+      display: 'grid',
+      gridTemplateColumns: '1fr',
+      gridTemplateRows: 'calc(100% - 60px) 55px',
+      gridRowGap: '5px',
       height: '100%',
       width: '100%',
     }}
   >
-    {props.event.pinnedByUser && <ThumbTackIcon />}
-    {props.title}
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {props.event.pinnedByUser && <ThumbTackIcon />}
+      <span style={{
+        writingMode: 'vertical-rl',
+        transform: 'rotate(180deg)',
+      }}
+      >
+        {`${props.title} ${props.event.requiredSkillSet.length
+          ? `(${props.event.requiredSkillSet.map(s => s.name).join(', ')})` : ''} ${
+          (props.event.originalEmployee && props.event.employee
+            && props.event.originalEmployee.id !== props.event.employee.id)
+            ? `(was ${props.event.originalEmployee.name})` : ''}`}
+      </span>
+    </div>
+    <IndictmentIcons {...props.event} />
   </span>
 );
 

@@ -58,8 +58,8 @@ public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServ
 
     private ResponseEntity<List<ShiftView>> getShifts(Integer tenantId) {
         return restTemplate.exchange(shiftPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<ShiftView>>() {
-                }, tenantId);
+                                     new ParameterizedTypeReference<List<ShiftView>>() {
+                                     }, tenantId);
     }
 
     private ResponseEntity<ShiftView> getShift(Integer tenantId, Long id) {
@@ -103,14 +103,16 @@ public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServ
     @Test
     public void shiftCrudTest() {
         ResponseEntity<Spot> spotResponseEntity = addSpot(TENANT_ID, new SpotView(TENANT_ID, "spot",
-                Collections.emptySet()));
+                                                                                  Collections.emptySet()));
         Spot spot = spotResponseEntity.getBody();
 
         ResponseEntity<Contract> contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "contract"));
         Contract contract = contractResponseEntity.getBody();
 
-        ResponseEntity<Employee> rotationEmployeeResponseEntity = addEmployee(TENANT_ID, new Employee(TENANT_ID,
-                "rotationEmployee", contract, Collections.emptySet()));
+        ResponseEntity<Employee> rotationEmployeeResponseEntity = addEmployee(TENANT_ID,
+                                                                              new Employee(TENANT_ID,
+                                                                                           "rotationEmployee", contract,
+                                                                                           Collections.emptySet()));
         Employee rotationEmployee = rotationEmployeeResponseEntity.getBody();
 
         LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);

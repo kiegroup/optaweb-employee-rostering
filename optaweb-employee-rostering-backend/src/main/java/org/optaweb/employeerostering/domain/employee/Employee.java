@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.domain.employee;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -60,7 +61,8 @@ public class Employee extends AbstractPersistable {
     public Employee() {
     }
 
-    public Employee(Integer tenantId, String name, Contract contract, Set<Skill> skillProficiencySet) {
+    public Employee(Integer tenantId, String name, Contract contract,
+                    Set<Skill> skillProficiencySet) {
         super(tenantId);
         this.name = name;
         this.contract = contract;
@@ -122,6 +124,6 @@ public class Employee extends AbstractPersistable {
 
     @Override
     public int hashCode() {
-        return 31 * ((31 * name.hashCode()) ^ contract.hashCode()) ^ skillProficiencySet.hashCode();
+        return Objects.hash(name, contract, skillProficiencySet);
     }
 }

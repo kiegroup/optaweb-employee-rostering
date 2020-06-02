@@ -26,18 +26,13 @@ import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 public class RosterConstraintConfigurationView extends AbstractPersistable {
 
     @NotNull
-    private Integer undesiredTimeSlotWeight = 100;
-    @NotNull
-    private Integer desiredTimeSlotWeight = 10;
-    @NotNull
-    private Integer rotationEmployeeMatchWeight = 500;
-    @NotNull
     private DayOfWeek weekStartDay = DayOfWeek.MONDAY;
 
     private HardMediumSoftLongScore requiredSkill = HardMediumSoftLongScore.ofHard(100);
     private HardMediumSoftLongScore unavailableTimeSlot = HardMediumSoftLongScore.ofHard(50);
-    private HardMediumSoftLongScore oneShiftPerDay = HardMediumSoftLongScore.ofHard(10);
-    private HardMediumSoftLongScore noShiftsWithinTenHours = HardMediumSoftLongScore.ofHard(1);
+    private HardMediumSoftLongScore noOverlappingShifts = HardMediumSoftLongScore.ofHard(20);
+    private HardMediumSoftLongScore noMoreThan2ConsecutiveShifts = HardMediumSoftLongScore.ofHard(10);
+    private HardMediumSoftLongScore breakBetweenNonConsecutiveShiftsAtLeast10Hours = HardMediumSoftLongScore.ofHard(1);
     private HardMediumSoftLongScore contractMaximumDailyMinutes = HardMediumSoftLongScore.ofHard(1);
     private HardMediumSoftLongScore contractMaximumWeeklyMinutes = HardMediumSoftLongScore.ofHard(1);
     private HardMediumSoftLongScore contractMaximumMonthlyMinutes = HardMediumSoftLongScore.ofHard(1);
@@ -45,6 +40,7 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
 
     private HardMediumSoftLongScore assignEveryShift = HardMediumSoftLongScore.ofMedium(1);
 
+    private HardMediumSoftLongScore notOriginalEmployee = HardMediumSoftLongScore.ofSoft(100_000_000_000L);
     private HardMediumSoftLongScore undesiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
     private HardMediumSoftLongScore desiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
     private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ofSoft(1);
@@ -54,43 +50,14 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
         super(-1);
     }
 
-    public RosterConstraintConfigurationView(Integer tenantId,
-                                             Integer undesiredTimeSlotWeight, Integer desiredTimeSlotWeight,
-                                             Integer rotationEmployeeMatchWeight, DayOfWeek weekStartDay) {
+    public RosterConstraintConfigurationView(Integer tenantId, DayOfWeek weekStartDay) {
         super(tenantId);
-        this.undesiredTimeSlotWeight = undesiredTimeSlotWeight;
-        this.desiredTimeSlotWeight = desiredTimeSlotWeight;
-        this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
         this.weekStartDay = weekStartDay;
     }
 
     // ************************************************************************
     // Simple getters and setters
     // ************************************************************************
-
-    public Integer getUndesiredTimeSlotWeight() {
-        return undesiredTimeSlotWeight;
-    }
-
-    public void setUndesiredTimeSlotWeight(Integer undesiredTimeSlotWeight) {
-        this.undesiredTimeSlotWeight = undesiredTimeSlotWeight;
-    }
-
-    public Integer getDesiredTimeSlotWeight() {
-        return desiredTimeSlotWeight;
-    }
-
-    public void setDesiredTimeSlotWeight(Integer desiredTimeSlotWeight) {
-        this.desiredTimeSlotWeight = desiredTimeSlotWeight;
-    }
-
-    public Integer getRotationEmployeeMatchWeight() {
-        return rotationEmployeeMatchWeight;
-    }
-
-    public void setRotationEmployeeMatchWeight(Integer rotationEmployeeMatchWeight) {
-        this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
-    }
 
     public DayOfWeek getWeekStartDay() {
         return weekStartDay;
@@ -116,20 +83,30 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
         this.unavailableTimeSlot = unavailableTimeSlot;
     }
 
-    public HardMediumSoftLongScore getOneShiftPerDay() {
-        return oneShiftPerDay;
+    public HardMediumSoftLongScore getNoOverlappingShifts() {
+        return noOverlappingShifts;
     }
 
-    public void setOneShiftPerDay(HardMediumSoftLongScore oneShiftPerDay) {
-        this.oneShiftPerDay = oneShiftPerDay;
+    public void setNoOverlappingShifts(HardMediumSoftLongScore noOverlappingShifts) {
+        this.noOverlappingShifts = noOverlappingShifts;
     }
 
-    public HardMediumSoftLongScore getNoShiftsWithinTenHours() {
-        return noShiftsWithinTenHours;
+    public HardMediumSoftLongScore getNoMoreThan2ConsecutiveShifts() {
+        return noMoreThan2ConsecutiveShifts;
     }
 
-    public void setNoShiftsWithinTenHours(HardMediumSoftLongScore noShiftsWithinTenHours) {
-        this.noShiftsWithinTenHours = noShiftsWithinTenHours;
+    public void setNoMoreThan2ConsecutiveShifts(
+            HardMediumSoftLongScore noMoreThan2ConsecutiveShifts) {
+        this.noMoreThan2ConsecutiveShifts = noMoreThan2ConsecutiveShifts;
+    }
+
+    public HardMediumSoftLongScore getBreakBetweenNonConsecutiveShiftsAtLeast10Hours() {
+        return breakBetweenNonConsecutiveShiftsAtLeast10Hours;
+    }
+
+    public void setBreakBetweenNonConsecutiveShiftsAtLeast10Hours(
+            HardMediumSoftLongScore breakBetweenNonConsecutiveShiftsAtLeast10Hours) {
+        this.breakBetweenNonConsecutiveShiftsAtLeast10Hours = breakBetweenNonConsecutiveShiftsAtLeast10Hours;
     }
 
     public HardMediumSoftLongScore getContractMaximumDailyMinutes() {
@@ -170,6 +147,14 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
 
     public void setAssignEveryShift(HardMediumSoftLongScore assignEveryShift) {
         this.assignEveryShift = assignEveryShift;
+    }
+
+    public HardMediumSoftLongScore getNotOriginalEmployee() {
+        return notOriginalEmployee;
+    }
+
+    public void setNotOriginalEmployee(HardMediumSoftLongScore notOriginalEmployee) {
+        this.notOriginalEmployee = notOriginalEmployee;
     }
 
     public HardMediumSoftLongScore getUndesiredTimeSlot() {

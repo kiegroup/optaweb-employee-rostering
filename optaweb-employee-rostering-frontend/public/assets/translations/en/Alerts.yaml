@@ -141,6 +141,10 @@ publish:
   title: Published Roster
   message: Published from {{from}} to {{to}}.
 
+commitChanges:
+  title: Committed Changes
+  message: Committed changes to published shifts.
+
 shiftRosterRefresh:
   title: Info
   message: The Shift Roster was refreshed.

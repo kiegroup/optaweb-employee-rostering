@@ -24,7 +24,7 @@ import Header from './header/Header';
 import Alerts from './Alerts';
 import {
   AdminPage, ShiftRosterPage, AvailabilityRosterPage, SkillsPage, SpotsPage, ContractsPage,
-  EmployeesPage, RotationPage,
+  EmployeesPage, RotationPage, CurrentShiftRosterPage,
 } from './pages';
 import Navigation from './header/Navigation';
 
@@ -75,6 +75,11 @@ const App: React.FC = () => {
             path="/:tenantId/shift"
             exact
             component={ShiftRosterPage}
+          />
+          <Route
+            path="/:tenantId/adjust"
+            exact
+            component={CurrentShiftRosterPage}
           />
           <Route
             path="/:tenantId/availability"

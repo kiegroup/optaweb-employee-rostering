@@ -20,6 +20,19 @@
 }
 /* End Hack */
 
+.rbc-header.historic-day::before {
+    content: "";
+    font-family: "pficon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-style: normal;
+    font-weight: normal;
+    font-feature-settings: normal;
+    font-variant: normal;
+    text-decoration: none;
+    text-transform: none;
+}
+
 .rbc-header.published-day::before {
     content: " ";
     font-family: "pficon";
@@ -61,9 +74,10 @@
 }
 
 .rbc-event:hover:not(.rbc-addons-dnd-drag-preview) {
-    min-height: 150px;
-    min-width: 150px;
+    min-height: min-content;
+    min-width: min-content;
     z-index: 1000000;
+    filter: brightness(1.1);
 }
 
 .availability-event {

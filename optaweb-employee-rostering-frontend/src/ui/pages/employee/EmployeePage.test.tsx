@@ -178,7 +178,7 @@ describe('Employees page', () => {
     const result3 = employeesPage.isDataComplete(noContract);
     expect(result3).toEqual(false);
 
-    const completed = {
+    const completed: Employee = {
       tenantId: 0,
       name: 'Name',
       skillProficiencySet: [],
@@ -190,7 +190,7 @@ describe('Employees page', () => {
 
   it('should treat empty name as invalid', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
-    const noName = {
+    const noName: Employee = {
       tenantId: 0,
       name: '',
       skillProficiencySet: [],

@@ -48,7 +48,13 @@ exports[`EventWrapper should render correctly when the event continues both befo
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;
@@ -101,7 +107,13 @@ exports[`EventWrapper should render correctly when the event continues from eari
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;
@@ -154,7 +166,13 @@ exports[`EventWrapper should render correctly when the event continues later 1`]
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;
@@ -207,7 +225,13 @@ exports[`EventWrapper should render correctly when the event does not have a cla
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;
@@ -260,7 +284,13 @@ exports[`EventWrapper should render correctly when the event does not span multi
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;
@@ -311,7 +341,13 @@ exports[`EventWrapper should render correctly when the event has no height or to
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;
@@ -361,7 +397,13 @@ exports[`EventWrapper should render correctly without a style 1`] = `
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;

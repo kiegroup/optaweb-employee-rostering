@@ -32,6 +32,7 @@ import {
   EmptyStateVariant,
   EmptyStateBody,
   Button,
+  ButtonVariant,
 } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { Skill } from 'domain/Skill';
@@ -41,9 +42,10 @@ import { Predicate, Sorter, ReadonlyPartial } from 'types';
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 import { StatefulMultiTypeaheadSelectInput } from 'ui/components/MultiTypeaheadSelectInput';
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, ArrowIcon } from '@patternfly/react-icons';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { withTranslation, WithTranslation, Trans } from 'react-i18next';
+import moment from 'moment';
 
 interface StateProps extends DataTableProps<Employee> {
   tenantId: number;
@@ -54,7 +56,11 @@ interface StateProps extends DataTableProps<Employee> {
 const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
   ...ownProps,
   title: ownProps.t('employees'),
-  columnTitles: [ownProps.t('name'), ownProps.t('contract'), ownProps.t('skillProficiencies')],
+  columnTitles: [
+    ownProps.t('name'),
+    ownProps.t('contract'),
+    ownProps.t('skillProficiencies'),
+  ],
   tableData: employeeSelectors.getEmployeeList(state),
   skillList: skillSelectors.getSkillList(state),
   contractList: contractSelectors.getContractList(state),
@@ -87,7 +93,18 @@ export class EmployeesPage extends DataTable<Employee, Props> {
 
   displayDataRow(data: Employee): JSX.Element[] {
     return [
-      <Text key={0}>{data.name}</Text>,
+      <span style={{ display: 'grid', gridTemplateColumns: 'max-content min-content' }}>
+        <Text key={0}>{data.name}</Text>
+        <Button
+          variant={ButtonVariant.link}
+          onClick={() => {
+            this.props.history.push(`/${this.props.tenantId}/availability?employee=${data.name}`
+            + `&week=${moment().startOf('week').format('YYYY-MM-DD')}`);
+          }}
+        >
+          <ArrowIcon />
+        </Button>
+      </span>,
       <Text key={1}>{data.contract.name}</Text>,
       <ChipGroup key={2}>
         {data.skillProficiencySet.map(skill => (
@@ -150,7 +167,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
   }
 
   getSorters(): (Sorter<Employee> | null)[] {
-    return [stringSorter(e => e.name), stringSorter(e => e.contract.name), null];
+    return [stringSorter(e => e.name), stringSorter(e => e.contract.name), null, null];
   }
 
   updateData(data: Employee): void {

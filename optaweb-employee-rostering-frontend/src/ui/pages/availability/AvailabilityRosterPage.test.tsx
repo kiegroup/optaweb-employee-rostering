@@ -575,6 +575,8 @@ const shift: Shift = {
   startDateTime: moment('2018-07-01T09:00').toDate(),
   endDateTime: moment('2018-07-01T17:00').toDate(),
   spot,
+  requiredSkillSet: [],
+  originalEmployee: null,
   employee,
   rotationEmployee: {
     ...employee,
@@ -627,6 +629,10 @@ const baseProps: Props = {
   tReady: true,
   tenantId: 0,
   score: { hardScore: 0, mediumScore: 0, softScore: 0 },
+  indictmentSummary: {
+    constraintToCountMap: {},
+    constraintToScoreImpactMap: {},
+  },
   isSolving: false,
   isLoading: false,
   totalNumOfSpots: 1,

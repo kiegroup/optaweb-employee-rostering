@@ -25,13 +25,18 @@ import { UndesiredTimeslotForEmployeePenalty } from './indictment/UndesiredTimes
 import { RotationViolationPenalty } from './indictment/RotationViolationPenalty';
 import { UnassignedShiftPenalty } from './indictment/UnassignedShiftPenalty';
 import { ContractMinutesViolation } from './indictment/ContractMinutesViolation';
+import { Skill } from './Skill';
+import { NoBreakViolation } from './indictment/NoBreakViolation';
+import { PublishedShiftReassignedPenalty } from './indictment/PublishedShiftReassignedPenalty';
 
 export interface Shift extends DomainObject {
   startDateTime: Date;
   endDateTime: Date;
   spot: Spot;
+  requiredSkillSet: Skill[];
   rotationEmployee: Employee | null;
   employee: Employee | null;
+  originalEmployee: Employee | null;
   pinnedByUser: boolean;
   indictmentScore?: HardMediumSoftScore;
   requiredSkillViolationList?: RequiredSkillViolation[];
@@ -42,4 +47,6 @@ export interface Shift extends DomainObject {
   rotationViolationPenaltyList?: RotationViolationPenalty[];
   unassignedShiftPenaltyList?: UnassignedShiftPenalty[];
   contractMinutesViolationPenaltyList?: ContractMinutesViolation[];
+  noBreakViolationList?: NoBreakViolation[];
+  publishedShiftReassignedPenaltyList?: PublishedShiftReassignedPenalty[];
 }

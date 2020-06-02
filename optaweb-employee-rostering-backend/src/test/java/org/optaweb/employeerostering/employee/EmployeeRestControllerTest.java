@@ -147,7 +147,8 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
 
-        Employee updatedEmployee = new Employee(TENANT_ID, "updatedEmployee", contractA, testSkillSet);
+        Employee updatedEmployee = new Employee(TENANT_ID, "updatedEmployee", contractA,
+                                                testSkillSet);
         updatedEmployee.setId(postResponse.getBody().getId());
         ResponseEntity<Employee> putResponse = updateEmployee(TENANT_ID, updatedEmployee);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -172,9 +173,10 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
         ResponseEntity<Contract> contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "contract"));
         Contract contract = contractResponseEntity.getBody();
 
-        ResponseEntity<Employee> employeeResponseEntity = addEmployee(TENANT_ID, new Employee(TENANT_ID, "employee",
-                                                                                              contract,
-                                                                                              Collections.emptySet()));
+        ResponseEntity<Employee> employeeResponseEntity = addEmployee(TENANT_ID,
+                                                                      new Employee(TENANT_ID, "employee",
+                                                                                   contract,
+                                                                                   Collections.emptySet()));
         Employee employee = employeeResponseEntity.getBody();
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);

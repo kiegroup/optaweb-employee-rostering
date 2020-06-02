@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
 import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
-
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.roster.Roster;
@@ -33,6 +33,9 @@ import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.violation.ContractMinutesViolation;
 import org.optaweb.employeerostering.domain.violation.DesiredTimeslotForEmployeeReward;
+import org.optaweb.employeerostering.domain.violation.IndictmentSummary;
+import org.optaweb.employeerostering.domain.violation.NoBreakViolation;
+import org.optaweb.employeerostering.domain.violation.PublishedShiftReassignedPenalty;
 import org.optaweb.employeerostering.domain.violation.RequiredSkillViolation;
 import org.optaweb.employeerostering.domain.violation.RotationViolationPenalty;
 import org.optaweb.employeerostering.domain.violation.ShiftEmployeeConflict;
@@ -40,7 +43,6 @@ import org.optaweb.employeerostering.domain.violation.UnassignedShiftPenalty;
 import org.optaweb.employeerostering.domain.violation.UnavailableEmployeeViolation;
 import org.optaweb.employeerostering.domain.violation.UndesiredTimeslotForEmployeePenalty;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
-
 import org.springframework.stereotype.Component;
 
 @Component
@@ -48,7 +50,7 @@ public class IndictmentUtils {
 
     private WannabeSolverManager solverManager;
 
-    private static final String CONSTRAINT_MATCH_PACKAGE = "org.optaweb.employeerostering.service.solver";
+    public static final String CONSTRAINT_MATCH_PACKAGE = "org.optaweb.employeerostering.service.solver";
 
     public IndictmentUtils(WannabeSolverManager solverManager) {
         this.solverManager = solverManager;
@@ -62,6 +64,30 @@ public class IndictmentUtils {
         }
     }
 
+    public IndictmentSummary getIndictmentSummaryForRoster(Roster roster) {
+        try (ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector()) {
+            scoreDirector.setWorkingSolution(roster);
+            scoreDirector.calculateScore();
+            Map<String, ConstraintMatchTotal> constraintMatchTotalMap = scoreDirector.getConstraintMatchTotalMap();
+            IndictmentSummary out = new IndictmentSummary();
+            out.setConstraintToCountMap(constraintMatchTotalMap.entrySet().stream()
+                                                .map(e -> e.getValue())
+                                                .collect(Collectors
+                                                                 .toMap(ConstraintMatchTotal::getConstraintName,
+                                                                        ConstraintMatchTotal::getConstraintMatchCount)
+                                                ));
+            out.setConstraintToScoreImpactMap(constraintMatchTotalMap.entrySet().stream()
+                                                      .map(e -> e.getValue())
+                                                      .collect(Collectors
+                                                                       .toMap(ConstraintMatchTotal::getConstraintName,
+                                                                              cmt -> {
+                                                                                  return (HardMediumSoftLongScore) cmt
+                                                                                          .getScore();
+                                                                              })));
+            return out;
+        }
+    }
+
     public ShiftView getShiftViewWithIndictment(ZoneId zoneId, Shift shift, Indictment indictment) {
         return new ShiftView(zoneId, shift,
                              getRequiredSkillViolationList(indictment),
@@ -72,6 +98,8 @@ public class IndictmentUtils {
                              getRotationViolationPenaltyList(indictment),
                              getUnassignedShiftPenaltyList(indictment),
                              getContractMinutesViolationList(indictment),
+                             getNoBreakViolationList(indictment),
+                             getPublishedShiftReassignedPenaltyList(indictment),
                              (indictment != null) ?
                                      (HardMediumSoftLongScore) indictment.getScore() : HardMediumSoftLongScore.ZERO);
     }
@@ -134,11 +162,25 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("At most one shift assignment per day per employee") ||
-                        cm.getConstraintName().equals("No 2 shifts within 10 hours from each other"))
+                        cm.getConstraintName().equals("Break between non-consecutive shifts is at least 10 hours") ||
+                        cm.getConstraintName().equals("No overlapping shifts"))
                 .map(cm -> new ShiftEmployeeConflict((Shift) cm.getJustificationList().get(0),
                                                      (Shift) cm.getJustificationList().get(1),
                                                      (HardMediumSoftLongScore) cm.getScore()))
+                .collect(Collectors.toList());
+    }
+
+    public List<NoBreakViolation> getNoBreakViolationList(Indictment indictment) {
+        if (indictment == null) {
+            return Collections.emptyList();
+        }
+        return indictment.getConstraintMatchSet().stream()
+                .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
+                        cm.getConstraintName().equals("No more than 2 consecutive shifts"))
+                .map(cm -> new NoBreakViolation((Shift) cm.getJustificationList().get(0),
+                                                (Shift) cm.getJustificationList().get(1),
+                                                (Shift) cm.getJustificationList().get(2),
+                                                (HardMediumSoftLongScore) cm.getScore()))
                 .collect(Collectors.toList());
     }
 
@@ -186,6 +228,18 @@ public class IndictmentUtils {
                                                                 .filter(o -> o instanceof Long)
                                                                 .findFirst().get(),
                                                         (HardMediumSoftLongScore) cm.getScore()))
+                .collect(Collectors.toList());
+    }
+
+    public List<PublishedShiftReassignedPenalty> getPublishedShiftReassignedPenaltyList(Indictment indictment) {
+        if (indictment == null) {
+            return Collections.emptyList();
+        }
+        return indictment.getConstraintMatchSet().stream()
+                .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
+                        cm.getConstraintName().equals("Employee is not original employee"))
+                .map(cm -> new PublishedShiftReassignedPenalty((Shift) cm.getJustificationList().get(0),
+                                                               (HardMediumSoftLongScore) cm.getScore()))
                 .collect(Collectors.toList());
     }
 }

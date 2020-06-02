@@ -104,7 +104,7 @@ describe('Rotation Page', () => {
     />);
     mount((rotationPage.find(Trans).prop('components') as any)[2]).simulate('click');
     expect(baseProps.history.push).toBeCalled();
-    expect(baseProps.history.push).toBeCalledWith('/0/spots');
+    expect(baseProps.history.push).toBeCalledWith('/0/wards');
   });
 
   it('should call updateShift on updateShift', () => {
@@ -195,6 +195,7 @@ describe('Rotation Page', () => {
       durationBetweenRotationStartAndTemplateStart: moment.duration(168, 'hours'),
       shiftTemplateDuration: moment.duration(8, 'hours'),
       spot,
+      requiredSkillSet: [],
       rotationEmployee: null,
     });
   });
@@ -269,6 +270,7 @@ const shiftTemplate: ShiftTemplate = {
   durationBetweenRotationStartAndTemplateStart: moment.duration(1, 'day').add(9, 'hours'),
   shiftTemplateDuration: moment.duration(8, 'hours'),
   spot,
+  requiredSkillSet: [],
   rotationEmployee: employee,
 };
 

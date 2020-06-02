@@ -34,11 +34,13 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.persistence.EntityManager;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.termination.TerminationConfig;
 import org.optaplanner.test.impl.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreVerifier;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
@@ -54,7 +56,6 @@ import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
-import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -83,6 +84,9 @@ public class SolverTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private SolverConfig solverConfig;
+
     private final String rosterPathURI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
 
     private ResponseEntity<Void> solveForTenant(Integer tenantId) {
@@ -94,14 +98,12 @@ public class SolverTest {
     }
 
     private SolverFactory<Roster> getSolverFactory() {
-        SolverFactory<Roster> solverFactory = SolverFactory.createFromXmlResource(WannabeSolverManager.SOLVER_CONFIG);
-        solverFactory.getSolverConfig().setTerminationConfig(new TerminationConfig()
-                                                                     .withScoreCalculationCountLimit(10000L));
-        return solverFactory;
+        return SolverFactory.create(solverConfig.copyConfig()
+                .withTerminationConfig(new TerminationConfig().withScoreCalculationCountLimit(10000L)));
     }
 
     private HardMediumSoftLongScoreVerifier<Roster> getScoreVerifier() {
-        return new HardMediumSoftLongScoreVerifier<Roster>(getSolverFactory());
+        return new HardMediumSoftLongScoreVerifier<>(getSolverFactory());
     }
 
     @Test
@@ -129,7 +131,7 @@ public class SolverTest {
         assertFalse(roster.getShiftList().isEmpty());
         assertTrue(roster.getShiftList().stream().anyMatch(s -> s.getEmployee() != null));
     }
-    
+
     // A solver "integration" test that verify it moves only draft shifts
     @Test(timeout = 600000)
     public void testMoveOnlyDraftShifts() {
@@ -145,13 +147,13 @@ public class SolverTest {
         RosterConstraintConfiguration constraintConfiguration = getRosterConstraintConfiguration(idGenerator);
 
         Contract contract = getDefaultContract(idGenerator);
-        
+
         Skill skill = new Skill(TENANT_ID, "Skill");
         skill.setId(idGenerator.getAndIncrement());
 
         Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
         employeeA.setId(idGenerator.getAndIncrement());
-        
+
         Employee employeeB = new Employee(TENANT_ID, "Bill", contract, Collections.singleton(skill));
         employeeB.setId(idGenerator.getAndIncrement());
 
@@ -177,14 +179,14 @@ public class SolverTest {
         roster.setRosterConstraintConfiguration(constraintConfiguration);
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
-        
+
         roster = solver.solve(roster);
         assertTrue(roster.getShiftList().stream()
-                   .filter(s -> !rosterState.isDraft(s))
-                   .allMatch(s -> s.getEmployee().equals(employeeA)));
+                           .filter(s -> !rosterState.isDraft(s))
+                           .allMatch(s -> s.getEmployee().equals(employeeA)));
         assertTrue(roster.getShiftList().stream()
-                   .filter(rosterState::isDraft)
-                   .allMatch(s -> s.getEmployee().equals(employeeB)));
+                           .filter(rosterState::isDraft)
+                           .allMatch(s -> s.getEmployee().equals(employeeB)));
     }
 
     private void testContractConstraint(ContractField contractField) {
@@ -237,15 +239,15 @@ public class SolverTest {
         shiftList.get(2).setEmployee(employeeA);
 
         // -1 for each shift in overloaded week
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 3);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 180);
 
         shiftList.get(5).setEmployee(employeeA);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 6);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 360);
 
         shiftList.get(1).setEmployee(null);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 3);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 180);
     }
 
     @Test(timeout = 600000)
@@ -295,15 +297,15 @@ public class SolverTest {
         roster.setShiftList(Collections.singletonList(shift));
 
         final Constraints constraint = Constraints.REQUIRED_SKILL_FOR_A_SHIFT;
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
 
         employeeA.setSkillProficiencySet(new HashSet<>(Collections.singleton(skillA)));
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
 
         employeeA.setSkillProficiencySet(new HashSet<>(Collections.singleton(skillB)));
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
 
         employeeA.setSkillProficiencySet(new HashSet<>(Arrays.asList(skillA, skillB)));
 
@@ -368,17 +370,17 @@ public class SolverTest {
                 throw new IllegalArgumentException("No case for (" + availabilityState + ")");
         }
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
 
         shift.setStartDateTime(firstDateTime.minusHours(3));
         shift.setEndDateTime(firstDateTime.plusHours(6));
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
 
         shift.setStartDateTime(firstDateTime.plusHours(3));
         shift.setEndDateTime(firstDateTime.plusHours(12));
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
 
         shift.setStartDateTime(firstDateTime.plusHours(12));
         shift.setEndDateTime(firstDateTime.plusHours(21));
@@ -394,7 +396,7 @@ public class SolverTest {
     }
 
     @Test(timeout = 600000)
-    public void testAtMostOneShiftAssignmentPerDayPerEmployee() {
+    public void testNoMoreThan2ConsecutiveShifts() {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
 
         AtomicLong idGenerator = new AtomicLong(1L);
@@ -433,27 +435,26 @@ public class SolverTest {
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
 
-        final Constraints constraint = Constraints.AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE;
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 2);
+        final Constraints constraint = Constraints.NO_MORE_THAN_2_CONSECUTIVE_SHIFTS;
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
 
-        shiftBuilder.withTimeBetweenShifts(Duration.ofDays(1));
-        shiftList = shiftBuilder.generateShifts(2);
+        shiftList = shiftBuilder.generateShifts(3);
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
 
         // Start time is midnight, so one hour before is a different day
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(-1));
-        shiftList = shiftBuilder.generateShifts(2);
+        shiftList = shiftBuilder.generateShifts(3);
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
     }
 
     @Test(timeout = 600000)
-    public void testNoTwoShiftsWithin10HoursOfEachOther() {
+    public void testBreaksBetweenConsecutiveShiftsAtLeast10Hours() {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
 
         AtomicLong idGenerator = new AtomicLong(1L);
@@ -478,9 +479,10 @@ public class SolverTest {
                 .forSpot(spotA)
                 .startingAtDate(firstDateTime)
                 .withShiftLength(Duration.ofHours(1))
-                .withTimeBetweenShifts(Duration.ofHours(1));
+                .withTimeBetweenShifts(Duration.ofHours(2));
 
         List<Shift> shiftList = shiftBuilder.generateShifts(2);
+        System.out.println(shiftList);
         shiftList.forEach(s -> s.setEmployee(employeeA));
 
         roster.setTenantId(TENANT_ID);
@@ -492,17 +494,16 @@ public class SolverTest {
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
 
-        final Constraints constraint = Constraints.NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER;
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        final Constraints constraint = Constraints.BREAKS_AT_LEAST_10_HOURS;
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540); // Only 1 hour of break.
 
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(10));
         shiftList = shiftBuilder.generateShifts(2);
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        // Although start times are 10 hours apart, first end time is 9 hours apart
-        // from next start time
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        // Although start times are 10 hours apart, first end time is 9 hours apart from next start time.
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
 
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(11));
         shiftList = shiftBuilder.generateShifts(2);
@@ -511,13 +512,13 @@ public class SolverTest {
 
         constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
 
-        // Start time is midnight, so one hour before is a different day
-        shiftBuilder.withTimeBetweenShifts(Duration.ofHours(-1));
+        // Start time is midnight, so two hours before is a different day
+        shiftBuilder.withTimeBetweenShifts(Duration.ofHours(-2));
         shiftList = shiftBuilder.generateShifts(2);
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
     }
 
     @Test(timeout = 600000)
@@ -575,6 +576,7 @@ public class SolverTest {
         constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
     }
 
+    @Ignore("Disabled as in this new world, predictability of schedules does not matter.")
     @Test(timeout = 600000)
     public void testEmployeeIsNotRotationEmployeeConstraint() {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
@@ -668,36 +670,34 @@ public class SolverTest {
 
     private enum Constraints {
         REQUIRED_SKILL_FOR_A_SHIFT("Required skill for a shift",
-                                   HardMediumSoftScore.of(-100, 0, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getRequiredSkill().negate()),
         UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE("Unavailable time slot for an employee",
-                                              HardMediumSoftScore.of(-50, 0, 0)),
-        AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE("At most one shift assignment per day per employee",
-                                                          HardMediumSoftScore.of(-10, 0, 0)),
-        NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER("No 2 shifts within 10 hours from each other",
-                                                    HardMediumSoftScore.of(-1, 0, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getUnavailableTimeSlot().negate()),
+        NO_MORE_THAN_2_CONSECUTIVE_SHIFTS("No more than 2 consecutive shifts",
+                ROSTER_CONSTRAINT_CONFIGURATION.getNoMoreThan2ConsecutiveShifts().negate()),
+        BREAKS_AT_LEAST_10_HOURS("Break between non-consecutive shifts is at least 10 hours",
+                ROSTER_CONSTRAINT_CONFIGURATION.getBreakBetweenNonConsecutiveShiftsAtLeast10Hours().negate()),
         DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Daily minutes must not exceed contract maximum",
-                                                       HardMediumSoftScore.of(-1, 0, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumDailyMinutes().negate()),
         WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Weekly minutes must not exceed contract maximum",
-                                                        HardMediumSoftScore.of(-1, 0, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumWeeklyMinutes().negate()),
         MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Monthly minutes must not exceed contract maximum",
-                                                         HardMediumSoftScore.of(-1, 0, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumMonthlyMinutes().negate()),
         YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Yearly minutes must not exceed contract maximum",
-                                                        HardMediumSoftScore.of(-1, 0, 0)),
-        ASSIGN_EVERY_SHIFT("Assign every shift", HardMediumSoftScore.of(0, -1, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumYearlyMinutes().negate()),
+        ASSIGN_EVERY_SHIFT("Assign every shift",
+                ROSTER_CONSTRAINT_CONFIGURATION.getAssignEveryShift().negate()),
         UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Undesired time slot for an employee",
-                                            HardMediumSoftScore.of(0, 0, -ROSTER_CONSTRAINT_CONFIGURATION.
-                                                    getUndesiredTimeSlotWeight())),
+                ROSTER_CONSTRAINT_CONFIGURATION.getUndesiredTimeSlot().negate()),
         DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Desired time slot for an employee",
-                                          HardMediumSoftScore.of(0, 0, ROSTER_CONSTRAINT_CONFIGURATION
-                                                  .getDesiredTimeSlotWeight())),
+                ROSTER_CONSTRAINT_CONFIGURATION.getDesiredTimeSlot()),
         EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE("Employee is not rotation employee",
-                                          HardMediumSoftScore.of(0, 0, -ROSTER_CONSTRAINT_CONFIGURATION
-                                                  .getRotationEmployeeMatchWeight()));
+                ROSTER_CONSTRAINT_CONFIGURATION.getNotRotationEmployee().negate());
 
         String constraintName;
-        HardMediumSoftScore constraintWeight;
+        HardMediumSoftLongScore constraintWeight;
 
-        private Constraints(String constraintName, HardMediumSoftScore constraintWeight) {
+        private Constraints(String constraintName, HardMediumSoftLongScore constraintWeight) {
             this.constraintName = constraintName;
             this.constraintWeight = constraintWeight;
         }

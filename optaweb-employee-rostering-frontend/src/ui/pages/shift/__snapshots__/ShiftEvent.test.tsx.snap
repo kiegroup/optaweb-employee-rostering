@@ -174,7 +174,9 @@ exports[`ShiftEvent getContractMinutesViolations should render correctly 1`] = `
       "softScore": 0,
     }
   }
+  originalEmployee={null}
   pinnedByUser={false}
+  requiredSkillSet={Array []}
   requiredSkillViolationList={Array []}
   rotationEmployee={
     Object {
@@ -335,7 +337,9 @@ exports[`ShiftEvent getDesiredTimeslotForEmployeeReward should render correctly 
             "mediumScore": 0,
             "softScore": 0,
           },
+          "originalEmployee": null,
           "pinnedByUser": false,
+          "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
             "contract": Object {
@@ -422,7 +426,9 @@ exports[`ShiftEvent getDesiredTimeslotForEmployeeReward should render correctly 
       "softScore": 0,
     }
   }
+  originalEmployee={null}
   pinnedByUser={false}
+  requiredSkillSet={Array []}
   requiredSkillViolationList={Array []}
   rotationEmployee={
     Object {
@@ -524,7 +530,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
       "softScore": 0,
     }
   }
+  originalEmployee={null}
   pinnedByUser={false}
+  requiredSkillSet={Array []}
   requiredSkillViolationList={
     Array [
       Object {
@@ -567,7 +575,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
             "mediumScore": 0,
             "softScore": 0,
           },
+          "originalEmployee": null,
           "pinnedByUser": false,
+          "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
             "contract": Object {
@@ -687,7 +697,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
             "mediumScore": 0,
             "softScore": 0,
           },
+          "originalEmployee": null,
           "pinnedByUser": false,
+          "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
             "contract": Object {
@@ -775,7 +787,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
     <ul
       className="pf-c-list"
     >
-      <RequiredSkillViolations
+      <PublishedShiftReassignedPenalties
         contractMinutesViolationPenaltyList={Array []}
         desiredTimeslotForEmployeeRewardList={Array []}
         employee={
@@ -813,7 +825,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={
           Array [
             Object {
@@ -856,7 +870,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -976,7 +992,292 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
+                "requiredSkillViolationList": Array [],
+                "rotationEmployee": Object {
+                  "contract": Object {
+                    "id": 5,
+                    "maximumMinutesPerDay": 10,
+                    "maximumMinutesPerMonth": 500,
+                    "maximumMinutesPerWeek": 70,
+                    "maximumMinutesPerYear": 6000,
+                    "name": "Basic Contract",
+                    "tenantId": 0,
+                    "version": 0,
+                  },
+                  "id": 7,
+                  "name": "Rotation Employee",
+                  "skillProficiencySet": Array [
+                    Object {
+                      "id": 6,
+                      "name": "Not Required Skill",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "rotationViolationPenaltyList": Array [],
+                "shiftEmployeeConflictList": Array [],
+                "spot": Object {
+                  "id": 2,
+                  "name": "Spot",
+                  "requiredSkillSet": Array [
+                    Object {
+                      "id": 3,
+                      "name": "Skill",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "startDateTime": 2018-07-01T09:00:00.000Z,
+                "tenantId": 0,
+                "unassignedShiftPenaltyList": Array [],
+                "unavailableEmployeeViolationList": Array [],
+                "undesiredTimeslotForEmployeePenaltyList": Array [],
+                "version": 0,
+              },
+            },
+          ]
+        }
+        shiftEmployeeConflictList={Array []}
+        spot={
+          Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        startDateTime={2018-07-01T09:00:00.000Z}
+        tenantId={0}
+        unassignedShiftPenaltyList={Array []}
+        unavailableEmployeeViolationList={Array []}
+        undesiredTimeslotForEmployeePenaltyList={Array []}
+        version={0}
+      />
+      <RequiredSkillViolations
+        contractMinutesViolationPenaltyList={Array []}
+        desiredTimeslotForEmployeeRewardList={Array []}
+        employee={
+          Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        endDateTime={2018-07-01T17:00:00.000Z}
+        id={1}
+        indictmentScore={
+          Object {
+            "hardScore": 0,
+            "mediumScore": 0,
+            "softScore": 0,
+          }
+        }
+        originalEmployee={null}
+        pinnedByUser={false}
+        requiredSkillSet={Array []}
+        requiredSkillViolationList={
+          Array [
+            Object {
+              "score": Object {
+                "hardScore": -10,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "shift": Object {
+                "contractMinutesViolationPenaltyList": Array [],
+                "desiredTimeslotForEmployeeRewardList": Array [],
+                "employee": Object {
+                  "contract": Object {
+                    "id": 5,
+                    "maximumMinutesPerDay": 10,
+                    "maximumMinutesPerMonth": 500,
+                    "maximumMinutesPerWeek": 70,
+                    "maximumMinutesPerYear": 6000,
+                    "name": "Basic Contract",
+                    "tenantId": 0,
+                    "version": 0,
+                  },
+                  "id": 4,
+                  "name": "Employee 1",
+                  "skillProficiencySet": Array [
+                    Object {
+                      "id": 6,
+                      "name": "Not Required Skill",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "endDateTime": 2018-07-01T17:00:00.000Z,
+                "id": 1,
+                "indictmentScore": Object {
+                  "hardScore": 0,
+                  "mediumScore": 0,
+                  "softScore": 0,
+                },
+                "originalEmployee": null,
+                "pinnedByUser": false,
+                "requiredSkillSet": Array [],
+                "requiredSkillViolationList": Array [],
+                "rotationEmployee": Object {
+                  "contract": Object {
+                    "id": 5,
+                    "maximumMinutesPerDay": 10,
+                    "maximumMinutesPerMonth": 500,
+                    "maximumMinutesPerWeek": 70,
+                    "maximumMinutesPerYear": 6000,
+                    "name": "Basic Contract",
+                    "tenantId": 0,
+                    "version": 0,
+                  },
+                  "id": 7,
+                  "name": "Rotation Employee",
+                  "skillProficiencySet": Array [
+                    Object {
+                      "id": 6,
+                      "name": "Not Required Skill",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "rotationViolationPenaltyList": Array [],
+                "shiftEmployeeConflictList": Array [],
+                "spot": Object {
+                  "id": 2,
+                  "name": "Spot",
+                  "requiredSkillSet": Array [
+                    Object {
+                      "id": 3,
+                      "name": "Skill",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "startDateTime": 2018-07-01T09:00:00.000Z,
+                "tenantId": 0,
+                "unassignedShiftPenaltyList": Array [],
+                "unavailableEmployeeViolationList": Array [],
+                "undesiredTimeslotForEmployeePenaltyList": Array [],
+                "version": 0,
+              },
+            },
+          ]
+        }
+        rotationEmployee={
+          Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 7,
+            "name": "Rotation Employee",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        rotationViolationPenaltyList={
+          Array [
+            Object {
+              "score": Object {
+                "hardScore": 0,
+                "mediumScore": 0,
+                "softScore": -100,
+              },
+              "shift": Object {
+                "contractMinutesViolationPenaltyList": Array [],
+                "desiredTimeslotForEmployeeRewardList": Array [],
+                "employee": Object {
+                  "contract": Object {
+                    "id": 5,
+                    "maximumMinutesPerDay": 10,
+                    "maximumMinutesPerMonth": 500,
+                    "maximumMinutesPerWeek": 70,
+                    "maximumMinutesPerYear": 6000,
+                    "name": "Basic Contract",
+                    "tenantId": 0,
+                    "version": 0,
+                  },
+                  "id": 4,
+                  "name": "Employee 1",
+                  "skillProficiencySet": Array [
+                    Object {
+                      "id": 6,
+                      "name": "Not Required Skill",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "endDateTime": 2018-07-01T17:00:00.000Z,
+                "id": 1,
+                "indictmentScore": Object {
+                  "hardScore": 0,
+                  "mediumScore": 0,
+                  "softScore": 0,
+                },
+                "originalEmployee": null,
+                "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -1108,7 +1409,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={
           Array [
             Object {
@@ -1151,7 +1454,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -1271,7 +1576,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -1385,7 +1692,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={
           Array [
             Object {
@@ -1428,7 +1737,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -1548,7 +1859,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -1662,7 +1975,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={
           Array [
             Object {
@@ -1705,7 +2020,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -1825,7 +2142,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -1939,7 +2258,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={
           Array [
             Object {
@@ -1982,7 +2303,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -2102,7 +2425,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -2216,7 +2541,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={
           Array [
             Object {
@@ -2259,7 +2586,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -2379,7 +2708,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -2501,7 +2832,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={
           Array [
             Object {
@@ -2544,7 +2877,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -2664,7 +2999,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -2778,7 +3115,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={
           Array [
             Object {
@@ -2821,7 +3160,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -2941,7 +3282,292 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                   "mediumScore": 0,
                   "softScore": 0,
                 },
+                "originalEmployee": null,
                 "pinnedByUser": false,
+                "requiredSkillSet": Array [],
+                "requiredSkillViolationList": Array [],
+                "rotationEmployee": Object {
+                  "contract": Object {
+                    "id": 5,
+                    "maximumMinutesPerDay": 10,
+                    "maximumMinutesPerMonth": 500,
+                    "maximumMinutesPerWeek": 70,
+                    "maximumMinutesPerYear": 6000,
+                    "name": "Basic Contract",
+                    "tenantId": 0,
+                    "version": 0,
+                  },
+                  "id": 7,
+                  "name": "Rotation Employee",
+                  "skillProficiencySet": Array [
+                    Object {
+                      "id": 6,
+                      "name": "Not Required Skill",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "rotationViolationPenaltyList": Array [],
+                "shiftEmployeeConflictList": Array [],
+                "spot": Object {
+                  "id": 2,
+                  "name": "Spot",
+                  "requiredSkillSet": Array [
+                    Object {
+                      "id": 3,
+                      "name": "Skill",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "startDateTime": 2018-07-01T09:00:00.000Z,
+                "tenantId": 0,
+                "unassignedShiftPenaltyList": Array [],
+                "unavailableEmployeeViolationList": Array [],
+                "undesiredTimeslotForEmployeePenaltyList": Array [],
+                "version": 0,
+              },
+            },
+          ]
+        }
+        shiftEmployeeConflictList={Array []}
+        spot={
+          Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        startDateTime={2018-07-01T09:00:00.000Z}
+        tenantId={0}
+        unassignedShiftPenaltyList={Array []}
+        unavailableEmployeeViolationList={Array []}
+        undesiredTimeslotForEmployeePenaltyList={Array []}
+        version={0}
+      />
+      <NoBreaksViolations
+        contractMinutesViolationPenaltyList={Array []}
+        desiredTimeslotForEmployeeRewardList={Array []}
+        employee={
+          Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        endDateTime={2018-07-01T17:00:00.000Z}
+        id={1}
+        indictmentScore={
+          Object {
+            "hardScore": 0,
+            "mediumScore": 0,
+            "softScore": 0,
+          }
+        }
+        originalEmployee={null}
+        pinnedByUser={false}
+        requiredSkillSet={Array []}
+        requiredSkillViolationList={
+          Array [
+            Object {
+              "score": Object {
+                "hardScore": -10,
+                "mediumScore": 0,
+                "softScore": 0,
+              },
+              "shift": Object {
+                "contractMinutesViolationPenaltyList": Array [],
+                "desiredTimeslotForEmployeeRewardList": Array [],
+                "employee": Object {
+                  "contract": Object {
+                    "id": 5,
+                    "maximumMinutesPerDay": 10,
+                    "maximumMinutesPerMonth": 500,
+                    "maximumMinutesPerWeek": 70,
+                    "maximumMinutesPerYear": 6000,
+                    "name": "Basic Contract",
+                    "tenantId": 0,
+                    "version": 0,
+                  },
+                  "id": 4,
+                  "name": "Employee 1",
+                  "skillProficiencySet": Array [
+                    Object {
+                      "id": 6,
+                      "name": "Not Required Skill",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "endDateTime": 2018-07-01T17:00:00.000Z,
+                "id": 1,
+                "indictmentScore": Object {
+                  "hardScore": 0,
+                  "mediumScore": 0,
+                  "softScore": 0,
+                },
+                "originalEmployee": null,
+                "pinnedByUser": false,
+                "requiredSkillSet": Array [],
+                "requiredSkillViolationList": Array [],
+                "rotationEmployee": Object {
+                  "contract": Object {
+                    "id": 5,
+                    "maximumMinutesPerDay": 10,
+                    "maximumMinutesPerMonth": 500,
+                    "maximumMinutesPerWeek": 70,
+                    "maximumMinutesPerYear": 6000,
+                    "name": "Basic Contract",
+                    "tenantId": 0,
+                    "version": 0,
+                  },
+                  "id": 7,
+                  "name": "Rotation Employee",
+                  "skillProficiencySet": Array [
+                    Object {
+                      "id": 6,
+                      "name": "Not Required Skill",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "rotationViolationPenaltyList": Array [],
+                "shiftEmployeeConflictList": Array [],
+                "spot": Object {
+                  "id": 2,
+                  "name": "Spot",
+                  "requiredSkillSet": Array [
+                    Object {
+                      "id": 3,
+                      "name": "Skill",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "startDateTime": 2018-07-01T09:00:00.000Z,
+                "tenantId": 0,
+                "unassignedShiftPenaltyList": Array [],
+                "unavailableEmployeeViolationList": Array [],
+                "undesiredTimeslotForEmployeePenaltyList": Array [],
+                "version": 0,
+              },
+            },
+          ]
+        }
+        rotationEmployee={
+          Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 7,
+            "name": "Rotation Employee",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        rotationViolationPenaltyList={
+          Array [
+            Object {
+              "score": Object {
+                "hardScore": 0,
+                "mediumScore": 0,
+                "softScore": -100,
+              },
+              "shift": Object {
+                "contractMinutesViolationPenaltyList": Array [],
+                "desiredTimeslotForEmployeeRewardList": Array [],
+                "employee": Object {
+                  "contract": Object {
+                    "id": 5,
+                    "maximumMinutesPerDay": 10,
+                    "maximumMinutesPerMonth": 500,
+                    "maximumMinutesPerWeek": 70,
+                    "maximumMinutesPerYear": 6000,
+                    "name": "Basic Contract",
+                    "tenantId": 0,
+                    "version": 0,
+                  },
+                  "id": 4,
+                  "name": "Employee 1",
+                  "skillProficiencySet": Array [
+                    Object {
+                      "id": 6,
+                      "name": "Not Required Skill",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "endDateTime": 2018-07-01T17:00:00.000Z,
+                "id": 1,
+                "indictmentScore": Object {
+                  "hardScore": 0,
+                  "mediumScore": 0,
+                  "softScore": 0,
+                },
+                "originalEmployee": null,
+                "pinnedByUser": false,
+                "requiredSkillSet": Array [],
                 "requiredSkillViolationList": Array [],
                 "rotationEmployee": Object {
                   "contract": Object {
@@ -3061,7 +3687,9 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
       "softScore": 0,
     }
   }
+  originalEmployee={null}
   pinnedByUser={false}
+  requiredSkillSet={Array []}
   requiredSkillViolationList={Array []}
   rotationEmployee={
     Object {
@@ -3126,6 +3754,99 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
     <ul
       className="pf-c-list"
     >
+      <PublishedShiftReassignedPenalties
+        contractMinutesViolationPenaltyList={Array []}
+        desiredTimeslotForEmployeeRewardList={Array []}
+        employee={
+          Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        endDateTime={2018-07-01T17:00:00.000Z}
+        id={1}
+        indictmentScore={
+          Object {
+            "hardScore": 0,
+            "mediumScore": 0,
+            "softScore": 0,
+          }
+        }
+        originalEmployee={null}
+        pinnedByUser={false}
+        requiredSkillSet={Array []}
+        requiredSkillViolationList={Array []}
+        rotationEmployee={
+          Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 7,
+            "name": "Rotation Employee",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        rotationViolationPenaltyList={Array []}
+        shiftEmployeeConflictList={Array []}
+        spot={
+          Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        startDateTime={2018-07-01T09:00:00.000Z}
+        tenantId={0}
+        unassignedShiftPenaltyList={Array []}
+        unavailableEmployeeViolationList={Array []}
+        undesiredTimeslotForEmployeePenaltyList={Array []}
+        version={0}
+      />
       <RequiredSkillViolations
         contractMinutesViolationPenaltyList={Array []}
         desiredTimeslotForEmployeeRewardList={Array []}
@@ -3164,7 +3885,9 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={Array []}
         rotationEmployee={
           Object {
@@ -3255,7 +3978,9 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={Array []}
         rotationEmployee={
           Object {
@@ -3346,7 +4071,9 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={Array []}
         rotationEmployee={
           Object {
@@ -3437,7 +4164,9 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={Array []}
         rotationEmployee={
           Object {
@@ -3528,7 +4257,9 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={Array []}
         rotationEmployee={
           Object {
@@ -3619,7 +4350,9 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={Array []}
         rotationEmployee={
           Object {
@@ -3710,7 +4443,9 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={Array []}
         rotationEmployee={
           Object {
@@ -3801,7 +4536,102 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
             "softScore": 0,
           }
         }
+        originalEmployee={null}
         pinnedByUser={false}
+        requiredSkillSet={Array []}
+        requiredSkillViolationList={Array []}
+        rotationEmployee={
+          Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 7,
+            "name": "Rotation Employee",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        rotationViolationPenaltyList={Array []}
+        shiftEmployeeConflictList={Array []}
+        spot={
+          Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        startDateTime={2018-07-01T09:00:00.000Z}
+        tenantId={0}
+        unassignedShiftPenaltyList={Array []}
+        unavailableEmployeeViolationList={Array []}
+        undesiredTimeslotForEmployeePenaltyList={Array []}
+        version={0}
+      />
+      <NoBreaksViolations
+        contractMinutesViolationPenaltyList={Array []}
+        desiredTimeslotForEmployeeRewardList={Array []}
+        employee={
+          Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        endDateTime={2018-07-01T17:00:00.000Z}
+        id={1}
+        indictmentScore={
+          Object {
+            "hardScore": 0,
+            "mediumScore": 0,
+            "softScore": 0,
+          }
+        }
+        originalEmployee={null}
+        pinnedByUser={false}
+        requiredSkillSet={Array []}
         requiredSkillViolationList={Array []}
         rotationEmployee={
           Object {
@@ -3898,7 +4728,9 @@ exports[`ShiftEvent getRequiredSkillViolations should render correctly 1`] = `
       "softScore": 0,
     }
   }
+  originalEmployee={null}
   pinnedByUser={false}
+  requiredSkillSet={Array []}
   requiredSkillViolationList={
     Array [
       Object {
@@ -3941,7 +4773,9 @@ exports[`ShiftEvent getRequiredSkillViolations should render correctly 1`] = `
             "mediumScore": 0,
             "softScore": 0,
           },
+          "originalEmployee": null,
           "pinnedByUser": false,
+          "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
             "contract": Object {
@@ -4103,7 +4937,9 @@ exports[`ShiftEvent getRotationViolationPenalties should render correctly 1`] = 
       "softScore": 0,
     }
   }
+  originalEmployee={null}
   pinnedByUser={false}
+  requiredSkillSet={Array []}
   requiredSkillViolationList={Array []}
   rotationEmployee={
     Object {
@@ -4173,7 +5009,9 @@ exports[`ShiftEvent getRotationViolationPenalties should render correctly 1`] = 
             "mediumScore": 0,
             "softScore": 0,
           },
+          "originalEmployee": null,
           "pinnedByUser": false,
+          "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
             "contract": Object {
@@ -4261,11 +5099,11 @@ exports[`ShiftEvent getRotationViolationPenalties should render correctly 1`] = 
 
 exports[`ShiftEvent getShiftColor should return a color depending on score 1`] = `
 Object {
-  "negativeHardColor": "#9B1D07",
-  "negativeMediumColor": "#F5C12E",
-  "negativeSoftColor": "#F1C33E",
-  "positiveSoftColor": "#ABD4A7",
-  "zeroColor": "#CFE7CD",
+  "negativeHardColor": "#CC0000",
+  "negativeMediumColor": "#FCE94F",
+  "negativeSoftColor": "#FCAF3E",
+  "positiveSoftColor": "#73D216",
+  "zeroColor": "#EEEEEC",
 }
 `;
 
@@ -4308,7 +5146,9 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
       "softScore": 0,
     }
   }
+  originalEmployee={null}
   pinnedByUser={false}
+  requiredSkillSet={Array []}
   requiredSkillViolationList={Array []}
   rotationEmployee={
     Object {
@@ -4374,7 +5214,9 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
             "mediumScore": 0,
             "softScore": 0,
           },
+          "originalEmployee": null,
           "pinnedByUser": false,
+          "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
             "contract": Object {
@@ -4457,7 +5299,9 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
             "mediumScore": 0,
             "softScore": 0,
           },
+          "originalEmployee": null,
           "pinnedByUser": false,
+          "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
             "contract": Object {
@@ -4547,7 +5391,9 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
             "mediumScore": 0,
             "softScore": 0,
           },
+          "originalEmployee": null,
           "pinnedByUser": false,
+          "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
             "contract": Object {
@@ -4630,7 +5476,9 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
             "mediumScore": 0,
             "softScore": 0,
           },
+          "originalEmployee": null,
           "pinnedByUser": false,
+          "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
             "contract": Object {
@@ -4766,7 +5614,9 @@ exports[`ShiftEvent getUnassignedShiftPenalties should render correctly 1`] = `
       "softScore": 0,
     }
   }
+  originalEmployee={null}
   pinnedByUser={false}
+  requiredSkillSet={Array []}
   requiredSkillViolationList={Array []}
   rotationEmployee={
     Object {
@@ -4856,7 +5706,9 @@ exports[`ShiftEvent getUnassignedShiftPenalties should render correctly 1`] = `
             "mediumScore": 0,
             "softScore": 0,
           },
+          "originalEmployee": null,
           "pinnedByUser": false,
+          "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
             "contract": Object {
@@ -4961,7 +5813,9 @@ exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`]
       "softScore": 0,
     }
   }
+  originalEmployee={null}
   pinnedByUser={false}
+  requiredSkillSet={Array []}
   requiredSkillViolationList={Array []}
   rotationEmployee={
     Object {
@@ -5084,7 +5938,9 @@ exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`]
             "mediumScore": 0,
             "softScore": 0,
           },
+          "originalEmployee": null,
           "pinnedByUser": false,
+          "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
             "contract": Object {
@@ -5188,7 +6044,9 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
       "softScore": 0,
     }
   }
+  originalEmployee={null}
   pinnedByUser={false}
+  requiredSkillSet={Array []}
   requiredSkillViolationList={Array []}
   rotationEmployee={
     Object {
@@ -5312,7 +6170,9 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
             "mediumScore": 0,
             "softScore": 0,
           },
+          "originalEmployee": null,
           "pinnedByUser": false,
+          "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
             "contract": Object {
@@ -5380,13 +6240,127 @@ exports[`ShiftEvent should render ShiftEvent correctly 1`] = `
 <span
   style={
     Object {
-      "display": "flex",
+      "display": "grid",
+      "gridRowGap": "5px",
+      "gridTemplateColumns": "1fr",
+      "gridTemplateRows": "calc(100% - 60px) 55px",
       "height": "100%",
       "width": "100%",
     }
   }
 >
-  Employee
+  <div
+    style={
+      Object {
+        "display": "flex",
+        "flexDirection": "column",
+      }
+    }
+  >
+    <span
+      style={
+        Object {
+          "transform": "rotate(180deg)",
+          "writingMode": "vertical-rl",
+        }
+      }
+    >
+      Employee  
+    </span>
+  </div>
+  <IndictmentIcons
+    contractMinutesViolationPenaltyList={Array []}
+    desiredTimeslotForEmployeeRewardList={Array []}
+    employee={
+      Object {
+        "contract": Object {
+          "id": 5,
+          "maximumMinutesPerDay": 10,
+          "maximumMinutesPerMonth": 500,
+          "maximumMinutesPerWeek": 70,
+          "maximumMinutesPerYear": 6000,
+          "name": "Basic Contract",
+          "tenantId": 0,
+          "version": 0,
+        },
+        "id": 4,
+        "name": "Employee 1",
+        "skillProficiencySet": Array [
+          Object {
+            "id": 6,
+            "name": "Not Required Skill",
+            "tenantId": 0,
+            "version": 0,
+          },
+        ],
+        "tenantId": 0,
+        "version": 0,
+      }
+    }
+    endDateTime={2018-07-01T17:00:00.000Z}
+    id={1}
+    indictmentScore={
+      Object {
+        "hardScore": 0,
+        "mediumScore": 0,
+        "softScore": 0,
+      }
+    }
+    originalEmployee={null}
+    pinnedByUser={false}
+    requiredSkillSet={Array []}
+    requiredSkillViolationList={Array []}
+    rotationEmployee={
+      Object {
+        "contract": Object {
+          "id": 5,
+          "maximumMinutesPerDay": 10,
+          "maximumMinutesPerMonth": 500,
+          "maximumMinutesPerWeek": 70,
+          "maximumMinutesPerYear": 6000,
+          "name": "Basic Contract",
+          "tenantId": 0,
+          "version": 0,
+        },
+        "id": 7,
+        "name": "Rotation Employee",
+        "skillProficiencySet": Array [
+          Object {
+            "id": 6,
+            "name": "Not Required Skill",
+            "tenantId": 0,
+            "version": 0,
+          },
+        ],
+        "tenantId": 0,
+        "version": 0,
+      }
+    }
+    rotationViolationPenaltyList={Array []}
+    shiftEmployeeConflictList={Array []}
+    spot={
+      Object {
+        "id": 2,
+        "name": "Spot",
+        "requiredSkillSet": Array [
+          Object {
+            "id": 3,
+            "name": "Skill",
+            "tenantId": 0,
+            "version": 0,
+          },
+        ],
+        "tenantId": 0,
+        "version": 0,
+      }
+    }
+    startDateTime={2018-07-01T09:00:00.000Z}
+    tenantId={0}
+    unassignedShiftPenaltyList={Array []}
+    unavailableEmployeeViolationList={Array []}
+    undesiredTimeslotForEmployeePenaltyList={Array []}
+    version={0}
+  />
 </span>
 `;
 
@@ -5394,19 +6368,133 @@ exports[`ShiftEvent should render ShiftEvent correctly when pinned 1`] = `
 <span
   style={
     Object {
-      "display": "flex",
+      "display": "grid",
+      "gridRowGap": "5px",
+      "gridTemplateColumns": "1fr",
+      "gridTemplateRows": "calc(100% - 60px) 55px",
       "height": "100%",
       "width": "100%",
     }
   }
 >
-  <ThumbTackIcon
-    color="currentColor"
-    noVerticalAlign={false}
-    size="sm"
-    title={null}
+  <div
+    style={
+      Object {
+        "display": "flex",
+        "flexDirection": "column",
+      }
+    }
+  >
+    <ThumbTackIcon
+      color="currentColor"
+      noVerticalAlign={false}
+      size="sm"
+      title={null}
+    />
+    <span
+      style={
+        Object {
+          "transform": "rotate(180deg)",
+          "writingMode": "vertical-rl",
+        }
+      }
+    >
+      Employee  
+    </span>
+  </div>
+  <IndictmentIcons
+    contractMinutesViolationPenaltyList={Array []}
+    desiredTimeslotForEmployeeRewardList={Array []}
+    employee={
+      Object {
+        "contract": Object {
+          "id": 5,
+          "maximumMinutesPerDay": 10,
+          "maximumMinutesPerMonth": 500,
+          "maximumMinutesPerWeek": 70,
+          "maximumMinutesPerYear": 6000,
+          "name": "Basic Contract",
+          "tenantId": 0,
+          "version": 0,
+        },
+        "id": 4,
+        "name": "Employee 1",
+        "skillProficiencySet": Array [
+          Object {
+            "id": 6,
+            "name": "Not Required Skill",
+            "tenantId": 0,
+            "version": 0,
+          },
+        ],
+        "tenantId": 0,
+        "version": 0,
+      }
+    }
+    endDateTime={2018-07-01T17:00:00.000Z}
+    id={1}
+    indictmentScore={
+      Object {
+        "hardScore": 0,
+        "mediumScore": 0,
+        "softScore": 0,
+      }
+    }
+    originalEmployee={null}
+    pinnedByUser={true}
+    requiredSkillSet={Array []}
+    requiredSkillViolationList={Array []}
+    rotationEmployee={
+      Object {
+        "contract": Object {
+          "id": 5,
+          "maximumMinutesPerDay": 10,
+          "maximumMinutesPerMonth": 500,
+          "maximumMinutesPerWeek": 70,
+          "maximumMinutesPerYear": 6000,
+          "name": "Basic Contract",
+          "tenantId": 0,
+          "version": 0,
+        },
+        "id": 7,
+        "name": "Rotation Employee",
+        "skillProficiencySet": Array [
+          Object {
+            "id": 6,
+            "name": "Not Required Skill",
+            "tenantId": 0,
+            "version": 0,
+          },
+        ],
+        "tenantId": 0,
+        "version": 0,
+      }
+    }
+    rotationViolationPenaltyList={Array []}
+    shiftEmployeeConflictList={Array []}
+    spot={
+      Object {
+        "id": 2,
+        "name": "Spot",
+        "requiredSkillSet": Array [
+          Object {
+            "id": 3,
+            "name": "Skill",
+            "tenantId": 0,
+            "version": 0,
+          },
+        ],
+        "tenantId": 0,
+        "version": 0,
+      }
+    }
+    startDateTime={2018-07-01T09:00:00.000Z}
+    tenantId={0}
+    unassignedShiftPenaltyList={Array []}
+    unavailableEmployeeViolationList={Array []}
+    undesiredTimeslotForEmployeePenaltyList={Array []}
+    version={0}
   />
-  Employee
 </span>
 `;
 
@@ -5461,7 +6549,9 @@ exports[`ShiftEvent should render ShiftPopupBody correctly 1`] = `
         "softScore": 0,
       }
     }
+    originalEmployee={null}
     pinnedByUser={false}
+    requiredSkillSet={Array []}
     requiredSkillViolationList={Array []}
     rotationEmployee={
       Object {

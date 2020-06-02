@@ -54,6 +54,7 @@ import org.optaweb.employeerostering.service.employee.EmployeeRepository;
 import org.optaweb.employeerostering.service.rotation.ShiftTemplateRepository;
 import org.optaweb.employeerostering.service.shift.ShiftRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
+import org.optaweb.employeerostering.service.solver.SolverStatus;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.optaweb.employeerostering.service.tenant.RosterConstraintConfigurationRepository;
@@ -190,6 +191,7 @@ public class RosterService extends AbstractRestService {
 
         shiftRosterView.setScore(roster == null ? null : roster.getScore());
         shiftRosterView.setRosterState(getRosterState(tenantId));
+        shiftRosterView.setIndictmentSummary(indictmentUtils.getIndictmentSummaryForRoster(roster));
 
         return shiftRosterView;
     }
@@ -298,6 +300,8 @@ public class RosterService extends AbstractRestService {
         //  score might be inaccurate.
         availabilityRosterView.setScore(roster.getScore());
         availabilityRosterView.setRosterState(getRosterState(tenantId));
+        availabilityRosterView.setIndictmentSummary(indictmentUtils.getIndictmentSummaryForRoster(roster));
+
         return availabilityRosterView;
     }
 
@@ -316,6 +320,7 @@ public class RosterService extends AbstractRestService {
                 .stream()
                 .map(ea -> ea.inTimeZone(zoneId))
                 .collect(Collectors.toList());
+
         List<Shift> shiftList = shiftRepository.findAllByTenantId(tenantId)
                 .stream()
                 .map(s -> s.inTimeZone(zoneId))
@@ -365,6 +370,14 @@ public class RosterService extends AbstractRestService {
         solverManager.solve(tenantId);
     }
 
+    public void replanRoster(Integer tenantId) {
+        solverManager.replan(tenantId);
+    }
+
+    public SolverStatus getSolverStatus(Integer tenantId) {
+        return solverManager.getSolverStatus(tenantId);
+    }
+
     public void terminateRosterEarly(Integer tenantId) {
         solverManager.terminate(tenantId);
     }
@@ -381,6 +394,13 @@ public class RosterService extends AbstractRestService {
         LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
 
         // Publish
+        ZoneId timeZone = rosterState.getTimeZone();
+        List<Shift> publishedShifts = shiftRepository
+                .findAllByTenantIdBetweenDates(tenantId,
+                                               publishFrom.atStartOfDay(timeZone).toOffsetDateTime(),
+                                               publishTo.atStartOfDay(timeZone).toOffsetDateTime());
+        publishedShifts.forEach(s -> s.setOriginalEmployee(s.getEmployee()));
+        shiftRepository.saveAll(publishedShifts);
         rosterState.setFirstDraftDate(publishTo);
 
         // Provision
@@ -403,5 +423,21 @@ public class RosterService extends AbstractRestService {
         }
         rosterState.setUnplannedRotationOffset(dayOffset);
         return new PublishResult(publishFrom, publishTo);
+    }
+
+    @Transactional
+    public void commitChanges(Integer tenantId) {
+        RosterState rosterState = getRosterState(tenantId);
+        LocalDate publishFrom = LocalDate.now();
+        LocalDate publishTo = rosterState.getFirstDraftDate();
+
+        // Publish
+        ZoneId timeZone = rosterState.getTimeZone();
+        List<Shift> publishedShifts = shiftRepository
+                .findAllByTenantIdBetweenDates(tenantId,
+                                               publishFrom.atStartOfDay(timeZone).toOffsetDateTime(),
+                                               publishTo.atStartOfDay(timeZone).toOffsetDateTime());
+        publishedShifts.forEach(s -> s.setOriginalEmployee(s.getEmployee()));
+        shiftRepository.saveAll(publishedShifts);
     }
 }

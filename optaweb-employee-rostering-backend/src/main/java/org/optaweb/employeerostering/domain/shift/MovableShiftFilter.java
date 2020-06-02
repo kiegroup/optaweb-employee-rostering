@@ -26,7 +26,12 @@ public class MovableShiftFilter implements SelectionFilter<Roster, Shift> {
 
     @Override
     public boolean accept(ScoreDirector<Roster> scoreDirector, Shift shift) {
-        RosterState rosterState = scoreDirector.getWorkingSolution().getRosterState();
-        return rosterState.isDraft(shift);
+        Roster roster = scoreDirector.getWorkingSolution();
+        RosterState rosterState = roster.getRosterState();
+        if (roster.isNondisruptivePlanning()) {
+            return !shift.getStartDateTime().isBefore(roster.getNondisruptiveReplanFrom());
+        } else {
+            return rosterState.isDraft(shift);
+        }
     }
 }

@@ -34,7 +34,8 @@ public class EmployeeView extends AbstractPersistable {
     public EmployeeView() {
     }
 
-    public EmployeeView(Integer tenantId, String name, Contract contract, Set<Skill> skillProficiencySet) {
+    public EmployeeView(Integer tenantId, String name, Contract contract,
+                        Set<Skill> skillProficiencySet) {
         super(tenantId);
         this.name = name;
         this.contract = contract;

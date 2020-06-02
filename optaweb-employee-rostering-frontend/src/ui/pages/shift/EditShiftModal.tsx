@@ -16,7 +16,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Button, Switch, InputGroup, Label, Form, Modal, ButtonVariant } from '@patternfly/react-core';
+import { Button, Switch, InputGroup, Label, Form, Modal, ButtonVariant, Text } from '@patternfly/react-core';
 import DatePicker from 'react-datepicker';
 
 import { Shift } from 'domain/Shift';
@@ -29,11 +29,15 @@ import { withTranslation, WithTranslation } from 'react-i18next';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
+import { skillSelectors } from 'store/skill';
+import { Skill } from 'domain/Skill';
+import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 
 interface Props {
   tenantId: number;
   shift?: Shift;
   isOpen: boolean;
+  skillList: Skill[];
   employeeList: Employee[];
   spotList: Spot[];
   onSave: (shift: Shift) => void;
@@ -50,6 +54,7 @@ const mapStateToProps = (state: AppState, ownProps: {
 }): Props => ({
   ...ownProps,
   tenantId: state.tenantData.currentTenantId,
+  skillList: skillSelectors.getSkillList(state),
   employeeList: employeeSelectors.getEmployeeList(state),
   spotList: spotSelectors.getSpotList(state),
 });
@@ -64,10 +69,24 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
     super(props);
 
     this.onSave = this.onSave.bind(this);
-    this.state = {
-      resetCount: 0,
-      editedValue: { ...this.props.shift },
-    };
+    if (this.props.shift) {
+      this.state = {
+        resetCount: 0,
+        editedValue: { ...this.props.shift },
+      };
+    } else {
+      this.state = {
+        resetCount: 0,
+        editedValue: {
+          tenantId: this.props.tenantId,
+          employee: null,
+          originalEmployee: null,
+          requiredSkillSet: [],
+          rotationEmployee: null,
+          pinnedByUser: false,
+        },
+      };
+    }
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -77,6 +96,8 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
         editedValue: {
           tenantId: this.props.tenantId,
           employee: null,
+          originalEmployee: null,
+          requiredSkillSet: [],
           rotationEmployee: null,
           pinnedByUser: false,
         } });
@@ -93,7 +114,9 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
     if (shift.spot !== undefined && shift.startDateTime !== undefined
         && shift.endDateTime !== undefined && shift.employee !== undefined
         && shift.pinnedByUser !== undefined && shift.rotationEmployee !== undefined) {
-      this.props.onSave({ ...shift, tenantId: this.props.tenantId } as Shift);
+      this.props.onSave({ ...shift,
+        tenantId: this.props.tenantId,
+        originalEmployee: this.props.shift ? this.props.shift.originalEmployee : null } as Shift);
     }
   }
 
@@ -170,6 +193,19 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
             />
           </InputGroup>
           <InputGroup>
+            <Label>{t('addtionalSkills')}</Label>
+            <MultiTypeaheadSelectInput
+              aria-label="Additional Skills"
+              emptyText={t('selectAdditionalSkills')}
+              value={this.state.editedValue.requiredSkillSet ? this.state.editedValue.requiredSkillSet : []}
+              options={this.props.skillList}
+              optionToStringMap={skill => skill.name}
+              onChange={requiredSkillSet => this.setState(prevState => ({
+                editedValue: { ...prevState.editedValue, requiredSkillSet },
+              }))}
+            />
+          </InputGroup>
+          <InputGroup>
             <Label>{t('employee')}</Label>
             <TypeaheadSelectInput
               aria-label="Employee"
@@ -183,6 +219,16 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
               }))}
               optional
             />
+          </InputGroup>
+          <InputGroup>
+            <Label>{t('originalEmployee')}</Label>
+            <span style={{ width: 10 }} />
+            <Text>
+              {
+                this.state.editedValue.originalEmployee
+                  ? this.state.editedValue.originalEmployee.name : t('unassigned')
+              }
+            </Text>
           </InputGroup>
           <InputGroup>
             <Label>{t('rotationEmployee')}</Label>

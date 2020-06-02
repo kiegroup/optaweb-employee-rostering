@@ -248,8 +248,10 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
   // Use for SNAPSHOT testing
   renderEditor(data: T): JSX.Element {
     const editedData: T = { ...data };
-    // eslint-disable-next-line no-return-assign
-    const setProperty = (key: keyof T, value: any) => editedData[key] = value;
+    const setProperty = (key: keyof T, value: any) => {
+      editedData[key] = value;
+    };
+
     return <tr>{this.editDataRow(editedData, setProperty).map((c, index) => <td key={index}>{c}</td>)}</tr>;
   }
   /* eslint-enable react/no-array-index-key */

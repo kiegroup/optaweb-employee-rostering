@@ -37,6 +37,7 @@ import Actions from 'ui/components/Actions';
 import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
 import { ScoreDisplay } from 'ui/components/ScoreDisplay';
 import { getPropsFromUrl, setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
+import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
 import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from './ShiftEvent';
 import EditShiftModal from './EditShiftModal';
 
@@ -50,6 +51,7 @@ interface StateProps {
   totalNumOfSpots: number;
   rosterState: RosterState | null;
   score: HardMediumSoftScore | null;
+  indictmentSummary: IndictmentSummary | null;
 }
 
 export type ShiftRosterUrlProps = UrlProps<'spot'|'week'>;
@@ -60,7 +62,7 @@ let lastShownSpotList: Spot[] = [];
 // eslint-disable-next-line no-return-assign
 const mapStateToProps = (state: AppState): StateProps => ({
   tenantId: state.tenantData.currentTenantId,
-  isSolving: state.solverState.isSolving,
+  isSolving: state.solverState.solverStatus !== 'TERMINATED',
   isLoading: rosterSelectors.isShiftRosterLoading(state),
   allSpotList: spotSelectors.getSpotList(state),
   // The use of "x = isLoading? x : getUpdatedData()" is a way to use old value if data is still loading
@@ -74,6 +76,7 @@ const mapStateToProps = (state: AppState): StateProps => ({
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
   rosterState: state.rosterState.rosterState,
   score: state.shiftRoster.shiftRosterView ? state.shiftRoster.shiftRosterView.score : null,
+  indictmentSummary: state.shiftRoster.shiftRosterView ? state.shiftRoster.shiftRosterView.indictmentSummary : null,
 });
 
 export interface DispatchProps {
@@ -123,17 +126,20 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   }
 
   onUpdateShiftRoster(urlProps: ShiftRosterUrlProps) {
-    const spot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.allSpotList[0];
-    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
-    const endDate = moment(startDate).endOf('week').toDate();
-    if (spot) {
-      this.props.getShiftRosterFor({
-        fromDate: startDate,
-        toDate: endDate,
-        spotList: [spot],
-      });
-      this.setState({ firstLoad: false });
-      setPropsInUrl(this.props, { ...urlProps, spot: spot.name });
+    if (this.props.rosterState) {
+      const spot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.allSpotList[0];
+      const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
+      const endDate = moment(startDate).endOf('week').toDate();
+
+      if (spot) {
+        this.props.getShiftRosterFor({
+          fromDate: startDate,
+          toDate: endDate,
+          spotList: [spot],
+        });
+        this.setState({ firstLoad: false });
+        setPropsInUrl(this.props, { ...urlProps, spot: spot.name });
+      }
     }
   }
 
@@ -159,7 +165,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       return {
         style: {
           border: '1px solid',
-          backgroundColor: Color(color).saturate(-0.5).hex(),
+          opacity: 0.3,
+          backgroundColor: Color(color).hex(),
         },
       };
     }
@@ -174,6 +181,15 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   }
 
   getDayStyle: StyleSupplier<Date> = (date) => {
+    if (this.props.rosterState !== null && moment(date).isBefore(moment().startOf('day'))) {
+      return {
+        className: 'historic-day',
+        style: {
+          backgroundColor: '#d3d7cf',
+        },
+      };
+    }
+
     if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
       return {
         className: 'published-day',
@@ -218,7 +234,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     const changedTenant = this.props.shownSpotList.length === 0
       || this.props.tenantId !== this.props.shownSpotList[0].tenantId;
 
-    if (this.props.shownSpotList.length === 0 || this.state.firstLoad || changedTenant) {
+    if (this.props.shownSpotList.length === 0 || this.state.firstLoad
+        || changedTenant || this.props.rosterState === null) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
@@ -230,9 +247,9 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               <EmptyStateBody key={1} />,
               <Button
                 key={2}
-                aria-label="Spots Page"
+                aria-label="Wards Page"
                 variant="primary"
-                onClick={() => this.props.history.push(`/${this.props.tenantId}/spots`)}
+                onClick={() => this.props.history.push(`/${this.props.tenantId}/wards`)}
               />,
             ]}
           />
@@ -240,12 +257,14 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       );
     }
 
-    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
+    const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
     const endDate = moment(startDate).endOf('week').toDate();
     const shownSpot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.shownSpotList[0];
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
+    const indictmentSummary: IndictmentSummary = this.props.indictmentSummary
+        || { constraintToCountMap: {}, constraintToScoreImpactMap: {} };
     const actions = [
-      { name: t('publish'), action: this.props.publishRoster },
+      { name: t('publish'), action: this.props.publishRoster, isDisabled: this.props.isSolving },
       { name: this.props.isSolving ? t('terminateEarly') : t('schedule'),
         action: this.props.isSolving ? this.props.terminateSolvingRosterEarly : this.props.solveRoster },
       { name: t('refresh'),
@@ -290,6 +309,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           <WeekPicker
             aria-label="Select Week to View"
             value={startDate}
+            minDate={this.props.rosterState ? this.props.rosterState.firstDraftDate : undefined}
             onChange={(weekStart) => {
               this.onUpdateShiftRoster({
                 ...urlProps,
@@ -297,7 +317,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               });
             }}
           />
-          <ScoreDisplay score={score} />
+          <ScoreDisplay score={score} indictmentSummary={indictmentSummary} isSolving={this.props.isSolving} />
           <Actions
             actions={actions}
           />
@@ -339,6 +359,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 employee: null,
                 rotationEmployee: null,
                 pinnedByUser: false,
+                originalEmployee: null,
+                requiredSkillSet: [],
               });
             }
           }

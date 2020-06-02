@@ -50,8 +50,8 @@ public class SpotRestControllerTest extends AbstractEntityRequireTenantRestServi
 
     private ResponseEntity<List<Spot>> getSpots(Integer tenantId) {
         return restTemplate.exchange(spotPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Spot>>() {
-                }, tenantId);
+                                     new ParameterizedTypeReference<List<Spot>>() {
+                                     }, tenantId);
     }
 
     private ResponseEntity<Spot> getSpot(Integer tenantId, Long id) {

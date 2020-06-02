@@ -169,20 +169,16 @@ public class TenantService extends AbstractRestService {
                                                     ") cannot change tenants.");
         }
 
-        oldRosterConstraintConfiguration.setDesiredTimeSlotWeight(rosterConstraintConfigurationView
-                                                                          .getDesiredTimeSlotWeight());
-        oldRosterConstraintConfiguration.setRotationEmployeeMatchWeight(
-                rosterConstraintConfigurationView.getRotationEmployeeMatchWeight());
-        oldRosterConstraintConfiguration.setUndesiredTimeSlotWeight(
-                rosterConstraintConfigurationView.getUndesiredTimeSlotWeight());
         oldRosterConstraintConfiguration.setWeekStartDay(rosterConstraintConfigurationView.getWeekStartDay());
-
         oldRosterConstraintConfiguration.setRequiredSkill(rosterConstraintConfigurationView.getRequiredSkill());
-        oldRosterConstraintConfiguration.setUnavailableTimeSlot(rosterConstraintConfigurationView
-                                                                        .getUnavailableTimeSlot());
-        oldRosterConstraintConfiguration.setOneShiftPerDay(rosterConstraintConfigurationView.getOneShiftPerDay());
-        oldRosterConstraintConfiguration.setNoShiftsWithinTenHours(rosterConstraintConfigurationView
-                                                                           .getNoShiftsWithinTenHours());
+        oldRosterConstraintConfiguration.setUnavailableTimeSlot(
+                rosterConstraintConfigurationView.getUnavailableTimeSlot());
+        oldRosterConstraintConfiguration.setNoOverlappingShifts(
+                rosterConstraintConfigurationView.getNoOverlappingShifts());
+        oldRosterConstraintConfiguration.setNoMoreThan2ConsecutiveShifts(
+                rosterConstraintConfigurationView.getNoMoreThan2ConsecutiveShifts());
+        oldRosterConstraintConfiguration.setBreakBetweenNonConsecutiveShiftsAtLeast10Hours(
+                rosterConstraintConfigurationView.getBreakBetweenNonConsecutiveShiftsAtLeast10Hours());
         oldRosterConstraintConfiguration.setContractMaximumDailyMinutes(rosterConstraintConfigurationView
                                                                                 .getContractMaximumDailyMinutes());
         oldRosterConstraintConfiguration.setContractMaximumWeeklyMinutes(rosterConstraintConfigurationView
@@ -191,8 +187,10 @@ public class TenantService extends AbstractRestService {
                                                                                   .getContractMaximumMonthlyMinutes());
         oldRosterConstraintConfiguration.setContractMaximumYearlyMinutes(rosterConstraintConfigurationView
                                                                                  .getContractMaximumYearlyMinutes());
+
         oldRosterConstraintConfiguration.setAssignEveryShift(rosterConstraintConfigurationView
                                                                      .getAssignEveryShift());
+
         oldRosterConstraintConfiguration.setUndesiredTimeSlot(rosterConstraintConfigurationView
                                                                       .getUndesiredTimeSlot());
         oldRosterConstraintConfiguration.setDesiredTimeSlot(rosterConstraintConfigurationView

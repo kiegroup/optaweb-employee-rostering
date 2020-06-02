@@ -91,6 +91,8 @@ describe('Edit Shift Modal', () => {
       tenantId: baseProps.tenantId,
       employee: null,
       rotationEmployee: null,
+      originalEmployee: null,
+      requiredSkillSet: [],
       pinnedByUser: false,
     });
   });
@@ -220,10 +222,12 @@ describe('Edit Shift Modal', () => {
     />);
     editShiftModal.find('[aria-label="Shift Start"]').simulate('change', new Date('2019-01-01T09:00'));
     expect(editShiftModal.state('editedValue')).toEqual({
+      ...defaultValues,
       startDateTime: new Date('2019-01-01T09:00'),
     });
     editShiftModal.find('[aria-label="Shift Start"]').simulate('change', null);
     expect(editShiftModal.state('editedValue')).toEqual({
+      ...defaultValues,
       startDateTime: undefined,
     });
   });
@@ -238,10 +242,12 @@ describe('Edit Shift Modal', () => {
     />);
     editShiftModal.find('[aria-label="Shift End"]').simulate('change', new Date('2019-01-01T09:00'));
     expect(editShiftModal.state('editedValue')).toEqual({
+      ...defaultValues,
       endDateTime: new Date('2019-01-01T09:00'),
     });
     editShiftModal.find('[aria-label="Shift End"]').simulate('change', null);
     expect(editShiftModal.state('editedValue')).toEqual({
+      ...defaultValues,
       endDateTime: undefined,
     });
   });
@@ -256,6 +262,7 @@ describe('Edit Shift Modal', () => {
     />);
     editShiftModal.find('TypeaheadSelectInput[aria-label="Spot"]').simulate('change', spot);
     expect(editShiftModal.state('editedValue')).toEqual({
+      ...defaultValues,
       spot,
     });
   });
@@ -270,11 +277,13 @@ describe('Edit Shift Modal', () => {
     />);
     editShiftModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate('change', employee);
     expect(editShiftModal.state('editedValue')).toEqual({
+      ...defaultValues,
       employee,
     });
 
     editShiftModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate('change', undefined);
     expect(editShiftModal.state('editedValue')).toEqual({
+      ...defaultValues,
       employee: null,
     });
   });
@@ -289,11 +298,13 @@ describe('Edit Shift Modal', () => {
     />);
     editShiftModal.find('TypeaheadSelectInput[aria-label="Rotation Employee"]').simulate('change', employee);
     expect(editShiftModal.state('editedValue')).toEqual({
+      ...defaultValues,
       rotationEmployee: employee,
     });
 
     editShiftModal.find('TypeaheadSelectInput[aria-label="Rotation Employee"]').simulate('change', undefined);
     expect(editShiftModal.state('editedValue')).toEqual({
+      ...defaultValues,
       rotationEmployee: null,
     });
   });
@@ -308,10 +319,20 @@ describe('Edit Shift Modal', () => {
     />);
     editShiftModal.find('[aria-label="Is Pinned"]').simulate('change', true);
     expect(editShiftModal.state('editedValue')).toEqual({
+      ...defaultValues,
       pinnedByUser: true,
     });
   });
 });
+
+const defaultValues = {
+  tenantId: 1,
+  employee: null,
+  originalEmployee: null,
+  requiredSkillSet: [],
+  rotationEmployee: null,
+  pinnedByUser: false,
+};
 
 const spot: Spot = {
   tenantId: 0,
@@ -358,6 +379,8 @@ const baseShift: Shift = {
   startDateTime: moment('2018-07-01T09:00').toDate(),
   endDateTime: moment('2018-07-01T17:00').toDate(),
   spot,
+  requiredSkillSet: [],
+  originalEmployee: null,
   employee,
   rotationEmployee: {
     ...employee,
@@ -382,5 +405,6 @@ const baseProps = {
   tReady: true,
   tenantId: 1,
   spotList: [spot],
+  skillList: [],
   employeeList: [employee],
 };

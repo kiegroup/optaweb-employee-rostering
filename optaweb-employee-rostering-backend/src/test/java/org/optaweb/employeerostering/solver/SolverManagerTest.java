@@ -17,6 +17,9 @@
 package org.optaweb.employeerostering.solver;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,13 +29,12 @@ import org.junit.runner.RunWith;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaweb.employeerostering.domain.roster.Roster;
+import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
-import org.optaweb.employeerostering.service.roster.RosterService;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertFalse;
@@ -45,25 +47,45 @@ import static org.junit.Assert.assertTrue;
 public class SolverManagerTest {
 
     @Autowired
-    private ThreadPoolTaskExecutor taskExecutor;
-
-    @Autowired
-    private RosterService rosterService;
-
-    @Autowired
     private RosterGenerator rosterGenerator;
+
+    @Autowired
+    protected WannabeSolverManager solverManager;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Test
-    public void testSolverManager() throws InterruptedException {
-        WannabeSolverManager solverManager = new WannabeSolverManager(taskExecutor, rosterService);
+    public void testSolveRoster() throws InterruptedException {
         solverManager.setUpSolverFactory();
-
         Roster roster = rosterGenerator.generateRoster(10, 7);
 
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 30, TimeUnit.SECONDS);
         CountDownLatch solverEndedLatch = solverManager.solve(roster.getTenantId());
+
+        solverEndedLatch.await();
+        ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector();
+        scoreDirector.setWorkingSolution(roster);
+        roster.setScore((HardMediumSoftLongScore) scoreDirector.calculateScore());
+        assertNotNull(roster.getScore());
+        // Due to overconstrained planning, the score is always feasible
+        assertTrue(roster.getScore().isFeasible());
+        assertFalse(roster.getShiftList().isEmpty());
+        assertTrue(roster.getShiftList().stream().anyMatch(s -> s.getEmployee() != null));
+    }
+    
+    @Test
+    public void testReplanRoster() throws InterruptedException {
+        solverManager.setUpSolverFactory();
+        Roster roster = rosterGenerator.generateRoster(1, 7);
+        Shift unassignedShift = roster.getShiftList().stream()
+                .filter(shift -> shift.getEmployee() != null).findFirst().get();
+        unassignedShift.setEmployee(null);
+        
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 5, TimeUnit.SECONDS);
+        CountDownLatch solverEndedLatch = solverManager.replan(roster.getTenantId());
 
         solverEndedLatch.await();
         ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector();

@@ -124,7 +124,13 @@ describe('Spot operations', () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
 
-    const spotToUpdate: Spot = { tenantId, name: 'Updated Spot', id: 4, version: 0, requiredSkillSet: [] };
+    const spotToUpdate: Spot = {
+      tenantId,
+      name: 'Updated Spot',
+      id: 4,
+      version: 0,
+      requiredSkillSet: [],
+    };
     const spotWithUpdatedVersion: Spot = { ...spotToUpdate, version: 1 };
     onPost(`/tenant/${tenantId}/spot/update`, spotToUpdate, spotWithUpdatedVersion);
     await store.dispatch(spotOperations.updateSpot(spotToUpdate));
@@ -139,8 +145,20 @@ describe('Spot operations', () => {
 
 describe('Spot reducers', () => {
   const addedSpot: Spot = { tenantId: 0, id: 4321, version: 0, name: 'Spot 1', requiredSkillSet: [] };
-  const updatedSpot: Spot = { tenantId: 0, id: 1234, version: 1, name: 'Updated Spot 2', requiredSkillSet: [] };
-  const deletedSpot: Spot = { tenantId: 0, id: 2312, version: 0, name: 'Spot 3', requiredSkillSet: [] };
+  const updatedSpot: Spot = {
+    tenantId: 0,
+    id: 1234,
+    version: 1,
+    name: 'Updated Spot 2',
+    requiredSkillSet: [],
+  };
+  const deletedSpot: Spot = {
+    tenantId: 0,
+    id: 2312,
+    version: 0,
+    name: 'Spot 3',
+    requiredSkillSet: [],
+  };
   it('set loading', () => {
     expect(
       reducer(state.spotList, actions.setIsSpotListLoading(true)),
@@ -306,7 +324,7 @@ const state: AppState = {
     availabilityRosterView: null,
   },
   solverState: {
-    isSolving: false,
+    solverStatus: 'TERMINATED',
   },
   alerts: {
     alertList: [],

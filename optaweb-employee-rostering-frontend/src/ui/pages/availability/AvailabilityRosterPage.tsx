@@ -39,6 +39,7 @@ import Actions from 'ui/components/Actions';
 import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
 import { ScoreDisplay } from 'ui/components/ScoreDisplay';
 import { UrlProps, setPropsInUrl, getPropsFromUrl } from 'util/BookmarkableUtils';
+import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
 import AvailabilityEvent, { AvailabilityPopoverHeader, AvailabilityPopoverBody } from './AvailabilityEvent';
 import EditAvailabilityModal from './EditAvailabilityModal';
 import ShiftEvent, { ShiftPopupHeader, ShiftPopupBody } from '../shift/ShiftEvent';
@@ -55,6 +56,7 @@ interface StateProps {
   totalNumOfSpots: number;
   rosterState: RosterState | null;
   score: HardMediumSoftScore | null;
+  indictmentSummary: IndictmentSummary | null;
 }
 
 // Snapshot of the last value to show when loading
@@ -67,7 +69,7 @@ let lastShownEmployeeList: Employee[] = [];
 // eslint-disable-next-line no-return-assign
 const mapStateToProps = (state: AppState): StateProps => ({
   tenantId: state.tenantData.currentTenantId,
-  isSolving: state.solverState.isSolving,
+  isSolving: state.solverState.solverStatus === 'SOLVING',
   isLoading: rosterSelectors.isAvailabilityRosterLoading(state),
   allEmployeeList: employeeSelectors.getEmployeeList(state),
   shownEmployeeList: lastShownEmployeeList = rosterSelectors.isAvailabilityRosterLoading(state)
@@ -86,6 +88,8 @@ const mapStateToProps = (state: AppState): StateProps => ({
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
   rosterState: state.rosterState.rosterState,
   score: state.availabilityRoster.availabilityRosterView ? state.availabilityRoster.availabilityRosterView.score : null,
+  indictmentSummary: state.availabilityRoster.availabilityRosterView
+    ? state.availabilityRoster.availabilityRosterView.indictmentSummary : null,
 });
 
 export interface DispatchProps {
@@ -167,18 +171,20 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
   }
 
   onUpdateAvailabilityRoster(urlProps: AvailabilityRosterUrlProps) {
-    const employee = this.props.allEmployeeList
-      .find(e => e.name === urlProps.employee) || this.props.allEmployeeList[0];
-    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
-    const endDate = moment(startDate).endOf('week').toDate();
-    if (employee) {
-      this.props.getAvailabilityRosterFor({
-        fromDate: startDate,
-        toDate: endDate,
-        employeeList: [employee],
-      });
-      this.setState({ firstLoad: false });
-      setPropsInUrl(this.props, { ...urlProps, employee: employee.name });
+    if (this.props.rosterState !== null) {
+      const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
+      const endDate = moment(startDate).endOf('week').toDate();
+      const employee = this.props.allEmployeeList
+        .find(e => e.name === urlProps.employee) || this.props.allEmployeeList[0];
+      if (employee) {
+        this.props.getAvailabilityRosterFor({
+          fromDate: startDate,
+          toDate: endDate,
+          employeeList: [employee],
+        });
+        this.setState({ firstLoad: false });
+        setPropsInUrl(this.props, { ...urlProps, employee: employee.name });
+      }
     }
   }
 
@@ -235,7 +241,12 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
           throw new Error(`Unexpected availability state: ${dayAvailability.state}`);
       }
     }
-    if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
+    if (this.props.rosterState !== null && moment(date).isBefore(moment(moment().startOf('day')))) {
+      if (!className) {
+        style.backgroundColor = '#d3d7cf';
+      }
+      className += ' historic-day';
+    } else if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
       if (!className) {
         style.backgroundColor = 'var(--pf-global--BackgroundColor--300)';
       }
@@ -282,7 +293,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       || (urlProps.employee !== null
       && this.props.tenantId !== this.props.shownEmployeeList[0].tenantId);
 
-    if (this.props.shownEmployeeList.length === 0 || changedTenant) {
+    if (this.props.shownEmployeeList.length === 0 || changedTenant || this.props.rosterState === null) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
@@ -304,14 +315,16 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       );
     }
 
-    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
+    const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
     const endDate = moment(startDate).endOf('week').toDate();
     const shownEmployee = this.props.allEmployeeList.find(e => e.name === urlProps.employee)
       || this.props.shownEmployeeList[0];
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
+    const indictmentSummary: IndictmentSummary = this.props.indictmentSummary || { constraintToCountMap: {},
+      constraintToScoreImpactMap: {} };
     const events: ShiftOrAvailability[] = [];
     const actions = [
-      { name: t('publish'), action: this.props.publishRoster },
+      { name: t('publish'), action: this.props.publishRoster, isDisabled: this.props.isSolving },
       { name: this.props.isSolving ? t('terminateEarly') : t('schedule'),
         action: this.props.isSolving ? this.props.terminateSolvingRosterEarly : this.props.solveRoster },
       { name: t('refresh'),
@@ -387,7 +400,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               });
             }}
           />
-          <ScoreDisplay score={score} />
+          <ScoreDisplay score={score} indictmentSummary={indictmentSummary} isSolving={this.props.isSolving} />
           <Actions
             actions={actions}
           />
