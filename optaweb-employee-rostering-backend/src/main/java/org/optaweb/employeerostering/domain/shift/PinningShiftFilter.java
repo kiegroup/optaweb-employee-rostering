@@ -17,21 +17,19 @@
 
 package org.optaweb.employeerostering.domain.shift;
 
-import org.optaplanner.core.impl.heuristic.selector.common.decorator.SelectionFilter;
-import org.optaplanner.core.impl.score.director.ScoreDirector;
+import org.optaplanner.core.api.domain.entity.PinningFilter;
 import org.optaweb.employeerostering.domain.roster.Roster;
 import org.optaweb.employeerostering.domain.roster.RosterState;
 
-public class MovableShiftFilter implements SelectionFilter<Roster, Shift> {
+public class PinningShiftFilter implements PinningFilter<Roster, Shift> {
 
     @Override
-    public boolean accept(ScoreDirector<Roster> scoreDirector, Shift shift) {
-        Roster roster = scoreDirector.getWorkingSolution();
+    public boolean accept(Roster roster, Shift shift) {
         RosterState rosterState = roster.getRosterState();
         if (roster.isNondisruptivePlanning()) {
-            return !shift.getStartDateTime().isBefore(roster.getNondisruptiveReplanFrom());
+            return shift.getStartDateTime().isBefore(roster.getNondisruptiveReplanFrom());
         } else {
-            return rosterState.isDraft(shift);
+            return !rosterState.isDraft(shift);
         }
     }
 }
