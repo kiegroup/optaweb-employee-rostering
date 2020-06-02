@@ -8,7 +8,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        java: [8, 11]
+        # TODO: update each time a new major Java version is released.
+        java: [8, 11, 14]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -23,17 +24,3 @@ jobs:
       # the git command returns 1 and fails the build if there are any uncommitted changes
       - name: Check for clean working tree
         run: git diff HEAD --exit-code
-
-  # Early feedback on a compatibility with the newest Java version.
-  # TODO: update each time a new major Java version is released.
-  latest-jdk:
-    name: Java 14
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
-      - name: Build with Maven
-        run: mvn -B install -Dintegration-tests=true
