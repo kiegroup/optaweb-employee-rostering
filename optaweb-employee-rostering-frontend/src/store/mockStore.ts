@@ -74,7 +74,7 @@ export const mockStore = (state: Partial<AppState>) => {
       availabilityRosterView: null,
     },
     solverState: {
-      isSolving: false,
+      solverStatus: 'TERMINATED',
     },
     alerts: {
       alertList: [],
