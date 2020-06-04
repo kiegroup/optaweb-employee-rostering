@@ -22,12 +22,20 @@ import { useSelector } from 'react-redux';
 import { Skill } from 'domain/Skill';
 import { v4 as uuid } from 'uuid';
 import { TrashIcon } from '@patternfly/react-icons';
+import { Stub } from './EmployeeStub';
+import { rosterSelectors } from 'store/roster';
+
+export interface Seat {
+  dayInRotation: number;
+  stub: Stub | null;
+}
 
 export interface TimeBucket {
   startTime: string;
   endTime: string;
   repeatOn: string[];
   additionalSkillSet: Skill[];
+  seatList: Seat[];
 };
 
 export interface EditTimeBucketModalProps {
@@ -115,12 +123,23 @@ export const TimeBucket: React.FC<{
                     repeatOn: [
                       ...props.timeBucket.repeatOn,
                       enumValue
-                    ]
+                    ],
+                    seatList: props.timeBucket.seatList.map(v => v.dayInRotation % 7 === index? {
+                      ...v,
+                      stub: {
+                        employee: null,
+                        color: '#FFFFFF'
+                      },
+                    } : v),
                   });
                 } else {
                   props.onUpdateTimeBucket({
                     ...props.timeBucket,
                     repeatOn: props.timeBucket.repeatOn.filter(v => v !== enumValue),
+                    seatList: props.timeBucket.seatList.map(v => v.dayInRotation % 7 === index? {
+                      ...v,
+                      stub: null,
+                    } : v),
                   });
                 }
               }}
@@ -162,11 +181,14 @@ export const EditTimeBucketModal: React.FC<EditTimeBucketModalProps> = props => 
   React.useEffect(() => {
     setEditedTimeBucketList(props.timeBuckets);
   }, [props.timeBuckets, props.isOpen]);
+  const rosterState = useSelector(rosterSelectors.getRosterState);
+  const rotationLength = (rosterState !== null)? rosterState.rotationLength : 0;
   
   return (
     <Modal
       title='Create Working Time Bucket'
       isOpen={props.isOpen}
+      onClose={props.onClose}
       isSmall
       actions={[
         (
@@ -183,7 +205,7 @@ export const EditTimeBucketModal: React.FC<EditTimeBucketModalProps> = props => 
             key={1}
             variant='primary'
             onClick={() => {
-              props.onUpdateTimeBucketList([]);
+              props.onUpdateTimeBucketList(editedTimeBucketList);
               props.onClose();
              }}
            >
@@ -236,6 +258,10 @@ export const EditTimeBucketModal: React.FC<EditTimeBucketModalProps> = props => 
                 endTime: '00:00',
                 repeatOn: [],
                 additionalSkillSet: [],
+                seatList: new Array(rotationLength).fill(null).map((_, index) => ({
+                  dayInRotation: index,
+                  stub: null,
+                })),
               },
             ])}
           >
