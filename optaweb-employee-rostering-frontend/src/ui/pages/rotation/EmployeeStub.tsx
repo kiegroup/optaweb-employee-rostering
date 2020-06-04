@@ -35,9 +35,11 @@ export const EmployeeStub: React.FC<{
         width: '20px',
         height: '30px',
         marginTop: '10px',
-        border: '1px solid black',
+        border: `${props.isSelected? 3 : 1}px solid ${props.isSelected? 'var(--pf-global--primary-color--100)' : 'black'}`,
+        cursor: 'pointer',
         backgroundColor: props.color,
       }}
+      onClick={props.onClick}
       title={props.employee !== null? props.employee.name : 'Unassigned'}
     />
   );
@@ -236,7 +238,7 @@ export const EditEmployeeStubListModal: React.FC<{
 };
 
 export const EmployeeStubList: React.FC<{
-  selectedEmployee: Employee | null,
+  selectedStub: Stub | null,
   stubList: Stub[],
   onStubSelect: (stub: Stub) => void,
   onUpdateStubList: (stubList: Stub[]) => void,
@@ -255,7 +257,7 @@ export const EmployeeStubList: React.FC<{
         <Flex>
           <FlexItem>
             <EmployeeStub
-              isSelected={props.selectedEmployee === null}
+              isSelected={props.selectedStub !== null && props.selectedStub.employee === null}
               employee={null}
               color='#FFFFFF'
               onClick={() => props.onStubSelect({ color: '#FFFFFF', employee: null })}
@@ -264,7 +266,7 @@ export const EmployeeStubList: React.FC<{
           {props.stubList.map(stub => (
             <GridItem>
               <EmployeeStub
-                isSelected={props.selectedEmployee === stub.employee}
+                isSelected={props.selectedStub === stub}
                 employee={stub.employee}
                 color={stub.color}
                 onClick={() => props.onStubSelect(stub)}

@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import {
   Level, LevelItem, Button, Text, Pagination, ButtonVariant, EmptyState, EmptyStateVariant,
-  EmptyStateIcon, Title, EmptyStateBody, Split, SplitItem, Bullseye,
+  EmptyStateIcon, Title, EmptyStateBody, Split, SplitItem, Bullseye, Flex, FlexModifiers, FlexItem,
 } from '@patternfly/react-core';
 import { EventProps } from 'react-big-calendar';
 import { modulo } from 'util/MathUtils';
@@ -37,7 +37,8 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { UrlProps, getPropsFromUrl, setPropsInUrl } from 'util/BookmarkableUtils';
 import EditShiftTemplateModal from './EditShiftTemplateModal';
 import { EmployeeStubList, Stub } from './EmployeeStub';
-import { EditTimeBucketModal } from './EditTimeBucketModal';
+import { EditTimeBucketModal, TimeBucket } from './EditTimeBucketModal';
+import { SeatJigsaw } from './SeatJigsaw';
 
 interface StateProps {
   tenantId: number;
@@ -89,6 +90,8 @@ interface State {
   isCreatingOrEditingShiftTemplate: boolean;
   selectedShiftTemplate?: ShiftTemplate;
   stubList: Stub[];
+  selectedStub: Stub | null;
+  timeBucketList: TimeBucket[],
   isEditingTimeBuckets: boolean;
 }
 
@@ -172,6 +175,8 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
     this.state = {
       isCreatingOrEditingShiftTemplate: false,
       stubList: [],
+      selectedStub: null,
+      timeBucketList: [],
       isEditingTimeBuckets: false,
     };
   }
@@ -239,9 +244,11 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
         <Split>
           <SplitItem>
             <EmployeeStubList
-              selectedEmployee={null}
+              selectedStub={this.state.selectedStub}
               stubList={this.state.stubList}
-              onStubSelect={() => {}}
+              onStubSelect={selectedStub => this.setState({
+                selectedStub,
+              })}
               onUpdateStubList={stubList => this.setState({ stubList })}
             />
           </SplitItem>
@@ -263,10 +270,29 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
             </Button>
           </SplitItem>
         </Split>
+        <Flex breakpointMods={[{modifier: FlexModifiers.column}]}>
+          {this.state.timeBucketList.map((timeBucket, index) => (
+            <FlexItem>
+              <SeatJigsaw
+                selectedStub={this.state.selectedStub}
+                timeBucket={timeBucket}
+                onUpdateTimeBucket={updatedTimeBucket => this.setState(state => ({
+                  timeBucketList: [
+                    ...state.timeBucketList.filter((_, i) => i < index),
+                    updatedTimeBucket,
+                    ...state.timeBucketList.filter((_, i) => i > index),
+                  ]
+                }))}
+              />
+            </FlexItem>
+          ))}
+        </Flex>
         <EditTimeBucketModal
           isOpen={this.state.isEditingTimeBuckets}
-           timeBuckets={[]} 
-           onUpdateTimeBucketList={bucketList => {}}
+           timeBuckets={this.state.timeBucketList} 
+           onUpdateTimeBucketList={timeBucketList => this.setState({
+             timeBucketList
+           })}
            onClose={() => this.setState({
              isEditingTimeBuckets: false,
            })}
