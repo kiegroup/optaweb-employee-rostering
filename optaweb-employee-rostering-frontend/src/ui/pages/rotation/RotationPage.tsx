@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import {
   Level, LevelItem, Button, Text, Pagination, ButtonVariant, EmptyState, EmptyStateVariant,
-  EmptyStateIcon, Title, EmptyStateBody,
+  EmptyStateIcon, Title, EmptyStateBody, Split, SplitItem, Bullseye,
 } from '@patternfly/react-core';
 import { EventProps } from 'react-big-calendar';
 import { modulo } from 'util/MathUtils';
@@ -32,11 +32,12 @@ import { RosterState } from 'domain/RosterState';
 import { ShiftTemplate } from 'domain/ShiftTemplate';
 import { shiftTemplateSelectors, shiftTemplateOperations } from 'store/rotation';
 import { WithTranslation, withTranslation, useTranslation, Trans } from 'react-i18next';
-import { EditIcon, TrashIcon, CubesIcon, BlueprintIcon } from '@patternfly/react-icons';
-import Schedule from 'ui/components/calendar/Schedule';
+import { EditIcon, TrashIcon, CubesIcon, BlueprintIcon, CogIcon } from '@patternfly/react-icons';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { UrlProps, getPropsFromUrl, setPropsInUrl } from 'util/BookmarkableUtils';
 import EditShiftTemplateModal from './EditShiftTemplateModal';
+import { EmployeeStubList, Stub } from './EmployeeStub';
+import { EditTimeBucketModal } from './EditTimeBucketModal';
 
 interface StateProps {
   tenantId: number;
@@ -87,6 +88,8 @@ export type Props = RouteComponentProps & StateProps & DispatchProps;
 interface State {
   isCreatingOrEditingShiftTemplate: boolean;
   selectedShiftTemplate?: ShiftTemplate;
+  stubList: Stub[];
+  isEditingTimeBuckets: boolean;
 }
 
 // export const baseDate = moment('2018-01-01T00:00').locale('en').startOf('week').toDate();
@@ -168,6 +171,8 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
 
     this.state = {
       isCreatingOrEditingShiftTemplate: false,
+      stubList: [],
+      isEditingTimeBuckets: false,
     };
   }
 
@@ -217,187 +222,54 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
     const weekNumber = parseInt(urlProps.weekNumber as string, 10);
     const shownSpot = this.props.spotList.find(s => s.name === urlProps.shownSpot) as Spot;
 
-    const startDate = moment(baseDate).add(weekNumber, 'weeks').toDate();
-    const endDate = moment(startDate).add(1, 'week').toDate();
-    const events: { shiftTemplate: ShiftTemplate; start: Date; end: Date }[] = [];
-
-    (this.props.spotIdToShiftTemplateListMap.get(shownSpot.id as number) as ShiftTemplate[])
-      .forEach((st) => {
-        const startHours = st.shiftTemplateDuration.hours();
-        const startMinutes = st.shiftTemplateDuration.minutes();
-        const durationBetweenRotationStartAndTemplateStart = moment
-          .duration(st.durationBetweenRotationStartAndTemplateStart);
-
-        if (startHours === 0 && startMinutes === 0) {
-          durationBetweenRotationStartAndTemplateStart.add(1, 'ms');
-        }
-
-
-        const durationBetweenRotationStartAndEnd = moment
-          .duration(st.durationBetweenRotationStartAndTemplateStart).add(st.shiftTemplateDuration);
-        const endHours = durationBetweenRotationStartAndEnd.hours();
-        const endMinutes = durationBetweenRotationStartAndEnd.minutes();
-        const shiftTemplateDuration = moment.duration(st.shiftTemplateDuration);
-        if (endHours === 0 && endMinutes === 0) {
-          shiftTemplateDuration.subtract(1, 'ms');
-        }
-        events.push({
-          shiftTemplate: st,
-          start: moment(baseDate).add(durationBetweenRotationStartAndTemplateStart).toDate(),
-          end: moment(baseDate)
-            .add(durationBetweenRotationStartAndTemplateStart)
-            .add(shiftTemplateDuration).toDate(),
-        });
-      });
-
     return (
       <>
-        <Level
-          gutter="sm"
-          style={{
-            height: '60px',
-            padding: '5px 5px 5px 5px',
-            backgroundColor: 'var(--pf-global--BackgroundColor--100)',
-          }}
-        >
-          <LevelItem style={{ display: 'flex' }}>
-            <TypeaheadSelectInput
-              aria-label="Select Spot"
-              emptyText={t('selectSpot')}
-              optionToStringMap={spot => spot.name}
-              options={this.props.spotList}
-              value={shownSpot}
-              onChange={(newSpot) => {
-                if (newSpot !== undefined) {
-                  setPropsInUrl(this.props, { shownSpot: newSpot.name });
-                }
-              }}
-              noClearButton
-            />
-            <Pagination
-              itemCount={Math.ceil(this.props.rosterState.rotationLength)}
-              page={weekNumber + 1}
-              onSetPage={(e, page) => {
-                setPropsInUrl(this.props, { weekNumber: `${page - 1}` });
-              }}
-              perPage={7}
-              perPageOptions={[]}
-              titles={{
-                items: t('days'),
-                page: t('week'),
-                itemsPerPage: t('weekNum'),
-                perPageSuffix: t('weekNum'),
-                toFirstPage: t('gotoFirstWeek'),
-                toPreviousPage: t('gotoPreviousWeek'),
-                toLastPage: t('gotoLastWeek'),
-                toNextPage: t('gotoNextWeek'),
-                optionsToggle: t('select'),
-                currPage: t('currentWeek'),
-                paginationTitle: t('weekSelect'),
-              }}
-            />
-          </LevelItem>
-          <LevelItem style={{ display: 'flex' }}>
-            <Button
-              style={{ margin: '5px' }}
-              aria-label="Create Shift Template"
-              onClick={() => {
-                this.setState({
-                  selectedShiftTemplate: undefined,
-                  isCreatingOrEditingShiftTemplate: true,
-                });
-              }}
-            >
-              {t('createShiftTemplate')}
-            </Button>
-          </LevelItem>
-        </Level>
-        <EditShiftTemplateModal
-          aria-label="Edit Shift Template"
-          shiftTemplate={this.state.selectedShiftTemplate}
-          isOpen={this.state.isCreatingOrEditingShiftTemplate}
-          onSave={(shiftTemplate) => {
-            if (this.state.selectedShiftTemplate !== undefined) {
-              this.props.updateShiftTemplate(shiftTemplate);
-            } else {
-              this.props.addShiftTemplate(shiftTemplate);
-            }
-            this.setState({ selectedShiftTemplate: undefined, isCreatingOrEditingShiftTemplate: false });
-          }}
-          onDelete={(shiftTemplate) => {
-            this.props.removeShiftTemplate(shiftTemplate);
-            this.setState({ isCreatingOrEditingShiftTemplate: false });
-          }}
-          onClose={() => {
-            this.setState({
-              selectedShiftTemplate: undefined,
-              isCreatingOrEditingShiftTemplate: false,
-            });
-          }}
+        <Title size='2xl'>Rotation</Title>
+        <TypeaheadSelectInput
+            aria-label="Select Spot"
+            emptyText={t('selectSpot')}
+            optionToStringMap={spot => spot.name}
+            options={this.props.spotList}
+            value={shownSpot}
+            onChange={(s) => {
+              setPropsInUrl(this.props, { shownSpot: s? s.name : undefined });
+            }}
+            noClearButton
         />
-        <Schedule<{ shiftTemplate: ShiftTemplate; start: Date; end: Date }>
-          key={shownSpot.id}
-          startDate={startDate}
-          endDate={endDate}
-          dateFormat={date => this.props.t('rotationDay',
-            {
-              day: moment.duration(moment(date).diff(baseDate)).asDays() + 1,
-            })
-          }
-          events={events}
-          titleAccessor={e => (e.shiftTemplate.rotationEmployee
-            ? e.shiftTemplate.rotationEmployee.name : t('unassigned'))}
-          startAccessor={e => e.start}
-          endAccessor={e => e.end}
-          onAddEvent={
-            (start, end) => {
-              this.addShiftTemplate({
-                tenantId: shownSpot.tenantId,
-                durationBetweenRotationStartAndTemplateStart: moment.duration(moment(start)
-                  .diff(baseDate)),
-                shiftTemplateDuration: moment.duration(moment(end).diff(baseDate))
-                  .subtract(moment(start).diff(baseDate)),
-                spot: shownSpot,
-                rotationEmployee: null,
-                requiredSkillSet: [],
-              });
-            }
-          }
-          onUpdateEvent={
-            (event, start, end) => {
-              this.updateShiftTemplate({
-                ...event.shiftTemplate,
-                durationBetweenRotationStartAndTemplateStart: moment.duration(moment(start)
-                  .diff(baseDate)),
-                shiftTemplateDuration: moment.duration(moment(end).diff(baseDate))
-                  .subtract(moment(start).diff(baseDate)),
-              });
-            }
-          }
-          eventStyle={() => ({})}
-          dayStyle={() => ({})}
-          wrapperStyle={() => ({})}
-          popoverHeader={st => ShiftTemplatePopoverHeader({
-            shiftTemplate: st.shiftTemplate,
-            rotationLength: (this.props.rosterState as RosterState).rotationLength,
-            onEdit: shiftTemplate => this.setState({
-              selectedShiftTemplate: shiftTemplate,
-              isCreatingOrEditingShiftTemplate: true,
-            }),
-            onCopy: shiftTemplate => this.props.addShiftTemplate({
-              ...shiftTemplate,
-              rotationEmployee: null,
-              id: undefined,
-              version: undefined,
-            }),
-            onDelete: shiftTemplate => this.props.removeShiftTemplate(shiftTemplate),
-          })
-          }
-          popoverBody={() => ShiftTemplatePopoverBody({})}
-          eventComponent={params => ShiftTemplateEvent({
-            ...params,
-            event: params.event.shiftTemplate,
-          })}
+        <Split>
+          <SplitItem>
+            <EmployeeStubList
+              selectedEmployee={null}
+              stubList={this.state.stubList}
+              onStubSelect={() => {}}
+              onUpdateStubList={stubList => this.setState({ stubList })}
+            />
+          </SplitItem>
+          <SplitItem isFilled />
+          <SplitItem>
+            <Button
+              variant='secondary'
+              onClick={() => this.setState({
+                isEditingTimeBuckets: true,
+              })}
+            >
+              <Bullseye>
+                <CogIcon
+                  style={{
+                    marginRight: '5px',
+                  }}/>
+                Time Window
+              </Bullseye>
+            </Button>
+          </SplitItem>
+        </Split>
+        <EditTimeBucketModal
+          isOpen={this.state.isEditingTimeBuckets}
+           timeBuckets={[]} 
+           onUpdateTimeBucketList={bucketList => {}}
+           onClose={() => this.setState({
+             isEditingTimeBuckets: false,
+           })}
         />
       </>
     );
