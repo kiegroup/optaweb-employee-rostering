@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AxiosInstance, AxiosResponse, AxiosStatic, AxiosError } from 'axios';
+import { AxiosInstance, AxiosResponse, AxiosStatic } from 'axios';
 
 import { alert } from 'store/alert';
 import { ServerSideExceptionInfo, BasicObject } from 'types';
@@ -75,11 +75,17 @@ export default class RestServiceClient {
   }
 
   handleResponse<T>(res: AxiosResponse<T>): Promise<T> {
-    if (res.status >= 200 && res.status <= 300) {
+    if (res.status >= 200 && res.status < 300) {
       if (this.dispatch) {
         this.dispatch(setConnectionStatus(true));
       }
       return Promise.resolve(res.data);
+    }
+    if (res.status >= 502 && res.status <= 504) { // 502-504 are gateway releated responses
+      this.handleError({
+        isAxiosError: true,
+      });
+      return Promise.reject(res.status);
     }
     if (this.dispatch !== null) {
       if (typeJsonRegex.test(res.headers['content-type'])) {
@@ -93,7 +99,7 @@ export default class RestServiceClient {
     throw Error('Dispatch was not passed to RestServiceClient');
   }
 
-  handleError(err: AxiosError<any>): void {
+  handleError(err: { isAxiosError: boolean }): void {
     if (err.isAxiosError && this.pollForServerTimeout === null) {
       if (this.dispatch) {
         this.dispatch(setConnectionStatus(false));

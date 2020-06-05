@@ -15,7 +15,7 @@
  */
 import { alert } from 'store/alert';
 import { AxiosStatic } from 'axios';
-import { ServerSideExceptionInfo, BasicObject } from 'types';
+import { ServerSideExceptionInfo, BasicObject, doNothing } from 'types';
 import { setConnectionStatus } from 'store/tenant/actions';
 import * as tenantOperations from 'store/tenant/operations';
 
@@ -225,6 +225,29 @@ describe('Rest Service Client', () => {
     };
 
     expect(restServiceClient.handleResponse(response)).resolves.toEqual(data);
+  });
+
+  it('Should call the error handler on bad gateway', async () => {
+    const baseURL = '/rest';
+    const restServiceClient = new RestServiceClient(baseURL, axios);
+    const handleErrorSpy = jest.spyOn(restServiceClient, 'handleError');
+    handleErrorSpy.mockImplementation(doNothing);
+
+    const data = {
+      a: 'Test',
+      b: 2,
+    };
+
+    const response = {
+      status: 502,
+      data,
+      statusText: 'Bad Gateway',
+      headers: {},
+      config: {},
+    };
+
+    expect(restServiceClient.handleResponse(response)).rejects.toEqual(502);
+    expect(handleErrorSpy).toBeCalledWith({ isAxiosError: true });
   });
 
   it('Should reject the promise on failure and show an alert with text if not JSON', async () => {
