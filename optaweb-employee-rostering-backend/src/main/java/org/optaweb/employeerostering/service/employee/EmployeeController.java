@@ -17,10 +17,7 @@
 package org.optaweb.employeerostering.service.employee;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -55,17 +52,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-    private final EmployeeListXlsxFileIO employeeListXlsxFileIO;
-    private final EmployeeRepository employeeRepository;
 
     public EmployeeController(EmployeeService employeeService, EmployeeRepository employeeRepository,
                               EmployeeListXlsxFileIO employeeListXlsxFileIO) {
         this.employeeService = employeeService;
         Assert.notNull(employeeService, "employeeService must not be null.");
-        this.employeeListXlsxFileIO = employeeListXlsxFileIO;
-        Assert.notNull(employeeListXlsxFileIO, "employeeListXlsxFileIO must not be null.");
-        this.employeeRepository = employeeRepository;
-        Assert.notNull(employeeRepository, "employeeRepository must not be null");
     }
 
     // ************************************************************************
@@ -104,32 +95,8 @@ public class EmployeeController {
                                                                     @RequestParam("file") MultipartFile excelDataFile)
             throws IOException {
 
-        List<EmployeeView> excelEmployeeList = employeeListXlsxFileIO
-                .getEmployeeListFromExcelFile(tenantId, excelDataFile.getInputStream());
-
-        final Set<String> addedEmployeeSet = new HashSet<>();
-        excelEmployeeList.stream().flatMap(employee -> {
-            if (addedEmployeeSet.contains(employee.getName().toLowerCase())) {
-                // Duplicate Employee; already in the stream
-                return Stream.empty();
-            }
-            // Add employee to the stream
-            addedEmployeeSet.add(employee.getName().toLowerCase());
-            return Stream.of(employee);
-        }).forEach(employee -> {
-            Employee oldEmployee = employeeRepository.findEmployeeByName(tenantId, employee.getName());
-            if (oldEmployee != null) {
-                employee.setContract(oldEmployee.getContract());
-                employee.setCovidRiskType(oldEmployee.getCovidRiskType());
-                employee.setId(oldEmployee.getId());
-                employee.setVersion(oldEmployee.getVersion());
-                employeeService.updateEmployee(tenantId, employee);
-            } else {
-                employeeService.createEmployee(tenantId, employee);
-            }
-        });
-
-        return getEmployeeList(tenantId);
+        return new ResponseEntity<>(employeeService.importEmployeesFromExcel(tenantId, excelDataFile.getInputStream()),
+                                    HttpStatus.OK);
     }
 
     @ApiOperation("Update an employee")
