@@ -835,7 +835,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 assertEquals("Wrong number of skills for " + expected.getName(),
                              expected.getSkillProficiencySet().size(), actual.getSkillProficiencySet().size());
                 expected.getSkillProficiencySet().forEach(skill -> assertTrue("Missing skill " + skill.getName() +
-                                                                                      " for employee " + expected.getName(),
+                                                                                      " for employee " + 
+                                                                                      expected.getName(),
                                                                               actual.getSkillProficiencySet().stream()
                                                                                       .filter(s -> s.getName()
                                                                                               .equals(skill.getName()))
