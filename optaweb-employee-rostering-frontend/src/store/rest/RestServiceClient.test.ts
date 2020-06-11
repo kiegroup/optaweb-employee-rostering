@@ -44,7 +44,6 @@ beforeEach(() => {
   mockCreate.mockClear();
 });
 
-
 describe('Rest Service Client', () => {
   it('Should call axios constructor with correct arguments', () => {
     const baseURL = '/rest';
@@ -131,6 +130,28 @@ describe('Rest Service Client', () => {
     }
   });
 
+  it('Should call axios.post with form data on uploadFile', async () => {
+    const baseURL = '/rest';
+    const restServiceClient = new RestServiceClient(baseURL, axios);
+    const handleResponseSpy = jest.spyOn(restServiceClient, 'handleResponse');
+    const targetURL = '/endpoint';
+    const data = 'myfile.txt';
+    const response = {
+      status: 200,
+      data: {},
+      statusText: 'Ok',
+      headers: {},
+      config: {},
+    };
+    mockPost.mockReturnValue(Promise.resolve(response));
+    await restServiceClient.uploadFile(targetURL, data as unknown as File);
+
+    const expectedParam = new FormData();
+    expectedParam.append('file', data);
+    expect(mockPost).toBeCalled();
+    expect(mockPost).toBeCalledWith('/endpoint', expectedParam);
+    expect(handleResponseSpy).toBeCalledWith(response);
+  });
 
   it('Should call axios.put on put', async () => {
     const baseURL = '/rest';
@@ -250,6 +271,7 @@ describe('Rest Service Client', () => {
 
   it('Should reject the promise on failure and show an alert of exception if JSON', async () => {
     const dispatch = jest.fn();
+
     const baseURL = '/rest';
     const restServiceClient = new RestServiceClient(baseURL, axios);
     const data: ServerSideExceptionInfo & BasicObject = {
