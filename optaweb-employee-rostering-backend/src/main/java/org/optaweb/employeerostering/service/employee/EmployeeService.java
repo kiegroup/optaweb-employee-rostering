@@ -16,9 +16,14 @@
 
 package org.optaweb.employeerostering.service.employee;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -30,6 +35,7 @@ import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.optaweb.employeerostering.service.roster.RosterStateRepository;
+import org.optaweb.employeerostering.util.EmployeeListXlsxFileIO;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,12 +49,16 @@ public class EmployeeService extends AbstractRestService {
 
     private final RosterStateRepository rosterStateRepository;
 
+    private final EmployeeListXlsxFileIO employeeListXlsxFileIO;
+
     public EmployeeService(EmployeeRepository employeeRepository,
                            EmployeeAvailabilityRepository employeeAvailabilityRepository,
-                           RosterStateRepository rosterStateRepository) {
+                           RosterStateRepository rosterStateRepository,
+                           EmployeeListXlsxFileIO employeeListXlsxFileIO) {
         this.employeeRepository = employeeRepository;
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
         this.rosterStateRepository = rosterStateRepository;
+        this.employeeListXlsxFileIO = employeeListXlsxFileIO;
     }
 
     // ************************************************************************
@@ -118,6 +128,36 @@ public class EmployeeService extends AbstractRestService {
         oldEmployee.setSkillProficiencySet(newEmployee.getSkillProficiencySet());
         oldEmployee.setContract(newEmployee.getContract());
         return employeeRepository.save(oldEmployee);
+    }
+
+    @Transactional
+    public List<Employee> importEmployeesFromExcel(Integer tenantId, InputStream excelInputStream) throws IOException {
+        List<EmployeeView> excelEmployeeList = employeeListXlsxFileIO
+                .getEmployeeListFromExcelFile(tenantId, excelInputStream);
+
+        final Set<String> addedEmployeeSet = new HashSet<>();
+        excelEmployeeList.stream().flatMap(employee -> {
+            if (addedEmployeeSet.contains(employee.getName().toLowerCase())) {
+                // Duplicate Employee; already in the stream
+                return Stream.empty();
+            }
+            // Add employee to the stream
+            addedEmployeeSet.add(employee.getName().toLowerCase());
+            return Stream.of(employee);
+        }).forEach(employee -> {
+            Employee oldEmployee = employeeRepository.findEmployeeByName(tenantId, employee.getName());
+            if (oldEmployee != null) {
+                employee.setContract(oldEmployee.getContract());
+                employee.setCovidRiskType(oldEmployee.getCovidRiskType());
+                employee.setId(oldEmployee.getId());
+                employee.setVersion(oldEmployee.getVersion());
+                updateEmployee(tenantId, employee);
+            } else {
+                createEmployee(tenantId, employee);
+            }
+        });
+
+        return getEmployeeList(tenantId);
     }
 
     protected void validateTenantIdParameter(Integer tenantId, Employee employee) {
