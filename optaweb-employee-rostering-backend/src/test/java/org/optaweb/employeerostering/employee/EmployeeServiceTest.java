@@ -16,10 +16,18 @@
 
 package org.optaweb.employeerostering.employee;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
@@ -52,6 +60,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -762,5 +773,82 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+    }
+
+    private Set<Skill> getSkillSet(String... names) {
+        AtomicLong id = new AtomicLong(0L);
+        return Arrays.asList(names).stream()
+                .map(name -> {
+                    Skill out = new Skill(TENANT_ID, (String) name);
+                    out.setId(id.incrementAndGet());
+                    return out;
+                })
+                .collect(Collectors.toSet());
+    }
+
+    @Test
+    public void employeeListImportTest() throws IOException {
+        Contract defaultContract = contractService.getOrCreateDefaultContract(TENANT_ID);
+        CovidRiskType defaultCovidRisk = CovidRiskType.LOW;
+
+        List<Employee> expectedEmployeeList = Arrays.asList(
+                new Employee(TENANT_ID, "Amy Cole", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Beth Fox", defaultContract,
+                             getSkillSet("Respiratory Specialist", "Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Chad Green", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Dan Jones", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Elsa King", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Flo Li", defaultContract,
+                             getSkillSet("Nurse", "Emergency Person"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Gus Poe", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Hugo Rye", defaultContract, Collections.emptySet(), defaultCovidRisk),
+                new Employee(TENANT_ID, "Ivy Smith", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Amy Fox", defaultContract, getSkillSet("Foo Faa fu"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Beth Green", defaultContract,
+                             getSkillSet("Foo Faa fu"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Chad Jones", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Dan King", defaultContract, Collections.emptySet(), defaultCovidRisk),
+                new Employee(TENANT_ID, "Elsa Li", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Flo Poe", defaultContract, getSkillSet("Doctor"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Gus Rye", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Hugo Smith", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Ivy Watt", defaultContract, getSkillSet("Nur se"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Jay Cole", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Amy Green", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Beth Jones", defaultContract,
+                             getSkillSet("Respiratory Specialist"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Chad King", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Dan Li", defaultContract, getSkillSet("Doctor"), defaultCovidRisk),
+                new Employee(TENANT_ID, "My Name", defaultContract, getSkillSet("Nur se"), defaultCovidRisk));
+
+        Function<List<Employee>, Consumer<Employee>> assertListMatch = employeeList -> expected -> {
+            Optional<Employee> maybeActual = employeeList.stream()
+                    .filter(e -> e.getName().equals(expected.getName())).findAny();
+            if (maybeActual.isPresent()) {
+                Employee actual = maybeActual.get();
+                assertEquals("Wrong contract for " + expected.getName(),
+                             expected.getContract(), actual.getContract());
+                assertEquals("Wrong covid risk type for " + expected.getName(),
+                             expected.getCovidRiskType(), actual.getCovidRiskType());
+                assertEquals("Wrong tenant id for " + expected.getName(),
+                             expected.getTenantId(), actual.getTenantId());
+                assertEquals("Wrong number of skills for " + expected.getName(),
+                             expected.getSkillProficiencySet().size(), actual.getSkillProficiencySet().size());
+                expected.getSkillProficiencySet().forEach(skill -> assertTrue("Missing skill " + skill.getName() +
+                                                                                      " for employee " + expected.getName(),
+                                                                              actual.getSkillProficiencySet().stream()
+                                                                                      .filter(s -> s.getName()
+                                                                                              .equals(skill.getName()))
+                                                                                      .findAny().isPresent()));
+            } else {
+                fail("Expected an employee with name (" + expected.getName() + "), but no such employee was found.");
+            }
+        };
+
+        final List<Employee> excelEmployeeList = employeeService
+                .importEmployeesFromExcel(TENANT_ID, getClass().getResourceAsStream("/EmployeeList.xlsx"));
+        expectedEmployeeList.forEach(assertListMatch.apply(excelEmployeeList));
+        final List<Employee> allEmployeeList = employeeService.getEmployeeList(TENANT_ID);
+        expectedEmployeeList.forEach(assertListMatch.apply(allEmployeeList));
     }
 }
