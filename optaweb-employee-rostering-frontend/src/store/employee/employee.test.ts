@@ -19,14 +19,17 @@ import {
   createIdMapFromList, mapWithElement, mapWithoutElement,
   mapWithUpdatedElement,
 } from 'util/ImmutableCollectionOperations';
-import { onGet, onPost, onDelete, resetRestClientMock } from 'store/rest/RestTestUtils';
+import { onGet, onPost, onDelete, resetRestClientMock, onUploadFile } from 'store/rest/RestTestUtils';
 import { Employee } from 'domain/Employee';
+import * as skillActions from 'store/skill/actions';
+import * as contractActions from 'store/contract/actions';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
 import reducer, { employeeSelectors, employeeOperations } from './index';
 
 describe('Employee operations', () => {
+  // TODO: Separate this test into separate tests
   it('should dispatch actions and call client', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
@@ -112,6 +115,34 @@ describe('Employee operations', () => {
     ]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/update`, employeeToUpdate);
+
+    store.clearActions();
+    resetRestClientMock(client);
+
+    const fileMock = 'myFile' as unknown as File;
+    onUploadFile(`/tenant/${tenantId}/employee/import`, fileMock, mockEmployeeList);
+    onGet(`/tenant/${tenantId}/skill/`, []);
+    onGet(`/tenant/${tenantId}/contract/`, []);
+
+    await store.dispatch(employeeOperations.uploadEmployeeList(fileMock));
+    expect(store.getActions()).toEqual([
+      actions.setIsEmployeeListLoading(true),
+      skillActions.setIsSkillListLoading(true),
+      contractActions.setIsContractListLoading(true),
+      alert.showSuccessMessage('importSuccessful'),
+      skillActions.refreshSkillList([]),
+      skillActions.setIsSkillListLoading(false),
+      contractActions.refreshContractList([]),
+      contractActions.setIsContractListLoading(false),
+      actions.refreshEmployeeList(mockEmployeeList),
+      actions.setIsEmployeeListLoading(false),
+
+    ]);
+    expect(client.uploadFile).toHaveBeenCalledTimes(1);
+    expect(client.uploadFile).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/import`, fileMock);
+    expect(client.get).toBeCalledTimes(2);
+    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/skill/`);
+    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/contract/`);
   });
 });
 

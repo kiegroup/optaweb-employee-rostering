@@ -80,6 +80,7 @@ RefreshContractListAction | SetContractListLoadingAction > = file => (dispatch, 
   const tenantId = state().tenantData.currentTenantId;
   dispatch(actions.setIsEmployeeListLoading(true));
   dispatch(skillActions.setIsSkillListLoading(true));
+  dispatch(contractActions.setIsContractListLoading(true));
   return client.uploadFile<Employee[]>(`/tenant/${tenantId}/employee/import`, file)
     .then(employeeList => client.get<Skill[]>(`/tenant/${tenantId}/skill/`)
       .then(skillList => client.get<Contract[]>(`/tenant/${tenantId}/contract/`).then((contractList) => {
