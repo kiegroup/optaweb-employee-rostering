@@ -38,6 +38,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -254,7 +256,7 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         String exceptionClass = "java.lang.IllegalStateException";
 
         ContractView contractView = new ContractView(TENANT_ID, "contract");
-        Contract contract = contractService.createContract(TENANT_ID, contractView);
+        contractService.createContract(TENANT_ID, contractView);
 
         ContractView updatedContractView = new ContractView(TENANT_ID, "updatedContract");
         String body = (new ObjectMapper()).writeValueAsString(updatedContractView);
@@ -305,5 +307,28 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+    }
+
+    @Test
+    public void getOrCreateDefaultContractNotExistsTest() {
+        Contract contract = contractService.getOrCreateDefaultContract(TENANT_ID);
+        assertEquals(contract.getName(), "Default Contract");
+        assertNull(contract.getMaximumMinutesPerDay());
+        assertNull(contract.getMaximumMinutesPerWeek());
+        assertNull(contract.getMaximumMinutesPerMonth());
+        assertNull(contract.getMaximumMinutesPerYear());
+    }
+
+    @Test
+    public void getOrCreateDefaultContractExistsTest() {
+        ContractView contractView = new ContractView();
+        contractView.setTenantId(TENANT_ID);
+        contractView.setName("Default Contract");
+        contractView.setMaximumMinutesPerDay(10);
+
+        Contract contract = contractService.createContract(TENANT_ID, contractView);
+        Contract defaultContract = contractService.getOrCreateDefaultContract(TENANT_ID);
+
+        assertEquals(contract, defaultContract);
     }
 }
