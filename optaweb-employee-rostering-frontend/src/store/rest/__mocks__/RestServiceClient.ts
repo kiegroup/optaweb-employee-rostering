@@ -27,12 +27,16 @@ export const mockPut = jest.fn().mockImplementation((url, params) => Promise.res
 export const mockDelete = jest.fn().mockImplementation(url => Promise.resolve(
   deleteAnswers.get(url),
 ));
+export const mockUploadFile = jest.fn().mockImplementation((url, file) => Promise.resolve(
+  postAnswers.get(url + JSON.stringify(file)),
+));
 
 const mock = jest.fn().mockImplementation(() => ({
   get: mockGet,
   post: mockPost,
   put: mockPut,
   delete: mockDelete,
+  uploadFile: mockUploadFile,
 }));
 
 export default mock;
