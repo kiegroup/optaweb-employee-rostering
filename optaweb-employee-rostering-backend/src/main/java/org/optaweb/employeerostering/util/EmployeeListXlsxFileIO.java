@@ -61,10 +61,10 @@ public class EmployeeListXlsxFileIO {
             Map<String, Skill> skillMap = skillService.getSkillList(tenantId).stream()
                     .collect(Collectors.toMap(s -> s.getName().toLowerCase(), Function.identity()));
             Contract defaultContract = contractService.getOrCreateDefaultContract(tenantId);
-            for (int i = 1; i < worksheet.getLastRowNum(); i++) {
+            for (int i = 1; i <= worksheet.getLastRowNum(); i++) {
                 Row row = worksheet.getRow(i);
 
-                if (row.getCell(0) == null) {
+                if (row == null || row.getCell(0) == null) {
                     continue;
                 }
 
