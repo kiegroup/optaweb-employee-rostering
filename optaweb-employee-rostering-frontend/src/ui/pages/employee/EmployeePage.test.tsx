@@ -23,9 +23,14 @@ import { Employee } from 'domain/Employee';
 import { act } from 'react-dom/test-utils';
 import { useTranslation, Trans } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { FileUpload } from '@patternfly/react-core';
 import { EmployeesPage, Props } from './EmployeesPage';
 
 describe('Employees page', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should render correctly with no employees', () => {
     const employeesPage = shallow(<EmployeesPage {...noEmployees} />);
     expect(toJson(employeesPage)).toMatchSnapshot();
@@ -205,6 +210,20 @@ describe('Employees page', () => {
     const components = twoEmployees.tableData[0];
     const result = employeesPage.isValid(components);
     expect(result).toEqual(true);
+  });
+
+  it('should upload the file on Excel input', () => {
+    const employeesPage = shallow(<EmployeesPage {...noEmployees} />);
+    const file = new File([], 'hello.xlsx');
+    employeesPage.find(FileUpload).simulate('change', file);
+    expect(noEmployees.uploadEmployeeList).toBeCalledWith(file);
+  });
+
+  it('should show an error on non-excel input', () => {
+    const employeesPage = shallow(<EmployeesPage {...noEmployees} />);
+    employeesPage.find(FileUpload).simulate('change', '');
+    expect(noEmployees.uploadEmployeeList).not.toBeCalled();
+    expect(noEmployees.showErrorMessage).toBeCalledWith('badFileType', { fileTypes: 'Excel (.xlsx)' });
   });
 });
 
