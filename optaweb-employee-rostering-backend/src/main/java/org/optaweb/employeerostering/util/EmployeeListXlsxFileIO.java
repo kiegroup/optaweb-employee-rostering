@@ -42,12 +42,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmployeeListXlsxFileIO {
 
-    @Autowired
     private final SkillService skillService;
 
-    @Autowired
     private final ContractService contractService;
-
+    
+    @Autowired
     public EmployeeListXlsxFileIO(SkillService skillService, ContractService contractService) {
         this.skillService = skillService;
         this.contractService = contractService;
