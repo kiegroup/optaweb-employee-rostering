@@ -148,7 +148,6 @@ public class EmployeeService extends AbstractRestService {
             Employee oldEmployee = employeeRepository.findEmployeeByName(tenantId, employee.getName());
             if (oldEmployee != null) {
                 employee.setContract(oldEmployee.getContract());
-                employee.setCovidRiskType(oldEmployee.getCovidRiskType());
                 employee.setId(oldEmployee.getId());
                 employee.setVersion(oldEmployee.getVersion());
                 updateEmployee(tenantId, employee);

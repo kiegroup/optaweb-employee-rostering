@@ -765,37 +765,36 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
     @Test
     public void employeeListImportTest() throws IOException {
         Contract defaultContract = contractService.getOrCreateDefaultContract(TENANT_ID);
-        CovidRiskType defaultCovidRisk = CovidRiskType.LOW;
 
         List<Employee> expectedEmployeeList = Arrays.asList(
-                new Employee(TENANT_ID, "Amy Cole", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                new Employee(TENANT_ID, "Amy Cole", defaultContract, getSkillSet("Nurse")),
                 new Employee(TENANT_ID, "Beth Fox", defaultContract,
-                             getSkillSet("Respiratory Specialist", "Nurse"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Chad Green", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Dan Jones", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Elsa King", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                             getSkillSet("Respiratory Specialist", "Nurse")),
+                new Employee(TENANT_ID, "Chad Green", defaultContract, getSkillSet("Nurse")),
+                new Employee(TENANT_ID, "Dan Jones", defaultContract, getSkillSet("Nurse")),
+                new Employee(TENANT_ID, "Elsa King", defaultContract, getSkillSet("Nurse")),
                 new Employee(TENANT_ID, "Flo Li", defaultContract,
-                             getSkillSet("Nurse", "Emergency Person"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Gus Poe", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Hugo Rye", defaultContract, Collections.emptySet(), defaultCovidRisk),
-                new Employee(TENANT_ID, "Ivy Smith", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Amy Fox", defaultContract, getSkillSet("Foo Faa fu"), defaultCovidRisk),
+                             getSkillSet("Nurse", "Emergency Person")),
+                new Employee(TENANT_ID, "Gus Poe", defaultContract, getSkillSet("Nurse")),
+                new Employee(TENANT_ID, "Hugo Rye", defaultContract, Collections.emptySet()),
+                new Employee(TENANT_ID, "Ivy Smith", defaultContract, getSkillSet("Nurse")),
+                new Employee(TENANT_ID, "Amy Fox", defaultContract, getSkillSet("Foo Faa fu")),
                 new Employee(TENANT_ID, "Beth Green", defaultContract,
-                             getSkillSet("Foo Faa fu"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Chad Jones", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Dan King", defaultContract, Collections.emptySet(), defaultCovidRisk),
-                new Employee(TENANT_ID, "Elsa Li", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Flo Poe", defaultContract, getSkillSet("Doctor"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Gus Rye", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Hugo Smith", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Ivy Watt", defaultContract, getSkillSet("Nur se"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Jay Cole", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Amy Green", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
+                             getSkillSet("Foo Faa fu")),
+                new Employee(TENANT_ID, "Chad Jones", defaultContract, getSkillSet("Nurse")),
+                new Employee(TENANT_ID, "Dan King", defaultContract, Collections.emptySet()),
+                new Employee(TENANT_ID, "Elsa Li", defaultContract, getSkillSet("Nurse")),
+                new Employee(TENANT_ID, "Flo Poe", defaultContract, getSkillSet("Doctor")),
+                new Employee(TENANT_ID, "Gus Rye", defaultContract, getSkillSet("Nurse")),
+                new Employee(TENANT_ID, "Hugo Smith", defaultContract, getSkillSet("Nurse")),
+                new Employee(TENANT_ID, "Ivy Watt", defaultContract, getSkillSet("Nur se")),
+                new Employee(TENANT_ID, "Jay Cole", defaultContract, getSkillSet("Nurse")),
+                new Employee(TENANT_ID, "Amy Green", defaultContract, getSkillSet("Nurse")),
                 new Employee(TENANT_ID, "Beth Jones", defaultContract,
-                             getSkillSet("Respiratory Specialist"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Chad King", defaultContract, getSkillSet("Nurse"), defaultCovidRisk),
-                new Employee(TENANT_ID, "Dan Li", defaultContract, getSkillSet("Doctor"), defaultCovidRisk),
-                new Employee(TENANT_ID, "My Name", defaultContract, getSkillSet("Nur se"), defaultCovidRisk));
+                             getSkillSet("Respiratory Specialist")),
+                new Employee(TENANT_ID, "Chad King", defaultContract, getSkillSet("Nurse")),
+                new Employee(TENANT_ID, "Dan Li", defaultContract, getSkillSet("Doctor")),
+                new Employee(TENANT_ID, "My Name", defaultContract, getSkillSet("Nur se")));
 
         Function<List<Employee>, Consumer<Employee>> assertListMatch = employeeList -> expected -> {
             Optional<Employee> maybeActual = employeeList.stream()
@@ -804,8 +803,6 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 Employee actual = maybeActual.get();
                 assertEquals("Wrong contract for " + expected.getName(),
                              expected.getContract(), actual.getContract());
-                assertEquals("Wrong covid risk type for " + expected.getName(),
-                             expected.getCovidRiskType(), actual.getCovidRiskType());
                 assertEquals("Wrong tenant id for " + expected.getName(),
                              expected.getTenantId(), actual.getTenantId());
                 assertEquals("Wrong number of skills for " + expected.getName(),

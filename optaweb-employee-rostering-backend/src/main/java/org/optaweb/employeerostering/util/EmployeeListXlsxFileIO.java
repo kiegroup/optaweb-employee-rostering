@@ -30,7 +30,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.optaweb.employeerostering.domain.contract.Contract;
-import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
@@ -82,7 +81,6 @@ public class EmployeeListXlsxFileIO {
                                     return skillService.createSkill(tenantId, skillView);
                                 }))
                                 .collect(Collectors.toCollection(HashSet::new)));
-                employee.setCovidRiskType(CovidRiskType.LOW);
                 employee.setContract(defaultContract);
                 out.add(employee);
             }
