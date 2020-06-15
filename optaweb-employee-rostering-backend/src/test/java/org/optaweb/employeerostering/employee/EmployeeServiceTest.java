@@ -753,9 +753,9 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
     private Set<Skill> getSkillSet(String... names) {
         AtomicLong id = new AtomicLong(0L);
-        return Arrays.asList(names).stream()
+        return Arrays.stream(names)
                 .map(name -> {
-                    Skill out = new Skill(TENANT_ID, (String) name);
+                    Skill out = new Skill(TENANT_ID, name);
                     out.setId(id.incrementAndGet());
                     return out;
                 })
@@ -810,13 +810,14 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                              expected.getTenantId(), actual.getTenantId());
                 assertEquals("Wrong number of skills for " + expected.getName(),
                              expected.getSkillProficiencySet().size(), actual.getSkillProficiencySet().size());
+                
                 expected.getSkillProficiencySet().forEach(skill -> assertTrue("Missing skill " + skill.getName() +
                                                                                       " for employee " + 
                                                                                       expected.getName(),
                                                                               actual.getSkillProficiencySet().stream()
-                                                                                      .filter(s -> s.getName()
+                                                                                      .anyMatch(s -> s.getName()
                                                                                               .equals(skill.getName()))
-                                                                                      .findAny().isPresent()));
+                                                                                      ));
             } else {
                 fail("Expected an employee with name (" + expected.getName() + "), but no such employee was found.");
             }
