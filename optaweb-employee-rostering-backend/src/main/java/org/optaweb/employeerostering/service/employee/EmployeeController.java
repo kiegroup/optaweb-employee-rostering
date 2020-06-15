@@ -27,7 +27,6 @@ import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
-import org.optaweb.employeerostering.util.EmployeeListXlsxFileIO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -53,8 +52,7 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-    public EmployeeController(EmployeeService employeeService, EmployeeRepository employeeRepository,
-                              EmployeeListXlsxFileIO employeeListXlsxFileIO) {
+    public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
         Assert.notNull(employeeService, "employeeService must not be null.");
     }
