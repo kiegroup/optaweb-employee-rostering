@@ -34,10 +34,12 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import NewTenantFormModal from './NewTenantFormModal';
 
 interface StateProps {
+  tenantId: number;
   tenantList: Tenant[];
 }
 
 const mapStateToProps = (state: AppState): StateProps => ({
+  tenantId: state.tenantData.currentTenantId,
   tenantList: state.tenantData.tenantList,
 });
 
@@ -57,7 +59,7 @@ export interface State {
 }
 
 export const AdminPage: React.FC<Props> = (props) => {
-  const { tenantList } = props;
+  const { tenantId, tenantList } = props;
   const { t } = useTranslation('AdminPage');
   const [isCreatingTenant, setIsCreatingTenant] = React.useState(false);
   const [isResetDialogOpen, setIsResetDialogOpen] = React.useState(false);
@@ -161,9 +163,15 @@ export const AdminPage: React.FC<Props> = (props) => {
                       }}
                     >
                       <span />
-                      <Button variant="danger" onClick={() => props.removeTenant(tenant)}>
-                        <TrashIcon />
-                      </Button>
+                      <span title={(tenantId === tenant.id) ? t('cannotDeleteCurrentTenant') : undefined}>
+                        <Button
+                          variant="danger"
+                          onClick={() => props.removeTenant(tenant)}
+                          isDisabled={tenantId === tenant.id}
+                        >
+                          <TrashIcon />
+                        </Button>
+                      </span>
                     </span>
                   </td>
                 ),

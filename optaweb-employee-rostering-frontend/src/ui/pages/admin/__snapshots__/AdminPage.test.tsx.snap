@@ -97,17 +97,22 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
+                <span
+                  title="Trans(i18nKey=cannotDeleteCurrentTenant)"
                 >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                  <Unknown
+                    isDisabled={true}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -130,17 +135,20 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -251,17 +259,22 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
+                <span
+                  title="Trans(i18nKey=cannotDeleteCurrentTenant)"
                 >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                  <Unknown
+                    isDisabled={true}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -284,17 +297,20 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -405,17 +421,20 @@ exports[`Admin Page should filter by name 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -438,17 +457,20 @@ exports[`Admin Page should filter by name 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -559,17 +581,20 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -592,17 +617,20 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -625,17 +653,20 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -658,17 +689,20 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -691,17 +725,20 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -724,17 +761,20 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -757,17 +797,20 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -790,17 +833,20 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -823,17 +869,20 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -856,17 +905,20 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -977,17 +1029,22 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
+                <span
+                  title="Trans(i18nKey=cannotDeleteCurrentTenant)"
                 >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                  <Unknown
+                    isDisabled={true}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1010,17 +1067,20 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1131,17 +1191,22 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
+                <span
+                  title="Trans(i18nKey=cannotDeleteCurrentTenant)"
                 >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                  <Unknown
+                    isDisabled={true}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1164,17 +1229,20 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1197,17 +1265,20 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1230,17 +1301,20 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1263,17 +1337,20 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1296,17 +1373,20 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1329,17 +1409,20 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1362,17 +1445,20 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1395,17 +1481,20 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1428,17 +1517,20 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1634,17 +1726,22 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
+                <span
+                  title="Trans(i18nKey=cannotDeleteCurrentTenant)"
                 >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                  <Unknown
+                    isDisabled={true}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1667,17 +1764,20 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1788,17 +1888,22 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
+                <span
+                  title="Trans(i18nKey=cannotDeleteCurrentTenant)"
                 >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                  <Unknown
+                    isDisabled={true}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1821,17 +1926,20 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1854,17 +1962,20 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1887,17 +1998,20 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],
@@ -1920,17 +2034,20 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                 }
               >
                 <span />
-                <Unknown
-                  onClick={[Function]}
-                  variant="danger"
-                >
-                  <TrashIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
+                <span>
+                  <Unknown
+                    isDisabled={false}
+                    onClick={[Function]}
+                    variant="danger"
+                  >
+                    <TrashIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                  </Unknown>
+                </span>
               </span>
             </td>,
           ],

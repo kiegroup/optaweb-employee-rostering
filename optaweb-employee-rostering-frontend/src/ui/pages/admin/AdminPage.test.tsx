@@ -84,11 +84,20 @@ describe('Admin Page', () => {
     const twoTenants = generateProps(2, {});
     const adminPage = shallow(<AdminPage {...twoTenants} />);
     act(() => {
+      expect(shallow((adminPage.find('[caption="Trans(i18nKey=tenants)"]').prop('rows') as unknown as any[]
+      )[1].cells[1]).find(Button).prop('isDisabled')).toEqual(false);
       shallow((adminPage.find('[caption="Trans(i18nKey=tenants)"]').prop('rows') as unknown as any[]
-      )[0].cells[1]).find(Button).simulate('click');
+      )[1].cells[1]).find(Button).simulate('click');
     });
     expect(twoTenants.removeTenant).toBeCalled();
-    expect(twoTenants.removeTenant).toBeCalledWith(twoTenants.tenantList[0]);
+    expect(twoTenants.removeTenant).toBeCalledWith(twoTenants.tenantList[1]);
+  });
+
+  it('should not call remove tenant when the delete tenant button is clicked for the current tenant', () => {
+    const twoTenants = generateProps(2, {});
+    const adminPage = shallow(<AdminPage {...twoTenants} />);
+    expect(shallow((adminPage.find('[caption="Trans(i18nKey=tenants)"]').prop('rows') as unknown as any[]
+    )[0].cells[1]).find(Button).prop('isDisabled')).toEqual(true);
   });
 
   it('should show confirm dialog when the reset button is clicked', () => {
@@ -113,6 +122,7 @@ function generateProps(numberOfTenants: number, urlProps: Partial<DataTableUrlPr
     tenants[i] = { name: `Tenant ${i + 1}`, id: i, version: 0 };
   }
   return {
+    tenantId: 0,
     tenantList: tenants,
     removeTenant: jest.fn(),
     resetApplication: jest.fn(),
