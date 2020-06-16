@@ -1,5 +1,8 @@
 ---
 resetApplication: Reset Application
 confirmResetTitle: Reset the Application?
+cannotDeleteCurrentTenant:
+  Cannot delete this tenant as it is the tenant currently being viewed. Please change to
+  a different tenant if you wish to delete this one.
 confirmResetBody:
   Any data in the application will not be able to be recovered after the reset. Continue?
