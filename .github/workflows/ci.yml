@@ -2,6 +2,14 @@ name: CI
 
 on: [push, pull_request]
 
+env:
+  # To prevent build failures due to "Connection reset" during artifact download.
+  MVN_CONNECTION_PROPS: -Dmaven.wagon.httpconnectionManager.ttlSeconds=60 -Dmaven.wagon.http.retryHandler.count=5
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
   os-java:
     name: OS x Java
@@ -19,7 +27,7 @@ jobs:
           java-version: ${{ matrix.java }}
       # http.keepAlive and maven.wagon.http.pool are used to help stabilize network connection in virtual hosts
       - name: Build with Maven
-        run: mvn -B install -Dintegration-tests=true -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false
+        run: mvn -B install -Dintegration-tests=true ${{ env.MVN_CONNECTION_PROPS }}
       # check that git working tree is clean after running npm install via a frontend-maven-plugin
       # the git command returns 1 and fails the build if there are any uncommitted changes
       - name: Check for clean working tree
