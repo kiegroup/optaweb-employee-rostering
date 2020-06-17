@@ -36,12 +36,9 @@ import javax.persistence.EntityManager;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
-import org.optaplanner.core.config.solver.SolverConfig;
-import org.optaplanner.core.config.solver.termination.TerminationConfig;
 import org.optaplanner.test.impl.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreVerifier;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.contract.Contract;
@@ -57,11 +54,8 @@ import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -83,10 +77,7 @@ import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfig
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureTestDatabase
-public class SolverTest {
+public abstract class AbstractSolverTest {
 
     private static final int TENANT_ID = 0;
     private static final LocalDate START_DATE = LocalDate.of(2019, 5, 13);
@@ -96,9 +87,6 @@ public class SolverTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
-
-    @Autowired
-    private SolverConfig solverConfig;
 
     private final String rosterPathURI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
 
@@ -110,10 +98,9 @@ public class SolverTest {
         return restTemplate.postForEntity(ROSTER_PATH_URI + "terminate", null, Void.class, tenantId);
     }
 
-    private SolverFactory<Roster> getSolverFactory() {
-        return SolverFactory.create(solverConfig.copyConfig()
-                .withTerminationConfig(new TerminationConfig().withScoreCalculationCountLimit(10000L)));
-    }
+    public abstract SolverFactory<Roster> getSolverFactory();
+
+    /**/
 
     private HardMediumSoftLongScoreVerifier<Roster> getScoreVerifier() {
         return new HardMediumSoftLongScoreVerifier<>(getSolverFactory());
@@ -251,16 +238,16 @@ public class SolverTest {
 
         shiftList.get(2).setEmployee(employeeA);
 
-        // -1 for each shift in overloaded week
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 180);
+        // -1 for # of extra minutes in each overloaded period
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
 
         shiftList.get(5).setEmployee(employeeA);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 360);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 120);
 
         shiftList.get(1).setEmployee(null);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 180);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
     }
 
     @Test(timeout = 600000)
@@ -685,29 +672,34 @@ public class SolverTest {
     //  This information should be read from OptaPlanner, not re-assembled here.
     private enum Constraints {
         REQUIRED_SKILL_FOR_A_SHIFT(CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT,
-                ROSTER_CONSTRAINT_CONFIGURATION.getRequiredSkill().negate()),
+                                   ROSTER_CONSTRAINT_CONFIGURATION.getRequiredSkill().negate()),
         UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE,
-                ROSTER_CONSTRAINT_CONFIGURATION.getUnavailableTimeSlot().negate()),
+                                              ROSTER_CONSTRAINT_CONFIGURATION.getUnavailableTimeSlot().negate()),
         NO_MORE_THAN_2_CONSECUTIVE_SHIFTS(CONSTRAINT_NO_MORE_THAN_2_CONSECUTIVE_SHIFTS,
-                ROSTER_CONSTRAINT_CONFIGURATION.getNoMoreThan2ConsecutiveShifts().negate()),
+                                          ROSTER_CONSTRAINT_CONFIGURATION.getNoMoreThan2ConsecutiveShifts().negate()),
         BREAKS_AT_LEAST_10_HOURS(CONSTRAINT_BREAK_BETWEEN_NON_CONSECUTIVE_SHIFTS,
-                ROSTER_CONSTRAINT_CONFIGURATION.getBreakBetweenNonConsecutiveShiftsAtLeast10Hours().negate()),
+                                 ROSTER_CONSTRAINT_CONFIGURATION
+                                         .getBreakBetweenNonConsecutiveShiftsAtLeast10Hours().negate()),
         DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
-                ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumDailyMinutes().negate()),
+                                                       ROSTER_CONSTRAINT_CONFIGURATION
+                                                               .getContractMaximumDailyMinutes().negate()),
         WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
-                ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumWeeklyMinutes().negate()),
+                                                        ROSTER_CONSTRAINT_CONFIGURATION
+                                                                .getContractMaximumWeeklyMinutes().negate()),
         MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
-                ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumMonthlyMinutes().negate()),
+                                                         ROSTER_CONSTRAINT_CONFIGURATION
+                                                                 .getContractMaximumMonthlyMinutes().negate()),
         YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
-                ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumYearlyMinutes().negate()),
+                                                        ROSTER_CONSTRAINT_CONFIGURATION
+                                                                .getContractMaximumYearlyMinutes().negate()),
         ASSIGN_EVERY_SHIFT(CONSTRAINT_ASSIGN_EVERY_SHIFT,
-                ROSTER_CONSTRAINT_CONFIGURATION.getAssignEveryShift().negate()),
+                           ROSTER_CONSTRAINT_CONFIGURATION.getAssignEveryShift().negate()),
         UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE,
-                ROSTER_CONSTRAINT_CONFIGURATION.getUndesiredTimeSlot().negate()),
+                                            ROSTER_CONSTRAINT_CONFIGURATION.getUndesiredTimeSlot().negate()),
         DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE,
-                ROSTER_CONSTRAINT_CONFIGURATION.getDesiredTimeSlot()),
+                                          ROSTER_CONSTRAINT_CONFIGURATION.getDesiredTimeSlot()),
         EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE(CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE,
-                ROSTER_CONSTRAINT_CONFIGURATION.getNotRotationEmployee().negate());
+                                          ROSTER_CONSTRAINT_CONFIGURATION.getNotRotationEmployee().negate());
 
         String constraintName;
         HardMediumSoftLongScore constraintWeight;

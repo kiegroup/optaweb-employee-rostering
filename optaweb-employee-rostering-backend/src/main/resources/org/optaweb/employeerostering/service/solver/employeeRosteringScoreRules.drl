@@ -114,14 +114,18 @@ rule "Daily minutes must not exceed contract maximum"
     when
         $employee : Employee($contract : contract, $contract.getMaximumMinutesPerDay() != null)
         $s : Shift(employee == $employee, $startDateTime : startDateTime)
-        $minutes: Number( intValue > $contract.getMaximumMinutesPerDay() ) from accumulate(
-            Shift(employee == $employee, $shiftStart : startDateTime,
-            $shiftEnd : endDateTime,
-            $shiftStart.toLocalDate().equals($startDateTime.toLocalDate())),
-            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        accumulate(
+            $other : Shift(
+                employee == $employee, $shiftStart : startDateTime,
+                $shiftEnd : endDateTime,
+                $shiftStart.toLocalDate().equals($startDateTime.toLocalDate())
+            ),
+            $shiftCount : count($other),
+            $totalMinutes : sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
+        Number(this > $contract.getMaximumMinutesPerDay()) from $totalMinutes
     then
-        scoreHolder.penalize(kcontext, ((long)$minutes) - $contract.getMaximumMinutesPerDay());
+        scoreHolder.penalize(kcontext, (((long)$totalMinutes) - $contract.getMaximumMinutesPerDay()) / $shiftCount);
 end
 
 rule "Weekly minutes must not exceed contract maximum"
@@ -129,43 +133,55 @@ rule "Weekly minutes must not exceed contract maximum"
         $rosterConstraintConfiguration : RosterConstraintConfiguration()
         $employee : Employee($contract : contract, $contract.getMaximumMinutesPerWeek() != null)
         $s : Shift(employee == $employee, $startDateTime : startDateTime)
-        $minutes: Number( intValue > $contract.getMaximumMinutesPerWeek() ) from accumulate(
-            Shift(employee == $employee, $shiftStart : startDateTime,
-            $shiftEnd : endDateTime,
-            DateTimeUtils.sameWeek($rosterConstraintConfiguration.getWeekStartDay(), $shiftStart, $startDateTime)),
-            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        accumulate(
+            $other : Shift(
+                employee == $employee, $shiftStart : startDateTime,
+                $shiftEnd : endDateTime,
+                DateTimeUtils.sameWeek($rosterConstraintConfiguration.getWeekStartDay(), $shiftStart, $startDateTime)
+            ),
+            $shiftCount : count($other),
+            $totalMinutes : sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
+        Number(this > $contract.getMaximumMinutesPerWeek()) from $totalMinutes
     then
-        scoreHolder.penalize(kcontext, ((long)$minutes) - $contract.getMaximumMinutesPerWeek());
+        scoreHolder.penalize(kcontext, (((long)$totalMinutes) - $contract.getMaximumMinutesPerWeek()) / $shiftCount);
 end
 
 rule "Monthly minutes must not exceed contract maximum"
     when
         $employee : Employee($contract : contract, $contract.getMaximumMinutesPerMonth() != null)
         $s : Shift(employee == $employee, $startDateTime : startDateTime)
-        $minutes: Number( intValue > $contract.getMaximumMinutesPerMonth() ) from accumulate(
-            Shift(employee == $employee, $shiftStart : startDateTime,
-            $shiftEnd : endDateTime,
-            $shiftStart.getMonth() == $startDateTime.getMonth(),
-            $shiftStart.getYear() == $startDateTime.getYear()),
-            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        accumulate(
+            $other : Shift(
+                employee == $employee, $shiftStart : startDateTime,
+                $shiftEnd : endDateTime,
+                $shiftStart.getMonth() == $startDateTime.getMonth(),
+                $shiftStart.getYear() == $startDateTime.getYear()
+            ),
+            $shiftCount : count($other),
+            $totalMinutes : sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
+        Number(this > $contract.getMaximumMinutesPerMonth()) from $totalMinutes
     then
-        scoreHolder.penalize(kcontext, ((long)$minutes) - $contract.getMaximumMinutesPerMonth());
+        scoreHolder.penalize(kcontext, (((long)$totalMinutes) - $contract.getMaximumMinutesPerMonth()) / $shiftCount);
 end
 
 rule "Yearly minutes must not exceed contract maximum"
     when
         $employee : Employee($contract : contract, $contract.getMaximumMinutesPerYear() != null)
         $s : Shift(employee == $employee, $startDateTime : startDateTime)
-        $minutes: Number( intValue > $contract.getMaximumMinutesPerYear() ) from accumulate(
-            Shift(employee == $employee, $shiftStart : startDateTime,
-            $shiftEnd : endDateTime,
-            $shiftStart.getYear() == $startDateTime.getYear()),
-            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        accumulate(
+            $other : Shift(
+                employee == $employee, $shiftStart : startDateTime,
+                $shiftEnd : endDateTime,
+                $shiftStart.getYear() == $startDateTime.getYear()
+            ),
+            $shiftCount : count($other),
+            $totalMinutes : sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
+        Number(this > $contract.getMaximumMinutesPerYear()) from $totalMinutes
     then
-        scoreHolder.penalize(kcontext, ((long)$minutes) - $contract.getMaximumMinutesPerYear());
+        scoreHolder.penalize(kcontext, (((long)$totalMinutes) - $contract.getMaximumMinutesPerYear()) / $shiftCount);
 end
 
 
