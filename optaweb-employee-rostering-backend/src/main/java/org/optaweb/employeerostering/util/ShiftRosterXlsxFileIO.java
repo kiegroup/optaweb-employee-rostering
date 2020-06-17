@@ -78,7 +78,7 @@ public final class ShiftRosterXlsxFileIO {
                         shiftRow = sheet.createRow(rowNumber);
                     }
                     Cell employeeCell = shiftRow.createCell(2);
-                    employeeCell.setCellValue(employeeIdToNameMap.get(shift.getEmployeeId()));
+                    employeeCell.setCellValue(employeeIdToNameMap.getOrDefault(shift.getEmployeeId(), "Unassigned"));
                     rowNumber++;
                 }
                 sheet.autoSizeColumn(0);

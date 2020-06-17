@@ -16,6 +16,8 @@
 
 package org.optaweb.employeerostering.roster;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,7 +25,13 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.google.common.collect.Comparators;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +50,7 @@ import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
+import org.optaweb.employeerostering.util.ShiftRosterXlsxFileIO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,6 +63,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.junit.Assert.fail;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -155,10 +165,24 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return restTemplate.postForEntity(uriComponents.toUriString(), employees, AvailabilityRosterView.class);
     }
 
+    private ResponseEntity<byte[]> getShiftRosterAsExcel(List<Spot> spotList,
+                                                         LocalDate startDate,
+                                                         LocalDate endDate) {
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "shiftRosterView/excel")
+                .queryParam("startDate", startDate.toString())
+                .queryParam("endDate", endDate.toString())
+                .queryParam("spotList", spotList.stream().map(Spot::getId).map(id -> id.toString())
+                        .collect(Collectors.joining(",")))
+                .build()
+                .expand(Collections.singletonMap("tenantId", TENANT_ID));
+
+        return restTemplate.getForEntity(uriComponents.toUriString(), byte[].class);
+    }
+
     private ResponseEntity<PublishResult> publishAndProvision() {
         return restTemplate.postForEntity(rosterPathURI + "publishAndProvision", null, PublishResult.class, TENANT_ID);
     }
-    
+
     private ResponseEntity<Void> commitChanges() {
         return restTemplate.postForEntity(rosterPathURI + "commitChanges", null, Void.class, TENANT_ID);
     }
@@ -446,7 +470,101 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         assertThat(publishResultResponseEntity.getBody().getPublishedFromDate()).isEqualTo("2000-01-01");
         assertThat(publishResultResponseEntity.getBody().getPublishedToDate()).isEqualTo("2000-01-08");
     }
-    
+
+    @Test
+    public void testGetShiftRosterAsExcel() {
+        createTestRoster();
+
+        LocalDate startDate = LocalDate.of(2000, 1, 1);
+        LocalDate endDate = LocalDate.of(2000, 1, 2);
+
+        List<Spot> requestSpotList = spotList.subList(0, 1);
+        ResponseEntity<byte[]> response = getShiftRosterAsExcel(requestSpotList, startDate, endDate);
+
+        assertThat(response.getStatusCode()).as("Response should be successful for one spot").isEqualTo(HttpStatus.OK);
+        try (Workbook workbook = new XSSFWorkbook(new ByteArrayInputStream(response.getBody()))) {
+            assertThat(workbook.getNumberOfSheets()).as("There should only be one sheet in the file").isEqualTo(1);
+            Sheet spotSheet = workbook.getSheet(requestSpotList.get(0).getName());
+            assertSheetForSpotIsCorrect(spotSheet, requestSpotList.get(0), startDate, endDate);
+        } catch (IOException e) {
+            fail("Unable to read response as an Excel file");
+        }
+
+        requestSpotList = spotList;
+        response = getShiftRosterAsExcel(requestSpotList, startDate, endDate);
+
+        assertThat(response.getStatusCode()).as("Response should be successful for two spots").isEqualTo(HttpStatus.OK);
+        try (Workbook workbook = new XSSFWorkbook(new ByteArrayInputStream(response.getBody()))) {
+            assertThat(workbook.getNumberOfSheets()).as("There should only be two sheets in the file").isEqualTo(2);
+            Sheet spotSheet = workbook.getSheet(requestSpotList.get(0).getName());
+            assertSheetForSpotIsCorrect(spotSheet, requestSpotList.get(0), startDate, endDate);
+            spotSheet = workbook.getSheet(requestSpotList.get(1).getName());
+            assertSheetForSpotIsCorrect(spotSheet, requestSpotList.get(1), startDate, endDate);
+        } catch (IOException e) {
+            fail("Unable to read response as an Excel file");
+        }
+
+        Spot badSpot = new Spot(TENANT_ID, "Bad", Collections.emptySet());
+        badSpot.setId(-1L);
+
+        requestSpotList = Arrays.asList(badSpot);
+        response = getShiftRosterAsExcel(requestSpotList, startDate, endDate);
+
+        assertThat(response.getStatusCode()).as("Response should fail with BAD_REQUEST for non-existing spot in tenant")
+                .isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    private void assertSheetForSpotIsCorrect(Sheet spotSheet, Spot spot, LocalDate from, LocalDate to) {
+        assertThat(spotSheet).as("Spot %s sheet should not be null", spot.getName()).isNotNull();
+
+        Map<Long, String> employeeIdToNameList = employeeList.stream()
+                .collect(Collectors.toMap(Employee::getId, Employee::getName));
+
+        Map<List<LocalDateTime>, List<ShiftView>> requestShiftMapByStartAndEndTime = shiftViewList.stream()
+                // Include only shift views for this spot, between from and to
+                .filter(sv -> sv.getSpotId().equals(spot.getId()) &&
+                        // to is exclusive, from is inclusive
+                        !sv.getStartDateTime().toLocalDate().isAfter(to.minusDays(1)) &&
+                        !sv.getEndDateTime().toLocalDate().isBefore(from))
+                .collect(Collectors.groupingBy(sv -> Arrays.asList(sv.getStartDateTime(), sv.getEndDateTime())));
+
+        assertThat(spotSheet.getRow(0).getCell(0).getStringCellValue())
+                .as("Header Column A should be Start").isEqualTo("Start");
+        assertThat(spotSheet.getRow(0).getCell(1).getStringCellValue())
+                .as("Header Column B should be End").isEqualTo("End");
+        assertThat(spotSheet.getRow(0).getCell(2).getStringCellValue())
+                .as("Header Column C should be Employee").isEqualTo("Employee");
+
+        // Sort startEndTimePairs by start time then end time
+        List<List<LocalDateTime>> sortedStartEndTimePairs = requestShiftMapByStartAndEndTime.keySet().stream()
+                .sorted(Comparators.lexicographical(LocalDateTime::compareTo))
+                .collect(Collectors.toList());
+
+        int rowIndex = 1;
+        assertThat(requestShiftMapByStartAndEndTime).isNotEmpty();
+
+        for (List<LocalDateTime> startEndTimePair : sortedStartEndTimePairs) {
+            // First row of each time slot group has start date time and end date time
+            assertThat(spotSheet.getRow(rowIndex).getCell(0).getStringCellValue())
+                    .as("Start time for row %d", rowIndex)
+                    .isEqualTo(startEndTimePair.get(0).format(ShiftRosterXlsxFileIO.DATE_TIME_FORMATTER));
+            assertThat(spotSheet.getRow(rowIndex).getCell(1).getStringCellValue())
+                    .as("End time for row %d", rowIndex)
+                    .isEqualTo(startEndTimePair.get(1).format(ShiftRosterXlsxFileIO.DATE_TIME_FORMATTER));
+
+            rowIndex++;
+            for (ShiftView shiftView : requestShiftMapByStartAndEndTime.get(startEndTimePair)) {
+                // Employee name is in the third column
+                assertThat(spotSheet.getRow(rowIndex).getCell(2).getStringCellValue())
+                        .as("%s to %s Shift's Employee Name", startEndTimePair.get(0).toString(),
+                            startEndTimePair.get(1).toString())
+                        .isEqualTo(employeeIdToNameList.getOrDefault(shiftView.getEmployeeId(), "Unassigned"));
+                rowIndex++;
+            }
+        }
+        assertThat(spotSheet.getRow(rowIndex)).as("Sheet should end on row %d", rowIndex).isNull();
+    }
+
     @Test
     public void testCommitChanges() {
         createTestRoster();

@@ -133,6 +133,11 @@ public class RosterController {
         List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE))
                 .stream().filter(s -> spotIdSet.contains(s.getId()))
                 .collect(Collectors.toList());
+
+        if (spotList.size() != spotIdSet.size()) {
+            return new ResponseEntity<>(new byte[]{},
+                                        HttpStatus.BAD_REQUEST);
+        }
         ShiftRosterView shiftRosterView = rosterService.getShiftRosterViewFor(tenantId, startDateString, endDateString,
                                                                               spotList);
         try {
