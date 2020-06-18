@@ -29,6 +29,7 @@ import Schedule from 'ui/components/calendar/Schedule';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 import { getShiftColor } from './ShiftEvent';
 import { ShiftRosterPage, Props, ShiftRosterUrlProps } from './CurrentShiftRosterPage';
+import ExportScheduleModal from './ExportScheduleModal';
 
 describe('Current Shift Roster Page', () => {
   beforeEach(() => {
@@ -162,6 +163,27 @@ describe('Current Shift Roster Page', () => {
       .filter(a => a.name === 'Trans(i18nKey=reschedule)')
       .forEach(a => a.action());
     expect(baseProps.replanRoster).toBeCalled();
+  });
+
+  it('should open the export schedule modal when export is clicked', () => {
+    const shiftRosterPage = shallow(<ShiftRosterPage
+      {...baseProps}
+    />);
+    shiftRosterPage.find(Actions).prop('actions')
+      .filter(a => a.name === 'Trans(i18nKey=exportToExcel)')
+      .forEach(a => a.action());
+    expect(shiftRosterPage.find(ExportScheduleModal).prop('isOpen')).toEqual(true);
+  });
+
+  it('should close the export schedule modal when export is closed', () => {
+    const shiftRosterPage = shallow(<ShiftRosterPage
+      {...baseProps}
+    />);
+    shiftRosterPage.find(Actions).prop('actions')
+      .filter(a => a.name === 'Trans(i18nKey=exportToExcel)')
+      .forEach(a => a.action());
+    expect(shiftRosterPage.find(ExportScheduleModal).simulate('close'));
+    expect(shiftRosterPage.find(ExportScheduleModal).prop('isOpen')).toEqual(false);
   });
 
   it('should call terminateSolvingRosterEarly when the Terminate Early button is clicked', () => {

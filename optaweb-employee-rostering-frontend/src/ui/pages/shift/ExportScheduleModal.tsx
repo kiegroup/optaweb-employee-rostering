@@ -44,9 +44,9 @@ const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps & OwnP
 
 export const ExportScheduleModal: React.FC<StateProps & OwnProps> = (props) => {
   const { t } = useTranslation('ExportScheduleModal');
-  const [fromDate, setFromDate] = React.useState<Date | null>(null);
-  const [toDate, setToDate] = React.useState<Date | null>(null);
-  const [exportedSpots, setExportedSpots] = React.useState<Spot[]>([]);
+  const [fromDate, setFromDate] = React.useState<Date | null>(props.defaultFromDate);
+  const [toDate, setToDate] = React.useState<Date | null>(props.defaultToDate);
+  const [exportedSpots, setExportedSpots] = React.useState<Spot[]>(props.spotList);
 
   // Work around since useEffect use shallowEquality, and the same date created at different times are not equal
   const defaultFromDateTime = props.defaultFromDate.getTime();
@@ -60,14 +60,13 @@ export const ExportScheduleModal: React.FC<StateProps & OwnProps> = (props) => {
     }
   }, [props.isOpen, defaultFromDateTime, defaultToDateTime, props.spotList]);
 
-  const spotSet = (exportedSpots.length > 0) ? exportedSpots.map(s => `${s.id}`)
-    .reduce((prev, next) => `${prev},${next}`) : null;
+  const spotSet = (exportedSpots.length > 0) ? exportedSpots.map(s => `${s.id}`).join(',') : null;
 
   let exportUrl = '_blank';
   if (spotSet && toDate && fromDate) {
     exportUrl = `${process.env.REACT_APP_BACKEND_URL}/rest/tenant/${props.tenantId}/roster/shiftRosterView/excel?`
-                    + `startDate=${moment(fromDate as Date).format('YYYY-MM-DD')}&`
-                    + `endDate=${moment(toDate as Date).format('YYYY-MM-DD')}&spotList=${spotSet}`;
+                    + `startDate=${moment(fromDate).format('YYYY-MM-DD')}&`
+                    + `endDate=${moment(toDate).format('YYYY-MM-DD')}&spotList=${spotSet}`;
   }
   const exportSchedule = () => {
     props.onClose();
