@@ -79,6 +79,8 @@ import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfig
 
 public abstract class AbstractSolverTest {
 
+    public static final String BEST_SCORE_TERMINATION_LIMIT = "0hard/0medium/-9223372036854775808soft";
+
     private static final int TENANT_ID = 0;
     private static final LocalDate START_DATE = LocalDate.of(2019, 5, 13);
     private static final RosterConstraintConfiguration ROSTER_CONSTRAINT_CONFIGURATION =
@@ -88,19 +90,11 @@ public abstract class AbstractSolverTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private final String rosterPathURI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
-
-    private ResponseEntity<Void> solveForTenant(Integer tenantId) {
-        return restTemplate.postForEntity(rosterPathURI + "solve", null, Void.class, tenantId);
-    }
-
     private ResponseEntity<Void> terminateSolver(Integer tenantId) {
         return restTemplate.postForEntity(ROSTER_PATH_URI + "terminate", null, Void.class, tenantId);
     }
 
     public abstract SolverFactory<Roster> getSolverFactory();
-
-    /**/
 
     private HardMediumSoftLongScoreVerifier<Roster> getScoreVerifier() {
         return new HardMediumSoftLongScoreVerifier<>(getSolverFactory());
@@ -109,7 +103,7 @@ public abstract class AbstractSolverTest {
     @Test
     public void testTerminateNonExistentSolver() {
         try {
-            ResponseEntity<Void> terminateResponse = terminateSolver(0);
+            terminateSolver(0);
         } catch (IllegalStateException e) {
             assertThat(e.getMessage()).isEqualTo("The roster with tenantId (0) is not being solved currently.");
         }

@@ -39,6 +39,8 @@ public class DroolsSolverTest extends AbstractSolverTest {
         return SolverFactory.create(solverConfig.copyConfig()
                                             .withTerminationConfig(
                                                     new TerminationConfig()
+                                                            .withBestScoreLimit(AbstractSolverTest
+                                                                                        .BEST_SCORE_TERMINATION_LIMIT)
                                                             .withScoreCalculationCountLimit(10000L)));
     }
 }
