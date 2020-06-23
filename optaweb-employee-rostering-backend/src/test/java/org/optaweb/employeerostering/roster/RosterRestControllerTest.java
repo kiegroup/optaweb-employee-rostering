@@ -24,11 +24,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Comparators;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -537,7 +537,8 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
 
         // Sort startEndTimePairs by start time then end time
         List<List<LocalDateTime>> sortedStartEndTimePairs = requestShiftMapByStartAndEndTime.keySet().stream()
-                .sorted(Comparators.lexicographical(LocalDateTime::compareTo))
+                .sorted(Comparator.comparing((List<LocalDateTime> pair) -> pair.get(0))
+                                .thenComparing(pair -> pair.get(1)))
                 .collect(Collectors.toList());
 
         int rowIndex = 1;

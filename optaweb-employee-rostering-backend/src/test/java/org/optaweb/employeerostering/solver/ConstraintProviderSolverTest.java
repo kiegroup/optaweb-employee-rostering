@@ -45,6 +45,8 @@ public class ConstraintProviderSolverTest extends AbstractSolverTest {
                                                                     EmployeeRosteringConstraintProvider.class))
                                             .withTerminationConfig(
                                                     new TerminationConfig()
+                                                            .withBestScoreLimit(AbstractSolverTest
+                                                                                        .BEST_SCORE_TERMINATION_LIMIT)
                                                             .withScoreCalculationCountLimit(10000L)));
     }
 }

@@ -21,9 +21,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
@@ -52,8 +49,6 @@ public class SolverManagerTest {
     @Autowired
     protected WannabeSolverManager solverManager;
 
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Test
     public void testSolveRoster() throws InterruptedException {
@@ -61,7 +56,7 @@ public class SolverManagerTest {
         Roster roster = rosterGenerator.generateRoster(10, 7);
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 30, TimeUnit.SECONDS);
+        executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 1, TimeUnit.SECONDS);
         CountDownLatch solverEndedLatch = solverManager.solve(roster.getTenantId());
 
         solverEndedLatch.await();
@@ -74,7 +69,7 @@ public class SolverManagerTest {
         assertFalse(roster.getShiftList().isEmpty());
         assertTrue(roster.getShiftList().stream().anyMatch(s -> s.getEmployee() != null));
     }
-    
+
     @Test
     public void testReplanRoster() throws InterruptedException {
         solverManager.setUpSolverFactory();
@@ -82,9 +77,9 @@ public class SolverManagerTest {
         Shift unassignedShift = roster.getShiftList().stream()
                 .filter(shift -> shift.getEmployee() != null).findFirst().get();
         unassignedShift.setEmployee(null);
-        
+
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 5, TimeUnit.SECONDS);
+        executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 1, TimeUnit.SECONDS);
         CountDownLatch solverEndedLatch = solverManager.replan(roster.getTenantId());
 
         solverEndedLatch.await();
