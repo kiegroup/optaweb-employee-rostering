@@ -49,14 +49,13 @@ public class SolverManagerTest {
     @Autowired
     protected WannabeSolverManager solverManager;
 
-
     @Test
     public void testSolveRoster() throws InterruptedException {
         solverManager.setUpSolverFactory();
         Roster roster = rosterGenerator.generateRoster(10, 7);
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 1, TimeUnit.SECONDS);
+        executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 3, TimeUnit.SECONDS);
         CountDownLatch solverEndedLatch = solverManager.solve(roster.getTenantId());
 
         solverEndedLatch.await();
@@ -79,7 +78,7 @@ public class SolverManagerTest {
         unassignedShift.setEmployee(null);
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 1, TimeUnit.SECONDS);
+        executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 3, TimeUnit.SECONDS);
         CountDownLatch solverEndedLatch = solverManager.replan(roster.getTenantId());
 
         solverEndedLatch.await();
