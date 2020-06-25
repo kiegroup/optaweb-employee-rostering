@@ -108,12 +108,20 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
         type="number"
       />
     </InputGroup>
-    <InputGroup>
+    <InputGroup
+      style={
+        Object {
+          "display": "grid",
+          "gridTemplateColumns": "auto 1fr",
+        }
+      }
+    >
       <Label>
         Trans(i18nKey=timezone)
       </Label>
       <TypeaheadSelectInput
         aria-label="Timezone"
+        autoSize={false}
         emptyText="Trans(i18nKey=selectATimezone)"
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -240,12 +248,20 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
         type="number"
       />
     </InputGroup>
-    <InputGroup>
+    <InputGroup
+      style={
+        Object {
+          "display": "grid",
+          "gridTemplateColumns": "auto 1fr",
+        }
+      }
+    >
       <Label>
         Trans(i18nKey=timezone)
       </Label>
       <TypeaheadSelectInput
         aria-label="Timezone"
+        autoSize={false}
         emptyText="Trans(i18nKey=selectATimezone)"
         onChange={[Function]}
         optionToStringMap={[Function]}
