@@ -174,7 +174,12 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
             min={2}
           />
         </InputGroup>
-        <InputGroup>
+        <InputGroup
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'auto 1fr',
+          }}
+        >
           <Label>{t('timezone')}</Label>
           <TypeaheadSelectInput
             aria-label="Timezone"
@@ -183,6 +188,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
             options={props.timezoneList}
             optionToStringMap={s => s}
             onChange={tz => setProperty({ timeZone: tz })}
+            autoSize={false}
           />
         </InputGroup>
       </Form>
