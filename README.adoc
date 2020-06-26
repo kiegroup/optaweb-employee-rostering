@@ -104,7 +104,7 @@ b. log in as "developer".
 +
 [source,subs="quotes"]
 ----
-oc new-project _project_name_
+oc new-project _project-name_
 ----
 
 4. Run the script:
