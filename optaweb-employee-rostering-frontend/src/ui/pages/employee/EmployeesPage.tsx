@@ -48,6 +48,7 @@ import { CubesIcon, ArrowIcon } from '@patternfly/react-icons';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { withTranslation, WithTranslation, Trans } from 'react-i18next';
 import moment from 'moment';
+import { ColorPicker } from '../rotation/EmployeeStub';
 
 interface StateProps extends DataTableProps<Employee> {
   tenantId: number;
@@ -62,6 +63,8 @@ const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
     ownProps.t('name'),
     ownProps.t('contract'),
     ownProps.t('skillProficiencies'),
+    ownProps.t('shortId'),
+    ownProps.t('color'),
   ],
   tableData: employeeSelectors.getEmployeeList(state),
   skillList: skillSelectors.getSkillList(state),
@@ -119,6 +122,16 @@ export class EmployeesPage extends DataTable<Employee, Props> {
           </Chip>
         ))}
       </ChipGroup>,
+      <Text key={3}>{data.shortId}</Text>,
+      <Text key={4}>
+        {data.color}
+        <span
+          style={{
+            color: data.color,
+            width: '30px',
+          }}
+        />
+      </Text>,
     ];
   }
 
@@ -152,6 +165,18 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         optionToStringMap={skill => skill.name}
         value={data.skillProficiencySet ? data.skillProficiencySet : []}
         onChange={selected => setProperty('skillProficiencySet', selected)}
+      />,
+      <TextInput
+        key={3}
+        name="shortId"
+        defaultValue={data.shortId}
+        aria-label="shortId"
+        onChange={value => setProperty('shortId', value)}
+      />,
+      <ColorPicker
+        key={4}
+        currentColor={data.color ? data.color : '#FFFFFF'}
+        onChangeColor={value => setProperty('color', value)}
       />,
     ];
   }

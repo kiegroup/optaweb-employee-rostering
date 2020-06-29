@@ -21,7 +21,7 @@ import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityReposi
 import org.optaweb.employeerostering.service.employee.EmployeeRepository;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
 import org.optaweb.employeerostering.service.roster.RosterStateRepository;
-import org.optaweb.employeerostering.service.rotation.ShiftTemplateRepository;
+import org.optaweb.employeerostering.service.rotation.TimeBucketRepository;
 import org.optaweb.employeerostering.service.shift.ShiftRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
@@ -35,7 +35,7 @@ public class AdminService {
 
     private ShiftRepository shiftRepository;
     private EmployeeAvailabilityRepository employeeAvailabilityRepository;
-    private ShiftTemplateRepository shiftTemplateRepository;
+    private TimeBucketRepository timeBucketRepository;
     private EmployeeRepository employeeRepository;
     private ContractRepository contractRepository;
     private SpotRepository spotRepository;
@@ -48,7 +48,7 @@ public class AdminService {
 
     public AdminService(ShiftRepository shiftRepository,
                         EmployeeAvailabilityRepository employeeAvailabilityRepository,
-                        ShiftTemplateRepository shiftTemplateRepository,
+                        TimeBucketRepository timeBucketRepository,
                         EmployeeRepository employeeRepository,
                         ContractRepository contractRepository,
                         SpotRepository spotRepository,
@@ -59,7 +59,7 @@ public class AdminService {
                         RosterGenerator rosterGenerator) {
         this.shiftRepository = shiftRepository;
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
-        this.shiftTemplateRepository = shiftTemplateRepository;
+        this.timeBucketRepository = timeBucketRepository;
         this.employeeRepository = employeeRepository;
         this.contractRepository = contractRepository;
         this.spotRepository = spotRepository;
@@ -80,7 +80,7 @@ public class AdminService {
     private void deleteAllEntities() {
         shiftRepository.deleteAllInBatch();
         employeeAvailabilityRepository.deleteAllInBatch();
-        shiftTemplateRepository.deleteAllInBatch();
+        timeBucketRepository.deleteAllInBatch();
         employeeRepository.deleteAllInBatch();
         contractRepository.deleteAllInBatch();
         spotRepository.deleteAllInBatch();

@@ -57,9 +57,9 @@ export const mockStore = (state: Partial<AppState>) => {
       isLoading: true,
       skillMapById: new Map(),
     },
-    shiftTemplateList: {
+    timeBucketList: {
       isLoading: true,
-      shiftTemplateMapById: new Map(),
+      timeBucketMapById: new Map(),
     },
     rosterState: {
       isLoading: true,

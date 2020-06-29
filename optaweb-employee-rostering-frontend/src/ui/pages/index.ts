@@ -21,7 +21,7 @@ import EmployeesPage from './employee/EmployeesPage';
 import ShiftRosterPage from './shift/ShiftRosterPage';
 import CurrentShiftRosterPage from './shift/CurrentShiftRosterPage';
 import AvailabilityRosterPage from './availability/AvailabilityRosterPage';
-import RotationPage from './rotation/RotationPage';
+import { RotationPage } from './rotation/RotationPage';
 import AdminPage from './admin/AdminPage';
 
 export {

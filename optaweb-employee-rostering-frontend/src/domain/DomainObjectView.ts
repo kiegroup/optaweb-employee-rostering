@@ -61,12 +61,16 @@ import { DomainObject } from './DomainObject';
  * @exports
 */
 
-type DomainObjectView<T extends DomainObject> = {
+type DomainObjectView<T> = {
   [K in keyof T]:
   T[K] extends DomainObject[]? number[] :
     T[K] extends DomainObject? number :
       T[K] extends (DomainObject | null)? number | null :
-        T[K];
+        T[K] extends (DomainObject | null)[]? (number | null)[] :
+          T[K] extends Date? Date :
+            T[K] extends object? DomainObjectView<T[K]> :
+              T[K] extends (object | null)? DomainObjectView<T[K]> | null :
+                T[K];
 }
 
 // eslint-disable-next-line no-undef

@@ -23,7 +23,7 @@ import javax.validation.constraints.Min;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
+import org.optaweb.employeerostering.domain.rotation.view.TimeBucketView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -54,37 +54,37 @@ public class RotationController {
 
     @ApiOperation("Get a list of all shift templates")
     @GetMapping("/")
-    public ResponseEntity<List<ShiftTemplateView>> getShiftTemplateList(@PathVariable @Min(0) Integer tenantId) {
-        return new ResponseEntity<>(rotationService.getShiftTemplateList(tenantId), HttpStatus.OK);
+    public ResponseEntity<List<TimeBucketView>> getTimeBucketList(@PathVariable @Min(0) Integer tenantId) {
+        return new ResponseEntity<>(rotationService.getTimeBucketList(tenantId), HttpStatus.OK);
     }
 
     @ApiOperation("Get a shift template by id")
     @GetMapping("/{id}")
-    public ResponseEntity<ShiftTemplateView> getShiftTemplate(@PathVariable @Min(0) Integer tenantId,
+    public ResponseEntity<TimeBucketView> getTimeBucket(@PathVariable @Min(0) Integer tenantId,
                                                               @PathVariable @Min(0) Long id) {
-        return new ResponseEntity<>(rotationService.getShiftTemplate(tenantId, id), HttpStatus.OK);
+        return new ResponseEntity<>(rotationService.getTimeBucket(tenantId, id), HttpStatus.OK);
     }
 
     @ApiOperation("Delete a shift template")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteShiftTemplate(@PathVariable @Min(0) Integer tenantId,
+    public ResponseEntity<Boolean> deleteTimeBucket(@PathVariable @Min(0) Integer tenantId,
                                                        @PathVariable @Min(0) Long id) {
-        return new ResponseEntity<>(rotationService.deleteShiftTemplate(tenantId, id), HttpStatus.OK);
+        return new ResponseEntity<>(rotationService.deleteTimeBucket(tenantId, id), HttpStatus.OK);
     }
 
     @ApiOperation("Add a new shift template")
     @PostMapping("/add")
-    public ResponseEntity<ShiftTemplateView> createShiftTemplate(@PathVariable @Min(0) Integer tenantId,
+    public ResponseEntity<TimeBucketView> createTimeBucket(@PathVariable @Min(0) Integer tenantId,
                                                                  @RequestBody @Valid
-                                                                         ShiftTemplateView shiftTemplateView) {
-        return new ResponseEntity<>(rotationService.createShiftTemplate(tenantId, shiftTemplateView), HttpStatus.OK);
+                                                                 TimeBucketView timeBucketView) {
+        return new ResponseEntity<>(rotationService.createTimeBucket(tenantId, timeBucketView), HttpStatus.OK);
     }
 
     @ApiOperation("Update a shift template")
     @PutMapping("/update")
-    public ResponseEntity<ShiftTemplateView> updateShiftTemplate(@PathVariable @Min(0) Integer tenantId,
+    public ResponseEntity<TimeBucketView> updateTimeBucket(@PathVariable @Min(0) Integer tenantId,
                                                                  @RequestBody @Valid
-                                                                         ShiftTemplateView shiftTemplateView) {
-        return new ResponseEntity<>(rotationService.updateShiftTemplate(tenantId, shiftTemplateView), HttpStatus.OK);
+                                                                 TimeBucketView timeBucketView) {
+        return new ResponseEntity<>(rotationService.updateTimeBucket(tenantId, timeBucketView), HttpStatus.OK);
     }
 }

@@ -22,13 +22,13 @@ import { skillOperations } from 'store/skill';
 import { spotOperations } from 'store/spot';
 import { contractOperations } from 'store/contract';
 import { employeeOperations } from 'store/employee';
-import { shiftTemplateOperations } from 'store/rotation';
+import { timeBucketOperations } from 'store/rotation';
 import * as rosterActions from 'store/roster/actions';
 import * as skillActions from 'store/skill/actions';
 import * as spotActions from 'store/spot/actions';
 import * as contractActions from 'store/contract/actions';
 import * as employeeActions from 'store/employee/actions';
-import * as shiftTemplateActions from 'store/rotation/actions';
+import * as timeBucketActions from 'store/rotation/actions';
 import { alert } from 'store/alert';
 import { RosterState } from 'domain/RosterState';
 import { AddAlertAction } from 'store/alert/types';
@@ -49,7 +49,7 @@ function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<an
   dispatch(spotActions.setIsSpotListLoading(true));
   dispatch(contractActions.setIsContractListLoading(true));
   dispatch(employeeActions.setIsEmployeeListLoading(true));
-  dispatch(shiftTemplateActions.setIsShiftTemplateListLoading(true));
+  dispatch(timeBucketActions.setIsTimeBucketListLoading(true));
   return Promise.all([
     dispatch(skillOperations.refreshSkillList()),
     dispatch(rosterOperations.getRosterState()),
@@ -57,7 +57,7 @@ function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<an
     dispatch(spotOperations.refreshSpotList()),
     dispatch(contractOperations.refreshContractList()),
     dispatch(employeeOperations.refreshEmployeeList()),
-    dispatch(shiftTemplateOperations.refreshShiftTemplateList()),
+    dispatch(timeBucketOperations.refreshTimeBucketList()),
   ]);
 }
 
@@ -93,7 +93,7 @@ ThunkCommandFactory<void, RefreshTenantListAction | any> = () => (dispatch, stat
       dispatch(spotActions.setIsSpotListLoading(true));
       dispatch(contractActions.setIsContractListLoading(true));
       dispatch(employeeActions.setIsEmployeeListLoading(true));
-      dispatch(shiftTemplateActions.setIsShiftTemplateListLoading(true));
+      dispatch(timeBucketActions.setIsTimeBucketListLoading(true));
       if (pollForTenantListTimeout === null) {
         pollForTenantListTimeout = window.setTimeout(() => {
           pollForTenantListTimeout = null;

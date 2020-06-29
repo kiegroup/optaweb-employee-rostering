@@ -13,14 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { DomainObject } from './DomainObject';
+import { Spot } from './Spot';
+import { Skill } from './Skill';
+import { Employee } from './Employee';
 
-import * as timeBucketOperations from './operations';
-import * as timeBucketSelectors from './selectors';
-import reducer from './reducers';
+export interface Seat {
+  dayInRotation: number;
+  employee: Employee|null;
+}
 
-export {
-  timeBucketOperations,
-  timeBucketSelectors,
-};
-
-export default reducer;
+export interface TimeBucket extends DomainObject {
+  spot: Spot;
+  additionalSkillSet: Skill[];
+  repeatOnDaySetList: string[];
+  startTime: Date;
+  endTime: Date;
+  seatList: Seat[];
+}

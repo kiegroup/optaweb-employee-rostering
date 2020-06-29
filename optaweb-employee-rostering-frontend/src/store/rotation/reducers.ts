@@ -19,36 +19,36 @@ import {
   mapWithUpdatedElement,
 } from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
-import { ShiftTemplate } from 'domain/ShiftTemplate';
-import { ActionType, ShiftTemplateList, ShiftTemplateAction } from './types';
+import { TimeBucket } from 'domain/TimeBucket';
+import { ActionType, TimeBucketList, TimeBucketAction } from './types';
 
-export const initialState: ShiftTemplateList = {
+export const initialState: TimeBucketList = {
   isLoading: true,
-  shiftTemplateMapById: new Map<number, DomainObjectView<ShiftTemplate>>(),
+  timeBucketMapById: new Map<number, DomainObjectView<TimeBucket>>(),
 };
 
-const shiftTemplateReducer = (state = initialState, action: ShiftTemplateAction): ShiftTemplateList => {
+const timeBucketReducer = (state = initialState, action: TimeBucketAction): TimeBucketList => {
   switch (action.type) {
-    case ActionType.SET_SHIFT_TEMPLATE_LIST_LOADING: {
+    case ActionType.SET_TIME_BUCKET_LIST_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_SHIFT_TEMPLATE: {
-      return { ...state, shiftTemplateMapById: mapWithElement(state.shiftTemplateMapById, action.shiftTemplate) };
+    case ActionType.ADD_TIME_BUCKET: {
+      return { ...state, timeBucketMapById: mapWithElement(state.timeBucketMapById, action.timeBucket) };
     }
-    case ActionType.REMOVE_SHIFT_TEMPLATE: {
-      return { ...state, shiftTemplateMapById: mapWithoutElement(state.shiftTemplateMapById, action.shiftTemplate) };
+    case ActionType.REMOVE_TIME_BUCKET: {
+      return { ...state, timeBucketMapById: mapWithoutElement(state.timeBucketMapById, action.timeBucket) };
     }
-    case ActionType.UPDATE_SHIFT_TEMPLATE: {
+    case ActionType.UPDATE_TIME_BUCKET: {
       return { ...state,
-        shiftTemplateMapById: mapWithUpdatedElement(state.shiftTemplateMapById,
-          action.shiftTemplate) };
+        timeBucketMapById: mapWithUpdatedElement(state.timeBucketMapById,
+          action.timeBucket) };
     }
-    case ActionType.REFRESH_SHIFT_TEMPLATE_LIST: {
-      return { ...state, shiftTemplateMapById: createIdMapFromList(action.shiftTemplateList) };
+    case ActionType.REFRESH_TIME_BUCKET_LIST: {
+      return { ...state, timeBucketMapById: createIdMapFromList(action.timeBucketList) };
     }
     default:
       return state;
   }
 };
 
-export default shiftTemplateReducer;
+export default timeBucketReducer;
