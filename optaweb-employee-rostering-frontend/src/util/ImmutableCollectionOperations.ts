@@ -60,7 +60,8 @@ export function mapDomainObjectToView<T extends DomainObject>(obj: T|DomainObjec
   Object.keys(objWithKeys).forEach((key) => {
     if (objWithKeys[key] !== null && objWithKeys[key].id !== undefined) {
       result[key] = objWithKeys[key].id;
-    } else if (Array.isArray(objWithKeys[key]) && objWithKeys[key].length > 0 && objWithKeys[key][0].id !== undefined) {
+    } else if (Array.isArray(objWithKeys[key]) && objWithKeys[key].length > 0
+        && objWithKeys[key].find((item: any) => item && item.id !== undefined) !== undefined) {
       result[key] = objWithKeys[key].map((ele: DomainObject) => ele.id);
     } else {
       result[key] = objWithKeys[key];

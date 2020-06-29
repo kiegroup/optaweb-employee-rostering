@@ -12,98 +12,190 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 
 import React from 'react';
-import { Stub } from './EmployeeStub';
-import { TimeBucket } from './EditTimeBucketModal';
-import { Title, Text, Grid, GridItem, Flex, FlexItem, FlexModifiers } from '@patternfly/react-core';
+import {
+  Title, Text, Flex, FlexItem,
+  FlexModifiers, SplitItem, Split, Button,
+} from '@patternfly/react-core';
 import moment from 'moment';
 import { rosterSelectors } from 'store/roster';
 import { useSelector } from 'react-redux';
+import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { TimeBucket } from 'domain/TimeBucket';
+import { EditTimeBucketModal } from './EditTimeBucketModal';
+import { Stub, EmployeeNickName } from './EmployeeStub';
+
+/* tslint:disable:no-nested-ternary react/no-array-index-key */
 
 export interface SeatJigsawProps {
   selectedStub: Stub | null;
   timeBucket: TimeBucket;
   onUpdateTimeBucket: (updatedTimeBucket: TimeBucket) => void;
+  onDeleteTimeBucket: () => void;
 }
 
-export const SeatJigsaw: React.FC<SeatJigsawProps> = props => {
+export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
+  const [isEditingTimeBucket, setIsEditingTimeBucket] = React.useState(false);
   const rosterState = useSelector(rosterSelectors.getRosterState);
-  const rotationLength = rosterState? rosterState.rotationLength : 0;
-  
+  const rotationLength = rosterState ? rosterState.rotationLength : 0;
+
   return (
     <>
-      <Title size='lg'>
+      <Title
+        size="lg"
+        style={{
+          userSelect: 'none',
+        }}
+      >
         {moment(props.timeBucket.startTime, 'HH:mm').format('LT')}
         -
         {moment(props.timeBucket.endTime, 'HH:mm').format('LT')}
-        {props.timeBucket.additionalSkillSet.length > 0 &&
-          <Text>
+        {props.timeBucket.additionalSkillSet.length > 0
+          && (
+            <Text>
           (
-            {props.timeBucket.additionalSkillSet.map(skill => skill.name).join(', ')}
+              {props.timeBucket.additionalSkillSet.map(skill => skill.name).join(', ')}
           )
-          </Text>
+            </Text>
+          )
         }
       </Title>
-      <Flex breakpointMods={[{ modifier: FlexModifiers["space-items-lg"]}]}>
-        {new Array(Math.ceil(rotationLength / 7)).fill(null).map((_, index) => (
-          <FlexItem>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(7, 30px)',
-                columnGap: '0.5rem',
-                cursor: 'pointer',
-              }}
-            >
-              {props.timeBucket.seatList
-                 .filter(seat => seat.dayInRotation >= index * 7 && seat.dayInRotation < (index + 1) * 7)
-                 .sort((a,b) => b.dayInRotation - a.dayInRotation)
-                 .map(seat => (
-                   <div
-                     title={seat.stub? seat.stub.employee? seat.stub.employee.name : 'Unassigned' : 'No Shift'}
-                     style={{
-                       border: '1px solid black',
-                       height: '50px',
-                       backgroundColor: seat.stub? seat.stub.color : 'gray'
-                     }}
-                     onMouseDown={() => {
-                       props.onUpdateTimeBucket({
-                         ...props.timeBucket,
-                         seatList: [
-                           ...props.timeBucket.seatList.filter(s => s.dayInRotation < seat.dayInRotation),
-                           {
-                             ...seat,
-                             stub: props.selectedStub, 
-                           },
-                           ...props.timeBucket.seatList.filter(s => s.dayInRotation > seat.dayInRotation),
-                         ],
-                       });
-                     }}
-                     onMouseMove={e => {
-                       if ((e.buttons & 1) === 1) { // 1 = Left mouse button
-                         props.onUpdateTimeBucket({
-                           ...props.timeBucket,
-                           seatList: [
-                             ...props.timeBucket.seatList.filter(s => s.dayInRotation < seat.dayInRotation),
-                             {
-                               ...seat,
-                               stub: props.selectedStub, 
-                             },
-                             ...props.timeBucket.seatList.filter(s => s.dayInRotation > seat.dayInRotation),
-                           ],
-                         });
-                       }
-                     }}
-                   />
-                 ))}
-             <span style={{ gridRow: 2, gridColumn: 1, justifySelf: 'center', userSelect: 'none' }}>{(index * 7) + 1}</span>
-             <span style={{ gridRow: 2, gridColumn: 7, justifySelf: 'center', userSelect: 'none' }}>{(index + 1) * 7}</span>
-            </div>
-          </FlexItem>
-        ))}
-      </Flex>
+      <Split>
+        <SplitItem>
+          <Flex breakpointMods={[{ modifier: FlexModifiers['space-items-lg'] }]}>
+            {new Array(Math.ceil(rotationLength / 7)).fill(null).map((_, index) => index).map(weekNumber => (
+              <FlexItem key={`${weekNumber}`}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(7, 30px)',
+                    columnGap: '0.5rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {Array(7).fill(null)
+                    .map((_, i) => props.timeBucket.seatList
+                      .find(seat => seat.dayInRotation === i + weekNumber * 7) || null)
+                    .map((seat, weekDay) => (
+                      <button
+                        key={`${weekDay + weekNumber * 7}`}
+                        // eslint-disable-next-line no-nested-ternary
+                        title={seat ? seat.employee ? seat.employee.name : 'Unassigned' : 'No Shift'}
+                        style={{
+                          border: '1px solid black',
+                          height: '50px',
+                          // eslint-disable-next-line no-nested-ternary
+                          backgroundColor: seat ? seat.employee ? seat.employee.color : 'white' : 'gray',
+                          writingMode: 'vertical-rl',
+                          textOrientation: 'upright',
+                          userSelect: 'none',
+                        }}
+                        type="button"
+                        onClick={() => {
+                          props.onUpdateTimeBucket({
+                            ...props.timeBucket,
+                            seatList: [
+                              ...props.timeBucket.seatList
+                                .filter(other => other.dayInRotation !== weekDay + weekNumber * 7),
+                              ...(props.selectedStub
+                                ? [
+                                  {
+                                    dayInRotation: weekDay + weekNumber * 7,
+                                    employee: props.selectedStub.employee,
+                                  },
+                                ] : []),
+                            ],
+                          });
+                        }}
+                        onMouseDown={() => {
+                          props.onUpdateTimeBucket({
+                            ...props.timeBucket,
+                            seatList: [
+                              ...props.timeBucket.seatList
+                                .filter(other => other.dayInRotation !== weekDay + weekNumber * 7),
+                              ...(props.selectedStub
+                                ? [
+                                  {
+                                    dayInRotation: weekDay + weekNumber * 7,
+                                    employee: props.selectedStub.employee,
+                                  },
+                                ] : []),
+                            ],
+                          });
+                        }}
+                        onMouseMove={(e) => {
+                          // eslint-disable-next-line no-bitwise
+                          if ((e.buttons & 1) === 1) { // 1 = Left mouse button
+                            props.onUpdateTimeBucket({
+                              ...props.timeBucket,
+                              seatList: [
+                                ...props.timeBucket.seatList
+                                  .filter(other => other.dayInRotation !== weekDay + weekNumber * 7),
+                                ...(props.selectedStub
+                                  ? [
+                                    {
+                                      dayInRotation: weekDay + weekNumber * 7,
+                                      employee: props.selectedStub.employee,
+                                    },
+                                  ] : []),
+                              ],
+                            });
+                          }
+                        }}
+                      >
+                        <EmployeeNickName employee={seat ? seat.employee : null} />
+                      </button>
+                    ))}
+                  <span
+                    style={{
+                      gridRow: 2,
+                      gridColumn: 1,
+                      justifySelf: 'center',
+                      userSelect: 'none',
+                    }}
+                  >
+                    {(weekNumber * 7) + 1}
+                  </span>
+                  <span
+                    style={{ gridRow: 2,
+                      gridColumn: 7,
+                      justifySelf: 'center',
+                      userSelect: 'none' }}
+                  >
+                    {(weekNumber + 1) * 7}
+                  </span>
+                </div>
+              </FlexItem>
+            ))}
+          </Flex>
+        </SplitItem>
+        <SplitItem>
+          <Button
+            onClick={() => setIsEditingTimeBucket(true)}
+            variant="link"
+          >
+            <EditIcon />
+            {' '}
+Edit Time Bucket
+          </Button>
+          <Button
+            onClick={props.onDeleteTimeBucket}
+            variant="link"
+          >
+            <TrashIcon />
+            {' '}
+Delete Time Bucket
+          </Button>
+        </SplitItem>
+      </Split>
+      <EditTimeBucketModal
+        isOpen={isEditingTimeBucket}
+        timeBucket={props.timeBucket}
+        onUpdateTimeBucket={props.onUpdateTimeBucket}
+        onClose={() => setIsEditingTimeBucket(false)}
+      />
     </>
   );
 };

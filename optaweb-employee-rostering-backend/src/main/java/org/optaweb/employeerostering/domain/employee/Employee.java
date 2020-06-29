@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.domain.employee;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -33,6 +34,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
+import org.optaweb.employeerostering.domain.common.ColorUtils;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.skill.Skill;
 
@@ -44,7 +46,17 @@ public class Employee extends AbstractPersistable {
     @Size(min = 1, max = 120)
     @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
     private String name;
-
+    
+    @NotNull
+    @Size(min = 1, max = 3)
+    @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
+    private String shortId;
+    
+    @NotNull
+    @Size(min = 7, max = 7)
+    @Pattern(regexp = "^#[0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F]$")
+    private String color;
+    
     @NotNull
     @ManyToOne
     private Contract contract;
@@ -65,6 +77,18 @@ public class Employee extends AbstractPersistable {
                     Set<Skill> skillProficiencySet) {
         super(tenantId);
         this.name = name;
+        this.shortId = Arrays.stream(name.split(" ")).limit(3).reduce("", (a,b) -> a + b.charAt(0));
+        this.color = ColorUtils.getRandomColor(name);
+        this.contract = contract;
+        this.skillProficiencySet = skillProficiencySet;
+    }
+    
+    public Employee(Integer tenantId, String name, Contract contract,
+                    Set<Skill> skillProficiencySet, String shortId, String color) {
+        super(tenantId);
+        this.name = name;
+        this.shortId = shortId;
+        this.color = color;
         this.contract = contract;
         this.skillProficiencySet = skillProficiencySet;
     }
@@ -108,6 +132,24 @@ public class Employee extends AbstractPersistable {
 
     public void setContract(Contract contract) {
         this.contract = contract;
+    }
+
+    
+    public String getShortId() {
+        return shortId;
+    }
+
+    
+    public void setShortId(String shortId) {
+        this.shortId = shortId;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     @Override

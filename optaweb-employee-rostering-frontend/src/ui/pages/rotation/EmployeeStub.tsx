@@ -15,111 +15,150 @@
  */
 import React from 'react';
 import { employeeSelectors } from 'store/employee';
-import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Text, Grid, GridItem, Modal, Stack, StackItem, InputGroup, Label, Button, Popover, SplitItem, Split, InputGroupText, Gallery, FlexItem, Flex, FlexModifiers } from '@patternfly/react-core';
-import { UsersIcon, UserIcon, AngleDownIcon, TrashIcon, EditIcon, PaletteIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
+import {
+  Text, Grid, GridItem, Modal, InputGroup, Button, Popover,
+  SplitItem, Split, InputGroupText, FlexItem, Flex, FlexModifiers, Bullseye,
+} from '@patternfly/react-core';
+import {
+  UsersIcon, UserIcon, AngleDownIcon, TrashIcon,
+  EditIcon, ExclamationTriangleIcon,
+} from '@patternfly/react-icons';
 import { Employee } from 'domain/Employee';
 import { v4 as uuidv4 } from 'uuid';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
+import Color from 'color';
 
-export const EmployeeStub: React.FC<{
-  isSelected: boolean,
-  employee: Employee | null,
-  color: string,
-  onClick: () => void,
-}> = props => {
+export const EmployeeNickName: React.FC<{ employee: Employee | null }> = (props) => {
+  const nickname = props.employee ? props.employee.shortId : '';
   return (
-    <div
+    <Bullseye
       style={{
-        width: '20px',
-        height: '30px',
-        marginTop: '10px',
-        border: `${props.isSelected? 3 : 1}px solid ${props.isSelected? 'var(--pf-global--primary-color--100)' : 'black'}`,
-        cursor: 'pointer',
-        backgroundColor: props.color,
+        // eslint-disable-next-line no-nested-ternary
+        color: props.employee ? (getColor(props.employee.color).isLight() ? 'black' : 'white') : 'gray',
       }}
-      onClick={props.onClick}
-      title={props.employee !== null? props.employee.name : 'Unassigned'}
-    />
+    >
+      <Text>{nickname}</Text>
+    </Bullseye>
   );
 };
+
+export function getColor(color: string): Color {
+  if (color.startsWith('var')) {
+    // CSS variable
+    return Color(getComputedStyle(document.documentElement)
+      .getPropertyValue(color.substring(4, color.length - 1)).trim());
+  }
+
+  return Color(color);
+}
+
+export const EmployeeStub: React.FC<{
+  isSelected: boolean;
+  employee: Employee | null;
+  color: string;
+  onClick: () => void;
+}> = props => (
+  <button
+    style={{
+      width: '20px',
+      height: '30px',
+      marginTop: '10px',
+      overflow: 'hidden',
+      outline: `${props.isSelected ? 5 : 1}px solid ${props.isSelected
+        ? 'var(--pf-global--primary-color--100)' : 'black'}`,
+      cursor: 'pointer',
+      writingMode: 'vertical-rl',
+      textOrientation: 'upright',
+      backgroundColor: props.color,
+      color: getColor(props.color).isLight() ? 'black' : 'white',
+    }}
+    type="button"
+    onClick={props.onClick}
+    title={props.employee !== null ? props.employee.name : 'Unassigned'}
+  >
+    <EmployeeNickName employee={props.employee} />
+  </button>
+);
 
 export interface Stub {
   employee: Employee | null;
   color: string;
 }
 
+const defaultColorList = ['red', 'orange', 'gold', 'green', 'cyan', 'blue', 'purple'].flatMap(colorFamily => (
+  ['600', '500', '400', '300', '200', '100'].map(value => `var(--pf-global--palette--${colorFamily}-${value})`)
+));
+
 export const ColorPicker: React.FC<{
-  currentColor: string,
-  onChangeColor: (newColor: string) => void
-}> = props => {
-  const defaultColorList = ['red', 'orange', 'gold', 'green', 'cyan', 'blue', 'purple'].flatMap(colorFamily => (
-    ['600', '500', '400', '300', '200', '100'].map(value => `var(--pf-global--palette--${colorFamily}-${value})`)
-  ));
-  return (
-    <Popover
-      aria-label='color-select'
-      bodyContent={(
-        <Grid>
-          {defaultColorList.map(color => (
-            <GridItem key={color} span={2} rowSpan={2} onClick={() => {
+  currentColor: string;
+  onChangeColor: (newColor: string) => void;
+}> = props => (
+  <Popover
+    aria-label="color-select"
+    bodyContent={(
+      <Grid>
+        {defaultColorList.map(color => (
+          <GridItem
+            key={color}
+            span={2}
+            rowSpan={2}
+            onClick={() => {
               props.onChangeColor(color);
-            }}>
-              <span 
-                style={{
-                  width: '30px',
-                  height: '30px',
-                  display: 'inline-block',
-                  borderRadius: '50%',
-                  backgroundColor: color,
-                  border: '1px solid var(--pf-global--palette--black-300)',
-                }}
-              />
-            </GridItem>
-            ))}
-          </Grid>
-      )}
-      position='bottom'
+            }}
+          >
+            <span
+              style={{
+                width: '30px',
+                height: '30px',
+                display: 'inline-block',
+                borderRadius: '50%',
+                backgroundColor: color,
+                border: '1px solid var(--pf-global--palette--black-300)',
+              }}
+            />
+          </GridItem>
+        ))}
+      </Grid>
+    )}
+    position="bottom"
+  >
+    <InputGroup
+      style={{
+        width: '100px',
+      }}
     >
-      <InputGroup
+      <Button
+        variant="control"
         style={{
-          width: '100px',
+          backgroundColor: props.currentColor,
         }}
+      />
+      <Button
+        variant="control"
       >
-        <Button
-          variant='control'
-          style={{
-            backgroundColor: props.currentColor
-          }}
-        >
-        </Button>
-        <Button
-          variant='control'
-        >
-          <AngleDownIcon/>
-        </Button>
-      </InputGroup>
-    </Popover>
-  );
-};
+        <AngleDownIcon />
+      </Button>
+    </InputGroup>
+  </Popover>
+);
 
 export const EditEmployeeStubListModal: React.FC<{
-  isVisible: boolean,
-  currentStubList: Stub[],
-  onClose: () => void,
-  onUpdateStubList: (stubList: Stub[]) => void,
-}> = props => {
+  isVisible: boolean;
+  currentStubList: Stub[];
+  onClose: () => void;
+  onUpdateStubList: (stubList: Stub[]) => void;
+}> = (props) => {
   const [editedStubList, setEditedStubList] = React.useState([...props.currentStubList]);
   const employeeList = useSelector(employeeSelectors.getEmployeeList);
-  
+
   React.useEffect(() => {
     setEditedStubList([...props.currentStubList]);
   }, [props.currentStubList, props.isVisible]);
-  
+
   return (
     <Modal
-      title='Edit Employee Stub List'
+      title="Edit Employee Stub List"
       isSmall
       onClose={props.onClose}
       isOpen={props.isVisible}
@@ -127,7 +166,7 @@ export const EditEmployeeStubListModal: React.FC<{
         (
           <Button
             key={0}
-            variant='secondary'
+            variant="secondary"
             onClick={props.onClose}
           >
             Cancel
@@ -136,18 +175,18 @@ export const EditEmployeeStubListModal: React.FC<{
         (
           <Button
             key={1}
-            variant='primary'
+            variant="primary"
             onClick={() => {
               props.onUpdateStubList(editedStubList);
               props.onClose();
-             }}
-           >
+            }}
+          >
              Save
-           </Button>
-         ),  
+          </Button>
+        ),
       ]}
     >
-      <Flex breakpointMods={[{modifier: FlexModifiers.column}]}>
+      <Flex breakpointMods={[{ modifier: FlexModifiers.column }]}>
         {editedStubList.map((stub, index) => (
           <FlexItem key={uuidv4()}>
             <Split>
@@ -158,54 +197,41 @@ export const EditEmployeeStubListModal: React.FC<{
                   </InputGroupText>
                   <span style={{
                     width: '200px',
-                  }}>
+                  }}
+                  >
                     <TypeaheadSelectInput
-                      emptyText='Select an employee...'
+                      emptyText="Select an employee..."
                       options={employeeList}
                       value={stub.employee}
-                      optionToStringMap={o => o? o.name : 'Unassigned'}
+                      optionToStringMap={o => (o ? o.name : 'Unassigned')}
                       autoSize={false}
-                      onChange={employee => {
+                      onChange={(employee) => {
                         setEditedStubList([
                           ...editedStubList.filter((_, i) => i < index),
                           {
                             ...stub,
-                            employee: employee? employee : null,
+                            employee: employee || null,
                           },
-                          ...editedStubList.filter((_, i) => i > index) 
+                          ...editedStubList.filter((_, i) => i > index),
                         ]);
                       }}
                     />
                   </span>
-                  <InputGroupText>
-                    <PaletteIcon />
-                  </InputGroupText>
-                  <ColorPicker
-                    currentColor={stub.color}
-                    onChangeColor={color => {
-                      setEditedStubList([
-                        ...editedStubList.filter((_, i) => i < index),
-                        {
-                          ...stub,
-                          color,
-                        },
-                        ...editedStubList.filter((_, i) => i > index)
-                      ]);
-                    }}
-                  />
-                  { (stub.employee === null || stub.color === '' ||
-                     editedStubList.filter(s => s.employee === stub.employee).length !== 1 ||
-                     editedStubList.filter(s => s.color === stub.color).length !== 1) &&
-                    <InputGroupText>
-                      <ExclamationTriangleIcon />
-                    </InputGroupText>
+                  { (stub.employee === null || stub.color === ''
+                     || editedStubList.filter(s => s.employee !== null
+                       && s.employee.id === (stub.employee as Employee).id).length !== 1)
+                    && (
+                      <InputGroupText>
+                        <ExclamationTriangleIcon />
+                      </InputGroupText>
+                    )
                   }
                 </InputGroup>
               </SplitItem>
-              <SplitItem isFilled><span/></SplitItem>
+              <SplitItem isFilled><span /></SplitItem>
               <SplitItem>
                 <Button
-                  variant='link'
+                  variant="link"
                   onClick={() => {
                     setEditedStubList(editedStubList.filter(item => item !== stub));
                   }}
@@ -218,18 +244,19 @@ export const EditEmployeeStubListModal: React.FC<{
         ))}
         <FlexItem>
           <Button
-            variant='link'
+            variant="link"
             onClick={() => {
               setEditedStubList([
-              ...editedStubList,
+                ...editedStubList,
                 {
                   employee: null,
-                  color: '',
-                }
-              ]);  
+                  color: defaultColorList[((editedStubList.length * 6) % defaultColorList.length)
+                    + (Math.max(5 - 3 * Math.floor(editedStubList.length / defaultColorList.length), 0))],
+                },
+              ]);
             }}
           >
-            + New Employee Stub
+            + Add Employee
           </Button>
         </FlexItem>
       </Flex>
@@ -238,57 +265,70 @@ export const EditEmployeeStubListModal: React.FC<{
 };
 
 export const EmployeeStubList: React.FC<{
-  selectedStub: Stub | null,
-  stubList: Stub[],
-  onStubSelect: (stub: Stub) => void,
-  onUpdateStubList: (stubList: Stub[]) => void,
-}> = props => {
-  const { t } = useTranslation('EmployeeStub');
+  selectedStub: Stub | null;
+  stubList: Stub[];
+  onStubSelect: (stub: Stub | null) => void;
+  onUpdateStubList: (stubList: Stub[]) => void;
+}> = (props) => {
+  // const { t } = useTranslation('EmployeeStub');
   const [isEditingEmployeeStubList, setIsEditingEmployeeStubList] = React.useState(false);
-  
-  return (<>
-    <Flex style={{
-      alignItems: 'center',
-    }}>
-      <FlexItem><UsersIcon /></FlexItem>
-      <FlexItem><Text>Employee Stub:</Text></FlexItem>
 
-      <FlexItem>
-        <Flex>
-          <FlexItem>
-            <EmployeeStub
-              isSelected={props.selectedStub !== null && props.selectedStub.employee === null}
-              employee={null}
-              color='#FFFFFF'
-              onClick={() => props.onStubSelect({ color: '#FFFFFF', employee: null })}
-            />
-          </FlexItem>
-          {props.stubList.map(stub => (
-            <GridItem>
+  return (
+    <>
+      <Flex style={{
+        alignItems: 'center',
+      }}
+      >
+        <FlexItem><UsersIcon /></FlexItem>
+        <FlexItem><Text>Employee Stub:</Text></FlexItem>
+
+        <FlexItem>
+          <Flex breakpointMods={[{ modifier: FlexModifiers['align-items-stretch'] }]}>
+            <FlexItem>
               <EmployeeStub
-                isSelected={props.selectedStub === stub}
-                employee={stub.employee}
-                color={stub.color}
-                onClick={() => props.onStubSelect(stub)}
+                isSelected={props.selectedStub === null}
+                employee={null}
+                color="gray"
+                onClick={() => props.onStubSelect(null)}
               />
-            </GridItem>
-          ))}
-        </Flex>
-      </FlexItem>
-      <FlexItem>
-        <Button
-          variant='link'
-          onClick={() => setIsEditingEmployeeStubList(true)}
-        >
-          Edit employee stub <EditIcon/>
-        </Button>
-      </FlexItem>
-    </Flex>
-    <EditEmployeeStubListModal
-      isVisible={isEditingEmployeeStubList}
-      currentStubList={props.stubList}
-      onClose={() => setIsEditingEmployeeStubList(false)}
-      onUpdateStubList={props.onUpdateStubList}
+            </FlexItem>
+            <FlexItem>
+              <EmployeeStub
+                isSelected={props.selectedStub !== null && props.selectedStub.employee === null}
+                employee={null}
+                color="#FFFFFF"
+                onClick={() => props.onStubSelect({ color: '#FFFFFF', employee: null })}
+              />
+            </FlexItem>
+            {props.stubList.map(stub => (
+              <GridItem>
+                <EmployeeStub
+                  isSelected={props.selectedStub === stub}
+                  employee={stub.employee}
+                  color={stub.color}
+                  onClick={() => props.onStubSelect(stub)}
+                />
+              </GridItem>
+            ))}
+          </Flex>
+        </FlexItem>
+        <FlexItem>
+          <Button
+            variant="link"
+            onClick={() => setIsEditingEmployeeStubList(true)}
+          >
+          Edit employee stub
+            {' '}
+            <EditIcon />
+          </Button>
+        </FlexItem>
+      </Flex>
+      <EditEmployeeStubListModal
+        isVisible={isEditingEmployeeStubList}
+        currentStubList={props.stubList}
+        onClose={() => setIsEditingEmployeeStubList(false)}
+        onUpdateStubList={props.onUpdateStubList}
       />
-  </>); 
+    </>
+  );
 };

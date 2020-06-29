@@ -22,9 +22,9 @@ import { AvailabilityRosterView } from 'domain/AvailabilityRosterView';
 import { spotSelectors } from 'store/spot';
 import { EmployeeAvailability } from 'domain/EmployeeAvailability';
 import { skillSelectors } from 'store/skill';
+import { RosterState } from 'domain/RosterState';
 import { employeeSelectors } from '../employee';
 import { AppState } from '../types';
-import { RosterState } from 'domain/RosterState';
 
 export function isShiftRosterLoading(state: AppState) {
   return state.spotList.isLoading || state.employeeList.isLoading || state.skillList.isLoading
@@ -42,9 +42,8 @@ export function getRosterState(state: AppState): RosterState | null {
   if (state.rosterState.isLoading) {
     return null;
   }
-  else {
-    return state.rosterState.rosterState;
-  }
+
+  return state.rosterState.rosterState;
 }
 
 export const getSpotListInShiftRoster = (state: AppState): Spot[] => {

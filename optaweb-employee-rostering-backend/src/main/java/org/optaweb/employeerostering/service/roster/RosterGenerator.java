@@ -29,17 +29,19 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.employee.Employee;
@@ -47,7 +49,8 @@ import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
 import org.optaweb.employeerostering.domain.roster.Roster;
 import org.optaweb.employeerostering.domain.roster.RosterState;
-import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
+import org.optaweb.employeerostering.domain.rotation.Seat;
+import org.optaweb.employeerostering.domain.rotation.TimeBucket;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
@@ -468,11 +471,14 @@ public class RosterGenerator implements ApplicationRunner {
         List<Contract> contractList = createContractList(tenantId);
         List<Employee> employeeList = createEmployeeList(generatorType, tenantId, employeeListSize,
                                                          contractList, skillList);
-        List<ShiftTemplate> shiftTemplateList = createShiftTemplateList(generatorType, tenantId,
-                                                                        rosterState, spotList,
+        List<TimeBucket> timeBucketList = createTimeBucketList(generatorType, tenantId,
+                                                                        rosterConstraintConfiguration
+                                                                            .getWeekStartDay(),
+                                                                        rosterState,
+                                                                        spotList,
                                                                         employeeList, skillList);
         List<Shift> shiftList = createShiftList(generatorType, tenantId, rosterConstraintConfiguration,
-                                                rosterState, spotList, shiftTemplateList);
+                                                rosterState, spotList, timeBucketList);
         List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(
                 generatorType, tenantId, rosterConstraintConfiguration, rosterState, employeeList, shiftList);
 
@@ -596,17 +602,16 @@ public class RosterGenerator implements ApplicationRunner {
     }
 
     @Transactional
-    public List<ShiftTemplate> createShiftTemplateList(GeneratorType generatorType,
+    public List<TimeBucket> createTimeBucketList(GeneratorType generatorType,
                                                        Integer tenantId,
+                                                       DayOfWeek startOfWeek,
                                                        RosterState rosterState,
                                                        List<Spot> spotList,
                                                        List<Employee> employeeList,
                                                        List<Skill> skillList) {
-        int rotationLength = rosterState.getRotationLength();
-        List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength *
-                                                                        generatorType.timeslotRangeList.size());
+        List<TimeBucket> timeBucketList = new ArrayList<>(spotList.size() * generatorType.timeslotRangeList.size());
         List<Employee> remainingEmployeeList = new ArrayList<>(employeeList);
-        Consumer<Spot> createShiftTemplatesForWard = (spot) -> {
+        Consumer<Spot> createTimeBucketsForSpot = (spot) -> {
             // Use if we take advantage of the additional skills for shifts feature
             final Function<Predicate<Employee>, List<Employee>> findEmployees = p -> {
                 List<Employee> out = remainingEmployeeList.stream()
@@ -619,47 +624,43 @@ public class RosterGenerator implements ApplicationRunner {
             };
 
             List<Employee> rotationEmployeeList = findEmployees.apply(t -> true);
-            // For every day in the rotation (independent of publishLength and draftLength)
-            for (int startDayOffset = 0; startDayOffset < rotationLength; startDayOffset++) {
-                // Fill the offset day with shift templates
-                for (int timeslotRangesIndex = 0; timeslotRangesIndex < generatorType.timeslotRangeList.size();
-                        timeslotRangesIndex++) {
-                    Triple<LocalTime, LocalTime, List<DayOfWeek>> timeslotRange =
-                            generatorType.timeslotRangeList.get(timeslotRangesIndex);
-                    final int dayOfWeek = (startDayOffset % 7) + 1;
-                    // Only generate shifts for days in the timeslot
-                    if (timeslotRange.getRight().stream().anyMatch(d -> d.getValue() == dayOfWeek)) {
-                        LocalTime startTime = timeslotRange.getLeft();
-                        LocalTime endTime = timeslotRange.getMiddle();
-                        int endDayOffset = startDayOffset;
-                        if (endTime.compareTo(startTime) < 0) {
-                            endDayOffset = (startDayOffset + 1) % rotationLength;
-                        }
+            final AtomicInteger timeslotRangesIndex = new AtomicInteger(0);
+            timeBucketList.addAll(generatorType.timeslotRangeList.stream().map(tr -> {
+                Set<DayOfWeek> repeatDays = tr.getRight().stream().collect(Collectors.toCollection(HashSet::new));
+                List<Seat> seatList = new ArrayList<Seat>(rosterState.getRotationLength());
+                
+                // For Every Day In the Rotation
+                for (int dayOffset = 0; dayOffset < rosterState.getRotationLength(); dayOffset++) {
+                    DayOfWeek dayOfWeek = startOfWeek.plus(dayOffset);
+                    
+                    // If this Time Bucket occurs on this dayOfWeek
+                    if (repeatDays.contains(dayOfWeek)) {
                         int rotationEmployeeIndex = generatorType.rotationEmployeeIndexCalculator
-                                .apply(startDayOffset, timeslotRangesIndex);
+                                .apply(dayOffset, timeslotRangesIndex.get());
                         if (rotationEmployeeIndex < 0 || rotationEmployeeIndex >=
                                 generatorType.rotationEmployeeListSize) {
                             throw new IllegalStateException(
                                     "The rotationEmployeeIndexCalculator for generatorType (" +
                                             generatorType.tenantNamePrefix +
                                             ") returns an invalid rotationEmployeeIndex (" + rotationEmployeeIndex +
-                                            ") for startDayOffset (" + startDayOffset + ") and timeslotRangesIndex (" +
+                                            ") for startDayOffset (" + dayOffset + ") and timeslotRangesIndex (" +
                                             timeslotRangesIndex + ").");
                         }
                         // There might be less employees than we need (overconstrained planning)
                         Employee rotationEmployee = (rotationEmployeeIndex >= rotationEmployeeList.size()) ? null :
                                 rotationEmployeeList.get(rotationEmployeeIndex);
-
-                        ShiftTemplate shiftTemplate = new ShiftTemplate(tenantId, spot, startDayOffset, startTime,
-                                                                        endDayOffset, endTime, rotationEmployee);
-                        entityManager.persist(shiftTemplate);
-                        shiftTemplateList.add(shiftTemplate);
+                        seatList.add(new Seat(dayOffset, rotationEmployee));
                     }
                 }
-            }
+                timeslotRangesIndex.incrementAndGet();
+                TimeBucket timeBucket = new TimeBucket(tenantId, spot, tr.getLeft(), tr.getMiddle(), new HashSet<>(),
+                                      repeatDays, seatList);
+                entityManager.persist(timeBucket);
+                return timeBucket;
+            }).collect(Collectors.toList()));
         };
-        spotList.stream().forEach(createShiftTemplatesForWard);
-        return shiftTemplateList;
+        spotList.stream().forEach(createTimeBucketsForSpot);
+        return timeBucketList;
     }
 
     @Transactional
@@ -668,48 +669,51 @@ public class RosterGenerator implements ApplicationRunner {
                                        RosterConstraintConfiguration rosterConstraintConfiguration,
                                        RosterState rosterState,
                                        List<Spot> spotList,
-                                       List<ShiftTemplate> shiftTemplateList) {
+                                       List<TimeBucket> timeBucketList) {
         ZoneId zoneId = rosterState.getTimeZone();
         int rotationLength = rosterState.getRotationLength();
-        LocalDate date = rosterState.getLastHistoricDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate nextDate = rosterState.getLastHistoricDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate firstDraftDate = rosterState.getFirstDraftDate();
         LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
 
         List<Shift> shiftList = new ArrayList<>();
-        Map<Pair<Integer, Spot>, List<ShiftTemplate>> dayOffsetAndSpotToShiftTemplateListMap = shiftTemplateList
-                .stream()
-                .collect(groupingBy(shiftTemplate -> Pair.of(shiftTemplate.getStartDayOffset(),
-                                                             shiftTemplate.getSpot())));
-        int dayOffset = 0;
-        while (date.compareTo(firstUnplannedDate) < 0) {
+
+        int nextDayOffset = 0;
+        while (nextDate.compareTo(firstUnplannedDate) < 0) {
+            final LocalDate date = nextDate;
+            final int dayOffset = nextDayOffset;
             for (Spot spot : spotList) {
-                List<ShiftTemplate> subShiftTemplateList = dayOffsetAndSpotToShiftTemplateListMap.getOrDefault(
-                        Pair.of(dayOffset, spot), Collections.emptyList());
-                for (ShiftTemplate shiftTemplate : subShiftTemplateList) {
+                List<TimeBucket> subTimeBucketList = timeBucketList.stream().filter(tb -> tb.getSpot().equals(spot))
+                        .collect(Collectors.toList());
+                subTimeBucketList.forEach(timeBucket -> {
                     boolean defaultToRotationEmployee = date.compareTo(firstDraftDate) < 0;
-                    Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
+                    Optional<Shift> maybeShift = timeBucket.createShiftForOffset(date, dayOffset,
                                                                   zoneId, defaultToRotationEmployee);
-                    if (date.compareTo(firstDraftDate) < 0) {
-                        shift.setOriginalEmployee(shiftTemplate.getRotationEmployee());
-                    }
-                    entityManager.persist(shift);
-                    shiftList.add(shift);
-                }
-                if (date.compareTo(firstDraftDate) >= 0 && !subShiftTemplateList.isEmpty()) {
+                    maybeShift.ifPresent(shift -> {
+                        if (date.compareTo(firstDraftDate) < 0 && defaultToRotationEmployee) {
+                            shift.setOriginalEmployee(shift.getRotationEmployee());
+                        }
+                        entityManager.persist(shift);
+                        shiftList.add(shift); 
+                    });
+                });
+                if (date.compareTo(firstDraftDate) >= 0 && !subTimeBucketList.isEmpty()) {
                     int extraShiftCount = generateRandomIntFromThresholds(EXTRA_SHIFT_THRESHOLDS);
                     for (int i = 0; i < extraShiftCount; i++) {
-                        ShiftTemplate shiftTemplate = extractRandomElement(subShiftTemplateList);
-                        Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
-                                                                      zoneId, false);
-                        entityManager.persist(shift);
-                        shiftList.add(shift);
+                        TimeBucket timeBucket = extractRandomElement(subTimeBucketList);
+                        Optional<Shift> maybeShift = timeBucket.createShiftForOffset(date, dayOffset,
+                                                                                     zoneId, false);
+                        maybeShift.ifPresent(shift -> {
+                            entityManager.persist(shift);
+                            shiftList.add(shift); 
+                        });
                     }
                 }
             }
-            date = date.plusDays(1);
-            dayOffset = (dayOffset + 1) % rotationLength;
+            nextDate = date.plusDays(1);
+            nextDayOffset = (dayOffset + 1) % rotationLength;
         }
-        rosterState.setUnplannedRotationOffset(dayOffset);
+        rosterState.setUnplannedRotationOffset(nextDayOffset);
         return shiftList;
     }
 

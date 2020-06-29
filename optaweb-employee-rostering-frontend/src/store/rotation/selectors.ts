@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ShiftTemplate } from 'domain/ShiftTemplate';
+import { TimeBucket } from 'domain/TimeBucket';
 import DomainObjectView from 'domain/DomainObjectView';
 import { spotSelectors } from 'store/spot';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
@@ -21,30 +21,30 @@ import { employeeSelectors } from 'store/employee';
 import { skillSelectors } from 'store/skill';
 import { AppState } from '../types';
 
-function isLoading(state: AppState) {
-  return state.shiftTemplateList.isLoading || state.employeeList.isLoading
+export function isLoading(state: AppState) {
+  return state.timeBucketList.isLoading || state.employeeList.isLoading
     || state.contractList.isLoading || state.spotList.isLoading || state.skillList.isLoading;
 }
 
-export const getShiftTemplateById = (state: AppState, id: number): ShiftTemplate => {
+export const getTimeBucketById = (state: AppState, id: number): TimeBucket => {
   if (isLoading(state)) {
-    throw Error('Shift Template list is loading');
+    throw Error('Time Bucket list is loading');
   }
-  const shiftTemplateView = state.shiftTemplateList.shiftTemplateMapById.get(id) as DomainObjectView<ShiftTemplate>;
+  const timeBucketView = state.timeBucketList.timeBucketMapById.get(id) as DomainObjectView<TimeBucket>;
   return {
-    ...objectWithout(shiftTemplateView, 'spot', 'rotationEmployee', 'requiredSkillSet'),
-    spot: spotSelectors.getSpotById(state, shiftTemplateView.spot),
-    requiredSkillSet: shiftTemplateView.requiredSkillSet.map(skillId => skillSelectors.getSkillById(state, skillId)),
-    rotationEmployee: shiftTemplateView.rotationEmployee
-      ? employeeSelectors.getEmployeeById(state, shiftTemplateView.rotationEmployee) : null,
+    ...objectWithout(timeBucketView, 'spot', 'additionalSkillSet', 'seatList'),
+    spot: spotSelectors.getSpotById(state, timeBucketView.spot),
+    additionalSkillSet: timeBucketView.additionalSkillSet.map(skillId => skillSelectors.getSkillById(state, skillId)),
+    seatList: timeBucketView.seatList.map(seat => (
+      { ...seat, employee: (seat.employee != null) ? employeeSelectors.getEmployeeById(state, seat.employee) : null })),
   };
 };
 
-export const getShiftTemplateList = (state: AppState): ShiftTemplate[] => {
+export const getTimeBucketList = (state: AppState): TimeBucket[] => {
   if (isLoading(state)) {
     return [];
   }
-  const out: ShiftTemplate[] = [];
-  state.shiftTemplateList.shiftTemplateMapById.forEach((value, key) => out.push(getShiftTemplateById(state, key)));
+  const out: TimeBucket[] = [];
+  state.timeBucketList.timeBucketMapById.forEach((value, key) => out.push(getTimeBucketById(state, key)));
   return out;
 };

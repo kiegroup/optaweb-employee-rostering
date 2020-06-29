@@ -13,59 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 import React from 'react';
-import { Modal, Text, Title, Flex, FlexItem, InputGroup, TextInput, InputGroupText, Button, Stack, StackItem, FlexModifiers, SplitItem, Split, Bullseye, GridItem, Grid } from '@patternfly/react-core';
+import {
+  Modal, Text, Title, Flex, FlexItem, InputGroup, TextInput,
+  InputGroupText, Button, FlexModifiers, Bullseye, GridItem, Grid,
+} from '@patternfly/react-core';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import { skillSelectors } from 'store/skill';
 import { useSelector } from 'react-redux';
-import { Skill } from 'domain/Skill';
-import { v4 as uuid } from 'uuid';
-import { TrashIcon } from '@patternfly/react-icons';
-import { Stub } from './EmployeeStub';
-import { rosterSelectors } from 'store/roster';
-
-export interface Seat {
-  dayInRotation: number;
-  stub: Stub | null;
-}
-
-export interface TimeBucket {
-  startTime: string;
-  endTime: string;
-  repeatOn: string[];
-  additionalSkillSet: Skill[];
-  seatList: Seat[];
-};
+import { TimeBucket } from 'domain/TimeBucket';
+import moment from 'moment';
 
 export interface EditTimeBucketModalProps {
   isOpen: boolean;
-  timeBuckets: TimeBucket[]; 
-  onUpdateTimeBucketList: (timeBuckets: TimeBucket[]) => void;
+  timeBucket: TimeBucket;
+  onUpdateTimeBucket: (timeBucket: TimeBucket) => void;
   onClose: () => void;
-};
+}
 
-export const TimeBucket: React.FC<{
-  name: string,
-  timeBucket: TimeBucket,
-  onUpdateTimeBucket: (newValue: TimeBucket) => void,
-}> = props => {
+export const TimeBucketEditor: React.FC<{
+  name: string;
+  timeBucket: TimeBucket;
+  onUpdateTimeBucket: (newValue: TimeBucket) => void;
+}> = (props) => {
   const skillList = useSelector(skillSelectors.getSkillList);
   const weekDaysEnum = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
   const weekDayTitle = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const TIME_FORMAT = 'HH:mm';
   return (
     <>
-      <Title size='lg'>{props.name}</Title>
-      <Flex breakpointMods={[{modifier: FlexModifiers.column}, {modifier: FlexModifiers["space-items-md"]}]}>
+      <Title size="lg">{props.name}</Title>
+      <Flex breakpointMods={[{ modifier: FlexModifiers.column }, { modifier: FlexModifiers['space-items-md'] }]}>
         <FlexItem>
           <InputGroup>
             <TextInput
-              type='time'
-              value={props.timeBucket.startTime}
-              onChange={startTime => {
-                  props.onUpdateTimeBucket({
+              aria-label="Start  Time"
+              type="time"
+              value={moment(props.timeBucket.startTime, TIME_FORMAT).format(TIME_FORMAT)}
+              onChange={(startTime) => {
+                props.onUpdateTimeBucket({
                   ...props.timeBucket,
-                  startTime,
+                  startTime: moment(startTime, TIME_FORMAT).toDate(),
                 });
               }}
             />
@@ -73,12 +62,13 @@ export const TimeBucket: React.FC<{
             to
             </InputGroupText>
             <TextInput
-              type='time'
-              value={props.timeBucket.endTime}
-              onChange={endTime => {
+              aria-label="End  Time"
+              type="time"
+              value={moment(props.timeBucket.endTime, TIME_FORMAT).format(TIME_FORMAT)}
+              onChange={(endTime) => {
                 props.onUpdateTimeBucket({
                   ...props.timeBucket,
-                  endTime,
+                  endTime: moment(endTime, TIME_FORMAT).toDate(),
                 });
               }}
             />
@@ -95,14 +85,14 @@ export const TimeBucket: React.FC<{
               <MultiTypeaheadSelectInput
                 options={skillList}
                 optionToStringMap={skill => skill.name}
-                emptyText='Select additional skills...'
+                emptyText="Select additional skills..."
                 autoSize={false}
                 value={props.timeBucket.additionalSkillSet}
-                onChange={additionalSkillSet => {
+                onChange={(additionalSkillSet) => {
                   props.onUpdateTimeBucket({
                     ...props.timeBucket,
                     additionalSkillSet,
-                  })
+                  });
                 }}
               />
             </GridItem>
@@ -115,78 +105,68 @@ export const TimeBucket: React.FC<{
               <FlexItem
                 key={enumValue}
                 onClick={() => {
-                  const index = props.timeBucket.repeatOn.indexOf(enumValue);
-                  
-                  if (index === -1) {
+                  const weekdayIndex = props.timeBucket.repeatOnDaySetList.indexOf(enumValue);
+
+                  if (weekdayIndex === -1) {
                     props.onUpdateTimeBucket({
-                    ...props.timeBucket,
-                    repeatOn: [
-                      ...props.timeBucket.repeatOn,
-                      enumValue
-                    ],
-                    seatList: props.timeBucket.seatList.map(v => v.dayInRotation % 7 === index? {
-                      ...v,
-                      stub: {
-                        employee: null,
-                        color: '#FFFFFF'
-                      },
-                    } : v),
-                  });
-                } else {
-                  props.onUpdateTimeBucket({
-                    ...props.timeBucket,
-                    repeatOn: props.timeBucket.repeatOn.filter(v => v !== enumValue),
-                    seatList: props.timeBucket.seatList.map(v => v.dayInRotation % 7 === index? {
-                      ...v,
-                      stub: null,
-                    } : v),
-                  });
-                }
-              }}
-            >
-              <span 
-                className='pf-l-bullseye'
-                style={{
-                  width: '30px',
-                  height: '30px',
-                  display: 'inline-block',
-                  borderRadius: '50%',
-                  backgroundColor: (props.timeBucket.repeatOn.filter(weekday => weekday == enumValue).length !== 0)?
-                    'var(--pf-global--primary-color--100)' : 'var(--pf-global--BackgroundColor--100)',
-                  border: '1px solid var(--pf-global--palette--black-300)',
+                      ...props.timeBucket,
+                      repeatOnDaySetList: [
+                        ...props.timeBucket.repeatOnDaySetList,
+                        enumValue,
+                      ],
+                    });
+                  } else {
+                    props.onUpdateTimeBucket({
+                      ...props.timeBucket,
+                      repeatOnDaySetList: props.timeBucket.repeatOnDaySetList.filter(v => v !== enumValue),
+                      seatList: props.timeBucket.seatList.filter(seat => seat.dayInRotation % 7 !== index),
+                    });
+                  }
                 }}
               >
-                <Bullseye>
-                  <Text
-                    style={{
-                      color: (props.timeBucket.repeatOn.filter(weekday => weekday == enumValue).length !== 0)?
-                        'var(--pf-global--BackgroundColor--100)' : 'var(--pf-global--BackgroundColor--dark-100)',
-                    }}
-                  >
-                    {weekDayTitle[index]}
-                  </Text>
-                </Bullseye>
-              </span>
-            </FlexItem>
-          ))}
-        </Flex>
-      </FlexItem>
-    </Flex>
+                <span
+                  className="pf-l-bullseye"
+                  style={{
+                    width: '30px',
+                    height: '30px',
+                    display: 'inline-block',
+                    borderRadius: '50%',
+                    backgroundColor: (props.timeBucket.repeatOnDaySetList
+                      .filter(weekday => weekday === enumValue).length !== 0)
+                      ? 'var(--pf-global--primary-color--100)' : 'var(--pf-global--BackgroundColor--100)',
+                    border: '1px solid var(--pf-global--palette--black-300)',
+                  }}
+                >
+                  <Bullseye>
+                    <Text
+                      style={{
+                        color: (props.timeBucket.repeatOnDaySetList
+                          .filter(weekday => weekday === enumValue).length !== 0)
+                          ? 'var(--pf-global--BackgroundColor--100)' : 'var(--pf-global--BackgroundColor--dark-100)',
+                      }}
+                    >
+                      {weekDayTitle[index]}
+                    </Text>
+                  </Bullseye>
+                </span>
+              </FlexItem>
+            ))}
+          </Flex>
+        </FlexItem>
+      </Flex>
     </>
   );
 };
 
-export const EditTimeBucketModal: React.FC<EditTimeBucketModalProps> = props => {
-  const [editedTimeBucketList, setEditedTimeBucketList] = React.useState(props.timeBuckets);
+export const EditTimeBucketModal: React.FC<EditTimeBucketModalProps> = (props) => {
+  const [editedTimeBucket, setEditedTimeBucket] = React.useState(props.timeBucket);
   React.useEffect(() => {
-    setEditedTimeBucketList(props.timeBuckets);
-  }, [props.timeBuckets, props.isOpen]);
-  const rosterState = useSelector(rosterSelectors.getRosterState);
-  const rotationLength = (rosterState !== null)? rosterState.rotationLength : 0;
-  
+    setEditedTimeBucket(props.timeBucket);
+  }, [props.timeBucket, props.isOpen]);
+
   return (
     <Modal
-      title='Create Working Time Bucket'
+      title="Create Working Time Bucket"
       isOpen={props.isOpen}
       onClose={props.onClose}
       isSmall
@@ -194,7 +174,7 @@ export const EditTimeBucketModal: React.FC<EditTimeBucketModalProps> = props => 
         (
           <Button
             key={0}
-            variant='secondary'
+            variant="secondary"
             onClick={props.onClose}
           >
             Cancel
@@ -203,72 +183,22 @@ export const EditTimeBucketModal: React.FC<EditTimeBucketModalProps> = props => 
         (
           <Button
             key={1}
-            variant='primary'
+            variant="primary"
             onClick={() => {
-              props.onUpdateTimeBucketList(editedTimeBucketList);
+              props.onUpdateTimeBucket(editedTimeBucket);
               props.onClose();
-             }}
-           >
+            }}
+          >
              Save
-           </Button>
-         ),  
+          </Button>
+        ),
       ]}
     >
-      <Stack>
-        <StackItem>
-          <Flex breakpointMods={[{modifier: FlexModifiers.column}]}>
-            {editedTimeBucketList.map((timeBucket, index) => (
-              <FlexItem key={uuid()}>
-                <Split>
-                  <SplitItem>
-                    <TimeBucket
-                      name={`Time Bucket ${index + 1}`}
-                      timeBucket={timeBucket}
-                      onUpdateTimeBucket={updatedTimeBucket => setEditedTimeBucketList([
-                        ...editedTimeBucketList.filter((_,i) => i < index),
-                        updatedTimeBucket,
-                        ...editedTimeBucketList.filter((_,i) => i > index),
-                      ])}
-                    />
-                  </SplitItem>
-                  <SplitItem isFilled><span/></SplitItem>
-                  <SplitItem>
-                    <Button
-                      variant='link'
-                      onClick={() => {
-                        setEditedTimeBucketList(editedTimeBucketList.filter(item => item !== timeBucket));
-                      }}
-                    >
-                      <TrashIcon />
-                    </Button>
-                  </SplitItem>
-                </Split>
-              </FlexItem>
-            ))}
-          </Flex>
-        </StackItem>
-        <StackItem isFilled><div /></StackItem>
-        <StackItem>
-          <Button
-            variant='link'
-            onClick={() => setEditedTimeBucketList([
-              ...editedTimeBucketList,
-              {
-                startTime: '00:00',
-                endTime: '00:00',
-                repeatOn: [],
-                additionalSkillSet: [],
-                seatList: new Array(rotationLength).fill(null).map((_, index) => ({
-                  dayInRotation: index,
-                  stub: null,
-                })),
-              },
-            ])}
-          >
-           + New Time Bucket
-          </Button>
-        </StackItem>
-      </Stack>
+      <TimeBucketEditor
+        name="Time Bucket"
+        timeBucket={editedTimeBucket}
+        onUpdateTimeBucket={setEditedTimeBucket}
+      />
     </Modal>
   );
 };

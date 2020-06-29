@@ -20,6 +20,8 @@ import { Contract } from './Contract';
 
 export interface Employee extends DomainObject {
   name: string;
+  shortId: string;
+  color: string;
   contract: Contract;
   skillProficiencySet: Skill[];
 }

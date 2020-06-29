@@ -24,7 +24,7 @@ import { ContractList } from './contract/types';
 import { EmployeeList } from './employee/types';
 import { CurrentRosterState, CurrentShiftRoster, CurrentAvailabilityRoster, CurrentSolverState } from './roster/types';
 import { AlertList } from './alert/types';
-import { ShiftTemplateList } from './rotation/types';
+import { TimeBucketList } from './rotation/types';
 
 /**
  * ThunkCommand is a ThunkAction that has no result (it's typically something like
@@ -64,7 +64,7 @@ export interface AppState {
   readonly spotList: SpotList;
   readonly contractList: ContractList;
   readonly employeeList: EmployeeList;
-  readonly shiftTemplateList: ShiftTemplateList;
+  readonly timeBucketList: TimeBucketList;
   readonly rosterState: CurrentRosterState;
   readonly shiftRoster: CurrentShiftRoster;
   readonly availabilityRoster: CurrentAvailabilityRoster;

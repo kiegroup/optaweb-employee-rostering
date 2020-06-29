@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.service.rotation;
 
+import java.time.DayOfWeek;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +25,13 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Validator;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
-import org.optaweb.employeerostering.domain.roster.RosterState;
-import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
-import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
+import org.optaweb.employeerostering.domain.rotation.Seat;
+import org.optaweb.employeerostering.domain.rotation.TimeBucket;
+import org.optaweb.employeerostering.domain.rotation.view.TimeBucketView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
@@ -36,6 +39,7 @@ import org.optaweb.employeerostering.service.employee.EmployeeService;
 import org.optaweb.employeerostering.service.roster.RosterService;
 import org.optaweb.employeerostering.service.skill.SkillService;
 import org.optaweb.employeerostering.service.spot.SpotService;
+import org.optaweb.employeerostering.service.tenant.TenantService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -43,18 +47,23 @@ import org.springframework.util.Assert;
 @Service
 public class RotationService extends AbstractRestService {
 
-    private final ShiftTemplateRepository shiftTemplateRepository;
+    private final TimeBucketRepository timeBucketRepository;
     private final RosterService rosterService;
+    private final TenantService tenantService;
     private final SpotService spotService;
     private final SkillService skillService;
     private final EmployeeService employeeService;
 
     public RotationService(Validator validator,
-                           ShiftTemplateRepository shiftTemplateRepository, RosterService rosterService,
-                           SpotService spotService, SkillService skillService, EmployeeService employeeService) {
+                           TimeBucketRepository timeBucketRepository, RosterService rosterService,
+                           TenantService tenantService, SpotService spotService, SkillService skillService,
+                           EmployeeService employeeService) {
         super(validator);
-        this.shiftTemplateRepository = shiftTemplateRepository;
-
+        this.timeBucketRepository = timeBucketRepository;
+        
+        this.tenantService = tenantService;
+        Assert.notNull(tenantService, "tenantService must not be null");
+        
         this.rosterService = rosterService;
         Assert.notNull(rosterService, "rosterService must not be null.");
 
@@ -68,102 +77,126 @@ public class RotationService extends AbstractRestService {
         Assert.notNull(employeeService, "employeeService must not be null.");
     }
 
-    @Transactional
-    public List<ShiftTemplateView> getShiftTemplateList(Integer tenantId) {
-        RosterState rosterState = rosterService.getRosterState(tenantId);
-        return shiftTemplateRepository.findAllByTenantId(tenantId)
-                .stream()
-                .map(st -> new ShiftTemplateView(rosterState.getRotationLength(), st))
-                .collect(Collectors.toList());
-    }
-
-    private Set<Skill> getRequiredSkillSet(Integer tenantId, ShiftTemplateView shiftTemplateView) {
-        return shiftTemplateView.getRequiredSkillSetIdList()
+    private Set<Skill> getRequiredSkillSet(Integer tenantId, TimeBucketView timeBucketView) {
+        return timeBucketView.getAdditionalSkillSetIdList()
                 .stream().map(id -> skillService.getSkill(tenantId, id))
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    @Transactional
-    public ShiftTemplateView getShiftTemplate(Integer tenantId, Long id) {
-        RosterState rosterState = rosterService.getRosterState(tenantId);
-        ShiftTemplate shiftTemplate = shiftTemplateRepository
+    public List<TimeBucketView> getTimeBucketList(@Min(0) Integer tenantId) {
+        return timeBucketRepository.findAllByTenantId(tenantId)
+                .stream()
+                .map(TimeBucketView::new)
+                .collect(Collectors.toList());
+    }
+
+    public TimeBucketView getTimeBucket(@Min(0) Integer tenantId, @Min(0) Long id) {
+        TimeBucket timeBucket = timeBucketRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No ShiftTemplate entity found with ID (" + id + ")."));
 
-        validateBean(tenantId, shiftTemplate);
-        return new ShiftTemplateView(rosterState.getRotationLength(), shiftTemplate);
+        validateBean(tenantId, timeBucket);
+        return new TimeBucketView(timeBucket);
     }
 
-    @Transactional
-    public ShiftTemplateView createShiftTemplate(Integer tenantId, ShiftTemplateView shiftTemplateView) {
-        RosterState rosterState = rosterService.getRosterState(tenantId);
-        Spot spot = spotService.getSpot(tenantId, shiftTemplateView.getSpotId());
-        Employee employee;
-        Set<Skill> requiredSkillSet = getRequiredSkillSet(tenantId, shiftTemplateView);
+    public Boolean deleteTimeBucket(@Min(0) Integer tenantId, @Min(0) Long id) {
+        Optional<TimeBucket> timeBucketOptional = timeBucketRepository.findById(id);
 
-        if (shiftTemplateView.getRotationEmployeeId() != null) {
-            employee = employeeService.getEmployee(tenantId, shiftTemplateView.getRotationEmployeeId());
-        } else {
-            employee = null;
-        }
-
-        ShiftTemplate shiftTemplate = new ShiftTemplate(rosterState.getRotationLength(), shiftTemplateView, spot,
-                                                        employee, requiredSkillSet);
-        validateBean(tenantId, shiftTemplate);
-        shiftTemplateRepository.save(shiftTemplate);
-        return new ShiftTemplateView(rosterState.getRotationLength(), shiftTemplate);
-    }
-
-    @Transactional
-    public ShiftTemplateView updateShiftTemplate(Integer tenantId, ShiftTemplateView shiftTemplateView) {
-        RosterState rosterState = rosterService.getRosterState(tenantId);
-        Spot spot = spotService.getSpot(tenantId, shiftTemplateView.getSpotId());
-        Employee employee;
-        Set<Skill> requiredSkillSet = getRequiredSkillSet(tenantId, shiftTemplateView);
-
-        if (shiftTemplateView.getRotationEmployeeId() != null) {
-            employee = employeeService.getEmployee(tenantId, shiftTemplateView.getRotationEmployeeId());
-        } else {
-            employee = null;
-        }
-
-        ShiftTemplate newShiftTemplate = new ShiftTemplate(rosterState.getRotationLength(), shiftTemplateView, spot,
-                                                           employee, requiredSkillSet);
-        validateBean(tenantId, newShiftTemplate);
-
-        ShiftTemplate oldShiftTemplate = shiftTemplateRepository
-                .findById(newShiftTemplate.getId())
-                .orElseThrow(() -> new EntityNotFoundException("ShiftTemplate entity with ID (" +
-                                                                       newShiftTemplate.getId() + ") not found."));
-
-        if (!oldShiftTemplate.getTenantId().equals(newShiftTemplate.getTenantId())) {
-            throw new IllegalStateException("ShiftTemplate entity with tenantId (" + oldShiftTemplate.getTenantId() +
-                                                    ") cannot change tenants.");
-        }
-
-        oldShiftTemplate.setRotationEmployee(employee);
-        oldShiftTemplate.setSpot(spot);
-        oldShiftTemplate.setStartDayOffset(newShiftTemplate.getStartDayOffset());
-        oldShiftTemplate.setEndDayOffset(newShiftTemplate.getEndDayOffset());
-        oldShiftTemplate.setStartTime(newShiftTemplate.getStartTime());
-        oldShiftTemplate.setEndTime(newShiftTemplate.getEndTime());
-
-        // Flush to increase version number before we duplicate it to ShiftTemplateView
-        ShiftTemplate updatedShiftTemplate = shiftTemplateRepository.saveAndFlush(oldShiftTemplate);
-
-        return new ShiftTemplateView(rosterState.getRotationLength(), updatedShiftTemplate);
-    }
-
-    @Transactional
-    public Boolean deleteShiftTemplate(Integer tenantId, Long id) {
-        Optional<ShiftTemplate> shiftTemplateOptional = shiftTemplateRepository.findById(id);
-
-        if (!shiftTemplateOptional.isPresent()) {
+        if (!timeBucketOptional.isPresent()) {
             return false;
         }
 
-        validateBean(tenantId, shiftTemplateOptional.get());
-        shiftTemplateRepository.deleteById(id);
+        validateBean(tenantId, timeBucketOptional.get());
+        timeBucketRepository.deleteById(id);
         return true;
+    }
+
+    public TimeBucketView createTimeBucket(@Min(0) Integer tenantId, @Valid TimeBucketView timeBucketView) {
+        Spot spot = spotService.getSpot(tenantId, timeBucketView.getSpotId());
+        Set<Skill> additionalSkillSet = getRequiredSkillSet(tenantId, timeBucketView);
+        Integer rotationLength = rosterService.getRosterState(tenantId).getRotationLength();
+        
+        Set<DayOfWeek> repeatOnDaySet = timeBucketView.getRepeatOnDaySetList().stream().collect(Collectors.toSet());
+        TimeBucket timeBucket;
+        
+        if (timeBucketView.getSeatList() != null) {
+            List<Seat> seatList = timeBucketView.getSeatList().stream()
+                    .map(seat -> {
+                            if (seat.getEmployeeId() != null) {
+                                Employee employee = employeeService.getEmployee(tenantId, seat.getEmployeeId());
+                                return new Seat(seat.getDayInRotation(), employee);
+                            }
+                            else {
+                                return new Seat(seat.getDayInRotation(), null);
+                            }
+                    }).collect(Collectors.toList());
+            timeBucket = new TimeBucket(tenantId, spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                                                   additionalSkillSet, repeatOnDaySet, seatList);
+        }
+        else {
+            DayOfWeek startOfWeek = tenantService.getRosterConstraintConfiguration(tenantId).getWeekStartDay();
+            timeBucket = new TimeBucket(tenantId, spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                                        additionalSkillSet, repeatOnDaySet, startOfWeek, rotationLength);
+        }
+        
+
+        
+        validateBean(tenantId, timeBucket);
+        timeBucketRepository.save(timeBucket);
+        return new TimeBucketView(timeBucket);
+    }
+
+    public TimeBucketView updateTimeBucket(@Min(0) Integer tenantId, @Valid TimeBucketView timeBucketView) {
+        Spot spot = spotService.getSpot(tenantId, timeBucketView.getSpotId());
+        Set<Skill> additionalSkillSet = getRequiredSkillSet(tenantId, timeBucketView);
+        Integer rotationLength = rosterService.getRosterState(tenantId).getRotationLength();
+        
+        Set<DayOfWeek> repeatOnDaySet = timeBucketView.getRepeatOnDaySetList().stream().collect(Collectors.toSet());
+        TimeBucket newTimeBucket;
+        
+        if (timeBucketView.getSeatList() != null) {
+            List<Seat> seatList = timeBucketView.getSeatList().stream()
+                    .map(seat -> {
+                        if (seat.getEmployeeId() != null) {
+                            Employee employee = employeeService.getEmployee(tenantId, seat.getEmployeeId());
+                            return new Seat(seat.getDayInRotation(), employee);
+                        }
+                        else {
+                            return new Seat(seat.getDayInRotation(), null);
+                        }
+                    }).collect(Collectors.toList());
+            newTimeBucket = new TimeBucket(tenantId, spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                                                   additionalSkillSet, repeatOnDaySet, seatList);
+            newTimeBucket.setId(timeBucketView.getId());
+            newTimeBucket.setVersion(timeBucketView.getVersion());
+        }
+        else {
+            DayOfWeek startOfWeek = tenantService.getRosterConstraintConfiguration(tenantId).getWeekStartDay();
+            newTimeBucket = new TimeBucket(tenantId, spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                                        additionalSkillSet, repeatOnDaySet, startOfWeek, rotationLength);
+            newTimeBucket.setId(timeBucketView.getId());
+            newTimeBucket.setVersion(timeBucketView.getVersion());
+        }
+        
+
+        
+        validateBean(tenantId, newTimeBucket);
+
+        TimeBucket oldTimeBucket = timeBucketRepository
+                .findById(newTimeBucket.getId())
+                .orElseThrow(() -> new EntityNotFoundException("TimeBucket entity with ID (" +
+                        newTimeBucket.getId() + ") not found."));
+
+        if (!oldTimeBucket.getTenantId().equals(newTimeBucket.getTenantId())) {
+            throw new IllegalStateException("TimeBucket entity with tenantId (" + oldTimeBucket.getTenantId() +
+                                                    ") cannot change tenants.");
+        }
+
+        oldTimeBucket.setValuesFromTimeBucket(newTimeBucket);
+
+        // Flush to increase version number before we duplicate it to ShiftTemplateView
+        TimeBucket updatedTimeBucket = timeBucketRepository.saveAndFlush(oldTimeBucket);
+
+        return new TimeBucketView(updatedTimeBucket);
     }
 }

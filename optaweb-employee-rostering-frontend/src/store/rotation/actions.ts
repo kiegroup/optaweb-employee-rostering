@@ -14,39 +14,39 @@
  * limitations under the License.
  */
 
-import { ShiftTemplate } from 'domain/ShiftTemplate';
+import { TimeBucket } from 'domain/TimeBucket';
 import DomainObjectView from 'domain/DomainObjectView';
 import { ActionFactory } from '../types';
 import {
-  ActionType, SetShiftTemplateListLoadingAction, AddShiftTemplateAction,
-  UpdateShiftTemplateAction, RemoveShiftTemplateAction, RefreshShiftTemplateListAction,
+  ActionType, SetTimeBucketListLoadingAction, AddTimeBucketAction,
+  UpdateTimeBucketAction, RemoveTimeBucketAction, RefreshTimeBucketListAction,
 } from './types';
 
-export const setIsShiftTemplateListLoading: ActionFactory<boolean, SetShiftTemplateListLoadingAction> = isLoading => ({
-  type: ActionType.SET_SHIFT_TEMPLATE_LIST_LOADING,
+export const setIsTimeBucketListLoading: ActionFactory<boolean, SetTimeBucketListLoadingAction> = isLoading => ({
+  type: ActionType.SET_TIME_BUCKET_LIST_LOADING,
   isLoading,
 });
 
-export const addShiftTemplate:
-ActionFactory<DomainObjectView<ShiftTemplate>, AddShiftTemplateAction> = newShiftTemplate => ({
-  type: ActionType.ADD_SHIFT_TEMPLATE,
-  shiftTemplate: newShiftTemplate,
+export const addTimeBucket:
+ActionFactory<DomainObjectView<TimeBucket>, AddTimeBucketAction> = timeBucket => ({
+  type: ActionType.ADD_TIME_BUCKET,
+  timeBucket,
 });
 
-export const removeShiftTemplate: ActionFactory<DomainObjectView<ShiftTemplate>,
-RemoveShiftTemplateAction> = deletedShiftTemplate => ({
-  type: ActionType.REMOVE_SHIFT_TEMPLATE,
-  shiftTemplate: deletedShiftTemplate,
+export const removeTimeBucket: ActionFactory<DomainObjectView<TimeBucket>,
+RemoveTimeBucketAction> = timeBucket => ({
+  type: ActionType.REMOVE_TIME_BUCKET,
+  timeBucket,
 });
 
-export const updateShiftTemplate: ActionFactory<DomainObjectView<ShiftTemplate>,
-UpdateShiftTemplateAction> = updatedShiftTemplate => ({
-  type: ActionType.UPDATE_SHIFT_TEMPLATE,
-  shiftTemplate: updatedShiftTemplate,
+export const updateTimeBucket: ActionFactory<DomainObjectView<TimeBucket>,
+UpdateTimeBucketAction> = timeBucket => ({
+  type: ActionType.UPDATE_TIME_BUCKET,
+  timeBucket,
 });
 
-export const refreshShiftTemplateList: ActionFactory<DomainObjectView<ShiftTemplate>[],
-RefreshShiftTemplateListAction> = newShiftTemplateList => ({
-  type: ActionType.REFRESH_SHIFT_TEMPLATE_LIST,
-  shiftTemplateList: newShiftTemplateList,
+export const refreshTimeBucketList: ActionFactory<DomainObjectView<TimeBucket>[],
+RefreshTimeBucketListAction> = timeBucketList => ({
+  type: ActionType.REFRESH_TIME_BUCKET_LIST,
+  timeBucketList,
 });

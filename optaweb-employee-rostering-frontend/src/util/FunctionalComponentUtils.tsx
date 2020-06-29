@@ -13,7 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router';
+
+export function useUrlState(urlProperty: string, initialValue?: string):
+[string|null, (newValue: string|null) => void] {
+  const history = useHistory();
+  const searchParams = new URLSearchParams(history.location.search);
+  const [state, setState] = useState(searchParams.get(urlProperty) || initialValue || null);
+  return [
+    state || null,
+    (newValue) => {
+      setState(newValue);
+      const newSearchParams = new URLSearchParams(history.location.search);
+      if (newValue !== null) {
+        newSearchParams.set(urlProperty, newValue);
+      } else {
+        newSearchParams.delete(urlProperty);
+      }
+      history.push(`${history.location.pathname}?${newSearchParams.toString()}`);
+    }];
+}
 
 // From https://overreacted.io/making-setinterval-declarative-with-react-hooks/
 export function useInterval(callback: Function, delay: number|null) {

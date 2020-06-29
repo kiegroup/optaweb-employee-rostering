@@ -15,41 +15,41 @@
  */
 
 import { Action } from 'redux';
-import { ShiftTemplate } from 'domain/ShiftTemplate';
 import DomainObjectView from 'domain/DomainObjectView';
+import { TimeBucket } from 'domain/TimeBucket';
 
 export enum ActionType {
-  ADD_SHIFT_TEMPLATE = 'ADD_SHIFT_TEMPLATE',
-  REMOVE_SHIFT_TEMPLATE = 'REMOVE_SHIFT_TEMPLATE',
-  UPDATE_SHIFT_TEMPLATE = 'UPDATE_SHIFT_TEMPLATE',
-  REFRESH_SHIFT_TEMPLATE_LIST = 'REFRESH_SHIFT_TEMPLATE_LIST',
-  SET_SHIFT_TEMPLATE_LIST_LOADING = 'SET_SHIFT_TEMPLATE_LIST_LOADING'
+  ADD_TIME_BUCKET = 'ADD__TIME_BUCKET',
+  REMOVE_TIME_BUCKET = 'REMOVE_TIME_BUCKET',
+  UPDATE_TIME_BUCKET = 'UPDATE_TIME_BUCKET',
+  REFRESH_TIME_BUCKET_LIST = 'REFRESH_TIME_BUCKET_LIST',
+  SET_TIME_BUCKET_LIST_LOADING = 'SET_TIME_BUCKET_LIST_LOADING'
 }
 
-export interface SetShiftTemplateListLoadingAction extends Action<ActionType.SET_SHIFT_TEMPLATE_LIST_LOADING> {
+export interface SetTimeBucketListLoadingAction extends Action<ActionType.SET_TIME_BUCKET_LIST_LOADING> {
   readonly isLoading: boolean;
 }
 
-export interface AddShiftTemplateAction extends Action<ActionType.ADD_SHIFT_TEMPLATE> {
-  readonly shiftTemplate: DomainObjectView<ShiftTemplate>;
+export interface AddTimeBucketAction extends Action<ActionType.ADD_TIME_BUCKET> {
+  readonly timeBucket: DomainObjectView<TimeBucket>;
 }
 
-export interface RemoveShiftTemplateAction extends Action<ActionType.REMOVE_SHIFT_TEMPLATE> {
-  readonly shiftTemplate: DomainObjectView<ShiftTemplate>;
+export interface RemoveTimeBucketAction extends Action<ActionType.REMOVE_TIME_BUCKET> {
+  readonly timeBucket: DomainObjectView<TimeBucket>;
 }
 
-export interface UpdateShiftTemplateAction extends Action<ActionType.UPDATE_SHIFT_TEMPLATE> {
-  readonly shiftTemplate: DomainObjectView<ShiftTemplate>;
+export interface UpdateTimeBucketAction extends Action<ActionType.UPDATE_TIME_BUCKET> {
+  readonly timeBucket: DomainObjectView<TimeBucket>;
 }
 
-export interface RefreshShiftTemplateListAction extends Action<ActionType.REFRESH_SHIFT_TEMPLATE_LIST> {
-  readonly shiftTemplateList: DomainObjectView<ShiftTemplate>[];
+export interface RefreshTimeBucketListAction extends Action<ActionType.REFRESH_TIME_BUCKET_LIST> {
+  readonly timeBucketList: DomainObjectView<TimeBucket>[];
 }
 
-export type ShiftTemplateAction = SetShiftTemplateListLoadingAction | AddShiftTemplateAction |
-RemoveShiftTemplateAction | UpdateShiftTemplateAction | RefreshShiftTemplateListAction;
+export type TimeBucketAction = SetTimeBucketListLoadingAction | AddTimeBucketAction |
+RemoveTimeBucketAction | UpdateTimeBucketAction | RefreshTimeBucketListAction;
 
-export interface ShiftTemplateList {
+export interface TimeBucketList {
   readonly isLoading: boolean;
-  readonly shiftTemplateMapById: Map<number, DomainObjectView<ShiftTemplate>>;
+  readonly timeBucketMapById: Map<number, DomainObjectView<TimeBucket>>;
 }
