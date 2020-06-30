@@ -26,6 +26,39 @@ import { AppState } from '../types';
 import * as actions from './actions';
 import reducer, { spotSelectors, spotOperations } from './index';
 
+const state: Partial<AppState> = {
+  spotList: {
+    isLoading: false,
+    spotMapById: new Map([
+      [1234, {
+        tenantId: 0,
+        id: 1234,
+        version: 1,
+        name: 'Spot 2',
+        requiredSkillSet: [1],
+      }],
+      [2312, {
+        tenantId: 0,
+        id: 2312,
+        version: 0,
+        name: 'Spot 3',
+        requiredSkillSet: [],
+      }],
+    ]),
+  },
+  skillList: {
+    isLoading: false,
+    skillMapById: new Map([
+      [1, {
+        tenantId: 0,
+        id: 1,
+        version: 0,
+        name: 'Skill 1',
+      }],
+    ]),
+  },
+};
+
 describe('Spot operations', () => {
   it('should dispatch actions and call client on refresh spot list', async () => {
     const { store, client } = mockStore(state);
@@ -159,52 +192,58 @@ describe('Spot reducers', () => {
     name: 'Spot 3',
     requiredSkillSet: [],
   };
+  const { store } = mockStore(state);
+  const storeState = store.getState();
+
   it('set loading', () => {
     expect(
-      reducer(state.spotList, actions.setIsSpotListLoading(true)),
-    ).toEqual({ ...state.spotList,
+      reducer(storeState.spotList, actions.setIsSpotListLoading(true)),
+    ).toEqual({ ...storeState.spotList,
       isLoading: true });
   });
   it('add spot', () => {
     expect(
-      reducer(state.spotList, actions.addSpot(addedSpot)),
-    ).toEqual({ ...state.spotList,
-      spotMapById: mapWithElement(state.spotList.spotMapById, addedSpot) });
+      reducer(storeState.spotList, actions.addSpot(addedSpot)),
+    ).toEqual({ ...storeState.spotList,
+      spotMapById: mapWithElement(storeState.spotList.spotMapById, addedSpot) });
   });
   it('remove spot', () => {
     expect(
-      reducer(state.spotList, actions.removeSpot(deletedSpot)),
-    ).toEqual({ ...state.spotList,
-      spotMapById: mapWithoutElement(state.spotList.spotMapById, deletedSpot) });
+      reducer(storeState.spotList, actions.removeSpot(deletedSpot)),
+    ).toEqual({ ...storeState.spotList,
+      spotMapById: mapWithoutElement(storeState.spotList.spotMapById, deletedSpot) });
   });
   it('update spot', () => {
     expect(
-      reducer(state.spotList, actions.updateSpot(updatedSpot)),
-    ).toEqual({ ...state.spotList,
-      spotMapById: mapWithUpdatedElement(state.spotList.spotMapById, updatedSpot) });
+      reducer(storeState.spotList, actions.updateSpot(updatedSpot)),
+    ).toEqual({ ...storeState.spotList,
+      spotMapById: mapWithUpdatedElement(storeState.spotList.spotMapById, updatedSpot) });
   });
   it('refresh spot list', () => {
     expect(
-      reducer(state.spotList, actions.refreshSpotList([addedSpot])),
-    ).toEqual({ ...state.spotList,
+      reducer(storeState.spotList, actions.refreshSpotList([addedSpot])),
+    ).toEqual({ ...storeState.spotList,
       spotMapById: createIdMapFromList([addedSpot]) });
   });
 });
 
 describe('Spot selectors', () => {
+  const { store } = mockStore(state);
+  const storeState = store.getState();
+
   it('should throw an error if Spot list or Skill is loading', () => {
     expect(() => spotSelectors.getSpotById({
-      ...state,
-      skillList: { ...state.skillList, isLoading: true },
+      ...storeState,
+      skillList: { ...storeState.skillList, isLoading: true },
     }, 1234)).toThrow();
     expect(() => spotSelectors.getSpotById({
-      ...state,
-      spotList: { ...state.spotList, isLoading: true },
+      ...storeState,
+      spotList: { ...storeState.spotList, isLoading: true },
     }, 1234)).toThrow();
   });
 
   it('should get a spot by id', () => {
-    const spot = spotSelectors.getSpotById(state, 1234);
+    const spot = spotSelectors.getSpotById(storeState, 1234);
     expect(spot).toEqual({
       tenantId: 0,
       id: 1234,
@@ -223,19 +262,19 @@ describe('Spot selectors', () => {
 
   it('should return an empty list if spot list or skill list is loading', () => {
     let spotList = spotSelectors.getSpotList({
-      ...state,
-      skillList: { ...state.skillList, isLoading: true },
+      ...storeState,
+      skillList: { ...storeState.skillList, isLoading: true },
     });
     expect(spotList).toEqual([]);
     spotList = spotSelectors.getSpotList({
-      ...state,
-      spotList: { ...state.spotList, isLoading: true },
+      ...storeState,
+      spotList: { ...storeState.spotList, isLoading: true },
     });
     expect(spotList).toEqual([]);
   });
 
   it('should return a list of all spots', () => {
-    const spotList = spotSelectors.getSpotList(state);
+    const spotList = spotSelectors.getSpotList(storeState);
     expect(spotList).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
@@ -262,73 +301,3 @@ describe('Spot selectors', () => {
     expect(spotList.length).toEqual(2);
   });
 });
-
-const state: AppState = {
-  tenantData: {
-    currentTenantId: 0,
-    tenantList: [],
-    timezoneList: ['America/Toronto'],
-  },
-  employeeList: {
-    isLoading: false,
-    employeeMapById: new Map(),
-  },
-  contractList: {
-    isLoading: false,
-    contractMapById: new Map(),
-  },
-  spotList: {
-    isLoading: false,
-    spotMapById: new Map([
-      [1234, {
-        tenantId: 0,
-        id: 1234,
-        version: 1,
-        name: 'Spot 2',
-        requiredSkillSet: [1],
-      }],
-      [2312, {
-        tenantId: 0,
-        id: 2312,
-        version: 0,
-        name: 'Spot 3',
-        requiredSkillSet: [],
-      }],
-    ]),
-  },
-  skillList: {
-    isLoading: false,
-    skillMapById: new Map([
-      [1, {
-        tenantId: 0,
-        id: 1,
-        version: 0,
-        name: 'Skill 1',
-      }],
-    ]),
-  },
-  shiftTemplateList: {
-    isLoading: false,
-    shiftTemplateMapById: new Map(),
-  },
-  rosterState: {
-    isLoading: true,
-    rosterState: null,
-  },
-  shiftRoster: {
-    isLoading: true,
-    shiftRosterView: null,
-  },
-  availabilityRoster: {
-    isLoading: true,
-    availabilityRosterView: null,
-  },
-  solverState: {
-    solverStatus: 'TERMINATED',
-  },
-  alerts: {
-    alertList: [],
-    idGeneratorIndex: 0,
-  },
-  isConnected: true,
-};

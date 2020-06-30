@@ -93,7 +93,7 @@ public class RotationService extends AbstractRestService {
     public TimeBucketView getTimeBucket(@Min(0) Integer tenantId, @Min(0) Long id) {
         TimeBucket timeBucket = timeBucketRepository
                 .findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No ShiftTemplate entity found with ID (" + id + ")."));
+                .orElseThrow(() -> new EntityNotFoundException("No TimeBucket entity found with ID (" + id + ")."));
 
         validateBean(tenantId, timeBucket);
         return new TimeBucketView(timeBucket);
@@ -130,12 +130,14 @@ public class RotationService extends AbstractRestService {
                                 return new Seat(seat.getDayInRotation(), null);
                             }
                     }).collect(Collectors.toList());
-            timeBucket = new TimeBucket(tenantId, spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
-                                                   additionalSkillSet, repeatOnDaySet, seatList);
+            timeBucket = new TimeBucket(timeBucketView.getTenantId(),
+                                        spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                                        additionalSkillSet, repeatOnDaySet, seatList);
         }
         else {
             DayOfWeek startOfWeek = tenantService.getRosterConstraintConfiguration(tenantId).getWeekStartDay();
-            timeBucket = new TimeBucket(tenantId, spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+            timeBucket = new TimeBucket(timeBucketView.getTenantId(),
+                                        spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
                                         additionalSkillSet, repeatOnDaySet, startOfWeek, rotationLength);
         }
         
@@ -165,15 +167,17 @@ public class RotationService extends AbstractRestService {
                             return new Seat(seat.getDayInRotation(), null);
                         }
                     }).collect(Collectors.toList());
-            newTimeBucket = new TimeBucket(tenantId, spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
-                                                   additionalSkillSet, repeatOnDaySet, seatList);
+            newTimeBucket = new TimeBucket(timeBucketView.getTenantId(),
+                                           spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                                           additionalSkillSet, repeatOnDaySet, seatList);
             newTimeBucket.setId(timeBucketView.getId());
             newTimeBucket.setVersion(timeBucketView.getVersion());
         }
         else {
             DayOfWeek startOfWeek = tenantService.getRosterConstraintConfiguration(tenantId).getWeekStartDay();
-            newTimeBucket = new TimeBucket(tenantId, spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
-                                        additionalSkillSet, repeatOnDaySet, startOfWeek, rotationLength);
+            newTimeBucket = new TimeBucket(timeBucketView.getTenantId(),
+                                           spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                                           additionalSkillSet, repeatOnDaySet, startOfWeek, rotationLength);
             newTimeBucket.setId(timeBucketView.getId());
             newTimeBucket.setVersion(timeBucketView.getVersion());
         }
@@ -194,7 +198,7 @@ public class RotationService extends AbstractRestService {
 
         oldTimeBucket.setValuesFromTimeBucket(newTimeBucket);
 
-        // Flush to increase version number before we duplicate it to ShiftTemplateView
+        // Flush to increase version number before we duplicate it to TimeBucketView
         TimeBucket updatedTimeBucket = timeBucketRepository.saveAndFlush(oldTimeBucket);
 
         return new TimeBucketView(updatedTimeBucket);

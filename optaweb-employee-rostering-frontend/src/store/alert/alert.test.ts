@@ -21,12 +21,27 @@ import * as actions from './actions';
 import reducer, { alert } from './index';
 import { AlertInfo, AlertComponent } from './types';
 
+const state: Partial<AppState> = {
+  alerts: {
+    alertList: [{
+      id: 0,
+      createdAt: new Date(),
+      i18nKey: 'alert1',
+      variant: 'info',
+      params: {},
+      components: [],
+      componentProps: [],
+    }],
+    idGeneratorIndex: 1,
+  },
+};
+
 describe('Alert operations', () => {
   it('should dispatch actions on showSuccessMessage', async () => {
     const { store } = mockStore(state);
     const i18nKey = 'test';
 
-    await store.dispatch(alert.showSuccessMessage(i18nKey));
+    store.dispatch(alert.showSuccessMessage(i18nKey));
     expect(store.getActions()).toEqual([alert.showMessage('success', i18nKey)]);
   });
 
@@ -34,7 +49,7 @@ describe('Alert operations', () => {
     const { store } = mockStore(state);
     const i18nKey = 'test';
 
-    await store.dispatch(alert.showInfoMessage(i18nKey));
+    store.dispatch(alert.showInfoMessage(i18nKey));
     expect(store.getActions()).toEqual([alert.showMessage('info', i18nKey)]);
   });
 
@@ -43,7 +58,7 @@ describe('Alert operations', () => {
     const i18nKey = 'test';
     const params = { errorMsg: 'Hi' };
 
-    await store.dispatch(alert.showErrorMessage(i18nKey, params));
+    store.dispatch(alert.showErrorMessage(i18nKey, params));
     expect(store.getActions()).toEqual([alert.showMessage('danger', i18nKey, params)]);
   });
 
@@ -66,7 +81,7 @@ describe('Alert operations', () => {
       },
     };
 
-    await store.dispatch(alert.showServerError(serverSideException));
+    store.dispatch(alert.showServerError(serverSideException));
     expect(store.getActions()).toEqual([
       alert.showMessage('danger', 'exception',
         { message: 'message1' },
@@ -80,7 +95,7 @@ describe('Alert operations', () => {
     const i18nKey = 'generic';
     const params = { message: 'Hi' };
 
-    await store.dispatch(alert.showServerErrorMessage(params.message));
+    store.dispatch(alert.showServerErrorMessage(params.message));
     expect(store.getActions()).toEqual([alert.showMessage('danger', i18nKey, params)]);
   });
 
@@ -89,7 +104,7 @@ describe('Alert operations', () => {
     const variant = 'success';
     const i18nKey = 'generic';
 
-    await store.dispatch(alert.showMessage(variant, i18nKey));
+    store.dispatch(alert.showMessage(variant, i18nKey));
     expect(store.getActions()).toEqual([
       alert.addAlert({
         variant, i18nKey, params: {}, components: [], componentProps: [],
@@ -107,7 +122,7 @@ describe('Alert operations', () => {
       componentProps: [],
     };
 
-    await store.dispatch(alert.addAlert(alertInfo));
+    store.dispatch(alert.addAlert(alertInfo));
     expect(store.getActions()).toEqual([
       actions.addAlert({ ...alertInfo, createdAt: new Date() }),
     ]);
@@ -124,7 +139,7 @@ describe('Alert operations', () => {
       componentProps: [],
     };
 
-    await store.dispatch(alert.removeAlert(alertInfo));
+    store.dispatch(alert.removeAlert(alertInfo));
     expect(store.getActions()).toEqual([
       actions.removeAlert(1),
     ]);
@@ -141,72 +156,18 @@ describe('Alert reducers', () => {
     componentProps: [],
   };
   const removedAlertId = 0;
+  const { store } = mockStore(state);
+  const storeState = store.getState();
 
   it('add an alert', () => {
     expect(
       reducer(state.alerts, actions.addAlert(addedAlert)),
-    ).toEqual({ idGeneratorIndex: 2, alertList: withElement(state.alerts.alertList, { ...addedAlert, id: 1 }) });
+    ).toEqual({ idGeneratorIndex: 2, alertList: withElement(storeState.alerts.alertList, { ...addedAlert, id: 1 }) });
   });
 
   it('remove an alert', () => {
     expect(
       reducer(state.alerts, actions.removeAlert(removedAlertId)),
-    ).toEqual({ ...state.alerts, alertList: withoutElementWithId(state.alerts.alertList, removedAlertId) });
+    ).toEqual({ ...state.alerts, alertList: withoutElementWithId(storeState.alerts.alertList, removedAlertId) });
   });
 });
-
-const state: AppState = {
-  tenantData: {
-    currentTenantId: 0,
-    tenantList: [],
-    timezoneList: ['America/Toronto'],
-  },
-  employeeList: {
-    isLoading: false,
-    employeeMapById: new Map(),
-  },
-  contractList: {
-    isLoading: false,
-    contractMapById: new Map(),
-  },
-  spotList: {
-    isLoading: false,
-    spotMapById: new Map(),
-  },
-  skillList: {
-    isLoading: false,
-    skillMapById: new Map(),
-  },
-  shiftTemplateList: {
-    isLoading: false,
-    shiftTemplateMapById: new Map(),
-  },
-  rosterState: {
-    isLoading: true,
-    rosterState: null,
-  },
-  shiftRoster: {
-    isLoading: true,
-    shiftRosterView: null,
-  },
-  availabilityRoster: {
-    isLoading: true,
-    availabilityRosterView: null,
-  },
-  solverState: {
-    solverStatus: 'TERMINATED',
-  },
-  alerts: {
-    alertList: [{
-      id: 0,
-      createdAt: new Date(),
-      i18nKey: 'alert1',
-      variant: 'info',
-      params: {},
-      components: [],
-      componentProps: [],
-    }],
-    idGeneratorIndex: 1,
-  },
-  isConnected: true,
-};

@@ -21,7 +21,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.rotation.TimeBucket;
 import org.optaweb.employeerostering.domain.skill.Skill;
@@ -34,8 +33,6 @@ public class TimeBucketView extends AbstractPersistable {
     
     private List<Long> additionalSkillSetIdList;
     private List<DayOfWeek> repeatOnDaySetList;
-    
-    @JsonInclude(content=JsonInclude.Include.ALWAYS)
     private List<SeatView> seatList;
     
     public TimeBucketView() { 
@@ -53,7 +50,7 @@ public class TimeBucketView extends AbstractPersistable {
         this.repeatOnDaySetList = timeBucket.getRepeatOnDaySet().stream()
                 .sorted().collect(Collectors.toList());
         this.seatList = timeBucket.getSeatList().stream()
-                .map(seat -> (seat != null)? new SeatView(seat) : null)
+                .map(SeatView::new)
                 .collect(Collectors.toList());
     }
 

@@ -90,6 +90,8 @@ describe('Employees page', () => {
       tenantId: 0,
       id: 1,
       version: 0,
+      shortId: 'N',
+      color: '#FFFFFF',
     };
     employeesPage.addData(employee);
     expect(twoEmployees.addEmployee).toBeCalled();
@@ -105,6 +107,8 @@ describe('Employees page', () => {
       tenantId: 0,
       id: 1,
       version: 0,
+      shortId: 'N',
+      color: '#FFFFFF',
     };
     employeesPage.updateData(employee);
     expect(twoEmployees.updateEmployee).toBeCalled();
@@ -120,6 +124,8 @@ describe('Employees page', () => {
       tenantId: 0,
       id: 1,
       version: 0,
+      shortId: 'N',
+      color: '#FFFFFF',
     };
     employeesPage.removeData(employee);
     expect(twoEmployees.removeEmployee).toBeCalled();
@@ -188,6 +194,8 @@ describe('Employees page', () => {
       name: 'Name',
       skillProficiencySet: [],
       contract: twoEmployees.contractList[0],
+      shortId: 'N',
+      color: '#FFFFFF',
     };
     const result4 = employeesPage.isDataComplete(completed);
     expect(result4).toEqual(true);
@@ -200,6 +208,8 @@ describe('Employees page', () => {
       name: '',
       skillProficiencySet: [],
       contract: twoEmployees.contractList[0],
+      shortId: 'N',
+      color: '#FFFFFF',
     };
     const result1 = employeesPage.isValid(noName);
     expect(result1).toEqual(false);
@@ -266,6 +276,8 @@ const twoEmployees: Props = {
       maximumMinutesPerMonth: null,
       maximumMinutesPerYear: null,
     },
+    shortId: 'e1',
+    color: '#FFFFFF',
   },
   {
     id: 1,
@@ -283,6 +295,8 @@ const twoEmployees: Props = {
       maximumMinutesPerMonth: null,
       maximumMinutesPerYear: null,
     },
+    shortId: 'e1',
+    color: '#FFFFFF',
   }],
   skillList: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
   contractList: [

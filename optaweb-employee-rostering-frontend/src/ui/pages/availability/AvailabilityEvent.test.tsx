@@ -90,6 +90,8 @@ const employee: Employee = {
   name: 'Amy',
   contract,
   skillProficiencySet: [],
+  shortId: 'A',
+  color: '#FFFFFF',
 };
 
 const startDateTime = moment('2018-01-01T09:00').toDate();

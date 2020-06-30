@@ -16,7 +16,7 @@
 
 package org.optaweb.employeerostering.rotation;
 
-import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Set;
 
@@ -26,7 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
-import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
+import org.optaweb.employeerostering.domain.rotation.TimeBucket;
+import org.optaweb.employeerostering.domain.rotation.view.TimeBucketView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
@@ -45,6 +46,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -55,7 +57,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
     private static final Logger logger = LoggerFactory.getLogger(RotationServiceTest.class);
-
+    
+    @Autowired
+    private ObjectMapper objectMapper;
+    
     @Autowired
     private MockMvc mvc;
 
@@ -81,7 +86,7 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
     }
 
     @Test
-    public void getShiftTemplateListTest() throws Exception {
+    public void getTimeBucketListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
                             .get("/rest/tenant/{tenantId}/rotation/", TENANT_ID)
                             .accept(MediaType.APPLICATION_JSON))
@@ -89,29 +94,31 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .andExpect(status().isOk());
     }
 
-    /*@Test
-    public void getShiftTemplateTest() throws Exception {
+    @Test
+    public void getTimeBucketTest() throws Exception {
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null, Collections.emptyList());
-        ShiftTemplateView persistedShiftTemplate = rotationService.createShiftTemplate(TENANT_ID, shiftTemplateView);
+        TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spot, LocalTime.of(9, 0),
+                                                                          LocalTime.of(17, 0),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptyList()));
+        TimeBucketView persistedTimeBucket = rotationService.createTimeBucket(TENANT_ID, timeBucketView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, persistedShiftTemplate.getId())
+                            .get("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, persistedTimeBucket.getId())
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.spotId").value(spot.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.durationBetweenRotationStartAndTemplateStart").value(
-                        "PT0S"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.shiftTemplateDuration").value("PT0S"));
-    }*/
+                .andExpect(MockMvcResultMatchers.jsonPath("$.startTime").value("09:00:00"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.endTime").value("17:00:00"));
+    }
 
     @Test
-    public void getNonExistentShiftTemplateTest() throws Exception {
-        String exceptionMessage = "No ShiftTemplate entity found with ID (0).";
+    public void getNonExistentTimeBucketTest() throws Exception {
+        String exceptionMessage = "No TimeBucket entity found with ID (0).";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
         mvc.perform(MockMvcRequestBuilders
@@ -123,54 +130,63 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
     }
 
-    /*@Test
-    public void deleteShiftTemplateTest() throws Exception {
+    @Test
+    public void deleteTimeBucketTest() throws Exception {
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null, Collections.emptyList());
-        ShiftTemplateView persistedShiftTemplate = rotationService.createShiftTemplate(TENANT_ID, shiftTemplateView);
+        TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spot, LocalTime.of(9, 0),
+                                                                          LocalTime.of(17, 0),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptyList()));
+        TimeBucketView persistedTimeBucket = rotationService.createTimeBucket(TENANT_ID, timeBucketView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .delete("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, persistedShiftTemplate.getId())
+                            .delete("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, persistedTimeBucket.getId())
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().string("true"));
-    }*/
+    }
 
-    /*@Test
-    public void deleteNonMatchingShiftTemplateTest() throws Exception {
+    @Test
+    public void deleteNonMatchingTimeBucketTest() throws Exception {
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null, Collections.emptyList());
-        ShiftTemplateView persistedShiftTemplate = rotationService.createShiftTemplate(TENANT_ID, shiftTemplateView);
+        TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spot, LocalTime.of(9, 0),
+                                                                          LocalTime.of(17, 0),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptyList()));
+        TimeBucketView persistedTimeBucket = rotationService.createTimeBucket(TENANT_ID, timeBucketView);
 
-        String shiftTemplateName = "[ShiftTemplate-" + persistedShiftTemplate.getId() + "]";
+        String timeBucketName = "[TimeBucket-" + persistedTimeBucket.getId() + "]";
 
-        String exceptionMessage = "The tenantId (0) does not match the persistable (" + shiftTemplateName +
+        String exceptionMessage = "The tenantId (0) does not match the persistable (" + timeBucketName +
                 ")'s tenantId (" + TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
 
         mvc.perform(MockMvcRequestBuilders
-                            .delete("/rest/tenant/{tenantId}/rotation/{id}", 0, persistedShiftTemplate.getId())
+                            .delete("/rest/tenant/{tenantId}/rotation/{id}", 0, persistedTimeBucket.getId())
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
-    }*/
+    }
 
     @Test
-    public void createShiftTemplateTest() throws Exception {
+    public void createTimeBucketTest() throws Exception {
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null, Collections.emptyList());
-        String body = (new ObjectMapper()).writeValueAsString(shiftTemplateView);
-
+        TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spot, LocalTime.of(9, 0),
+                                                                          LocalTime.of(17, 0),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptyList()));
+        String body = objectMapper.writeValueAsString(timeBucketView);
+        
         mvc.perform(MockMvcRequestBuilders
                             .post("/rest/tenant/{tenantId}/rotation/add", TENANT_ID)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -180,23 +196,25 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.spotId").value(spot.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.durationBetweenRotationStartAndTemplateStart").value(
-                        "PT0S"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.shiftTemplateDuration").value("PT0S"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.startTime").value("09:00:00"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.endTime").value("17:00:00"));
     }
 
     @Test
-    public void createNonMatchingShiftTemplateTest() throws Exception {
+    public void createNonMatchingTimeBucketTest() throws Exception {
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(0, spot.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null, Collections.emptyList());
-        String body = (new ObjectMapper()).writeValueAsString(shiftTemplateView);
+        TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(0, spot, LocalTime.of(9, 0),
+                                                                          LocalTime.of(17, 0),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptyList()));
+        String body = objectMapper.writeValueAsString(timeBucketView);
 
-        String shiftTemplateName = "[ShiftTemplate-null]";
+        String timeBucketName = "[TimeBucket-null]";
 
         String exceptionMessage = "The tenantId (" + TENANT_ID + ") does not match the persistable (" +
-                shiftTemplateName + ")'s tenantId (0).";
+                timeBucketName + ")'s tenantId (0).";
         String exceptionClass = "java.lang.IllegalStateException";
 
         mvc.perform(MockMvcRequestBuilders
@@ -209,20 +227,26 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
     }
 
-    /*@Test
-    public void updateShiftTemplateTest() throws Exception {
+    @Test
+    public void updateTimeBucketTest() throws Exception {
         Spot spotA = createSpot(TENANT_ID, "A", Collections.emptySet());
         Spot spotB = createSpot(TENANT_ID, "B", Collections.emptySet());
 
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spotA.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null, Collections.emptyList());
-        ShiftTemplateView persistedShiftTemplate = rotationService.createShiftTemplate(TENANT_ID, shiftTemplateView);
+        TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spotA, LocalTime.of(9, 0),
+                                                                          LocalTime.of(17, 0),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptyList()));
+        
+        TimeBucketView persistedTimeBucket = rotationService.createTimeBucket(TENANT_ID, timeBucketView);
 
-        ShiftTemplateView updatedShiftTemplate = new ShiftTemplateView(TENANT_ID, spotB.getId(), Duration.ofDays(1),
-                                                                       Duration.ofDays(1), null,
-                                                                       Collections.emptyList());
-        updatedShiftTemplate.setId(persistedShiftTemplate.getId());
-        String body = (new ObjectMapper()).writeValueAsString(updatedShiftTemplate);
+        TimeBucketView updatedTimeBucket = new TimeBucketView(new TimeBucket(TENANT_ID, spotB, LocalTime.of(9, 0),
+                                                                             LocalTime.of(17, 0),
+                                                                             Collections.emptySet(),
+                                                                             Collections.emptySet(),
+                                                                             Collections.emptyList()));
+        updatedTimeBucket.setId(persistedTimeBucket.getId());
+        String body = objectMapper.writeValueAsString(updatedTimeBucket);
 
         mvc.perform(MockMvcRequestBuilders
                             .put("/rest/tenant/{tenantId}/rotation/update", TENANT_ID)
@@ -233,22 +257,24 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.spotId").value(spotB.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.durationBetweenRotationStartAndTemplateStart").value(
-                        "PT24H"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.shiftTemplateDuration").value("PT24H"));
-    }*/
+                .andExpect(MockMvcResultMatchers.jsonPath("$.startTime").value("09:00:00"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.endTime").value("17:00:00"));
+    }
 
     @Test
-    public void updateNonExistentShiftTemplateTest() throws Exception {
-        String exceptionMessage = "ShiftTemplate entity with ID (0) not found.";
+    public void updateNonExistentTimeBucketTest() throws Exception {
+        String exceptionMessage = "TimeBucket entity with ID (0) not found.";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null, Collections.emptyList());
-        shiftTemplateView.setId(0L);
-        String body = (new ObjectMapper()).writeValueAsString(shiftTemplateView);
+        TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spot, LocalTime.of(9, 0),
+                                                                          LocalTime.of(17, 0),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptyList()));
+        timeBucketView.setId(0L);
+        String body = objectMapper.writeValueAsString(timeBucketView);
 
         mvc.perform(MockMvcRequestBuilders
                             .put("/rest/tenant/{tenantId}/rotation/update", TENANT_ID)

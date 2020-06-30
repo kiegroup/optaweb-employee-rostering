@@ -63,6 +63,8 @@ const mockShiftRoster: ShiftRosterView = {
         maximumMinutesPerMonth: null,
         maximumMinutesPerYear: null,
       },
+      shortId: 'e',
+      color: '#FFFFFF',
     },
   ],
   rosterState: {
@@ -135,6 +137,8 @@ const mockAvailabilityRoster: AvailabilityRosterView = {
         maximumMinutesPerMonth: null,
         maximumMinutesPerYear: null,
       },
+      shortId: 'e',
+      color: '#FFFFFF',
     },
   ],
   rosterState: {
@@ -186,6 +190,72 @@ const mockAvailabilityRoster: AvailabilityRosterView = {
   indictmentSummary: {
     constraintToCountMap: {},
     constraintToScoreImpactMap: {},
+  },
+};
+
+const state: Partial<AppState> = {
+  tenantData: {
+    currentTenantId: 0,
+    tenantList: [],
+    timezoneList: ['America/Toronto'],
+  },
+  employeeList: {
+    isLoading: false,
+    employeeMapById: new Map([[
+      20, {
+        tenantId: 0,
+        id: 20,
+        version: 0,
+        name: 'Employee',
+        skillProficiencySet: [],
+        contract: 30,
+        shortId: 'e',
+        color: '#FFFFFF',
+      },
+    ]]),
+  },
+  contractList: {
+    isLoading: false,
+    contractMapById: new Map([[
+      30, {
+        tenantId: 0,
+        id: 30,
+        version: 0,
+        name: 'Contract',
+        maximumMinutesPerDay: null,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null,
+      },
+    ]]),
+  },
+  spotList: {
+    isLoading: false,
+    spotMapById: new Map([[
+      10, {
+        tenantId: 0,
+        id: 10,
+        version: 0,
+        name: 'Spot',
+        requiredSkillSet: [],
+      },
+    ]]),
+  },
+  rosterState: {
+    isLoading: false,
+    rosterState: mockShiftRoster.rosterState,
+  },
+  shiftRoster: {
+    isLoading: false,
+    shiftRosterView: mockShiftRoster,
+  },
+  availabilityRoster: {
+    isLoading: false,
+    availabilityRosterView: mockAvailabilityRoster,
+  },
+  skillList: {
+    isLoading: false,
+    skillMapById: new Map(),
   },
 };
 
@@ -431,7 +501,8 @@ describe('Roster operations', () => {
     const tenantId = store.getState().tenantData.currentTenantId;
     jest.spyOn(rosterOperations, 'refreshAvailabilityRoster').mockRestore();
 
-    const testOperation = async (operation: () => void, method: 'get'|'post', restURL: string, restArg?: any) => {
+    const testOperation = async (operation: () => Promise<void>, method: 'get'|'post',
+      restURL: string, restArg?: any) => {
       store.clearActions();
       resetRestClientMock(client);
 
@@ -598,9 +669,9 @@ describe('Roster operations', () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const spotList: Spot[] = [spotSelectors.getSpotList(store.getState())[0]];
-    const fromDate = moment((state.rosterState.rosterState as RosterState).firstDraftDate)
+    const fromDate = moment((store.getState().rosterState.rosterState as RosterState).firstDraftDate)
       .startOf('week').toDate();
-    const toDate = moment((state.rosterState.rosterState as RosterState).firstDraftDate)
+    const toDate = moment((store.getState().rosterState.rosterState as RosterState).firstDraftDate)
       .endOf('week').toDate();
 
     onPost(`/tenant/${tenantId}/roster/shiftRosterView/for?`
@@ -751,9 +822,9 @@ describe('Roster operations', () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const employeeList: Employee[] = [employeeSelectors.getEmployeeList(store.getState())[0]];
-    const fromDate = moment((state.rosterState.rosterState as RosterState).firstDraftDate)
+    const fromDate = moment((store.getState().rosterState.rosterState as RosterState).firstDraftDate)
       .startOf('week').toDate();
-    const toDate = moment((state.rosterState.rosterState as RosterState).firstDraftDate)
+    const toDate = moment((store.getState().rosterState.rosterState as RosterState).firstDraftDate)
       .endOf('week').toDate();
 
     onPost(`/tenant/${tenantId}/roster/availabilityRosterView/for?`
@@ -1012,133 +1083,137 @@ describe('Roster reducers', () => {
 });
 
 describe('Roster selectors', () => {
+  const { store } = mockStore(state);
+  const storeState = store.getState();
+
   it('should return an empty list if loading on getSpotListInShiftRoster', () => {
     expect(rosterSelectors.getSpotListInShiftRoster({
-      ...state,
+      ...storeState,
       skillList: {
-        ...state.skillList, isLoading: true,
+        ...storeState.skillList, isLoading: true,
       },
     })).toEqual([]);
     expect(rosterSelectors.getSpotListInShiftRoster({
-      ...state,
+      ...storeState,
       spotList: {
-        ...state.spotList, isLoading: true,
+        ...storeState.spotList, isLoading: true,
       },
     })).toEqual([]);
     expect(rosterSelectors.getSpotListInShiftRoster({
-      ...state,
+      ...storeState,
       employeeList: {
-        ...state.employeeList, isLoading: true,
+        ...storeState.employeeList, isLoading: true,
       },
     })).toEqual([]);
     expect(rosterSelectors.getSpotListInShiftRoster({
-      ...state,
+      ...storeState,
       contractList: {
-        ...state.contractList, isLoading: true,
+        ...storeState.contractList, isLoading: true,
       },
     })).toEqual([]);
     expect(rosterSelectors.getSpotListInShiftRoster({
-      ...state,
+      ...storeState,
       shiftRoster: {
-        ...state.shiftRoster, isLoading: true,
+        ...storeState.shiftRoster, isLoading: true,
       },
     })).toEqual([]);
     expect(rosterSelectors.getSpotListInShiftRoster({
-      ...state,
+      ...storeState,
       rosterState: {
-        ...state.rosterState, isLoading: true,
+        ...storeState.rosterState, isLoading: true,
       },
     })).toEqual([]);
   });
 
   it('should return the spotList in shift roster in getSpotListInShiftRoster', () => {
-    expect(rosterSelectors.getSpotListInShiftRoster(state)).toEqual(mockShiftRoster.spotList);
+    expect(rosterSelectors.getSpotListInShiftRoster(storeState)).toEqual(mockShiftRoster.spotList);
   });
 
   it('should return an empty list if loading on getEmployeeListInAvailabilityRoster', () => {
     expect(rosterSelectors.getEmployeeListInAvailabilityRoster({
-      ...state,
+      ...storeState,
       skillList: {
-        ...state.skillList, isLoading: true,
+        ...storeState.skillList, isLoading: true,
       },
     })).toEqual([]);
     expect(rosterSelectors.getEmployeeListInAvailabilityRoster({
-      ...state,
+      ...storeState,
       spotList: {
-        ...state.spotList, isLoading: true,
+        ...storeState.spotList, isLoading: true,
       },
     })).toEqual([]);
     expect(rosterSelectors.getEmployeeListInAvailabilityRoster({
-      ...state,
+      ...storeState,
       employeeList: {
-        ...state.employeeList, isLoading: true,
+        ...storeState.employeeList, isLoading: true,
       },
     })).toEqual([]);
     expect(rosterSelectors.getEmployeeListInAvailabilityRoster({
-      ...state,
+      ...storeState,
       contractList: {
-        ...state.contractList, isLoading: true,
+        ...storeState.contractList, isLoading: true,
       },
     })).toEqual([]);
     expect(rosterSelectors.getEmployeeListInAvailabilityRoster({
-      ...state,
+      ...storeState,
       availabilityRoster: {
-        ...state.availabilityRoster, isLoading: true,
+        ...storeState.availabilityRoster, isLoading: true,
       },
     })).toEqual([]);
     expect(rosterSelectors.getEmployeeListInAvailabilityRoster({
-      ...state,
+      ...storeState,
       rosterState: {
-        ...state.rosterState, isLoading: true,
+        ...storeState.rosterState, isLoading: true,
       },
     })).toEqual([]);
   });
 
   it('should return the spotList in availability roster in getEmployeeListInAvailabilityRoster', () => {
-    expect(rosterSelectors.getEmployeeListInAvailabilityRoster(state)).toEqual(mockAvailabilityRoster.employeeList);
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster(storeState))
+      .toEqual(mockAvailabilityRoster.employeeList);
   });
 
   it('should throw an exception if loading in getShiftListForSpot', () => {
     expect(() => rosterSelectors.getShiftListForSpot({
-      ...state,
+      ...storeState,
       skillList: {
-        ...state.skillList, isLoading: true,
+        ...storeState.skillList, isLoading: true,
       },
-    }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
+    }, storeState.spotList.spotMapById.get(10) as any as Spot)).toThrow();
     expect(() => rosterSelectors.getShiftListForSpot({
-      ...state,
+      ...storeState,
       spotList: {
-        ...state.spotList, isLoading: true,
+        ...storeState.spotList, isLoading: true,
       },
-    }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
+    }, storeState.spotList.spotMapById.get(10) as any as Spot)).toThrow();
     expect(() => rosterSelectors.getShiftListForSpot({
-      ...state,
+      ...storeState,
       employeeList: {
-        ...state.employeeList, isLoading: true,
+        ...storeState.employeeList, isLoading: true,
       },
-    }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
+    }, storeState.spotList.spotMapById.get(10) as any as Spot)).toThrow();
     expect(() => rosterSelectors.getShiftListForSpot({
-      ...state,
+      ...storeState,
       contractList: {
-        ...state.contractList, isLoading: true,
+        ...storeState.contractList, isLoading: true,
       },
-    }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
+    }, storeState.spotList.spotMapById.get(10) as any as Spot)).toThrow();
     expect(() => rosterSelectors.getShiftListForSpot({
-      ...state,
+      ...storeState,
       shiftRoster: {
-        ...state.shiftRoster, isLoading: true,
+        ...storeState.shiftRoster, isLoading: true,
       },
-    }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
+    }, storeState.spotList.spotMapById.get(10) as any as Spot)).toThrow();
     expect(() => rosterSelectors.getShiftListForSpot({
-      ...state,
+      ...storeState,
       rosterState: {
-        ...state.rosterState, isLoading: true,
+        ...storeState.rosterState, isLoading: true,
       },
-    }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
+    }, storeState.spotList.spotMapById.get(10) as any as Spot)).toThrow();
   });
 
   it('should return the shift list for a given spot in getShiftListForSpot', () => {
-    expect(rosterSelectors.getShiftListForSpot(state, mockShiftRoster.spotList[0]))
+    expect(rosterSelectors.getShiftListForSpot(storeState, mockShiftRoster.spotList[0]))
       .toEqual([
         {
           tenantId: 0,
@@ -1163,6 +1238,8 @@ describe('Roster selectors', () => {
               maximumMinutesPerMonth: null,
               maximumMinutesPerYear: null,
             },
+            shortId: 'e',
+            color: '#FFFFFF',
           },
           rotationEmployee: null,
           indictmentScore: {
@@ -1176,7 +1253,7 @@ describe('Roster selectors', () => {
   });
 
   it('should return an empty list if spot not in roster getShiftListForSpot', () => {
-    expect(rosterSelectors.getShiftListForSpot(state, {
+    expect(rosterSelectors.getShiftListForSpot(storeState, {
       tenantId: 0,
       id: 999,
       version: 0,
@@ -1188,45 +1265,45 @@ describe('Roster selectors', () => {
 
   it('should throw an exception if loading in getShiftListForEmployee', () => {
     expect(() => rosterSelectors.getShiftListForEmployee({
-      ...state,
+      ...storeState,
       skillList: {
-        ...state.skillList, isLoading: true,
+        ...storeState.skillList, isLoading: true,
       },
-    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    }, storeState.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getShiftListForEmployee({
-      ...state,
+      ...storeState,
       spotList: {
-        ...state.spotList, isLoading: true,
+        ...storeState.spotList, isLoading: true,
       },
-    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    }, storeState.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getShiftListForEmployee({
-      ...state,
+      ...storeState,
       employeeList: {
-        ...state.employeeList, isLoading: true,
+        ...storeState.employeeList, isLoading: true,
       },
-    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    }, storeState.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getShiftListForEmployee({
-      ...state,
+      ...storeState,
       contractList: {
-        ...state.contractList, isLoading: true,
+        ...storeState.contractList, isLoading: true,
       },
-    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    }, storeState.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getAvailabilityListForEmployee({
-      ...state,
+      ...storeState,
       availabilityRoster: {
-        ...state.availabilityRoster, isLoading: true,
+        ...storeState.availabilityRoster, isLoading: true,
       },
-    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    }, storeState.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getShiftListForEmployee({
-      ...state,
+      ...storeState,
       rosterState: {
-        ...state.rosterState, isLoading: true,
+        ...storeState.rosterState, isLoading: true,
       },
-    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    }, storeState.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
   });
 
   it('should return the shift list for a given employee in getShiftListForEmployee', () => {
-    expect(rosterSelectors.getShiftListForEmployee(state, mockAvailabilityRoster.employeeList[0]))
+    expect(rosterSelectors.getShiftListForEmployee(storeState, mockAvailabilityRoster.employeeList[0]))
       .toEqual([
         {
           tenantId: 0,
@@ -1251,6 +1328,8 @@ describe('Roster selectors', () => {
               maximumMinutesPerMonth: null,
               maximumMinutesPerYear: null,
             },
+            shortId: 'e',
+            color: '#FFFFFF',
           },
           rotationEmployee: null,
           indictmentScore: {
@@ -1264,7 +1343,7 @@ describe('Roster selectors', () => {
   });
 
   it('should return an empty list if spot not in roster getShiftListForEmployee', () => {
-    expect(rosterSelectors.getShiftListForEmployee(state, {
+    expect(rosterSelectors.getShiftListForEmployee(storeState, {
       tenantId: 0,
       id: 999,
       version: 0,
@@ -1279,51 +1358,53 @@ describe('Roster selectors', () => {
         maximumMinutesPerWeek: null,
         maximumMinutesPerYear: null,
       },
+      shortId: 'me',
+      color: '#000000',
     }))
       .toEqual([]);
   });
 
   it('should throw an exception if loading in getAvailabilityListForEmployee', () => {
     expect(() => rosterSelectors.getAvailabilityListForEmployee({
-      ...state,
+      ...storeState,
       skillList: {
-        ...state.skillList, isLoading: true,
+        ...storeState.skillList, isLoading: true,
       },
-    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    }, storeState.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getAvailabilityListForEmployee({
-      ...state,
+      ...storeState,
       spotList: {
-        ...state.spotList, isLoading: true,
+        ...storeState.spotList, isLoading: true,
       },
-    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    }, storeState.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getAvailabilityListForEmployee({
-      ...state,
+      ...storeState,
       employeeList: {
-        ...state.employeeList, isLoading: true,
+        ...storeState.employeeList, isLoading: true,
       },
-    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    }, storeState.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getAvailabilityListForEmployee({
-      ...state,
+      ...storeState,
       contractList: {
-        ...state.contractList, isLoading: true,
+        ...storeState.contractList, isLoading: true,
       },
-    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    }, storeState.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getAvailabilityListForEmployee({
-      ...state,
+      ...storeState,
       availabilityRoster: {
-        ...state.availabilityRoster, isLoading: true,
+        ...storeState.availabilityRoster, isLoading: true,
       },
-    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    }, storeState.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getAvailabilityListForEmployee({
-      ...state,
+      ...storeState,
       rosterState: {
-        ...state.rosterState, isLoading: true,
+        ...storeState.rosterState, isLoading: true,
       },
-    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    }, storeState.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
   });
 
   it('should return the shift list for a given employee in getAvailabilityListForEmployee', () => {
-    expect(rosterSelectors.getAvailabilityListForEmployee(state, mockAvailabilityRoster.employeeList[0]))
+    expect(rosterSelectors.getAvailabilityListForEmployee(storeState, mockAvailabilityRoster.employeeList[0]))
       .toEqual([
         {
           tenantId: 0,
@@ -1345,6 +1426,8 @@ describe('Roster selectors', () => {
               maximumMinutesPerMonth: null,
               maximumMinutesPerYear: null,
             },
+            shortId: 'e',
+            color: '#FFFFFF',
           },
           state: 'DESIRED',
         },
@@ -1352,7 +1435,7 @@ describe('Roster selectors', () => {
   });
 
   it('should return an empty list if spot not in roster getAvailabilityListForEmployee', () => {
-    expect(rosterSelectors.getShiftListForEmployee(state, {
+    expect(rosterSelectors.getShiftListForEmployee(storeState, {
       tenantId: 0,
       id: 999,
       version: 0,
@@ -1367,83 +1450,9 @@ describe('Roster selectors', () => {
         maximumMinutesPerWeek: null,
         maximumMinutesPerYear: null,
       },
+      shortId: 'me',
+      color: '#000000',
     }))
       .toEqual([]);
   });
 });
-
-const state: AppState = {
-  tenantData: {
-    currentTenantId: 0,
-    tenantList: [],
-    timezoneList: ['America/Toronto'],
-  },
-  employeeList: {
-    isLoading: false,
-    employeeMapById: new Map([[
-      20, {
-        tenantId: 0,
-        id: 20,
-        version: 0,
-        name: 'Employee',
-        skillProficiencySet: [],
-        contract: 30,
-      },
-    ]]),
-  },
-  contractList: {
-    isLoading: false,
-    contractMapById: new Map([[
-      30, {
-        tenantId: 0,
-        id: 30,
-        version: 0,
-        name: 'Contract',
-        maximumMinutesPerDay: null,
-        maximumMinutesPerWeek: null,
-        maximumMinutesPerMonth: null,
-        maximumMinutesPerYear: null,
-      },
-    ]]),
-  },
-  spotList: {
-    isLoading: false,
-    spotMapById: new Map([[
-      10, {
-        tenantId: 0,
-        id: 10,
-        version: 0,
-        name: 'Spot',
-        requiredSkillSet: [],
-      },
-    ]]),
-  },
-  skillList: {
-    isLoading: false,
-    skillMapById: new Map(),
-  },
-  shiftTemplateList: {
-    isLoading: false,
-    shiftTemplateMapById: new Map(),
-  },
-  rosterState: {
-    isLoading: false,
-    rosterState: mockShiftRoster.rosterState,
-  },
-  shiftRoster: {
-    isLoading: false,
-    shiftRosterView: mockShiftRoster,
-  },
-  availabilityRoster: {
-    isLoading: false,
-    availabilityRosterView: mockAvailabilityRoster,
-  },
-  solverState: {
-    solverStatus: 'TERMINATED',
-  },
-  alerts: {
-    alertList: [],
-    idGeneratorIndex: 0,
-  },
-  isConnected: true,
-};

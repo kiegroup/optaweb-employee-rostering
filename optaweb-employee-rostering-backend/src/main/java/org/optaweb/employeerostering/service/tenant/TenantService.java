@@ -32,7 +32,7 @@ import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityRepository;
 import org.optaweb.employeerostering.service.employee.EmployeeRepository;
 import org.optaweb.employeerostering.service.roster.RosterStateRepository;
-import org.optaweb.employeerostering.service.rotation.ShiftTemplateRepository;
+import org.optaweb.employeerostering.service.rotation.TimeBucketRepository;
 import org.optaweb.employeerostering.service.shift.ShiftRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
@@ -52,7 +52,7 @@ public class TenantService extends AbstractRestService {
 
     private final EmployeeAvailabilityRepository employeeAvailabilityRepository;
 
-    private final ShiftTemplateRepository shiftTemplateRepository;
+    private final TimeBucketRepository timeBucketRepository;
 
     private final EmployeeRepository employeeRepository;
 
@@ -66,7 +66,7 @@ public class TenantService extends AbstractRestService {
                          RosterStateRepository rosterStateRepository,
                          ShiftRepository shiftRepository,
                          EmployeeAvailabilityRepository employeeAvailabilityRepository,
-                         ShiftTemplateRepository shiftTemplateRepository,
+                         TimeBucketRepository timeBucketRepository,
                          EmployeeRepository employeeRepository,
                          SpotRepository spotRepository,
                          SkillRepository skillRepository) {
@@ -76,7 +76,7 @@ public class TenantService extends AbstractRestService {
         this.rosterStateRepository = rosterStateRepository;
         this.shiftRepository = shiftRepository;
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
-        this.shiftTemplateRepository = shiftTemplateRepository;
+        this.timeBucketRepository = timeBucketRepository;
         this.employeeRepository = employeeRepository;
         this.spotRepository = spotRepository;
         this.skillRepository = skillRepository;
@@ -136,7 +136,7 @@ public class TenantService extends AbstractRestService {
 
         shiftRepository.deleteForTenant(id);
         employeeAvailabilityRepository.deleteForTenant(id);
-        shiftTemplateRepository.deleteForTenant(id);
+        timeBucketRepository.deleteForTenant(id);
         employeeRepository.deleteForTenant(id);
         spotRepository.deleteForTenant(id);
         skillRepository.deleteForTenant(id);
