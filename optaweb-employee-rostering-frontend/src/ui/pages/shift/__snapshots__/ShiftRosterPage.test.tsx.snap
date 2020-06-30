@@ -144,6 +144,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
           "contractMinutesViolationPenaltyList": Array [],
           "desiredTimeslotForEmployeeRewardList": Array [],
           "employee": Object {
+            "color": "#FFFFFF",
             "contract": Object {
               "id": 5,
               "maximumMinutesPerDay": 10,
@@ -156,6 +157,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
             },
             "id": 4,
             "name": "Employee 1",
+            "shortId": "e1",
             "skillProficiencySet": Array [
               Object {
                 "id": 6,
@@ -179,6 +181,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
           "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
+            "color": "#FFFFFF",
             "contract": Object {
               "id": 5,
               "maximumMinutesPerDay": 10,
@@ -191,6 +194,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
             },
             "id": 7,
             "name": "Rotation Employee",
+            "shortId": "e1",
             "skillProficiencySet": Array [
               Object {
                 "id": 6,
@@ -384,6 +388,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
           "contractMinutesViolationPenaltyList": Array [],
           "desiredTimeslotForEmployeeRewardList": Array [],
           "employee": Object {
+            "color": "#FFFFFF",
             "contract": Object {
               "id": 5,
               "maximumMinutesPerDay": 10,
@@ -396,6 +401,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
             },
             "id": 4,
             "name": "Employee 1",
+            "shortId": "e1",
             "skillProficiencySet": Array [
               Object {
                 "id": 6,
@@ -419,6 +425,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
           "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
+            "color": "#FFFFFF",
             "contract": Object {
               "id": 5,
               "maximumMinutesPerDay": 10,
@@ -431,6 +438,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
             },
             "id": 7,
             "name": "Rotation Employee",
+            "shortId": "e1",
             "skillProficiencySet": Array [
               Object {
                 "id": 6,
@@ -652,6 +660,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
           "contractMinutesViolationPenaltyList": Array [],
           "desiredTimeslotForEmployeeRewardList": Array [],
           "employee": Object {
+            "color": "#FFFFFF",
             "contract": Object {
               "id": 5,
               "maximumMinutesPerDay": 10,
@@ -664,6 +673,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
             },
             "id": 4,
             "name": "Employee 1",
+            "shortId": "e1",
             "skillProficiencySet": Array [
               Object {
                 "id": 6,
@@ -687,6 +697,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
           "requiredSkillSet": Array [],
           "requiredSkillViolationList": Array [],
           "rotationEmployee": Object {
+            "color": "#FFFFFF",
             "contract": Object {
               "id": 5,
               "maximumMinutesPerDay": 10,
@@ -699,6 +710,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
             },
             "id": 7,
             "name": "Rotation Employee",
+            "shortId": "e1",
             "skillProficiencySet": Array [
               Object {
                 "id": 6,

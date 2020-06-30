@@ -72,12 +72,12 @@ public class AdminService {
 
     @Transactional
     public void resetApplication() {
-        // IMPORTANT: Delete entries that has Many-to-One relations first, otherwise we break referential integrity
         deleteAllEntities();
         rosterGenerator.setUpGeneratedData();
     }
 
     private void deleteAllEntities() {
+        // IMPORTANT: Delete entries that has Many-to-One relations first, otherwise we break referential integrity
         shiftRepository.deleteAllInBatch();
         employeeAvailabilityRepository.deleteAllInBatch();
         timeBucketRepository.deleteAllInBatch();

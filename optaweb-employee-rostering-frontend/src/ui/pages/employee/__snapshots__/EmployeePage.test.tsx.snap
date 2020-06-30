@@ -228,6 +228,48 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
+                  <ForwardRef
+                    aria-label="shortId"
+                    defaultValue="e1"
+                    name="shortId"
+                    onChange={[Function]}
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    e1
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <ColorPicker
+                    currentColor="#FFFFFF"
+                    onChangeColor={[Function]}
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    #FFFFFF
+                    <span
+                      style={
+                        Object {
+                          "color": "#FFFFFF",
+                          "width": "30px",
+                        }
+                      }
+                    />
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
                   <span
                     style={
                       Object {
@@ -459,6 +501,48 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
+                  <ForwardRef
+                    aria-label="shortId"
+                    defaultValue="e1"
+                    name="shortId"
+                    onChange={[Function]}
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    e1
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <ColorPicker
+                    currentColor="#FFFFFF"
+                    onChangeColor={[Function]}
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    #FFFFFF
+                    <span
+                      style={
+                        Object {
+                          "color": "#FFFFFF",
+                          "width": "30px",
+                        }
+                      }
+                    />
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
                   <span
                     style={
                       Object {
@@ -680,6 +764,26 @@ exports[`Employees page should render the editor correctly 1`] = `
       }
     />
   </td>
+  <td
+    key="3"
+  >
+    <ForwardRef
+      aria-label="shortId"
+      defaultValue="e1"
+      key="3"
+      name="shortId"
+      onChange={[Function]}
+    />
+  </td>
+  <td
+    key="4"
+  >
+    <ColorPicker
+      currentColor="#FFFFFF"
+      key="4"
+      onChangeColor={[Function]}
+    />
+  </td>
 </tr>
 `;
 
@@ -748,6 +852,32 @@ exports[`Employees page should render the viewer correctly 1`] = `
         Skill 2
       </Component>
     </ChipGroup>
+  </td>
+  <td
+    key="3"
+  >
+    <Text
+      key="3"
+    >
+      e1
+    </Text>
+  </td>
+  <td
+    key="4"
+  >
+    <Text
+      key="4"
+    >
+      #FFFFFF
+      <span
+        style={
+          Object {
+            "color": "#FFFFFF",
+            "width": "30px",
+          }
+        }
+      />
+    </Text>
   </td>
 </tr>
 `;

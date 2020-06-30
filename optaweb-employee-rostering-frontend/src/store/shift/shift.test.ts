@@ -20,6 +20,7 @@ import { onPost, onPut, onDelete } from 'store/rest/RestTestUtils';
 import { Shift } from 'domain/Shift';
 import moment from 'moment';
 import { serializeLocalDateTime } from 'store/rest/DataSerialization';
+import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
 import { shiftAdapter, KindaShiftView, kindaShiftViewAdapter } from './KindaShiftView';
 import { shiftOperations } from './index';
 import { AppState } from '../types';
@@ -220,6 +221,8 @@ describe('shift adapters', () => {
           maximumMinutesPerYear: null,
         },
         skillProficiencySet: [],
+        shortId: 'B',
+        color: '#FFFFFF',
       },
       rotationEmployee: null,
       pinnedByUser: true,
@@ -261,7 +264,7 @@ describe('shift adapters', () => {
       indictmentScore: '5hard/0medium/-14soft',
       // @ts-ignore
       unassignedShiftPenaltyList: [{
-        score: '5hard/0medium/-14soft',
+        score: '5hard/0medium/-14soft' as unknown as HardMediumSoftScore,
         shift: {
           tenantId: 0,
           id: 11,
@@ -324,24 +327,7 @@ describe('shift adapters', () => {
   });
 });
 
-const state: AppState = {
-  tenantData: {
-    currentTenantId: 0,
-    tenantList: [],
-    timezoneList: ['America/Toronto'],
-  },
-  employeeList: {
-    isLoading: false,
-    employeeMapById: new Map(),
-  },
-  contractList: {
-    isLoading: false,
-    contractMapById: new Map(),
-  },
-  spotList: {
-    isLoading: false,
-    spotMapById: new Map(),
-  },
+const state: Partial<AppState> = {
   skillList: {
     isLoading: false,
     skillMapById: new Map([
@@ -359,28 +345,4 @@ const state: AppState = {
       }],
     ]),
   },
-  shiftTemplateList: {
-    isLoading: false,
-    shiftTemplateMapById: new Map(),
-  },
-  rosterState: {
-    isLoading: true,
-    rosterState: null,
-  },
-  shiftRoster: {
-    isLoading: true,
-    shiftRosterView: null,
-  },
-  availabilityRoster: {
-    isLoading: true,
-    availabilityRosterView: null,
-  },
-  solverState: {
-    solverStatus: 'TERMINATED',
-  },
-  alerts: {
-    alertList: [],
-    idGeneratorIndex: 0,
-  },
-  isConnected: true,
 };

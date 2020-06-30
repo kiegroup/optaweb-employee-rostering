@@ -26,6 +26,10 @@ import { availabilityOperations } from './index';
 import { AppState } from '../types';
 import { mockStore } from '../mockStore';
 
+const state: Partial<AppState> = {
+  // Empty as we can just use default state for this test
+};
+
 const contract: Contract = {
   tenantId: 0,
   id: 100,
@@ -56,6 +60,8 @@ describe('Availability operations', () => {
         name: 'Employee',
         skillProficiencySet: [],
         contract,
+        shortId: 'e',
+        color: '#FFFFFF',
       },
       state: 'DESIRED',
     };
@@ -91,6 +97,8 @@ describe('Availability operations', () => {
         name: 'Employee',
         skillProficiencySet: [],
         contract,
+        shortId: 'e',
+        color: '#FFFFFF',
       },
       state: 'DESIRED',
     };
@@ -125,6 +133,8 @@ describe('Availability operations', () => {
         name: 'Employee',
         skillProficiencySet: [],
         contract,
+        shortId: 'e',
+        color: '#FFFFFF',
       },
       state: 'DESIRED',
     };
@@ -165,6 +175,8 @@ describe('Availability operations', () => {
         name: 'Spot',
         skillProficiencySet: [],
         contract,
+        shortId: 'e',
+        color: '#FFFFFF',
       },
       state: 'DESIRED',
     };
@@ -202,6 +214,8 @@ describe('Availability adapters', () => {
         name: 'Spot',
         skillProficiencySet: [],
         contract,
+        shortId: 'e',
+        color: '#FFFFFF',
       },
       state: 'DESIRED',
     };
@@ -241,64 +255,3 @@ describe('Availability adapters', () => {
     });
   });
 });
-
-const state: AppState = {
-  alerts: {
-    idGeneratorIndex: 0,
-    alertList: [],
-  },
-  tenantData: {
-    currentTenantId: 0,
-    tenantList: [],
-    timezoneList: ['America/Toronto'],
-  },
-  employeeList: {
-    isLoading: false,
-    employeeMapById: new Map(),
-  },
-  contractList: {
-    isLoading: false,
-    contractMapById: new Map(),
-  },
-  spotList: {
-    isLoading: false,
-    spotMapById: new Map(),
-  },
-  skillList: {
-    isLoading: false,
-    skillMapById: new Map([
-      [1234, {
-        tenantId: 0,
-        id: 1234,
-        version: 0,
-        name: 'Skill 2',
-      }],
-      [2312, {
-        tenantId: 0,
-        id: 2312,
-        version: 1,
-        name: 'Skill 3',
-      }],
-    ]),
-  },
-  shiftTemplateList: {
-    isLoading: false,
-    shiftTemplateMapById: new Map(),
-  },
-  rosterState: {
-    isLoading: true,
-    rosterState: null,
-  },
-  shiftRoster: {
-    isLoading: true,
-    shiftRosterView: null,
-  },
-  availabilityRoster: {
-    isLoading: true,
-    availabilityRosterView: null,
-  },
-  solverState: {
-    solverStatus: 'TERMINATED',
-  },
-  isConnected: true,
-};

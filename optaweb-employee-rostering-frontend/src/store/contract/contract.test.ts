@@ -26,6 +26,44 @@ import { AppState } from '../types';
 import * as actions from './actions';
 import reducer, { contractSelectors, contractOperations } from './index';
 
+const state: Partial<AppState> = {
+  contractList: {
+    isLoading: false,
+    contractMapById: new Map([
+      [0, {
+        tenantId: 0,
+        id: 0,
+        version: 0,
+        name: 'Contract 1',
+        maximumMinutesPerDay: null,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null,
+      }],
+      [1, {
+        tenantId: 0,
+        id: 1,
+        version: 0,
+        name: 'Contract 2',
+        maximumMinutesPerDay: null,
+        maximumMinutesPerWeek: 100,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null,
+      }],
+      [2, {
+        tenantId: 0,
+        id: 2,
+        version: 0,
+        name: 'Contract 3',
+        maximumMinutesPerDay: 100,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: 100,
+      }],
+    ]),
+  },
+};
+
 describe('Contract operations', () => {
   it('should dispatch actions and call client on refresh contract list', async () => {
     const { store, client } = mockStore(state);
@@ -170,6 +208,9 @@ describe('Contract reducers', () => {
     maximumMinutesPerMonth: null,
     maximumMinutesPerYear: 100,
   };
+  const { store } = mockStore(state);
+  const storeState = store.getState();
+
   it('set loading', () => {
     expect(
       reducer(state.contractList, actions.setIsContractListLoading(true)),
@@ -179,19 +220,19 @@ describe('Contract reducers', () => {
     expect(
       reducer(state.contractList, actions.addContract(addedContract)),
     ).toEqual({ ...state.contractList,
-      contractMapById: mapWithElement(state.contractList.contractMapById, addedContract) });
+      contractMapById: mapWithElement(storeState.contractList.contractMapById, addedContract) });
   });
   it('remove contract', () => {
     expect(
       reducer(state.contractList, actions.removeContract(deletedContract)),
     ).toEqual({ ...state.contractList,
-      contractMapById: mapWithoutElement(state.contractList.contractMapById, deletedContract) });
+      contractMapById: mapWithoutElement(storeState.contractList.contractMapById, deletedContract) });
   });
   it('update contract', () => {
     expect(
       reducer(state.contractList, actions.updateContract(updatedContract)),
     ).toEqual({ ...state.contractList,
-      contractMapById: mapWithUpdatedElement(state.contractList.contractMapById, updatedContract) });
+      contractMapById: mapWithUpdatedElement(storeState.contractList.contractMapById, updatedContract) });
   });
   it('refresh contract list', () => {
     expect(
@@ -202,15 +243,18 @@ describe('Contract reducers', () => {
 });
 
 describe('Contract selectors', () => {
+  const { store } = mockStore(state);
+  const storeState = store.getState();
+
   it('should throw an error if contract list is loading', () => {
     expect(() => contractSelectors.getContractById({
-      ...state,
-      contractList: { ...state.contractList, isLoading: true },
+      ...storeState,
+      contractList: { ...storeState.contractList, isLoading: true },
     }, 0)).toThrow();
   });
 
   it('should get a contract by id', () => {
-    const contract = contractSelectors.getContractById(state, 0);
+    const contract = contractSelectors.getContractById(storeState, 0);
     expect(contract).toEqual({
       tenantId: 0,
       id: 0,
@@ -225,14 +269,14 @@ describe('Contract selectors', () => {
 
   it('should return an empty list if contract list is loading', () => {
     const contractList = contractSelectors.getContractList({
-      ...state,
-      contractList: { ...state.contractList, isLoading: true },
+      ...storeState,
+      contractList: { ...storeState.contractList, isLoading: true },
     });
     expect(contractList).toEqual([]);
   });
 
   it('should return a list of all contracts', () => {
-    const contractList = contractSelectors.getContractList(state);
+    const contractList = contractSelectors.getContractList(storeState);
     expect(contractList).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
@@ -268,82 +312,3 @@ describe('Contract selectors', () => {
     expect(contractList.length).toEqual(3);
   });
 });
-
-const state: AppState = {
-  tenantData: {
-    currentTenantId: 0,
-    tenantList: [],
-    timezoneList: ['America/Toronto'],
-  },
-  employeeList: {
-    isLoading: false,
-    employeeMapById: new Map(),
-  },
-  spotList: {
-    isLoading: false,
-    spotMapById: new Map(),
-  },
-  contractList: {
-    isLoading: false,
-    contractMapById: new Map([
-      [0, {
-        tenantId: 0,
-        id: 0,
-        version: 0,
-        name: 'Contract 1',
-        maximumMinutesPerDay: null,
-        maximumMinutesPerWeek: null,
-        maximumMinutesPerMonth: null,
-        maximumMinutesPerYear: null,
-      }],
-      [1, {
-        tenantId: 0,
-        id: 1,
-        version: 0,
-        name: 'Contract 2',
-        maximumMinutesPerDay: null,
-        maximumMinutesPerWeek: 100,
-        maximumMinutesPerMonth: null,
-        maximumMinutesPerYear: null,
-      }],
-      [2, {
-        tenantId: 0,
-        id: 2,
-        version: 0,
-        name: 'Contract 3',
-        maximumMinutesPerDay: 100,
-        maximumMinutesPerWeek: null,
-        maximumMinutesPerMonth: null,
-        maximumMinutesPerYear: 100,
-      }],
-    ]),
-  },
-  skillList: {
-    isLoading: false,
-    skillMapById: new Map(),
-  },
-  shiftTemplateList: {
-    isLoading: false,
-    shiftTemplateMapById: new Map(),
-  },
-  rosterState: {
-    isLoading: true,
-    rosterState: null,
-  },
-  shiftRoster: {
-    isLoading: true,
-    shiftRosterView: null,
-  },
-  availabilityRoster: {
-    isLoading: true,
-    availabilityRosterView: null,
-  },
-  solverState: {
-    solverStatus: 'TERMINATED',
-  },
-  alerts: {
-    alertList: [],
-    idGeneratorIndex: 0,
-  },
-  isConnected: true,
-};

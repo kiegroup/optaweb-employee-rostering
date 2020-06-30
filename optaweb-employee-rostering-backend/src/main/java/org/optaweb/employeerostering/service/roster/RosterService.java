@@ -19,7 +19,6 @@ package org.optaweb.employeerostering.service.roster;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,7 +42,7 @@ import org.optaweb.employeerostering.domain.roster.Roster;
 import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.roster.view.AvailabilityRosterView;
 import org.optaweb.employeerostering.domain.roster.view.ShiftRosterView;
-import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
+import org.optaweb.employeerostering.domain.rotation.TimeBucket;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
@@ -52,7 +51,7 @@ import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.optaweb.employeerostering.service.common.IndictmentUtils;
 import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityRepository;
 import org.optaweb.employeerostering.service.employee.EmployeeRepository;
-import org.optaweb.employeerostering.service.rotation.ShiftTemplateRepository;
+import org.optaweb.employeerostering.service.rotation.TimeBucketRepository;
 import org.optaweb.employeerostering.service.shift.ShiftRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
 import org.optaweb.employeerostering.service.solver.SolverStatus;
@@ -64,8 +63,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static java.util.stream.Collectors.groupingBy;
-
 @Service
 public class RosterService extends AbstractRestService {
 
@@ -76,7 +73,7 @@ public class RosterService extends AbstractRestService {
     private EmployeeAvailabilityRepository employeeAvailabilityRepository;
     private ShiftRepository shiftRepository;
     private RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository;
-    private ShiftTemplateRepository shiftTemplateRepository;
+    private TimeBucketRepository timeBucketRepository;
 
     private WannabeSolverManager solverManager;
     private IndictmentUtils indictmentUtils;
@@ -87,7 +84,7 @@ public class RosterService extends AbstractRestService {
                          EmployeeAvailabilityRepository employeeAvailabilityRepository,
                          ShiftRepository shiftRepository,
                          RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
-                         ShiftTemplateRepository shiftTemplateRepository,
+                         TimeBucketRepository timeBucketRepository,
                          WannabeSolverManager solverManager, IndictmentUtils indictmentUtils) {
         super(validator);
         this.rosterStateRepository = rosterStateRepository;
@@ -97,7 +94,7 @@ public class RosterService extends AbstractRestService {
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
         this.shiftRepository = shiftRepository;
         this.rosterConstraintConfigurationRepository = rosterConstraintConfigurationRepository;
-        this.shiftTemplateRepository = shiftTemplateRepository;
+        this.timeBucketRepository = timeBucketRepository;
         this.solverManager = solverManager;
         this.indictmentUtils = indictmentUtils;
     }
@@ -407,19 +404,15 @@ public class RosterService extends AbstractRestService {
         rosterState.setFirstDraftDate(publishTo);
 
         // Provision
-        List<ShiftTemplate> shiftTemplateList = shiftTemplateRepository.findAllByTenantId(tenantId);
-        Map<Integer, List<ShiftTemplate>> dayOffsetToShiftTemplateListMap = shiftTemplateList.stream()
-                .collect(groupingBy(ShiftTemplate::getStartDayOffset));
+        List<TimeBucket> timeBucketList = timeBucketRepository.findAllByTenantId(tenantId);
 
         int dayOffset = rosterState.getUnplannedRotationOffset();
         LocalDate shiftDate = firstUnplannedDate;
         for (int i = 0; i < rosterState.getPublishLength(); i++) {
-            List<ShiftTemplate> dayShiftTemplateList = dayOffsetToShiftTemplateListMap.getOrDefault(
-                    dayOffset, Collections.emptyList());
-            for (ShiftTemplate shiftTemplate : dayShiftTemplateList) {
-                Shift shift = shiftTemplate.createShiftOnDate(shiftDate, rosterState.getRotationLength(),
-                                                              rosterState.getTimeZone(), false);
-                shiftRepository.save(shift);
+            for (TimeBucket timeBucket : timeBucketList) {
+                timeBucket.createShiftForOffset(shiftDate, dayOffset,
+                                                rosterState.getTimeZone(), false)
+                          .ifPresent(shiftRepository::save);
             }
             shiftDate = shiftDate.plusDays(1);
             dayOffset = (dayOffset + 1) % rosterState.getRotationLength();

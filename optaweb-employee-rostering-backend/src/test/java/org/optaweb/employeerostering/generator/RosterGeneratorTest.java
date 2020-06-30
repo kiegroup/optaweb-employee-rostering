@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.employee.Employee;
-import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
+import org.optaweb.employeerostering.domain.rotation.view.TimeBucketView;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
@@ -83,9 +83,9 @@ public class RosterGeneratorTest {
                                      new ParameterizedTypeReference<List<Employee>>() {}, tenantId);
     }
 
-    private ResponseEntity<List<ShiftTemplateView>> getShiftTemplates(Integer tenantId) {
+    private ResponseEntity<List<TimeBucketView>> getTimeBuckets(Integer tenantId) {
         return restTemplate.exchange(rotationPathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<ShiftTemplateView>>() {}, tenantId);
+                                     new ParameterizedTypeReference<List<TimeBucketView>>() {}, tenantId);
     }
 
     private ResponseEntity<List<ShiftView>> getShifts(Integer tenantId) {
@@ -142,7 +142,7 @@ public class RosterGeneratorTest {
 
     @Test
     public void generateShiftTemplateListTest() {
-        ResponseEntity<List<ShiftTemplateView>> response = getShiftTemplates(tenantId);
+        ResponseEntity<List<TimeBucketView>> response = getTimeBuckets(tenantId);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).size().isGreaterThan(0);

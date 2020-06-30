@@ -26,6 +26,26 @@ import { AppState } from '../types';
 import * as actions from './actions';
 import reducer, { skillSelectors, skillOperations } from './index';
 
+const state: Partial<AppState> = {
+  skillList: {
+    isLoading: false,
+    skillMapById: new Map([
+      [1234, {
+        tenantId: 0,
+        id: 1234,
+        version: 0,
+        name: 'Skill 2',
+      }],
+      [2312, {
+        tenantId: 0,
+        id: 2312,
+        version: 1,
+        name: 'Skill 3',
+      }],
+    ]),
+  },
+};
+
 describe('Skill operations', () => {
   it('should dispatch actions and call client on refresh skill list', async () => {
     const { store, client } = mockStore(state);
@@ -121,43 +141,54 @@ describe('Skill reducers', () => {
   const addedSkill: Skill = { tenantId: 0, id: 4321, version: 0, name: 'Skill 1' };
   const updatedSkill: Skill = { tenantId: 0, id: 1234, version: 1, name: 'Updated Skill 2' };
   const deletedSkill: Skill = { tenantId: 0, id: 2312, version: 0, name: 'Skill 3' };
+  const { store } = mockStore(state);
+  const storeState = store.getState();
+
   it('set is loading', () => {
     expect(
-      reducer(state.skillList, actions.setIsSkillListLoading(true)),
-    ).toEqual({ ...state.skillList, isLoading: true });
+      reducer(storeState.skillList, actions.setIsSkillListLoading(true)),
+    ).toEqual({ ...storeState.skillList, isLoading: true });
   });
   it('add skill', () => {
     expect(
-      reducer(state.skillList, actions.addSkill(addedSkill)),
-    ).toEqual({ ...state.skillList, skillMapById: mapWithElement(state.skillList.skillMapById, addedSkill) });
+      reducer(storeState.skillList, actions.addSkill(addedSkill)),
+    ).toEqual({ ...storeState.skillList, skillMapById: mapWithElement(storeState.skillList.skillMapById, addedSkill) });
   });
   it('remove skill', () => {
     expect(
-      reducer(state.skillList, actions.removeSkill(deletedSkill)),
-    ).toEqual({ ...state.skillList, skillMapById: mapWithoutElement(state.skillList.skillMapById, deletedSkill) });
+      reducer(storeState.skillList, actions.removeSkill(deletedSkill)),
+    ).toEqual({
+      ...storeState.skillList,
+      skillMapById: mapWithoutElement(storeState.skillList.skillMapById, deletedSkill),
+    });
   });
   it('update skill', () => {
     expect(
-      reducer(state.skillList, actions.updateSkill(updatedSkill)),
-    ).toEqual({ ...state.skillList, skillMapById: mapWithUpdatedElement(state.skillList.skillMapById, updatedSkill) });
+      reducer(storeState.skillList, actions.updateSkill(updatedSkill)),
+    ).toEqual({
+      ...storeState.skillList,
+      skillMapById: mapWithUpdatedElement(storeState.skillList.skillMapById, updatedSkill),
+    });
   });
   it('refresh skill list', () => {
     expect(
-      reducer(state.skillList, actions.refreshSkillList([addedSkill])),
-    ).toEqual({ ...state.skillList, skillMapById: createIdMapFromList([addedSkill]) });
+      reducer(storeState.skillList, actions.refreshSkillList([addedSkill])),
+    ).toEqual({ ...storeState.skillList, skillMapById: createIdMapFromList([addedSkill]) });
   });
 });
 
 describe('Skill selectors', () => {
+  const { store } = mockStore(state);
+  const storeState = store.getState();
   it('should throw an error if skill list is loading', () => {
     expect(() => skillSelectors.getSkillById({
-      ...state,
-      skillList: { ...state.skillList, isLoading: true },
+      ...storeState,
+      skillList: { ...storeState.skillList, isLoading: true },
     }, 1234)).toThrow();
   });
 
   it('should get a skill by id', () => {
-    const skill = skillSelectors.getSkillById(state, 1234);
+    const skill = skillSelectors.getSkillById(storeState, 1234);
     expect(skill).toEqual({
       tenantId: 0,
       id: 1234,
@@ -168,14 +199,14 @@ describe('Skill selectors', () => {
 
   it('should return an empty list if skill list is loading', () => {
     const skillList = skillSelectors.getSkillList({
-      ...state,
-      skillList: { ...state.skillList, isLoading: true },
+      ...storeState,
+      skillList: { ...storeState.skillList, isLoading: true },
     });
     expect(skillList).toEqual([]);
   });
 
   it('should return a list of all skills', () => {
-    const skillList = skillSelectors.getSkillList(state);
+    const skillList = skillSelectors.getSkillList(storeState);
     expect(skillList).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
@@ -193,64 +224,3 @@ describe('Skill selectors', () => {
     expect(skillList.length).toEqual(2);
   });
 });
-
-const state: AppState = {
-  tenantData: {
-    currentTenantId: 0,
-    tenantList: [],
-    timezoneList: ['America/Toronto'],
-  },
-  employeeList: {
-    isLoading: false,
-    employeeMapById: new Map(),
-  },
-  contractList: {
-    isLoading: false,
-    contractMapById: new Map(),
-  },
-  spotList: {
-    isLoading: false,
-    spotMapById: new Map(),
-  },
-  skillList: {
-    isLoading: false,
-    skillMapById: new Map([
-      [1234, {
-        tenantId: 0,
-        id: 1234,
-        version: 0,
-        name: 'Skill 2',
-      }],
-      [2312, {
-        tenantId: 0,
-        id: 2312,
-        version: 1,
-        name: 'Skill 3',
-      }],
-    ]),
-  },
-  shiftTemplateList: {
-    isLoading: false,
-    shiftTemplateMapById: new Map(),
-  },
-  rosterState: {
-    isLoading: true,
-    rosterState: null,
-  },
-  shiftRoster: {
-    isLoading: true,
-    shiftRosterView: null,
-  },
-  availabilityRoster: {
-    isLoading: true,
-    availabilityRosterView: null,
-  },
-  solverState: {
-    solverStatus: 'TERMINATED',
-  },
-  alerts: {
-    alertList: [],
-    idGeneratorIndex: 0,
-  },
-  isConnected: true,
-};

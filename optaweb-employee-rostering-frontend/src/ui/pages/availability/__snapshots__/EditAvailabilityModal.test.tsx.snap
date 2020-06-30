@@ -142,6 +142,7 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
         options={
           Array [
             Object {
+              "color": "#FFFFFF",
               "contract": Object {
                 "id": 5,
                 "maximumMinutesPerDay": 10,
@@ -154,6 +155,7 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
               },
               "id": 4,
               "name": "Employee 1",
+              "shortId": "e1",
               "skillProficiencySet": Array [
                 Object {
                   "id": 6,
@@ -333,6 +335,7 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
         options={
           Array [
             Object {
+              "color": "#FFFFFF",
               "contract": Object {
                 "id": 5,
                 "maximumMinutesPerDay": 10,
@@ -345,6 +348,7 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
               },
               "id": 4,
               "name": "Employee 1",
+              "shortId": "e1",
               "skillProficiencySet": Array [
                 Object {
                   "id": 6,
@@ -533,6 +537,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
         options={
           Array [
             Object {
+              "color": "#FFFFFF",
               "contract": Object {
                 "id": 5,
                 "maximumMinutesPerDay": 10,
@@ -545,6 +550,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
               },
               "id": 4,
               "name": "Employee 1",
+              "shortId": "e1",
               "skillProficiencySet": Array [
                 Object {
                   "id": 6,
@@ -560,6 +566,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
         }
         value={
           Object {
+            "color": "#FFFFFF",
             "contract": Object {
               "id": 5,
               "maximumMinutesPerDay": 10,
@@ -572,6 +579,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
             },
             "id": 4,
             "name": "Employee 1",
+            "shortId": "e1",
             "skillProficiencySet": Array [
               Object {
                 "id": 6,

@@ -16,7 +16,7 @@
 
 package org.optaweb.employeerostering.rotation;
 
-import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,7 +25,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
-import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
+import org.optaweb.employeerostering.domain.rotation.TimeBucket;
+import org.optaweb.employeerostering.domain.rotation.view.TimeBucketView;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,32 +50,32 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private final String shiftTemplatePathURI = "http://localhost:8080/rest/tenant/{tenantId}/rotation/";
+    private final String timeBucketPathURI = "http://localhost:8080/rest/tenant/{tenantId}/rotation/";
     private final String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
 
-    private ResponseEntity<List<ShiftTemplateView>> getShiftTemplates(Integer tenantId) {
-        return restTemplate.exchange(shiftTemplatePathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<ShiftTemplateView>>() {
+    private ResponseEntity<List<TimeBucketView>> getTimeBuckets(Integer tenantId) {
+        return restTemplate.exchange(timeBucketPathURI, HttpMethod.GET, null,
+                                     new ParameterizedTypeReference<List<TimeBucketView>>() {
                                      }, tenantId);
     }
 
-    private ResponseEntity<ShiftTemplateView> getShiftTemplate(Integer tenantId, Long id) {
-        return restTemplate.getForEntity(shiftTemplatePathURI + id, ShiftTemplateView.class, tenantId);
+    private ResponseEntity<TimeBucketView> getTimeBucket(Integer tenantId, Long id) {
+        return restTemplate.getForEntity(timeBucketPathURI + id, TimeBucketView.class, tenantId);
     }
 
-    private void deleteShiftTemplate(Integer tenantId, Long id) {
-        restTemplate.delete(shiftTemplatePathURI + id, tenantId);
+    private void deleteTimeBucket(Integer tenantId, Long id) {
+        restTemplate.delete(timeBucketPathURI + id, tenantId);
     }
 
-    private ResponseEntity<ShiftTemplateView> addShiftTemplate(Integer tenantId, ShiftTemplateView shiftTemplateView) {
-        return restTemplate.postForEntity(shiftTemplatePathURI + "add", shiftTemplateView, ShiftTemplateView.class,
+    private ResponseEntity<TimeBucketView> addTimeBucket(Integer tenantId, TimeBucketView shiftTemplateView) {
+        return restTemplate.postForEntity(timeBucketPathURI + "add", shiftTemplateView, TimeBucketView.class,
                                           tenantId);
     }
 
-    private ResponseEntity<ShiftTemplateView> updateShiftTemplate(Integer tenantId,
-                                                                  HttpEntity<ShiftTemplateView> request) {
-        return restTemplate.exchange(shiftTemplatePathURI + "update", HttpMethod.PUT, request,
-                                     ShiftTemplateView.class, tenantId);
+    private ResponseEntity<TimeBucketView> updateTimeBucket(Integer tenantId,
+                                                                  HttpEntity<TimeBucketView> request) {
+        return restTemplate.exchange(timeBucketPathURI + "update", HttpMethod.PUT, request,
+                                     TimeBucketView.class, tenantId);
     }
 
     private ResponseEntity<Spot> addSpot(Integer tenantId, SpotView spotView) {
@@ -97,30 +98,35 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
                                                                              Collections.emptySet()));
         Spot spotA = spotResponseA.getBody();
 
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spotA.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null, Collections.emptyList());
-        ResponseEntity<ShiftTemplateView> postResponse = addShiftTemplate(TENANT_ID, shiftTemplateView);
+        TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spotA, LocalTime.of(9, 0),
+                                                                          LocalTime.of(17, 0),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptySet(),
+                                                                          Collections.emptyList()));
+        ResponseEntity<TimeBucketView> postResponse = addTimeBucket(TENANT_ID, timeBucketView);
         assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        ResponseEntity<ShiftTemplateView> response = getShiftTemplate(TENANT_ID, postResponse.getBody().getId());
+        ResponseEntity<TimeBucketView> response = getTimeBucket(TENANT_ID, postResponse.getBody().getId());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
+        assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(postResponse.getBody());
 
-        ShiftTemplateView updatedShiftTemplate = new ShiftTemplateView(TENANT_ID, spotA.getId(), Duration.ofDays(1),
-                                                                       Duration.ofDays(1), null,
-                                                                       Collections.emptyList());
-        updatedShiftTemplate.setId(postResponse.getBody().getId());
-        HttpEntity<ShiftTemplateView> request = new HttpEntity<>(updatedShiftTemplate);
-        ResponseEntity<ShiftTemplateView> putResponse = updateShiftTemplate(TENANT_ID, request);
+        TimeBucketView updatedTimeBucket = new TimeBucketView(new TimeBucket(TENANT_ID, spotA, LocalTime.of(9, 0),
+                                                                                LocalTime.of(17, 0),
+                                                                                Collections.emptySet(),
+                                                                                Collections.emptySet(),
+                                                                                Collections.emptyList()));
+        updatedTimeBucket.setId(postResponse.getBody().getId());
+        HttpEntity<TimeBucketView> request = new HttpEntity<>(updatedTimeBucket);
+        ResponseEntity<TimeBucketView> putResponse = updateTimeBucket(TENANT_ID, request);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        response = getShiftTemplate(TENANT_ID, putResponse.getBody().getId());
+        response = getTimeBucket(TENANT_ID, putResponse.getBody().getId());
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(putResponse.getBody()).isEqualTo(response.getBody());
 
-        deleteShiftTemplate(TENANT_ID, putResponse.getBody().getId());
+        deleteTimeBucket(TENANT_ID, putResponse.getBody().getId());
 
-        ResponseEntity<List<ShiftTemplateView>> getListResponse = getShiftTemplates(TENANT_ID);
+        ResponseEntity<List<TimeBucketView>> getListResponse = getTimeBuckets(TENANT_ID);
         assertThat(getListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(getListResponse.getBody()).isEmpty();
     }

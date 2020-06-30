@@ -370,6 +370,8 @@ const employee: Employee = {
     version: 0,
     name: 'Not Required Skill',
   }],
+  shortId: 'e1',
+  color: '#FFFFFF',
 };
 
 const baseShift: Shift = {

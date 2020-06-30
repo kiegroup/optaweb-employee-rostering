@@ -28,8 +28,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -50,9 +53,27 @@ public class TimeBucket extends AbstractPersistable {
     private Set<Skill> additionalSkillSet;
     
     @ElementCollection
+    @CollectionTable(name = "repeat_on_day_set",
+        joinColumns = {
+        @JoinColumn(name = "day_id",
+            referencedColumnName = "id",
+            foreignKey=@ForeignKey(name="DAY_FK",
+            foreignKeyDefinition = "FOREIGN KEY (day_id) references public.time_bucket (id)" +
+            " ON UPDATE NO ACTION ON DELETE CASCADE"))
+        }
+    )
     private Set<DayOfWeek> repeatOnDaySet;
     
     @ElementCollection
+    @CollectionTable(name = "seat_list",
+        joinColumns = {
+        @JoinColumn(name = "seat_id",
+            referencedColumnName = "id",
+            foreignKey=@ForeignKey(name="SEAT_FK",
+            foreignKeyDefinition = "FOREIGN KEY (seat_id) references public.time_bucket (id)" +
+            " ON UPDATE NO ACTION ON DELETE CASCADE"))
+        }
+    )
     private List<Seat> seatList;
     
     public TimeBucket() {}
@@ -148,6 +169,7 @@ public class TimeBucket extends AbstractPersistable {
     }
 
     public void setValuesFromTimeBucket(TimeBucket updatedTimeBucket) {
+        setSpot(updatedTimeBucket.getSpot());
         setStartTime(updatedTimeBucket.getStartTime());
         setEndTime(updatedTimeBucket.getEndTime());
         setAdditionalSkillSet(updatedTimeBucket.getAdditionalSkillSet());

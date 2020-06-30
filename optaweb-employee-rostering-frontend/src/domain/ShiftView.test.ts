@@ -54,6 +54,8 @@ describe('ShiftView operations', () => {
 
         },
         skillProficiencySet: [],
+        shortId: 'e1',
+        color: '#000000',
       },
       rotationEmployee: {
         tenantId: 0,
@@ -72,6 +74,8 @@ describe('ShiftView operations', () => {
 
         },
         skillProficiencySet: [],
+        shortId: 'e2',
+        color: '#000000',
       },
       pinnedByUser: true,
     };
