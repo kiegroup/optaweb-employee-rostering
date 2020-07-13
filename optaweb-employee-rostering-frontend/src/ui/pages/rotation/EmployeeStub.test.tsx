@@ -1,0 +1,292 @@
+/*
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import React from 'react';
+import { Employee } from 'domain/Employee';
+import { AppState } from 'store/types';
+import { employeeSelectors } from 'store/employee';
+import { shallow } from 'enzyme';
+import { Button, Modal, Popover, GridItem } from '@patternfly/react-core';
+import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
+import {
+  EmployeeNickNameProps, EmployeeNickName, EmployeeStubProps, EmployeeStub,
+  ColorPickerProps, ColorPicker, EditEmployeeStubListModalProps, EditEmployeeStubListModal,
+  EmployeeStubListProps, Stub, EmployeeStubList,
+} from './EmployeeStub';
+
+const mockSelectorReturnValue = new Map();
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn().mockImplementation(selector => mockSelectorReturnValue.get(selector)),
+}));
+
+function mockSelector<T>(selector: (state: AppState) => T, value: T): void {
+  mockSelectorReturnValue.set(selector, value);
+}
+
+const employee: Employee = {
+  tenantId: 0,
+  id: 4,
+  version: 0,
+  name: 'Employee 1',
+  contract: {
+    tenantId: 0,
+    id: 5,
+    version: 0,
+    name: 'Basic Contract',
+    maximumMinutesPerDay: 10,
+    maximumMinutesPerWeek: 70,
+    maximumMinutesPerMonth: 500,
+    maximumMinutesPerYear: 6000,
+  },
+  skillProficiencySet: [],
+  shortId: 'e1',
+  color: '#FFFFFF',
+};
+
+const newEmployee: Employee = {
+  tenantId: 0,
+  id: 5,
+  version: 0,
+  name: 'Employee 2',
+  contract: {
+    tenantId: 0,
+    id: 5,
+    version: 0,
+    name: 'Basic Contract',
+    maximumMinutesPerDay: 10,
+    maximumMinutesPerWeek: 70,
+    maximumMinutesPerMonth: 500,
+    maximumMinutesPerYear: 6000,
+  },
+  skillProficiencySet: [],
+  shortId: 'e2',
+  color: '#000000',
+};
+
+
+const employeeList: Employee[] = [
+  employee,
+  newEmployee,
+];
+
+describe('EmployeeNickName Component', () => {
+  const baseProps: EmployeeNickNameProps = {
+    employee,
+  };
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('It should render correctly with an employee', () => {
+    const employeeNickName = shallow(<EmployeeNickName {...baseProps} />);
+    expect(employeeNickName).toMatchSnapshot();
+  });
+
+  it('It should render correctly without an employee', () => {
+    const employeeNickName = shallow(<EmployeeNickName employee={null} />);
+    expect(employeeNickName).toMatchSnapshot();
+  });
+
+  it('It color should contrast the employee color, or be gray for unassigned', () => {
+    let employeeNickName = shallow(<EmployeeNickName employee={employee} />);
+    expect(employeeNickName.prop('style').color).toEqual('black');
+
+    employeeNickName = shallow(<EmployeeNickName employee={newEmployee} />);
+    expect(employeeNickName.prop('style').color).toEqual('white');
+
+    employeeNickName = shallow(<EmployeeNickName employee={null} />);
+    expect(employeeNickName.prop('style').color).toEqual('gray');
+  });
+});
+
+describe('EmployeeStub Component', () => {
+  const baseProps: EmployeeStubProps = {
+    isSelected: false,
+    employee,
+    color: '#FF0000',
+    onClick: jest.fn(),
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('It should render correctly with an employee', () => {
+    const employeeStub = shallow(<EmployeeStub {...baseProps} />);
+    expect(employeeStub).toMatchSnapshot();
+  });
+
+  it('It should render correctly without an employee', () => {
+    const employeeStub = shallow(<EmployeeStub {...baseProps} employee={null} />);
+    expect(employeeStub).toMatchSnapshot();
+  });
+
+  it('It should call on click on click', () => {
+    const employeeStub = shallow(<EmployeeStub {...baseProps} employee={null} />);
+    employeeStub.simulate('click');
+    expect(baseProps.onClick).toBeCalled();
+  });
+
+  it('It should set color to contrast the background', () => {
+    let employeeStub = shallow(<EmployeeStub {...baseProps} color="white" />);
+    expect(employeeStub.prop('style').color).toEqual('black');
+
+    employeeStub = shallow(<EmployeeStub {...baseProps} color="black" />);
+    expect(employeeStub.prop('style').color).toEqual('white');
+  });
+
+  it('It have a small black outline if not selected', () => {
+    const employeeStub = shallow(<EmployeeStub {...baseProps} isSelected={false} />);
+    expect(employeeStub.prop('style').outline).toEqual('1px solid black');
+  });
+
+  it('It have a thick blue outline if selected', () => {
+    const employeeStub = shallow(<EmployeeStub {...baseProps} isSelected />);
+    expect(employeeStub.prop('style').outline).toEqual('5px solid var(--pf-global--primary-color--100)');
+  });
+});
+
+describe('ColorPicker component', () => {
+  const baseProps: ColorPickerProps = {
+    currentColor: 'red',
+    onChangeColor: jest.fn(),
+  };
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should render correctly', () => {
+    const colorPicker = shallow(<ColorPicker {...baseProps} />);
+    expect(colorPicker).toMatchSnapshot();
+  });
+
+  it('should set color on click', () => {
+    const colorPicker = shallow(<ColorPicker {...baseProps} />);
+    const newColor = 'var(--pf-global--palette--orange-400)';
+    shallow(colorPicker.find(Popover).prop('bodyContent') as React.ReactElement).find(GridItem)
+      .filterWhere(gi => gi.childAt(0).prop('style').backgroundColor === newColor)
+      .simulate('click');
+
+    expect(baseProps.onChangeColor).toBeCalledWith(newColor);
+  });
+});
+
+describe('EditEmployeeStubListModal component', () => {
+  const baseProps: EditEmployeeStubListModalProps = {
+    isVisible: true,
+    currentStubList: [{ color: employee.color, employee }],
+    onClose: jest.fn(),
+    onUpdateStubList: jest.fn(),
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockSelector(employeeSelectors.getEmployeeList, employeeList);
+  });
+
+  it('should render correctly', () => {
+    const editEmployeeStubListModal = shallow(<EditEmployeeStubListModal {...baseProps} />);
+    expect(editEmployeeStubListModal).toMatchSnapshot();
+  });
+
+  it('closing the modal should close the modal', () => {
+    const editEmployeeStubListModal = shallow(<EditEmployeeStubListModal {...baseProps} />);
+    editEmployeeStubListModal.find(Modal).simulate('close');
+    expect(baseProps.onClose).toBeCalled();
+    expect(baseProps.onUpdateStubList).not.toBeCalled();
+  });
+
+  it('clicking the close button should close the modal', () => {
+    const editEmployeeStubListModal = shallow(<EditEmployeeStubListModal {...baseProps} />);
+    editEmployeeStubListModal.find(Modal).prop('actions')[0].props.onClick();
+    expect(baseProps.onClose).toBeCalled();
+    expect(baseProps.onUpdateStubList).not.toBeCalled();
+  });
+
+  it('clicking the save button should close the modal and call onUpdateStubList', () => {
+    const editEmployeeStubListModal = shallow(<EditEmployeeStubListModal {...baseProps} />);
+
+    editEmployeeStubListModal.find(TypeaheadSelectInput).simulate('change', newEmployee);
+
+    editEmployeeStubListModal.find(Modal).prop('actions')[1].props.onClick();
+    expect(baseProps.onClose).toBeCalled();
+    expect(baseProps.onUpdateStubList).toBeCalledWith([{ color: newEmployee.color, employee: newEmployee }]);
+  });
+});
+
+describe('EmployeeStubList Component', () => {
+  const stub1: Stub = {
+    color: employee.color,
+    employee,
+  };
+
+  const stub2: Stub = {
+    color: newEmployee.color,
+    employee: newEmployee,
+  };
+
+  const baseProps: EmployeeStubListProps = {
+    selectedStub: stub1,
+    stubList: [stub1, stub2],
+    onStubSelect: jest.fn(),
+    onUpdateStubList: jest.fn(),
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockSelector(employeeSelectors.getEmployeeList, employeeList);
+  });
+
+  it('should render correctly', () => {
+    const employeeStubList = shallow(<EmployeeStubList {...baseProps} />);
+    expect(employeeStubList).toMatchSnapshot();
+  });
+
+  it('clicking on the first employee stub should set the employee stub to null', () => {
+    const employeeStubList = shallow(<EmployeeStubList {...baseProps} />);
+    employeeStubList.find(EmployeeStub).first().simulate('click');
+    expect(baseProps.onStubSelect).toBeCalledWith(null);
+  });
+
+  it('clicking on the second employee stub should set the employee stub to Unassigned (stub with null employee)',
+    () => {
+      const employeeStubList = shallow(<EmployeeStubList {...baseProps} />);
+      employeeStubList.find(EmployeeStub).at(1).simulate('click');
+      expect(baseProps.onStubSelect).toBeCalledWith({ color: '#FFFFFF', employee: null });
+    });
+
+  it('clicking on the employee stub should set the employee stub to it', () => {
+    const employeeStubList = shallow(<EmployeeStubList {...baseProps} />);
+    employeeStubList.find(EmployeeStub).filterWhere(wrapper => wrapper.prop('employee') === stub2.employee)
+      .simulate('click');
+    expect(baseProps.onStubSelect).toBeCalledWith(stub2);
+  });
+
+  it('clicking on the button should open the edit stub list modal', () => {
+    const employeeStubList = shallow(<EmployeeStubList {...baseProps} />);
+    expect(employeeStubList.find(EditEmployeeStubListModal).prop('isVisible')).toEqual(false);
+    employeeStubList.find(Button).simulate('click');
+    expect(employeeStubList.find(EditEmployeeStubListModal).prop('isVisible')).toEqual(true);
+    employeeStubList.find(EditEmployeeStubListModal).simulate('close');
+    expect(employeeStubList.find(EditEmployeeStubListModal).prop('isVisible')).toEqual(false);
+  });
+
+  it('updating the stub list in the modal should update the stub list', () => {
+    const employeeStubList = shallow(<EmployeeStubList {...baseProps} />);
+    employeeStubList.find(EditEmployeeStubListModal).simulate('updateStubList', [stub2]);
+    expect(baseProps.onUpdateStubList).toBeCalledWith([stub2]);
+  });
+});

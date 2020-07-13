@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Spot } from 'domain/Spot';
 import { spotSelectors } from 'store/spot';
 import { useSelector, useDispatch } from 'react-redux';
@@ -73,7 +73,7 @@ export const RotationPage: React.FC<{}> = () => {
     color: employee.color,
   })));
 
-  useEffect(() => {
+  React.useEffect(() => {
     const theShownSpot = spotList.find(s => s.name === shownSpotName);
     const theShownTimeBuckets = theShownSpot ? timeBucketList.filter(tb => tb.spot.id === theShownSpot.id) : [];
     if (oldShownTimeBuckets.current !== theShownTimeBuckets.map(tb => tb.id).join(',')) {
@@ -101,7 +101,7 @@ export const RotationPage: React.FC<{}> = () => {
               key={2}
               aria-label="Spots Page"
               variant="primary"
-              onClick={() => history.push(`/${tenantId}/wards`)}
+              onClick={() => history.push(`/${tenantId}/spots`)}
             />,
           ]}
         />
@@ -150,12 +150,13 @@ export const RotationPage: React.FC<{}> = () => {
               endTime: moment('00:00:00', 'HH:mm:ss').toDate(),
               repeatOnDaySetList: [],
               additionalSkillSet: [],
-              seatList: new Array(rosterState ? rosterState.rotationLength : 0).fill(null),
+              seatList: [],
             }}
             onUpdateTimeBucket={timeBucket => dispatch(timeBucketOperations.addTimeBucket(timeBucket))}
             onClose={() => setIsEditingTimeBuckets(false)}
           />
           <Button
+            aria-label="Add New Time Bucket"
             onClick={() => setIsEditingTimeBuckets(true)}
             variant="link"
           >

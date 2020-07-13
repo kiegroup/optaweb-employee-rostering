@@ -1,0 +1,397 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditTimeBucketModal Component It should render correctly when open 1`] = `
+<Modal
+  actions={
+    Array [
+      <Unknown
+        onClick={[MockFunction]}
+        variant="secondary"
+      >
+        Cancel
+      </Unknown>,
+      <Unknown
+        onClick={[Function]}
+        variant="primary"
+      >
+        Save
+      </Unknown>,
+    ]
+  }
+  appendTo={<body />}
+  ariaDescribedById=""
+  className=""
+  hideTitle={false}
+  isFooterLeftAligned={false}
+  isLarge={false}
+  isOpen={true}
+  isSmall={true}
+  onClose={[MockFunction]}
+  showClose={true}
+  title="Create Working Time Bucket"
+>
+  <TimeBucketEditor
+    name="Time Bucket"
+    onUpdateTimeBucket={[Function]}
+    timeBucket={
+      Object {
+        "additionalSkillSet": Array [
+          Object {
+            "id": 999,
+            "name": "Skill",
+            "tenantId": 0,
+            "version": 0,
+          },
+        ],
+        "endTime": 2018-01-01T17:00:00.000Z,
+        "id": 22,
+        "repeatOnDaySetList": Array [
+          "MONDAY",
+          "TUESDAY",
+        ],
+        "seatList": Array [
+          Object {
+            "dayInRotation": 0,
+            "employee": Object {
+              "color": "#FFFFFF",
+              "contract": Object {
+                "id": 5,
+                "maximumMinutesPerDay": 10,
+                "maximumMinutesPerMonth": 500,
+                "maximumMinutesPerWeek": 70,
+                "maximumMinutesPerYear": 6000,
+                "name": "Basic Contract",
+                "tenantId": 0,
+                "version": 0,
+              },
+              "id": 4,
+              "name": "Employee 1",
+              "shortId": "e1",
+              "skillProficiencySet": Array [],
+              "tenantId": 0,
+              "version": 0,
+            },
+          },
+        ],
+        "spot": Object {
+          "id": 2,
+          "name": "Spot",
+          "requiredSkillSet": Array [],
+          "tenantId": 0,
+          "version": 0,
+        },
+        "startTime": 2018-01-01T09:00:00.000Z,
+        "tenantId": 0,
+      }
+    }
+  />
+</Modal>
+`;
+
+exports[`TimeBucketEditor Component should render correctly 1`] = `
+<Fragment>
+  <Title
+    size="lg"
+  >
+    Title
+  </Title>
+  <Flex
+    breakpointMods={
+      Array [
+        Object {
+          "modifier": "column",
+        },
+        Object {
+          "modifier": "space-items-md",
+        },
+      ]
+    }
+  >
+    <FlexItem>
+      <InputGroup>
+        <ForwardRef
+          aria-label="Start Time"
+          onChange={[Function]}
+          type="time"
+          value="09:00"
+        />
+        <InputGroupText>
+          to
+        </InputGroupText>
+        <ForwardRef
+          aria-label="End Time"
+          onChange={[Function]}
+          type="time"
+          value="17:00"
+        />
+      </InputGroup>
+    </FlexItem>
+    <FlexItem>
+      <Grid
+        gutter="md"
+      >
+        <GridItem
+          span={4}
+        >
+          <Text>
+            Additional Skills
+          </Text>
+        </GridItem>
+        <GridItem
+          span={8}
+        >
+          <MultiTypeaheadSelectInput
+            autoSize={false}
+            emptyText="Select additional skills..."
+            onChange={[Function]}
+            optionToStringMap={[Function]}
+            options={
+              Array [
+                Object {
+                  "id": 1000,
+                  "name": "Skill 1",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                Object {
+                  "id": 2000,
+                  "name": "Skill 2",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+              ]
+            }
+            value={
+              Array [
+                Object {
+                  "id": 999,
+                  "name": "Skill",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+              ]
+            }
+          />
+        </GridItem>
+      </Grid>
+    </FlexItem>
+    <FlexItem>
+      <Flex>
+        <FlexItem>
+          Repeat on
+        </FlexItem>
+        <FlexItem
+          key="SUNDAY"
+          onClick={[Function]}
+        >
+          <span
+            className="pf-l-bullseye"
+            style={
+              Object {
+                "backgroundColor": "var(--pf-global--BackgroundColor--100)",
+                "border": "1px solid var(--pf-global--palette--black-300)",
+                "borderRadius": "50%",
+                "display": "inline-block",
+                "height": "30px",
+                "width": "30px",
+              }
+            }
+          >
+            <Bullseye>
+              <Text
+                style={
+                  Object {
+                    "color": "var(--pf-global--BackgroundColor--dark-100)",
+                  }
+                }
+              >
+                S
+              </Text>
+            </Bullseye>
+          </span>
+        </FlexItem>
+        <FlexItem
+          key="MONDAY"
+          onClick={[Function]}
+        >
+          <span
+            className="pf-l-bullseye"
+            style={
+              Object {
+                "backgroundColor": "var(--pf-global--primary-color--100)",
+                "border": "1px solid var(--pf-global--palette--black-300)",
+                "borderRadius": "50%",
+                "display": "inline-block",
+                "height": "30px",
+                "width": "30px",
+              }
+            }
+          >
+            <Bullseye>
+              <Text
+                style={
+                  Object {
+                    "color": "var(--pf-global--BackgroundColor--100)",
+                  }
+                }
+              >
+                M
+              </Text>
+            </Bullseye>
+          </span>
+        </FlexItem>
+        <FlexItem
+          key="TUESDAY"
+          onClick={[Function]}
+        >
+          <span
+            className="pf-l-bullseye"
+            style={
+              Object {
+                "backgroundColor": "var(--pf-global--primary-color--100)",
+                "border": "1px solid var(--pf-global--palette--black-300)",
+                "borderRadius": "50%",
+                "display": "inline-block",
+                "height": "30px",
+                "width": "30px",
+              }
+            }
+          >
+            <Bullseye>
+              <Text
+                style={
+                  Object {
+                    "color": "var(--pf-global--BackgroundColor--100)",
+                  }
+                }
+              >
+                T
+              </Text>
+            </Bullseye>
+          </span>
+        </FlexItem>
+        <FlexItem
+          key="WEDNESDAY"
+          onClick={[Function]}
+        >
+          <span
+            className="pf-l-bullseye"
+            style={
+              Object {
+                "backgroundColor": "var(--pf-global--BackgroundColor--100)",
+                "border": "1px solid var(--pf-global--palette--black-300)",
+                "borderRadius": "50%",
+                "display": "inline-block",
+                "height": "30px",
+                "width": "30px",
+              }
+            }
+          >
+            <Bullseye>
+              <Text
+                style={
+                  Object {
+                    "color": "var(--pf-global--BackgroundColor--dark-100)",
+                  }
+                }
+              >
+                W
+              </Text>
+            </Bullseye>
+          </span>
+        </FlexItem>
+        <FlexItem
+          key="THURSDAY"
+          onClick={[Function]}
+        >
+          <span
+            className="pf-l-bullseye"
+            style={
+              Object {
+                "backgroundColor": "var(--pf-global--BackgroundColor--100)",
+                "border": "1px solid var(--pf-global--palette--black-300)",
+                "borderRadius": "50%",
+                "display": "inline-block",
+                "height": "30px",
+                "width": "30px",
+              }
+            }
+          >
+            <Bullseye>
+              <Text
+                style={
+                  Object {
+                    "color": "var(--pf-global--BackgroundColor--dark-100)",
+                  }
+                }
+              >
+                T
+              </Text>
+            </Bullseye>
+          </span>
+        </FlexItem>
+        <FlexItem
+          key="FRIDAY"
+          onClick={[Function]}
+        >
+          <span
+            className="pf-l-bullseye"
+            style={
+              Object {
+                "backgroundColor": "var(--pf-global--BackgroundColor--100)",
+                "border": "1px solid var(--pf-global--palette--black-300)",
+                "borderRadius": "50%",
+                "display": "inline-block",
+                "height": "30px",
+                "width": "30px",
+              }
+            }
+          >
+            <Bullseye>
+              <Text
+                style={
+                  Object {
+                    "color": "var(--pf-global--BackgroundColor--dark-100)",
+                  }
+                }
+              >
+                F
+              </Text>
+            </Bullseye>
+          </span>
+        </FlexItem>
+        <FlexItem
+          key="SATURDAY"
+          onClick={[Function]}
+        >
+          <span
+            className="pf-l-bullseye"
+            style={
+              Object {
+                "backgroundColor": "var(--pf-global--BackgroundColor--100)",
+                "border": "1px solid var(--pf-global--palette--black-300)",
+                "borderRadius": "50%",
+                "display": "inline-block",
+                "height": "30px",
+                "width": "30px",
+              }
+            }
+          >
+            <Bullseye>
+              <Text
+                style={
+                  Object {
+                    "color": "var(--pf-global--BackgroundColor--dark-100)",
+                  }
+                }
+              >
+                S
+              </Text>
+            </Bullseye>
+          </span>
+        </FlexItem>
+      </Flex>
+    </FlexItem>
+  </Flex>
+</Fragment>
+`;

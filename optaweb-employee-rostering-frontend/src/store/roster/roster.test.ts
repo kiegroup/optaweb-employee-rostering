@@ -1086,6 +1086,19 @@ describe('Roster selectors', () => {
   const { store } = mockStore(state);
   const storeState = store.getState();
 
+  it('should return null if rosterState is loading in getRosterState', () => {
+    expect(rosterSelectors.getRosterState({
+      ...storeState,
+      rosterState: {
+        ...storeState.rosterState, isLoading: true,
+      },
+    })).toEqual(null);
+  });
+
+  it('should return the rosterState if rosterState is not loading in getRosterState', () => {
+    expect(rosterSelectors.getRosterState(storeState)).toEqual(storeState.rosterState.rosterState);
+  });
+
   it('should return an empty list if loading on getSpotListInShiftRoster', () => {
     expect(rosterSelectors.getSpotListInShiftRoster({
       ...storeState,

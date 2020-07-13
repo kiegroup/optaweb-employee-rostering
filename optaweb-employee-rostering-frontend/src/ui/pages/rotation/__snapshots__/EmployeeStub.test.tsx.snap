@@ -1,0 +1,1265 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ColorPicker component should render correctly 1`] = `
+<Popover
+  appendTo={[Function]}
+  aria-label="color-select"
+  bodyContent={
+    <Grid>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--red-600)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--red-500)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--red-400)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--red-300)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--red-200)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--red-100)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--orange-600)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--orange-500)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--orange-400)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--orange-300)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--orange-200)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--orange-100)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--gold-600)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--gold-500)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--gold-400)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--gold-300)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--gold-200)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--gold-100)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--green-600)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--green-500)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--green-400)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--green-300)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--green-200)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--green-100)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--cyan-600)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--cyan-500)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--cyan-400)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--cyan-300)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--cyan-200)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--cyan-100)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--blue-600)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--blue-500)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--blue-400)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--blue-300)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--blue-200)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--blue-100)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--purple-600)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--purple-500)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--purple-400)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--purple-300)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--purple-200)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+      <GridItem
+        onClick={[Function]}
+        rowSpan={2}
+        span={2}
+      >
+        <span
+          style={
+            Object {
+              "backgroundColor": "var(--pf-global--palette--purple-100)",
+              "border": "1px solid var(--pf-global--palette--black-300)",
+              "borderRadius": "50%",
+              "display": "inline-block",
+              "height": "30px",
+              "width": "30px",
+            }
+          }
+        />
+      </GridItem>
+    </Grid>
+  }
+  boundary="window"
+  className=""
+  closeBtnAriaLabel="Close"
+  distance={25}
+  enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  footerContent={null}
+  headerContent={null}
+  hideOnOutsideClick={true}
+  isVisible={null}
+  maxWidth="calc(2rem + 18.75rem)"
+  onHidden={[Function]}
+  onHide={[Function]}
+  onMount={[Function]}
+  onShow={[Function]}
+  onShown={[Function]}
+  position="bottom"
+  shouldClose={[Function]}
+  tippyProps={Object {}}
+  zIndex={9999}
+>
+  <InputGroup
+    style={
+      Object {
+        "width": "100px",
+      }
+    }
+  >
+    <Component
+      style={
+        Object {
+          "backgroundColor": "red",
+        }
+      }
+      variant="control"
+    />
+    <Component
+      variant="control"
+    >
+      <AngleDownIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+        title={null}
+      />
+    </Component>
+  </InputGroup>
+</Popover>
+`;
+
+exports[`EditEmployeeStubListModal component should render correctly 1`] = `
+<Modal
+  actions={
+    Array [
+      <Unknown
+        onClick={[MockFunction]}
+        variant="secondary"
+      >
+        Cancel
+      </Unknown>,
+      <Unknown
+        onClick={[Function]}
+        variant="primary"
+      >
+        Save
+      </Unknown>,
+    ]
+  }
+  appendTo={<body />}
+  ariaDescribedById=""
+  className=""
+  hideTitle={false}
+  isFooterLeftAligned={false}
+  isLarge={false}
+  isOpen={true}
+  isSmall={true}
+  onClose={[MockFunction]}
+  showClose={true}
+  title="Edit Employee Stub List"
+>
+  <Flex
+    breakpointMods={
+      Array [
+        Object {
+          "modifier": "column",
+        },
+      ]
+    }
+  >
+    <FlexItem
+      key="uuid-1"
+    >
+      <Split>
+        <SplitItem>
+          <InputGroup>
+            <InputGroupText>
+              <UserIcon
+                color="currentColor"
+                noVerticalAlign={false}
+                size="sm"
+                title={null}
+              />
+            </InputGroupText>
+            <span
+              style={
+                Object {
+                  "width": "200px",
+                }
+              }
+            >
+              <TypeaheadSelectInput
+                autoSize={false}
+                emptyText="Select an employee..."
+                onChange={[Function]}
+                optionToStringMap={[Function]}
+                options={
+                  Array [
+                    Object {
+                      "color": "#FFFFFF",
+                      "contract": Object {
+                        "id": 5,
+                        "maximumMinutesPerDay": 10,
+                        "maximumMinutesPerMonth": 500,
+                        "maximumMinutesPerWeek": 70,
+                        "maximumMinutesPerYear": 6000,
+                        "name": "Basic Contract",
+                        "tenantId": 0,
+                        "version": 0,
+                      },
+                      "id": 4,
+                      "name": "Employee 1",
+                      "shortId": "e1",
+                      "skillProficiencySet": Array [],
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                    Object {
+                      "color": "#000000",
+                      "contract": Object {
+                        "id": 5,
+                        "maximumMinutesPerDay": 10,
+                        "maximumMinutesPerMonth": 500,
+                        "maximumMinutesPerWeek": 70,
+                        "maximumMinutesPerYear": 6000,
+                        "name": "Basic Contract",
+                        "tenantId": 0,
+                        "version": 0,
+                      },
+                      "id": 5,
+                      "name": "Employee 2",
+                      "shortId": "e2",
+                      "skillProficiencySet": Array [],
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                  ]
+                }
+                value={
+                  Object {
+                    "color": "#FFFFFF",
+                    "contract": Object {
+                      "id": 5,
+                      "maximumMinutesPerDay": 10,
+                      "maximumMinutesPerMonth": 500,
+                      "maximumMinutesPerWeek": 70,
+                      "maximumMinutesPerYear": 6000,
+                      "name": "Basic Contract",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                    "id": 4,
+                    "name": "Employee 1",
+                    "shortId": "e1",
+                    "skillProficiencySet": Array [],
+                    "tenantId": 0,
+                    "version": 0,
+                  }
+                }
+              />
+            </span>
+          </InputGroup>
+        </SplitItem>
+        <SplitItem
+          isFilled={true}
+        >
+          <span />
+        </SplitItem>
+        <SplitItem>
+          <Component
+            onClick={[Function]}
+            variant="link"
+          >
+            <TrashIcon
+              color="currentColor"
+              noVerticalAlign={false}
+              size="sm"
+              title={null}
+            />
+          </Component>
+        </SplitItem>
+      </Split>
+    </FlexItem>
+    <FlexItem>
+      <Component
+        onClick={[Function]}
+        variant="link"
+      >
+        + Add Employee
+      </Component>
+    </FlexItem>
+  </Flex>
+</Modal>
+`;
+
+exports[`EmployeeNickName Component It should render correctly with an employee 1`] = `
+<Bullseye
+  style={
+    Object {
+      "color": "black",
+    }
+  }
+>
+  <Text>
+    e1
+  </Text>
+</Bullseye>
+`;
+
+exports[`EmployeeNickName Component It should render correctly without an employee 1`] = `
+<Bullseye
+  style={
+    Object {
+      "color": "gray",
+    }
+  }
+>
+  <Text />
+</Bullseye>
+`;
+
+exports[`EmployeeStub Component It should render correctly with an employee 1`] = `
+<button
+  onClick={[MockFunction]}
+  style={
+    Object {
+      "backgroundColor": "#FF0000",
+      "color": "white",
+      "cursor": "pointer",
+      "height": "30px",
+      "marginTop": "10px",
+      "outline": "1px solid black",
+      "overflow": "hidden",
+      "textOrientation": "upright",
+      "width": "20px",
+      "writingMode": "vertical-rl",
+    }
+  }
+  title="Employee 1"
+  type="button"
+>
+  <EmployeeNickName
+    employee={
+      Object {
+        "color": "#FFFFFF",
+        "contract": Object {
+          "id": 5,
+          "maximumMinutesPerDay": 10,
+          "maximumMinutesPerMonth": 500,
+          "maximumMinutesPerWeek": 70,
+          "maximumMinutesPerYear": 6000,
+          "name": "Basic Contract",
+          "tenantId": 0,
+          "version": 0,
+        },
+        "id": 4,
+        "name": "Employee 1",
+        "shortId": "e1",
+        "skillProficiencySet": Array [],
+        "tenantId": 0,
+        "version": 0,
+      }
+    }
+  />
+</button>
+`;
+
+exports[`EmployeeStub Component It should render correctly without an employee 1`] = `
+<button
+  onClick={[MockFunction]}
+  style={
+    Object {
+      "backgroundColor": "#FF0000",
+      "color": "white",
+      "cursor": "pointer",
+      "height": "30px",
+      "marginTop": "10px",
+      "outline": "1px solid black",
+      "overflow": "hidden",
+      "textOrientation": "upright",
+      "width": "20px",
+      "writingMode": "vertical-rl",
+    }
+  }
+  title="Unassigned"
+  type="button"
+>
+  <EmployeeNickName
+    employee={null}
+  />
+</button>
+`;
+
+exports[`EmployeeStubList Component should render correctly 1`] = `
+<Fragment>
+  <Flex
+    style={
+      Object {
+        "alignItems": "center",
+      }
+    }
+  >
+    <FlexItem>
+      <UsersIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+        title={null}
+      />
+    </FlexItem>
+    <FlexItem>
+      <Text>
+        Employee Stub:
+      </Text>
+    </FlexItem>
+    <FlexItem>
+      <Flex
+        breakpointMods={
+          Array [
+            Object {
+              "modifier": "align-items-stretch",
+            },
+          ]
+        }
+      >
+        <FlexItem>
+          <EmployeeStub
+            color="gray"
+            employee={null}
+            isSelected={false}
+            onClick={[Function]}
+          />
+        </FlexItem>
+        <FlexItem>
+          <EmployeeStub
+            color="#FFFFFF"
+            employee={null}
+            isSelected={false}
+            onClick={[Function]}
+          />
+        </FlexItem>
+        <GridItem>
+          <EmployeeStub
+            color="#FFFFFF"
+            employee={
+              Object {
+                "color": "#FFFFFF",
+                "contract": Object {
+                  "id": 5,
+                  "maximumMinutesPerDay": 10,
+                  "maximumMinutesPerMonth": 500,
+                  "maximumMinutesPerWeek": 70,
+                  "maximumMinutesPerYear": 6000,
+                  "name": "Basic Contract",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "id": 4,
+                "name": "Employee 1",
+                "shortId": "e1",
+                "skillProficiencySet": Array [],
+                "tenantId": 0,
+                "version": 0,
+              }
+            }
+            isSelected={true}
+            onClick={[Function]}
+          />
+        </GridItem>
+        <GridItem>
+          <EmployeeStub
+            color="#000000"
+            employee={
+              Object {
+                "color": "#000000",
+                "contract": Object {
+                  "id": 5,
+                  "maximumMinutesPerDay": 10,
+                  "maximumMinutesPerMonth": 500,
+                  "maximumMinutesPerWeek": 70,
+                  "maximumMinutesPerYear": 6000,
+                  "name": "Basic Contract",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+                "id": 5,
+                "name": "Employee 2",
+                "shortId": "e2",
+                "skillProficiencySet": Array [],
+                "tenantId": 0,
+                "version": 0,
+              }
+            }
+            isSelected={false}
+            onClick={[Function]}
+          />
+        </GridItem>
+      </Flex>
+    </FlexItem>
+    <FlexItem>
+      <Component
+        onClick={[Function]}
+        variant="link"
+      >
+        Edit employee stub
+         
+        <EditIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Component>
+    </FlexItem>
+  </Flex>
+  <EditEmployeeStubListModal
+    currentStubList={
+      Array [
+        Object {
+          "color": "#FFFFFF",
+          "employee": Object {
+            "color": "#FFFFFF",
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 4,
+            "name": "Employee 1",
+            "shortId": "e1",
+            "skillProficiencySet": Array [],
+            "tenantId": 0,
+            "version": 0,
+          },
+        },
+        Object {
+          "color": "#000000",
+          "employee": Object {
+            "color": "#000000",
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 5,
+            "name": "Employee 2",
+            "shortId": "e2",
+            "skillProficiencySet": Array [],
+            "tenantId": 0,
+            "version": 0,
+          },
+        },
+      ]
+    }
+    isVisible={false}
+    onClose={[Function]}
+    onUpdateStubList={[MockFunction]}
+  />
+</Fragment>
+`;
