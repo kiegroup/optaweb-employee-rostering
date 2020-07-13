@@ -1,0 +1,202 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Rotation Page It should render correctly 1`] = `
+<Fragment>
+  <Title
+    size="2xl"
+  >
+    Rotation
+  </Title>
+  <TypeaheadSelectInput
+    aria-label="Select Spot"
+    emptyText="Trans(i18nKey=selectSpot)"
+    noClearButton={true}
+    onChange={[Function]}
+    optionToStringMap={[Function]}
+    options={
+      Array [
+        Object {
+          "id": 2,
+          "name": "Spot",
+          "requiredSkillSet": Array [],
+          "tenantId": 0,
+          "version": 0,
+        },
+        Object {
+          "id": 111,
+          "name": "New Spot",
+          "requiredSkillSet": Array [],
+          "tenantId": 0,
+          "version": 0,
+        },
+      ]
+    }
+    value={
+      Object {
+        "id": 2,
+        "name": "Spot",
+        "requiredSkillSet": Array [],
+        "tenantId": 0,
+        "version": 0,
+      }
+    }
+  />
+  <EmployeeStubList
+    onStubSelect={[Function]}
+    onUpdateStubList={[Function]}
+    selectedStub={null}
+    stubList={
+      Array [
+        Object {
+          "color": "#FFFFFF",
+          "employee": Object {
+            "color": "#FFFFFF",
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 4,
+            "name": "Employee 1",
+            "shortId": "e1",
+            "skillProficiencySet": Array [],
+            "tenantId": 0,
+            "version": 0,
+          },
+        },
+      ]
+    }
+  />
+  <Flex
+    breakpointMods={
+      Array [
+        Object {
+          "modifier": "column",
+        },
+      ]
+    }
+  >
+    <FlexItem
+      key="uuid-1"
+    >
+      <SeatJigsaw
+        onDeleteTimeBucket={[Function]}
+        onUpdateTimeBucket={[Function]}
+        selectedStub={null}
+        timeBucket={
+          Object {
+            "additionalSkillSet": Array [],
+            "endTime": 2018-01-01T17:00:00.000Z,
+            "id": 22,
+            "repeatOnDaySetList": Array [],
+            "seatList": Array [
+              Object {
+                "dayInRotation": 0,
+                "employee": Object {
+                  "color": "#FFFFFF",
+                  "contract": Object {
+                    "id": 5,
+                    "maximumMinutesPerDay": 10,
+                    "maximumMinutesPerMonth": 500,
+                    "maximumMinutesPerWeek": 70,
+                    "maximumMinutesPerYear": 6000,
+                    "name": "Basic Contract",
+                    "tenantId": 0,
+                    "version": 0,
+                  },
+                  "id": 4,
+                  "name": "Employee 1",
+                  "shortId": "e1",
+                  "skillProficiencySet": Array [],
+                  "tenantId": 0,
+                  "version": 0,
+                },
+              },
+            ],
+            "spot": Object {
+              "id": 2,
+              "name": "Spot",
+              "requiredSkillSet": Array [],
+              "tenantId": 0,
+              "version": 0,
+            },
+            "startTime": 2018-01-01T09:00:00.000Z,
+            "tenantId": 0,
+          }
+        }
+      />
+    </FlexItem>
+    <FlexItem>
+      <EditTimeBucketModal
+        isOpen={false}
+        onClose={[Function]}
+        onUpdateTimeBucket={[Function]}
+        timeBucket={
+          Object {
+            "additionalSkillSet": Array [],
+            "endTime": 2018-01-01T00:00:00.000Z,
+            "repeatOnDaySetList": Array [],
+            "seatList": Array [],
+            "spot": Object {
+              "id": 2,
+              "name": "Spot",
+              "requiredSkillSet": Array [],
+              "tenantId": 0,
+              "version": 0,
+            },
+            "startTime": 2018-01-01T00:00:00.000Z,
+            "tenantId": 0,
+          }
+        }
+      />
+      <Component
+        aria-label="Add New Time Bucket"
+        onClick={[Function]}
+        variant="link"
+      >
+        <PlusIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+         
+        Add New Time Bucket
+      </Component>
+    </FlexItem>
+  </Flex>
+</Fragment>
+`;
+
+exports[`Rotation Page It should render empty state if loading 1`] = `
+<EmptyState
+  variant="full"
+>
+  <EmptyStateIcon
+    icon={[Function]}
+  />
+  <Trans
+    components={
+      Array [
+        <Title
+          headingLevel="h5"
+          size="lg"
+        />,
+        <EmptyStateBody />,
+        <Unknown
+          aria-label="Spots Page"
+          onClick={[Function]}
+          variant="primary"
+        />,
+      ]
+    }
+    i18nKey="noSpots"
+    t={[MockFunction]}
+  />
+</EmptyState>
+`;

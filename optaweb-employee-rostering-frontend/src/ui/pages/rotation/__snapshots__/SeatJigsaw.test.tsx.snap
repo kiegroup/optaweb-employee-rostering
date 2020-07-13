@@ -1,0 +1,331 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SeatJigsaw Component It should render correctly 1`] = `
+<Fragment>
+  <Title
+    size="lg"
+    style={
+      Object {
+        "userSelect": "none",
+      }
+    }
+  >
+    9:00 AM
+    -
+    5:00 PM
+    <Text>
+      (
+      Skill
+      )
+    </Text>
+  </Title>
+  <Split>
+    <SplitItem>
+      <Flex
+        breakpointMods={
+          Array [
+            Object {
+              "modifier": "space-items-lg",
+            },
+          ]
+        }
+      >
+        <FlexItem
+          key="0"
+        >
+          <div
+            style={
+              Object {
+                "columnGap": "0.5rem",
+                "cursor": "pointer",
+                "display": "grid",
+                "gridTemplateColumns": "repeat(7, 30px)",
+              }
+            }
+          >
+            <button
+              key="0"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+              onMouseMove={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "#FFFFFF",
+                  "border": "1px solid black",
+                  "height": "50px",
+                  "textOrientation": "upright",
+                  "userSelect": "none",
+                  "writingMode": "vertical-rl",
+                }
+              }
+              title="Employee 1"
+              type="button"
+            >
+              <EmployeeNickName
+                employee={
+                  Object {
+                    "color": "#FFFFFF",
+                    "contract": Object {
+                      "id": 5,
+                      "maximumMinutesPerDay": 10,
+                      "maximumMinutesPerMonth": 500,
+                      "maximumMinutesPerWeek": 70,
+                      "maximumMinutesPerYear": 6000,
+                      "name": "Basic Contract",
+                      "tenantId": 0,
+                      "version": 0,
+                    },
+                    "id": 4,
+                    "name": "Employee 1",
+                    "shortId": "e1",
+                    "skillProficiencySet": Array [],
+                    "tenantId": 0,
+                    "version": 0,
+                  }
+                }
+              />
+            </button>
+            <button
+              key="1"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+              onMouseMove={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "gray",
+                  "border": "1px solid black",
+                  "height": "50px",
+                  "textOrientation": "upright",
+                  "userSelect": "none",
+                  "writingMode": "vertical-rl",
+                }
+              }
+              title="No Shift"
+              type="button"
+            >
+              <EmployeeNickName
+                employee={null}
+              />
+            </button>
+            <button
+              key="2"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+              onMouseMove={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "gray",
+                  "border": "1px solid black",
+                  "height": "50px",
+                  "textOrientation": "upright",
+                  "userSelect": "none",
+                  "writingMode": "vertical-rl",
+                }
+              }
+              title="No Shift"
+              type="button"
+            >
+              <EmployeeNickName
+                employee={null}
+              />
+            </button>
+            <button
+              key="3"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+              onMouseMove={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "gray",
+                  "border": "1px solid black",
+                  "height": "50px",
+                  "textOrientation": "upright",
+                  "userSelect": "none",
+                  "writingMode": "vertical-rl",
+                }
+              }
+              title="No Shift"
+              type="button"
+            >
+              <EmployeeNickName
+                employee={null}
+              />
+            </button>
+            <button
+              key="4"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+              onMouseMove={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "gray",
+                  "border": "1px solid black",
+                  "height": "50px",
+                  "textOrientation": "upright",
+                  "userSelect": "none",
+                  "writingMode": "vertical-rl",
+                }
+              }
+              title="No Shift"
+              type="button"
+            >
+              <EmployeeNickName
+                employee={null}
+              />
+            </button>
+            <button
+              key="5"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+              onMouseMove={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "gray",
+                  "border": "1px solid black",
+                  "height": "50px",
+                  "textOrientation": "upright",
+                  "userSelect": "none",
+                  "writingMode": "vertical-rl",
+                }
+              }
+              title="No Shift"
+              type="button"
+            >
+              <EmployeeNickName
+                employee={null}
+              />
+            </button>
+            <button
+              key="6"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+              onMouseMove={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "gray",
+                  "border": "1px solid black",
+                  "height": "50px",
+                  "textOrientation": "upright",
+                  "userSelect": "none",
+                  "writingMode": "vertical-rl",
+                }
+              }
+              title="No Shift"
+              type="button"
+            >
+              <EmployeeNickName
+                employee={null}
+              />
+            </button>
+            <span
+              style={
+                Object {
+                  "gridColumn": 1,
+                  "gridRow": 2,
+                  "justifySelf": "center",
+                  "userSelect": "none",
+                }
+              }
+            >
+              1
+            </span>
+            <span
+              style={
+                Object {
+                  "gridColumn": 7,
+                  "gridRow": 2,
+                  "justifySelf": "center",
+                  "userSelect": "none",
+                }
+              }
+            >
+              7
+            </span>
+          </div>
+        </FlexItem>
+      </Flex>
+    </SplitItem>
+    <SplitItem>
+      <Component
+        onClick={[Function]}
+        variant="link"
+      >
+        <EditIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+         
+        Edit Time Bucket
+      </Component>
+      <Component
+        onClick={[MockFunction]}
+        variant="link"
+      >
+        <TrashIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+         
+        Delete Time Bucket
+      </Component>
+    </SplitItem>
+  </Split>
+  <EditTimeBucketModal
+    isOpen={false}
+    onClose={[Function]}
+    onUpdateTimeBucket={[MockFunction]}
+    timeBucket={
+      Object {
+        "additionalSkillSet": Array [
+          Object {
+            "id": 999,
+            "name": "Skill",
+            "tenantId": 0,
+            "version": 0,
+          },
+        ],
+        "endTime": 2018-01-01T17:00:00.000Z,
+        "id": 22,
+        "repeatOnDaySetList": Array [],
+        "seatList": Array [
+          Object {
+            "dayInRotation": 0,
+            "employee": Object {
+              "color": "#FFFFFF",
+              "contract": Object {
+                "id": 5,
+                "maximumMinutesPerDay": 10,
+                "maximumMinutesPerMonth": 500,
+                "maximumMinutesPerWeek": 70,
+                "maximumMinutesPerYear": 6000,
+                "name": "Basic Contract",
+                "tenantId": 0,
+                "version": 0,
+              },
+              "id": 4,
+              "name": "Employee 1",
+              "shortId": "e1",
+              "skillProficiencySet": Array [],
+              "tenantId": 0,
+              "version": 0,
+            },
+          },
+        ],
+        "spot": Object {
+          "id": 2,
+          "name": "Spot",
+          "requiredSkillSet": Array [],
+          "tenantId": 0,
+          "version": 0,
+        },
+        "startTime": 2018-01-01T09:00:00.000Z,
+        "tenantId": 0,
+      }
+    }
+  />
+</Fragment>
+`;

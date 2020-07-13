@@ -29,7 +29,10 @@ import { v4 as uuidv4 } from 'uuid';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import Color from 'color';
 
-export const EmployeeNickName: React.FC<{ employee: Employee | null }> = (props) => {
+export interface EmployeeNickNameProps {
+  employee: Employee | null;
+}
+export const EmployeeNickName: React.FC<EmployeeNickNameProps> = (props) => {
   const nickname = props.employee ? props.employee.shortId : '';
   return (
     <Bullseye
@@ -53,12 +56,14 @@ export function getColor(color: string): Color {
   return Color(color);
 }
 
-export const EmployeeStub: React.FC<{
+
+export interface EmployeeStubProps {
   isSelected: boolean;
   employee: Employee | null;
   color: string;
   onClick: () => void;
-}> = props => (
+}
+export const EmployeeStub: React.FC<EmployeeStubProps> = props => (
   <button
     style={{
       width: '20px',
@@ -90,10 +95,11 @@ const defaultColorList = ['red', 'orange', 'gold', 'green', 'cyan', 'blue', 'pur
   ['600', '500', '400', '300', '200', '100'].map(value => `var(--pf-global--palette--${colorFamily}-${value})`)
 ));
 
-export const ColorPicker: React.FC<{
+export interface ColorPickerProps {
   currentColor: string;
   onChangeColor: (newColor: string) => void;
-}> = props => (
+}
+export const ColorPicker: React.FC<ColorPickerProps> = props => (
   <Popover
     aria-label="color-select"
     bodyContent={(
@@ -143,12 +149,13 @@ export const ColorPicker: React.FC<{
   </Popover>
 );
 
-export const EditEmployeeStubListModal: React.FC<{
+export interface EditEmployeeStubListModalProps {
   isVisible: boolean;
   currentStubList: Stub[];
   onClose: () => void;
   onUpdateStubList: (stubList: Stub[]) => void;
-}> = (props) => {
+}
+export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps> = (props) => {
   const [editedStubList, setEditedStubList] = React.useState([...props.currentStubList]);
   const employeeList = useSelector(employeeSelectors.getEmployeeList);
 
@@ -211,6 +218,7 @@ export const EditEmployeeStubListModal: React.FC<{
                           {
                             ...stub,
                             employee: employee || null,
+                            color: employee ? employee.color : '',
                           },
                           ...editedStubList.filter((_, i) => i > index),
                         ]);
@@ -264,12 +272,14 @@ export const EditEmployeeStubListModal: React.FC<{
   );
 };
 
-export const EmployeeStubList: React.FC<{
+export interface EmployeeStubListProps {
   selectedStub: Stub | null;
   stubList: Stub[];
   onStubSelect: (stub: Stub | null) => void;
   onUpdateStubList: (stubList: Stub[]) => void;
-}> = (props) => {
+}
+
+export const EmployeeStubList: React.FC<EmployeeStubListProps> = (props) => {
   // const { t } = useTranslation('EmployeeStub');
   const [isEditingEmployeeStubList, setIsEditingEmployeeStubList] = React.useState(false);
 

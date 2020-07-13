@@ -32,11 +32,13 @@ export interface EditTimeBucketModalProps {
   onClose: () => void;
 }
 
-export const TimeBucketEditor: React.FC<{
+export interface TimeBucketEditorProps {
   name: string;
   timeBucket: TimeBucket;
   onUpdateTimeBucket: (newValue: TimeBucket) => void;
-}> = (props) => {
+}
+
+export const TimeBucketEditor: React.FC<TimeBucketEditorProps> = (props) => {
   const skillList = useSelector(skillSelectors.getSkillList);
   const weekDaysEnum = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
   const weekDayTitle = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -48,7 +50,7 @@ export const TimeBucketEditor: React.FC<{
         <FlexItem>
           <InputGroup>
             <TextInput
-              aria-label="Start  Time"
+              aria-label="Start Time"
               type="time"
               value={moment(props.timeBucket.startTime, TIME_FORMAT).format(TIME_FORMAT)}
               onChange={(startTime) => {
@@ -62,7 +64,7 @@ export const TimeBucketEditor: React.FC<{
             to
             </InputGroupText>
             <TextInput
-              aria-label="End  Time"
+              aria-label="End Time"
               type="time"
               value={moment(props.timeBucket.endTime, TIME_FORMAT).format(TIME_FORMAT)}
               onChange={(endTime) => {
