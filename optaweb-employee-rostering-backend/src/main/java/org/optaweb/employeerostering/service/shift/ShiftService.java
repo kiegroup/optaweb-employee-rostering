@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Validator;
 
 import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaweb.employeerostering.domain.employee.Employee;
@@ -55,9 +56,11 @@ public class ShiftService extends AbstractRestService {
 
     private IndictmentUtils indictmentUtils;
 
-    public ShiftService(ShiftRepository shiftRepository, SpotRepository spotRepository,
+    public ShiftService(Validator validator,
+                        ShiftRepository shiftRepository, SpotRepository spotRepository,
                         SkillService skillService, EmployeeRepository employeeRepository,
                         RosterService rosterService, IndictmentUtils indictmentUtils) {
+        super(validator);
         this.shiftRepository = shiftRepository;
         this.spotRepository = spotRepository;
         this.skillService = skillService;
@@ -85,7 +88,7 @@ public class ShiftService extends AbstractRestService {
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No Shift entity found with ID (" + id + ")."));
 
-        validateTenantIdParameter(tenantId, shift);
+        validateBean(tenantId, shift);
         Indictment indictment = indictmentUtils.getIndictmentMapForRoster(
                 rosterService.buildRoster(tenantId)).get(shift);
         return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(), shift,
@@ -93,14 +96,14 @@ public class ShiftService extends AbstractRestService {
     }
 
     private Shift convertFromView(Integer tenantId, ShiftView shiftView) {
-        validateTenantIdParameter(tenantId, shiftView);
+        validateBean(tenantId, shiftView);
 
         Spot spot = spotRepository
                 .findById(shiftView.getSpotId())
                 .orElseThrow(() -> new EntityNotFoundException("No Spot entity found with ID (" + shiftView.getSpotId()
                                                                        + ")."));
 
-        validateTenantIdParameter(tenantId, spot);
+        validateBean(tenantId, spot);
 
         Long rotationEmployeeId = shiftView.getRotationEmployeeId();
         Employee rotationEmployee = null;
@@ -111,7 +114,7 @@ public class ShiftService extends AbstractRestService {
                                                                            ") has an non-existing " +
                                                                            "rotationEmployeeId (" +
                                                                            rotationEmployeeId + ")."));
-            validateTenantIdParameter(tenantId, rotationEmployee);
+            validateBean(tenantId, rotationEmployee);
         }
 
         Long originalEmployeeId = shiftView.getOriginalEmployeeId();
@@ -123,7 +126,7 @@ public class ShiftService extends AbstractRestService {
                                                                            ") has an non-existing " +
                                                                            "originalEmployeeId (" +
                                                                            originalEmployeeId + ")."));
-            validateTenantIdParameter(tenantId, originalEmployee);
+            validateBean(tenantId, originalEmployee);
         }
 
         Set<Skill> requiredSkillSet = shiftView.getRequiredSkillSetIdList()
@@ -141,10 +144,11 @@ public class ShiftService extends AbstractRestService {
                     .orElseThrow(() -> new EntityNotFoundException("ShiftView (" + shiftView +
                                                                            ") has an non-existing employeeId (" +
                                                                            employeeId + ")."));
-            validateTenantIdParameter(tenantId, employee);
+            validateBean(tenantId, employee);
             shift.setEmployee(employee);
         }
-
+        
+        validateBean(tenantId, shift);
         return shift;
     }
 
@@ -195,7 +199,7 @@ public class ShiftService extends AbstractRestService {
         if (!shiftOptional.isPresent()) {
             return false;
         }
-        validateTenantIdParameter(tenantId, shiftOptional.get());
+        validateBean(tenantId, shiftOptional.get());
         shiftRepository.deleteById(id);
         return true;
     }

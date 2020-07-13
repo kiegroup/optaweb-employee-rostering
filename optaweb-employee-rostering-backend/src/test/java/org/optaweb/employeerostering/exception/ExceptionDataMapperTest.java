@@ -21,6 +21,7 @@ import javax.persistence.RollbackException;
 
 import org.junit.Test;
 import org.optaweb.employeerostering.ExceptionDataMapper;
+import org.optaweb.employeerostering.domain.exception.ConstraintViolatedException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,6 +34,8 @@ public class ExceptionDataMapperTest {
         tested = new ExceptionDataMapper();
         assertEquals(ExceptionDataMapper.ExceptionData.GENERIC_EXCEPTION,
                      tested.getExceptionDataForExceptionClass(Throwable.class));
+        assertEquals(ExceptionDataMapper.ExceptionData.ENTITY_CONSTRAINT_VIOLATION,
+                     tested.getExceptionDataForExceptionClass(ConstraintViolatedException.class));
         assertEquals(ExceptionDataMapper.ExceptionData.GENERIC_EXCEPTION,
                      tested.getExceptionDataForExceptionClass(IllegalStateException.class));
         assertEquals(ExceptionDataMapper.ExceptionData.ILLEGAL_ARGUMENT,

@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Validator;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
@@ -51,10 +52,12 @@ public class EmployeeService extends AbstractRestService {
 
     private final EmployeeListXlsxFileIO employeeListXlsxFileIO;
 
-    public EmployeeService(EmployeeRepository employeeRepository,
+    public EmployeeService(Validator validator,
+                           EmployeeRepository employeeRepository,
                            EmployeeAvailabilityRepository employeeAvailabilityRepository,
                            RosterStateRepository rosterStateRepository,
                            EmployeeListXlsxFileIO employeeListXlsxFileIO) {
+        super(validator);
         this.employeeRepository = employeeRepository;
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
         this.rosterStateRepository = rosterStateRepository;
@@ -66,9 +69,9 @@ public class EmployeeService extends AbstractRestService {
     // ************************************************************************
 
     public Employee convertFromEmployeeView(Integer tenantId, EmployeeView employeeView) {
-        validateTenantIdParameter(tenantId, employeeView);
-        Employee employee = new Employee(tenantId, employeeView.getName(), employeeView.getContract(),
+        Employee employee = new Employee(employeeView.getTenantId(), employeeView.getName(), employeeView.getContract(),
                                          employeeView.getSkillProficiencySet());
+        validateEmployee(tenantId, employee);
         employee.setId(employeeView.getId());
         employee.setVersion(employeeView.getVersion());
         return employee;
@@ -85,7 +88,7 @@ public class EmployeeService extends AbstractRestService {
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No Employee entity found with ID (" + id + ")."));
 
-        validateTenantIdParameter(tenantId, employee);
+        validateEmployee(tenantId, employee);
         return employee;
     }
 
@@ -97,7 +100,7 @@ public class EmployeeService extends AbstractRestService {
             return false;
         }
 
-        validateTenantIdParameter(tenantId, employeeOptional.get());
+        validateEmployee(tenantId, employeeOptional.get());
         employeeRepository.deleteById(id);
         return true;
     }
@@ -105,7 +108,7 @@ public class EmployeeService extends AbstractRestService {
     @Transactional
     public Employee createEmployee(Integer tenantId, EmployeeView employeeView) {
         Employee employee = convertFromEmployeeView(tenantId, employeeView);
-        validateTenantIdParameter(tenantId, employee);
+        validateEmployee(tenantId, employee);
 
         return employeeRepository.save(employee);
     }
@@ -123,7 +126,9 @@ public class EmployeeService extends AbstractRestService {
             throw new IllegalStateException("Employee entity with tenantId (" + oldEmployee.getTenantId()
                                                     + ") cannot change tenants.");
         }
-
+        
+        validateEmployee(tenantId, newEmployee);
+        
         oldEmployee.setName(newEmployee.getName());
         oldEmployee.setSkillProficiencySet(newEmployee.getSkillProficiencySet());
         oldEmployee.setContract(newEmployee.getContract());
@@ -145,6 +150,7 @@ public class EmployeeService extends AbstractRestService {
             addedEmployeeSet.add(employee.getName().toLowerCase());
             return Stream.of(employee);
         }).forEach(employee -> {
+            validateEmployee(tenantId, convertFromEmployeeView(tenantId, employee));
             Employee oldEmployee = employeeRepository.findEmployeeByName(tenantId, employee.getName());
             if (oldEmployee != null) {
                 employee.setContract(oldEmployee.getContract());
@@ -159,8 +165,8 @@ public class EmployeeService extends AbstractRestService {
         return getEmployeeList(tenantId);
     }
 
-    protected void validateTenantIdParameter(Integer tenantId, Employee employee) {
-        super.validateTenantIdParameter(tenantId, employee);
+    protected void validateEmployee(Integer tenantId, Employee employee) {
+        super.validateBean(tenantId, employee);
         for (Skill skill : employee.getSkillProficiencySet()) {
             if (!Objects.equals(skill.getTenantId(), tenantId)) {
                 throw new IllegalStateException("The tenantId (" + tenantId + ") does not match the skillProficiency ("
@@ -176,7 +182,7 @@ public class EmployeeService extends AbstractRestService {
     private EmployeeAvailability convertFromEmployeeAvailabilityView(Integer tenantId,
                                                                      EmployeeAvailabilityView
                                                                              employeeAvailabilityView) {
-        validateTenantIdParameter(tenantId, employeeAvailabilityView);
+        validateBean(tenantId, employeeAvailabilityView);
 
         Employee employee = employeeRepository
                 .findById(employeeAvailabilityView.getEmployeeId())
@@ -184,7 +190,7 @@ public class EmployeeService extends AbstractRestService {
                                                                        employeeAvailabilityView.getEmployeeId() +
                                                                        ") not found."));
 
-        validateTenantIdParameter(tenantId, employee);
+        validateBean(tenantId, employee);
 
         RosterState rosterState = rosterStateRepository
                 .findByTenantId(tenantId)
@@ -204,7 +210,7 @@ public class EmployeeService extends AbstractRestService {
                 .orElseThrow(() -> new EntityNotFoundException("No EmployeeAvailability entity found with ID (" + id +
                                                                        ")."));
 
-        validateTenantIdParameter(tenantId, employeeAvailability);
+        validateBean(tenantId, employeeAvailability);
 
         RosterState rosterState = rosterStateRepository
                 .findByTenantId(tenantId)
@@ -244,6 +250,7 @@ public class EmployeeService extends AbstractRestService {
                                                     newEmployeeAvailability.getTenantId() +
                                                     ") cannot change tenants.");
         }
+        validateBean(tenantId, newEmployeeAvailability);
 
         oldEmployeeAvailability.setEmployee(newEmployeeAvailability.getEmployee());
         oldEmployeeAvailability.setStartDateTime(newEmployeeAvailability.getStartDateTime());
@@ -269,7 +276,7 @@ public class EmployeeService extends AbstractRestService {
             return false;
         }
 
-        validateTenantIdParameter(tenantId, employeeAvailabilityOptional.get());
+        validateBean(tenantId, employeeAvailabilityOptional.get());
         employeeAvailabilityRepository.deleteById(id);
         return true;
     }

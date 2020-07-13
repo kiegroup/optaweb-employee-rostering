@@ -23,6 +23,7 @@ import java.util.function.Function;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.optaweb.employeerostering.domain.exception.ConstraintViolatedException;
 import org.optaweb.employeerostering.domain.exception.ServerSideExceptionInfo;
 import org.optaweb.employeerostering.util.HierarchyTree;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -64,6 +65,9 @@ public class ExceptionDataMapper {
     public enum ExceptionData {
         GENERIC_EXCEPTION("ServerSideException.generic", HttpStatus.INTERNAL_SERVER_ERROR, Throwable.class,
                           t -> Collections.emptyList()),
+        ENTITY_CONSTRAINT_VIOLATION("ServerSideException.entityConstraintViolation", HttpStatus.BAD_REQUEST,
+                                    ConstraintViolatedException.class,
+                                    t -> ((ConstraintViolatedException) t).getI18nMessageParameters()),
         ILLEGAL_ARGUMENT("ServerSideException.illegalArgument", HttpStatus.INTERNAL_SERVER_ERROR,
                          IllegalArgumentException.class,
                          t -> Collections.singletonList(t.getMessage())),

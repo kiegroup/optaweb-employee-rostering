@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Validator;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.roster.RosterState;
@@ -48,8 +49,10 @@ public class RotationService extends AbstractRestService {
     private final SkillService skillService;
     private final EmployeeService employeeService;
 
-    public RotationService(ShiftTemplateRepository shiftTemplateRepository, RosterService rosterService,
+    public RotationService(Validator validator,
+                           ShiftTemplateRepository shiftTemplateRepository, RosterService rosterService,
                            SpotService spotService, SkillService skillService, EmployeeService employeeService) {
+        super(validator);
         this.shiftTemplateRepository = shiftTemplateRepository;
 
         this.rosterService = rosterService;
@@ -87,7 +90,7 @@ public class RotationService extends AbstractRestService {
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No ShiftTemplate entity found with ID (" + id + ")."));
 
-        validateTenantIdParameter(tenantId, shiftTemplate);
+        validateBean(tenantId, shiftTemplate);
         return new ShiftTemplateView(rosterState.getRotationLength(), shiftTemplate);
     }
 
@@ -106,7 +109,7 @@ public class RotationService extends AbstractRestService {
 
         ShiftTemplate shiftTemplate = new ShiftTemplate(rosterState.getRotationLength(), shiftTemplateView, spot,
                                                         employee, requiredSkillSet);
-        validateTenantIdParameter(tenantId, shiftTemplate);
+        validateBean(tenantId, shiftTemplate);
         shiftTemplateRepository.save(shiftTemplate);
         return new ShiftTemplateView(rosterState.getRotationLength(), shiftTemplate);
     }
@@ -126,7 +129,7 @@ public class RotationService extends AbstractRestService {
 
         ShiftTemplate newShiftTemplate = new ShiftTemplate(rosterState.getRotationLength(), shiftTemplateView, spot,
                                                            employee, requiredSkillSet);
-        validateTenantIdParameter(tenantId, newShiftTemplate);
+        validateBean(tenantId, newShiftTemplate);
 
         ShiftTemplate oldShiftTemplate = shiftTemplateRepository
                 .findById(newShiftTemplate.getId())
@@ -159,7 +162,7 @@ public class RotationService extends AbstractRestService {
             return false;
         }
 
-        validateTenantIdParameter(tenantId, shiftTemplateOptional.get());
+        validateBean(tenantId, shiftTemplateOptional.get());
         shiftTemplateRepository.deleteById(id);
         return true;
     }

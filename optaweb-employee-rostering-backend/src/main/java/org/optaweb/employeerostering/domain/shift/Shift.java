@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.domain.shift;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -29,6 +30,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
@@ -115,6 +117,13 @@ public class Shift extends AbstractPersistable {
         this.rotationEmployee = rotationEmployee;
         this.requiredSkillSet = requiredSkillSet;
         this.originalEmployee = originalEmployee;
+    }
+    
+    @AssertTrue(message = "Shift's end date time is not at least 30 minutes" +
+                          " after shift's start date time")
+    public boolean isValid() {
+        return startDateTime != null && endDateTime != null &&
+               (Duration.between(startDateTime, endDateTime).getSeconds() / 60) >= 30;
     }
 
     @Override
