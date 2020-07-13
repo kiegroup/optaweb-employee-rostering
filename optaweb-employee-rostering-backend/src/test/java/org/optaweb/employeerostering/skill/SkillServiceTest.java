@@ -226,7 +226,7 @@ public class SkillServiceTest extends AbstractEntityRequireTenantRestServiceTest
         String exceptionClass = "java.lang.IllegalStateException";
 
         SkillView skillView = new SkillView(TENANT_ID, "skill");
-        Skill skill = skillService.createSkill(TENANT_ID, skillView);
+        skillService.createSkill(TENANT_ID, skillView);
 
         SkillView updatedSkill = new SkillView(TENANT_ID, "updatedSkill");
         String body = (new ObjectMapper()).writeValueAsString(updatedSkill);

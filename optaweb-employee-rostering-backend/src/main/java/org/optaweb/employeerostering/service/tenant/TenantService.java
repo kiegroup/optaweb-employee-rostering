@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Validator;
 
 import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
@@ -59,7 +60,8 @@ public class TenantService extends AbstractRestService {
 
     private final SkillRepository skillRepository;
 
-    public TenantService(TenantRepository tenantRepository,
+    public TenantService(Validator validator,
+                         TenantRepository tenantRepository,
                          RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
                          RosterStateRepository rosterStateRepository,
                          ShiftRepository shiftRepository,
@@ -68,6 +70,7 @@ public class TenantService extends AbstractRestService {
                          EmployeeRepository employeeRepository,
                          SpotRepository spotRepository,
                          SkillRepository skillRepository) {
+        super(validator);
         this.tenantRepository = tenantRepository;
         this.rosterConstraintConfigurationRepository = rosterConstraintConfigurationRepository;
         this.rosterStateRepository = rosterStateRepository;

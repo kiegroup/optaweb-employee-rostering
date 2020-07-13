@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Validator;
 
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
@@ -32,12 +33,13 @@ public class ContractService extends AbstractRestService {
 
     private final ContractRepository contractRepository;
 
-    public ContractService(ContractRepository contractRepository) {
+    public ContractService(Validator validator, ContractRepository contractRepository) {
+        super(validator);
         this.contractRepository = contractRepository;
     }
 
     public Contract convertFromView(Integer tenantId, ContractView contractView) {
-        validateTenantIdParameter(tenantId, contractView);
+        validateBean(tenantId, contractView);
         Contract contract = new Contract(tenantId, contractView.getName(),
                                          contractView.getMaximumMinutesPerDay(),
                                          contractView.getMaximumMinutesPerWeek(),
@@ -59,7 +61,7 @@ public class ContractService extends AbstractRestService {
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No Contract entity found with ID (" + id + ")."));
 
-        validateTenantIdParameter(tenantId, contract);
+        validateBean(tenantId, contract);
         return contract;
     }
 
@@ -71,7 +73,7 @@ public class ContractService extends AbstractRestService {
             return false;
         }
 
-        validateTenantIdParameter(tenantId, contractOptional.get());
+        validateBean(tenantId, contractOptional.get());
         contractRepository.deleteById(id);
         return true;
     }

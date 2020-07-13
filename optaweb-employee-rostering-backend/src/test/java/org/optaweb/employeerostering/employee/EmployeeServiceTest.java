@@ -278,8 +278,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
 
-        Skill skillA = createSkill(TENANT_ID, "A");
-        Skill skillB = createSkill(TENANT_ID, "B");
+        Skill skillA = createSkill(0, "A");
+        Skill skillB = createSkill(0, "B");
 
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);

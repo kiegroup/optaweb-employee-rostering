@@ -48,10 +48,18 @@ export const ServerSideExceptionDialog: React.FC<React.PropsWithChildren<ServerS
   const [isOpen, setIsOpen] = React.useState(false);
   const dialogBody = createStackTrace(props);
   const { t } = useTranslation('ServerSideException');
+  let { messageParameters } = props;
+
+  if (props.i18nKey === 'ServerSideException.entityConstraintViolation') {
+    messageParameters = {
+      entityClass: props.messageParameters[0],
+      violations: props.messageParameters.slice(1),
+    };
+  }
 
   return (
     <>
-      {t(props.i18nKey, props.messageParameters)}
+      {t(props.i18nKey, messageParameters, { joinArrays: '\n' })}
       <Button
         aria-label="Show Stack Trace"
         variant={ButtonVariant.link}

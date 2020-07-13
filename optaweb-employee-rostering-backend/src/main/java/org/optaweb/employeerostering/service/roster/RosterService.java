@@ -29,6 +29,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Validator;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.score.constraint.Indictment;
@@ -80,13 +81,15 @@ public class RosterService extends AbstractRestService {
     private WannabeSolverManager solverManager;
     private IndictmentUtils indictmentUtils;
 
-    public RosterService(RosterStateRepository rosterStateRepository, SkillRepository skillRepository,
+    public RosterService(Validator validator,
+                         RosterStateRepository rosterStateRepository, SkillRepository skillRepository,
                          SpotRepository spotRepository, EmployeeRepository employeeRepository,
                          EmployeeAvailabilityRepository employeeAvailabilityRepository,
                          ShiftRepository shiftRepository,
                          RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
                          ShiftTemplateRepository shiftTemplateRepository,
                          WannabeSolverManager solverManager, IndictmentUtils indictmentUtils) {
+        super(validator);
         this.rosterStateRepository = rosterStateRepository;
         this.skillRepository = skillRepository;
         this.spotRepository = spotRepository;
@@ -109,7 +112,7 @@ public class RosterService extends AbstractRestService {
                 .findByTenantId(tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("No RosterState entity found with tenantId (" +
                                                                        tenantId + ")."));
-        validateTenantIdParameter(tenantId, rosterState);
+        validateBean(tenantId, rosterState);
         return rosterState;
     }
 

@@ -9,3 +9,8 @@ ServerSideException:
   rollback: The object you tried to delete is still referenced from other entities.
     Update/delete all references to this object before deleting it.
   unknown: 'An exception occurred: {{0}}'
+  entityConstraintViolation: 'The {{entityClass}} object you submitted was invalid. The following constraints
+    were violated:
+    
+    {{violations}}
+    '

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Validator;
 
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
@@ -33,15 +34,17 @@ public class SpotService extends AbstractRestService {
 
     private final SpotRepository spotRepository;
 
-    public SpotService(SpotRepository spotRepository) {
+    public SpotService(Validator validator, SpotRepository spotRepository) {
+        super(validator);
         this.spotRepository = spotRepository;
     }
 
     public Spot convertFromView(Integer tenantId, SpotView spotView) {
-        validateTenantIdParameter(tenantId, spotView);
-        Spot spot = new Spot(tenantId, spotView.getName(), spotView.getRequiredSkillSet());
+        Spot spot = new Spot(spotView.getTenantId(), spotView.getName(), spotView.getRequiredSkillSet());
         spot.setId(spotView.getId());
         spot.setVersion(spotView.getVersion());
+        validateBean(tenantId, spot);
+        
         return spot;
     }
 
@@ -56,7 +59,7 @@ public class SpotService extends AbstractRestService {
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No Spot entity found with ID (" + id + ")."));
 
-        validateTenantIdParameter(tenantId, spot);
+        validateBean(tenantId, spot);
         return spot;
     }
 
@@ -68,7 +71,7 @@ public class SpotService extends AbstractRestService {
             return false;
         }
 
-        validateTenantIdParameter(tenantId, spotOptional.get());
+        validateBean(tenantId, spotOptional.get());
         spotRepository.deleteById(id);
         return true;
     }

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Validator;
 
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
@@ -32,15 +33,17 @@ public class SkillService extends AbstractRestService {
 
     private final SkillRepository skillRepository;
 
-    public SkillService(SkillRepository skillRepository) {
+    public SkillService(Validator validator, SkillRepository skillRepository) {
+        super(validator);
         this.skillRepository = skillRepository;
     }
 
     public Skill convertFromView(Integer tenantId, SkillView skillView) {
-        validateTenantIdParameter(tenantId, skillView);
-        Skill skill = new Skill(tenantId, skillView.getName());
+        Skill skill = new Skill(skillView.getTenantId(), skillView.getName());
         skill.setId(skillView.getId());
         skill.setVersion(skillView.getVersion());
+        validateBean(tenantId, skill);
+        
         return skill;
     }
 
@@ -55,7 +58,7 @@ public class SkillService extends AbstractRestService {
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No Skill entity found with ID (" + id + ")."));
 
-        validateTenantIdParameter(tenantId, skill);
+        validateBean(tenantId, skill);
         return skill;
     }
 
@@ -67,7 +70,7 @@ public class SkillService extends AbstractRestService {
             return false;
         }
 
-        validateTenantIdParameter(tenantId, skillOptional.get());
+        validateBean(tenantId, skillOptional.get());
         skillRepository.deleteById(id);
         return true;
     }
