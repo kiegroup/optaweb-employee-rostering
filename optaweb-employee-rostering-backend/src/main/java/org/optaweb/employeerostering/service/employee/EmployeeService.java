@@ -126,9 +126,9 @@ public class EmployeeService extends AbstractRestService {
             throw new IllegalStateException("Employee entity with tenantId (" + oldEmployee.getTenantId()
                                                     + ") cannot change tenants.");
         }
-        
+
         validateEmployee(tenantId, newEmployee);
-        
+
         oldEmployee.setName(newEmployee.getName());
         oldEmployee.setSkillProficiencySet(newEmployee.getSkillProficiencySet());
         oldEmployee.setContract(newEmployee.getContract());

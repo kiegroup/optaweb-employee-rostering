@@ -32,6 +32,8 @@ import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import { skillSelectors } from 'store/skill';
 import { Skill } from 'domain/Skill';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
+import moment from 'moment';
+import { useValidators } from 'util/ValidationUtils';
 
 interface Props {
   tenantId: number;
@@ -123,6 +125,22 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
   render() {
     const { t } = this.props;
     const dateFormat = 'MMMM dd, hh:mm a';
+    const { isValid, showValidationErrors } = useValidators(this.state.editedValue,
+      {
+        noStartDate: {
+          predicate: shift => shift.startDateTime !== undefined,
+          errorMsg: () => 'Shift must have a start date time',
+        },
+        noEndDate: {
+          predicate: shift => shift.endDateTime !== undefined,
+          errorMsg: () => 'Shift must have a end date time',
+        },
+        durationLessThan30Minutes: {
+          predicate: shift => !(shift.startDateTime && shift.endDateTime)
+            || moment(shift.endDateTime).diff(shift.startDateTime, 'minutes') >= 30,
+          errorMsg: () => 'Shift must have a duration of at least 30 minutes.',
+        },
+      });
 
     return (
       <Modal
@@ -149,7 +167,14 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
               {t('delete')}
             </Button>,
           ] : []).concat([
-            <Button aria-label="Save" key={2} onClick={this.onSave}>{t('save')}</Button>,
+            <Button
+              aria-label="Save"
+              key={2}
+              onClick={this.onSave}
+              isDisabled={!isValid}
+            >
+              {t('save')}
+            </Button>,
           ])
         }
         isSmall
@@ -166,6 +191,7 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
               dateFormat={dateFormat}
               showTimeSelect
             />
+            {showValidationErrors('noStartDate', 'durationLessThan30Minutes')}
           </InputGroup>
           <InputGroup>
             <Label>{t('shiftEnd')}</Label>
@@ -178,6 +204,7 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
               dateFormat={dateFormat}
               showTimeSelect
             />
+            {showValidationErrors('noEndDate', 'durationLessThan30Minutes')}
           </InputGroup>
           <InputGroup>
             <Label>{t('spot')}</Label>

@@ -44,7 +44,7 @@ public class SpotService extends AbstractRestService {
         spot.setId(spotView.getId());
         spot.setVersion(spotView.getVersion());
         validateBean(tenantId, spot);
-        
+
         return spot;
     }
 

@@ -43,7 +43,7 @@ public class SkillService extends AbstractRestService {
         skill.setId(skillView.getId());
         skill.setVersion(skillView.getVersion());
         validateBean(tenantId, skill);
-        
+
         return skill;
     }
 

@@ -807,14 +807,14 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                              expected.getTenantId(), actual.getTenantId());
                 assertEquals("Wrong number of skills for " + expected.getName(),
                              expected.getSkillProficiencySet().size(), actual.getSkillProficiencySet().size());
-                
+
                 expected.getSkillProficiencySet().forEach(skill -> assertTrue("Missing skill " + skill.getName() +
-                                                                                      " for employee " + 
+                                                                                      " for employee " +
                                                                                       expected.getName(),
                                                                               actual.getSkillProficiencySet().stream()
                                                                                       .anyMatch(s -> s.getName()
                                                                                               .equals(skill.getName()))
-                                                                                      ));
+                ));
             } else {
                 fail("Expected an employee with name (" + expected.getName() + "), but no such employee was found.");
             }

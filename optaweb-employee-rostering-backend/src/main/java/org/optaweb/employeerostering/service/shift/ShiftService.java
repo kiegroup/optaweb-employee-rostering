@@ -147,7 +147,7 @@ public class ShiftService extends AbstractRestService {
             validateBean(tenantId, employee);
             shift.setEmployee(employee);
         }
-        
+
         validateBean(tenantId, shift);
         return shift;
     }

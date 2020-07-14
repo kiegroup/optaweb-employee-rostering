@@ -206,7 +206,7 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
                 .andExpect(MockMvcResultMatchers.jsonPath("$.endDateTime").value(
                         "2000-01-01T08:00:00"));
     }
-    
+
     @Test
     public void createInvalidShiftTest() throws Exception {
         Spot spot = createSpot(TENANT_ID, "spot");
@@ -217,11 +217,11 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         LocalDateTime endDateTime = startDateTime;
         ShiftView shiftView = new ShiftView(TENANT_ID, spot, startDateTime, endDateTime, rotationEmployee);
         String body = (new ObjectMapper()).writeValueAsString(shiftView);
-        
+
         String exceptionMessage = "Shift's end date time is not at least 30 minutes" +
                 " after shift's start date time";
         String i18nKey = "ServerSideException.entityConstraintViolation";
-        
+
         mvc.perform(MockMvcRequestBuilders
                             .post("/rest/tenant/{tenantId}/shift/add", TENANT_ID)
                             .contentType(MediaType.APPLICATION_JSON)
