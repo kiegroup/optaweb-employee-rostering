@@ -26,20 +26,21 @@ import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.exception.ConstraintViolatedException;
 
 public class AbstractRestService {
-    
+
     Validator validator;
-    
+
     public AbstractRestService(Validator validator) {
         this.validator = validator;
     }
-    
+
     private void validateTenantIdParameter(Integer tenantId, AbstractPersistable persistable) {
         if (!Objects.equals(persistable.getTenantId(), tenantId)) {
             throw new IllegalStateException("The tenantId (" + tenantId + ") does not match the persistable ("
-                    + persistable + ")'s tenantId (" + persistable.getTenantId() + ").");
+                                                    + persistable + ")'s tenantId ("
+                                                    + persistable.getTenantId() + ").");
         }
     }
-    
+
     protected void validateBean(Integer tenantId, AbstractPersistable persistable) {
         Set<ConstraintViolation<Object>> violationSet = validator.validate(persistable);
         if (!violationSet.isEmpty()) {

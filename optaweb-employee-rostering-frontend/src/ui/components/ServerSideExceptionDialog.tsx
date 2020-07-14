@@ -48,13 +48,16 @@ export const ServerSideExceptionDialog: React.FC<React.PropsWithChildren<ServerS
   const [isOpen, setIsOpen] = React.useState(false);
   const dialogBody = createStackTrace(props);
   const { t } = useTranslation('ServerSideException');
-  let { messageParameters } = props;
+  let messageParameters: any;
 
   if (props.i18nKey === 'ServerSideException.entityConstraintViolation') {
     messageParameters = {
       entityClass: props.messageParameters[0],
       violations: props.messageParameters.slice(1),
     };
+  } else {
+    // eslint-disable-next-line prefer-destructuring
+    messageParameters = props.messageParameters;
   }
 
   return (

@@ -82,12 +82,12 @@ public class Shift extends AbstractPersistable {
     }
 
     public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime,
-            Employee rotationEmployee) {
+                 Employee rotationEmployee) {
         this(tenantId, spot, startDateTime, endDateTime, rotationEmployee, new HashSet<>(), null);
     }
 
     public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime,
-            Employee rotationEmployee, Set<Skill> requiredSkillSet, Employee originalEmployee) {
+                 Employee rotationEmployee, Set<Skill> requiredSkillSet, Employee originalEmployee) {
         super(tenantId);
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
@@ -106,24 +106,24 @@ public class Shift extends AbstractPersistable {
     }
 
     public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot, Employee rotationEmployee,
-            Set<Skill> requiredSkillSet, Employee originalEmployee) {
+                 Set<Skill> requiredSkillSet, Employee originalEmployee) {
         super(shiftView);
         this.startDateTime = OffsetDateTime.of(shiftView.getStartDateTime(),
-                zoneId.getRules().getOffset(shiftView.getStartDateTime()));
+                                               zoneId.getRules().getOffset(shiftView.getStartDateTime()));
         this.endDateTime = OffsetDateTime.of(shiftView.getEndDateTime(),
-                zoneId.getRules().getOffset(shiftView.getEndDateTime()));
+                                             zoneId.getRules().getOffset(shiftView.getEndDateTime()));
         this.spot = spot;
         this.pinnedByUser = shiftView.isPinnedByUser();
         this.rotationEmployee = rotationEmployee;
         this.requiredSkillSet = requiredSkillSet;
         this.originalEmployee = originalEmployee;
     }
-    
+
     @AssertTrue(message = "Shift's end date time is not at least 30 minutes" +
-                          " after shift's start date time")
+            " after shift's start date time")
     public boolean isValid() {
         return startDateTime != null && endDateTime != null &&
-               (Duration.between(startDateTime, endDateTime).getSeconds() / 60) >= 30;
+                (Duration.between(startDateTime, endDateTime).getSeconds() / 60) >= 30;
     }
 
     @Override
@@ -230,7 +230,7 @@ public class Shift extends AbstractPersistable {
 
     public Shift inTimeZone(ZoneId zoneId) {
         Shift out = new Shift(zoneId, new ShiftView(zoneId, this), getSpot(), getRotationEmployee(),
-                getRequiredSkillSet(), getOriginalEmployee());
+                              getRequiredSkillSet(), getOriginalEmployee());
         out.setEmployee(getEmployee());
         return out;
     }
