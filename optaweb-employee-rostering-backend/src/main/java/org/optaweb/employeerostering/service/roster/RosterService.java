@@ -41,12 +41,16 @@ import org.optaweb.employeerostering.domain.roster.PublishResult;
 import org.optaweb.employeerostering.domain.roster.Roster;
 import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.roster.view.AvailabilityRosterView;
+import org.optaweb.employeerostering.domain.roster.view.AvailabilityRosterViewVehicle;
 import org.optaweb.employeerostering.domain.roster.view.ShiftRosterView;
 import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.vehicle.Vehicle;
+import org.optaweb.employeerostering.domain.vehicle.VehicleAvailability;
+import org.optaweb.employeerostering.domain.vehicle.view.VehicleAvailabilityView;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.optaweb.employeerostering.service.common.IndictmentUtils;
 import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityRepository;
@@ -58,6 +62,8 @@ import org.optaweb.employeerostering.service.solver.SolverStatus;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.optaweb.employeerostering.service.tenant.RosterConstraintConfigurationRepository;
+import org.optaweb.employeerostering.service.vehicle.VehicleAvailabilityRepository;
+import org.optaweb.employeerostering.service.vehicle.VehicleRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -68,376 +74,469 @@ import static java.util.stream.Collectors.groupingBy;
 @Service
 public class RosterService extends AbstractRestService {
 
-    private RosterStateRepository rosterStateRepository;
-    private SkillRepository skillRepository;
-    private SpotRepository spotRepository;
-    private EmployeeRepository employeeRepository;
-    private EmployeeAvailabilityRepository employeeAvailabilityRepository;
-    private ShiftRepository shiftRepository;
-    private RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository;
-    private ShiftTemplateRepository shiftTemplateRepository;
+	private RosterStateRepository rosterStateRepository;
+	private SkillRepository skillRepository;
+	private SpotRepository spotRepository;
+	private EmployeeRepository employeeRepository;
+	private EmployeeAvailabilityRepository employeeAvailabilityRepository;
+	private ShiftRepository shiftRepository;
+	private RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository;
+	private ShiftTemplateRepository shiftTemplateRepository;
 
-    private WannabeSolverManager solverManager;
-    private IndictmentUtils indictmentUtils;
+	private VehicleRepository vehicleRepository;
+	private VehicleAvailabilityRepository vehicleAvailabilityRepository;
 
-    public RosterService(RosterStateRepository rosterStateRepository, SkillRepository skillRepository,
-                         SpotRepository spotRepository, EmployeeRepository employeeRepository,
-                         EmployeeAvailabilityRepository employeeAvailabilityRepository,
-                         ShiftRepository shiftRepository,
-                         RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
-                         ShiftTemplateRepository shiftTemplateRepository,
-                         WannabeSolverManager solverManager, IndictmentUtils indictmentUtils) {
-        this.rosterStateRepository = rosterStateRepository;
-        this.skillRepository = skillRepository;
-        this.spotRepository = spotRepository;
-        this.employeeRepository = employeeRepository;
-        this.employeeAvailabilityRepository = employeeAvailabilityRepository;
-        this.shiftRepository = shiftRepository;
-        this.rosterConstraintConfigurationRepository = rosterConstraintConfigurationRepository;
-        this.shiftTemplateRepository = shiftTemplateRepository;
-        this.solverManager = solverManager;
-        this.indictmentUtils = indictmentUtils;
-    }
+	private WannabeSolverManager solverManager;
+	private IndictmentUtils indictmentUtils;
 
-    // ************************************************************************
-    // RosterState
-    // ************************************************************************
+	public RosterService(RosterStateRepository rosterStateRepository, SkillRepository skillRepository,
+			SpotRepository spotRepository, EmployeeRepository employeeRepository,
+			EmployeeAvailabilityRepository employeeAvailabilityRepository, VehicleRepository vehicleRepository,
+			VehicleAvailabilityRepository vehicleAvailabilityRepository, ShiftRepository shiftRepository,
+			RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
+			ShiftTemplateRepository shiftTemplateRepository, WannabeSolverManager solverManager,
+			IndictmentUtils indictmentUtils) {
+		this.rosterStateRepository = rosterStateRepository;
+		this.skillRepository = skillRepository;
+		this.spotRepository = spotRepository;
+		this.employeeRepository = employeeRepository;
+		this.employeeAvailabilityRepository = employeeAvailabilityRepository;
+		this.vehicleRepository = vehicleRepository;
+		this.vehicleAvailabilityRepository = vehicleAvailabilityRepository;
+		this.shiftRepository = shiftRepository;
+		this.rosterConstraintConfigurationRepository = rosterConstraintConfigurationRepository;
+		this.shiftTemplateRepository = shiftTemplateRepository;
+		this.solverManager = solverManager;
+		this.indictmentUtils = indictmentUtils;
+	}
 
-    @Transactional
-    public RosterState getRosterState(Integer tenantId) {
-        RosterState rosterState = rosterStateRepository
-                .findByTenantId(tenantId)
-                .orElseThrow(() -> new EntityNotFoundException("No RosterState entity found with tenantId (" +
-                                                                       tenantId + ")."));
-        validateTenantIdParameter(tenantId, rosterState);
-        return rosterState;
-    }
+	// ************************************************************************
+	// RosterState
+	// ************************************************************************
 
-    // ************************************************************************
-    // ShiftRosterView
-    // ************************************************************************
+	@Transactional
+	public RosterState getRosterState(Integer tenantId) {
+		RosterState rosterState = rosterStateRepository.findByTenantId(tenantId).orElseThrow(
+				() -> new EntityNotFoundException("No RosterState entity found with tenantId (" + tenantId + ")."));
+		validateTenantIdParameter(tenantId, rosterState);
+		return rosterState;
+	}
 
-    @Transactional
-    public ShiftRosterView getCurrentShiftRosterView(Integer tenantId, Integer pageNumber,
-                                                     Integer numberOfItemsPerPage) {
-        RosterState rosterState = getRosterState(tenantId);
-        LocalDate startDate = rosterState.getFirstPublishedDate();
-        LocalDate endDate = rosterState.getFirstUnplannedDate();
-        return getShiftRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
-    }
+	// ************************************************************************
+	// ShiftRosterView
+	// ************************************************************************
 
-    @Transactional
-    public ShiftRosterView getShiftRosterView(final Integer tenantId, Integer pageNumber, Integer numberOfItemsPerPage,
-                                              final String startDateString,
-                                              final String endDateString) {
+	@Transactional
+	public ShiftRosterView getCurrentShiftRosterView(Integer tenantId, Integer pageNumber,
+			Integer numberOfItemsPerPage) {
+		RosterState rosterState = getRosterState(tenantId);
+		LocalDate startDate = rosterState.getFirstPublishedDate();
+		LocalDate endDate = rosterState.getFirstUnplannedDate();
+		return getShiftRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
+	}
 
-        return getShiftRosterView(tenantId, LocalDate.parse(startDateString), LocalDate.parse(endDateString),
-                                  Pagination.of(pageNumber, numberOfItemsPerPage));
-    }
+	@Transactional
+	public ShiftRosterView getShiftRosterView(final Integer tenantId, Integer pageNumber, Integer numberOfItemsPerPage,
+			final String startDateString, final String endDateString) {
 
-    private ShiftRosterView getShiftRosterView(final Integer tenantId,
-                                               final LocalDate startDate,
-                                               final LocalDate endDate,
-                                               final Pagination pagination) {
+		return getShiftRosterView(tenantId, LocalDate.parse(startDateString), LocalDate.parse(endDateString),
+				Pagination.of(pageNumber, numberOfItemsPerPage));
+	}
 
-        Pageable spotPage = PageRequest.of(pagination.getPageNumber(), pagination.getNumberOfItemsPerPage());
-        final List<Spot> spots = spotRepository.findAllByTenantId(tenantId, spotPage);
+	private ShiftRosterView getShiftRosterView(final Integer tenantId, final LocalDate startDate,
+			final LocalDate endDate, final Pagination pagination) {
 
-        return getShiftRosterView(tenantId, startDate, endDate, spots);
-    }
+		Pageable spotPage = PageRequest.of(pagination.getPageNumber(), pagination.getNumberOfItemsPerPage());
+		final List<Spot> spots = spotRepository.findAllByTenantId(tenantId, spotPage);
 
-    @Transactional
-    public ShiftRosterView getShiftRosterViewFor(Integer tenantId, String startDateString, String endDateString,
-                                                 List<Spot> spotList) {
-        LocalDate startDate = LocalDate.parse(startDateString);
-        LocalDate endDate = LocalDate.parse(endDateString);
-        if (spotList == null) {
-            throw new IllegalArgumentException("The spotList (" + spotList + ") must not be null.");
-        }
+		return getShiftRosterView(tenantId, startDate, endDate, spots);
+	}
 
-        return getShiftRosterView(tenantId, startDate, endDate, spotList);
-    }
+	@Transactional
+	public ShiftRosterView getShiftRosterViewFor(Integer tenantId, String startDateString, String endDateString,
+			List<Spot> spotList) {
+		LocalDate startDate = LocalDate.parse(startDateString);
+		LocalDate endDate = LocalDate.parse(endDateString);
+		if (spotList == null) {
+			throw new IllegalArgumentException("The spotList (" + spotList + ") must not be null.");
+		}
 
-    private ShiftRosterView getShiftRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate,
-                                               List<Spot> spotList) {
-        ShiftRosterView shiftRosterView = new ShiftRosterView(tenantId, startDate, endDate);
-        shiftRosterView.setSpotList(spotList);
-        List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId, PageRequest.of(0,
-                                                                                                    Integer.MAX_VALUE));
-        shiftRosterView.setEmployeeList(employeeList);
+		return getShiftRosterView(tenantId, startDate, endDate, spotList);
+	}
 
-        Set<Spot> spotSet = new HashSet<>(spotList);
-        ZoneId timeZone = getRosterState(tenantId).getTimeZone();
+	private ShiftRosterView getShiftRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate,
+			List<Spot> spotList) {
+		ShiftRosterView shiftRosterView = new ShiftRosterView(tenantId, startDate, endDate);
+		shiftRosterView.setSpotList(spotList);
+		List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId,
+				PageRequest.of(0, Integer.MAX_VALUE));
+		shiftRosterView.setEmployeeList(employeeList);
 
-        List<Shift> shiftList = shiftRepository.filterWithSpots(tenantId, spotSet,
-                                                                startDate.atStartOfDay(timeZone).toOffsetDateTime(),
-                                                                endDate.atStartOfDay(timeZone).toOffsetDateTime());
+		List<Vehicle> vehicleList = vehicleRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
+		shiftRosterView.setVehicleList(vehicleList);
 
-        Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
-        // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched, so the
-        //  score might be inaccurate
-        Roster roster = solverManager.getRoster(tenantId);
-        if (roster == null) {
-            roster = buildRoster(tenantId);
-        }
-        Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
+		Set<Spot> spotSet = new HashSet<>(spotList);
+		ZoneId timeZone = getRosterState(tenantId).getTimeZone();
 
-        for (Shift shift : shiftList) {
-            Indictment indictment = indictmentMap.get(shift);
-            spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>())
-                    .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
-        }
-        shiftRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewListMap);
+		List<Shift> shiftList = shiftRepository.filterWithSpots(tenantId, spotSet,
+				startDate.atStartOfDay(timeZone).toOffsetDateTime(), endDate.atStartOfDay(timeZone).toOffsetDateTime());
 
-        shiftRosterView.setScore(roster == null ? null : roster.getScore());
-        shiftRosterView.setRosterState(getRosterState(tenantId));
-        shiftRosterView.setIndictmentSummary(indictmentUtils.getIndictmentSummaryForRoster(roster));
+		Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
+		// TODO FIXME race condition solverManager's bestSolution might differ from the
+		// one we just fetched, so the
+		// score might be inaccurate
+		Roster roster = solverManager.getRoster(tenantId);
+		if (roster == null) {
+			roster = buildRoster(tenantId);
+		}
+		Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
 
-        return shiftRosterView;
-    }
+		for (Shift shift : shiftList) {
+			Indictment indictment = indictmentMap.get(shift);
+			spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>())
+					.add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+		}
+		shiftRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewListMap);
 
-    // ************************************************************************
-    // AvailabilityRosterView
-    // ************************************************************************
+		shiftRosterView.setScore(roster == null ? null : roster.getScore());
+		shiftRosterView.setRosterState(getRosterState(tenantId));
+		shiftRosterView.setIndictmentSummary(indictmentUtils.getIndictmentSummaryForRoster(roster));
 
-    @Transactional
-    public AvailabilityRosterView getCurrentAvailabilityRosterView(Integer tenantId,
-                                                                   Integer pageNumber,
-                                                                   Integer numberOfItemsPerPage) {
-        RosterState rosterState = getRosterState(tenantId);
-        LocalDate startDate = rosterState.getLastHistoricDate();
-        LocalDate endDate = rosterState.getFirstUnplannedDate();
-        return getAvailabilityRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
-    }
+		return shiftRosterView;
+	}
 
-    @Transactional
-    public AvailabilityRosterView getAvailabilityRosterView(Integer tenantId,
-                                                            Integer pageNumber,
-                                                            Integer numberOfItemsPerPage,
-                                                            String startDateString,
-                                                            String endDateString) {
-        LocalDate startDate = LocalDate.parse(startDateString);
-        LocalDate endDate = LocalDate.parse(endDateString);
-        return getAvailabilityRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
-    }
+	// ************************************************************************
+	// AvailabilityRosterView
+	// ************************************************************************
 
-    @Transactional
-    public AvailabilityRosterView getAvailabilityRosterViewFor(Integer tenantId,
-                                                               String startDateString,
-                                                               String endDateString,
-                                                               List<Employee> employeeList) {
-        LocalDate startDate = LocalDate.parse(startDateString);
-        LocalDate endDate = LocalDate.parse(endDateString);
-        if (employeeList == null) {
-            throw new IllegalArgumentException("The employeeList (" + employeeList + ") must not be null.");
-        }
-        return getAvailabilityRosterView(tenantId, startDate, endDate, employeeList);
-    }
+	@Transactional
+	public AvailabilityRosterView getCurrentAvailabilityRosterView(Integer tenantId, Integer pageNumber,
+			Integer numberOfItemsPerPage) {
+		RosterState rosterState = getRosterState(tenantId);
+		LocalDate startDate = rosterState.getLastHistoricDate();
+		LocalDate endDate = rosterState.getFirstUnplannedDate();
+		return getAvailabilityRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
+	}
+	
 
-    private AvailabilityRosterView getAvailabilityRosterView(final Integer tenantId,
-                                                             final LocalDate startDate,
-                                                             final LocalDate endDate,
-                                                             final Pagination pagination) {
+	@Transactional
+	public AvailabilityRosterView getAvailabilityRosterView(Integer tenantId, Integer pageNumber,
+			Integer numberOfItemsPerPage, String startDateString, String endDateString) {
+		LocalDate startDate = LocalDate.parse(startDateString);
+		LocalDate endDate = LocalDate.parse(endDateString);
+		return getAvailabilityRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
+	}
 
-        Pageable employeePage = PageRequest.of(pagination.getPageNumber(), pagination.getNumberOfItemsPerPage());
-        final List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId, employeePage);
+	@Transactional
+	public AvailabilityRosterView getAvailabilityRosterViewFor(Integer tenantId, String startDateString,
+			String endDateString, List<Employee> employeeList) {
+		LocalDate startDate = LocalDate.parse(startDateString);
+		LocalDate endDate = LocalDate.parse(endDateString);
+		if (employeeList == null) {
+			throw new IllegalArgumentException("The employeeList (" + employeeList + ") must not be null.");
+		}
+		return getAvailabilityRosterView(tenantId, startDate, endDate, employeeList);
+	}
 
-        return getAvailabilityRosterView(tenantId, startDate, endDate, employeeList);
-    }
+	private AvailabilityRosterView getAvailabilityRosterView(final Integer tenantId, final LocalDate startDate,
+			final LocalDate endDate, final Pagination pagination) {
 
-    private AvailabilityRosterView getAvailabilityRosterView(Integer tenantId,
-                                                             LocalDate startDate,
-                                                             LocalDate endDate,
-                                                             List<Employee> employeeList) {
-        AvailabilityRosterView availabilityRosterView = new AvailabilityRosterView(tenantId, startDate, endDate);
-        List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
-        availabilityRosterView.setSpotList(spotList);
+		Pageable employeePage = PageRequest.of(pagination.getPageNumber(), pagination.getNumberOfItemsPerPage());
+		final List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId, employeePage);
 
-        availabilityRosterView.setEmployeeList(employeeList);
+		return getAvailabilityRosterView(tenantId, startDate, endDate, employeeList);
+	}
 
-        Map<Long, List<ShiftView>> employeeIdToShiftViewListMap = new LinkedHashMap<>(employeeList.size());
-        List<ShiftView> unassignedShiftViewList = new ArrayList<>();
-        Set<Employee> employeeSet = new HashSet<>(employeeList);
-        ZoneId timeZone = getRosterState(tenantId).getTimeZone();
+	private AvailabilityRosterView getAvailabilityRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate,
+			List<Employee> employeeList) {
+		AvailabilityRosterView availabilityRosterView = new AvailabilityRosterView(tenantId, startDate, endDate);
+		List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
+		availabilityRosterView.setSpotList(spotList);
 
-        List<Shift> shiftList = shiftRepository.filterWithEmployees(tenantId, employeeSet,
-                                                                    startDate.atStartOfDay(timeZone).toOffsetDateTime(),
-                                                                    endDate.atStartOfDay(timeZone).toOffsetDateTime());
+		availabilityRosterView.setEmployeeList(employeeList);
 
-        Roster roster = solverManager.getRoster(tenantId);
-        if (roster == null) {
-            roster = buildRoster(tenantId);
-        }
-        Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
+		Map<Long, List<ShiftView>> employeeIdToShiftViewListMap = new LinkedHashMap<>(employeeList.size());
+		List<ShiftView> unassignedShiftViewList = new ArrayList<>();
+		Set<Employee> employeeSet = new HashSet<>(employeeList);
+		ZoneId timeZone = getRosterState(tenantId).getTimeZone();
 
-        for (Shift shift : shiftList) {
-            Indictment indictment = indictmentMap.get(shift);
-            if (shift.getEmployee() != null) {
-                employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(),
-                                                             k -> new ArrayList<>())
-                        .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
-            } else {
-                unassignedShiftViewList.add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
-            }
-        }
-        availabilityRosterView.setEmployeeIdToShiftViewListMap(employeeIdToShiftViewListMap);
-        availabilityRosterView.setUnassignedShiftViewList(unassignedShiftViewList);
-        Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewListMap = new LinkedHashMap<>(
-                employeeList.size());
-        List<EmployeeAvailability> employeeAvailabilityList =
-                employeeAvailabilityRepository.filterWithEmployee(tenantId, employeeSet,
-                                                                  startDate.atStartOfDay(timeZone).toOffsetDateTime(),
-                                                                  endDate.atStartOfDay(timeZone).toOffsetDateTime());
+		List<Shift> shiftList = shiftRepository.filterWithEmployees(tenantId, employeeSet,
+				startDate.atStartOfDay(timeZone).toOffsetDateTime(), endDate.atStartOfDay(timeZone).toOffsetDateTime());
 
-        for (EmployeeAvailability employeeAvailability : employeeAvailabilityList) {
-            employeeIdToAvailabilityViewListMap.computeIfAbsent(employeeAvailability.getEmployee().getId(),
-                                                                k -> new ArrayList<>())
-                    .add(new EmployeeAvailabilityView(timeZone, employeeAvailability));
-        }
-        availabilityRosterView.setEmployeeIdToAvailabilityViewListMap(employeeIdToAvailabilityViewListMap);
+		Roster roster = solverManager.getRoster(tenantId);
+		if (roster == null) {
+			roster = buildRoster(tenantId);
+		}
+		Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
 
-        // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched so the
-        //  score might be inaccurate.
-        availabilityRosterView.setScore(roster.getScore());
-        availabilityRosterView.setRosterState(getRosterState(tenantId));
-        availabilityRosterView.setIndictmentSummary(indictmentUtils.getIndictmentSummaryForRoster(roster));
+		for (Shift shift : shiftList) {
+			Indictment indictment = indictmentMap.get(shift);
+			if (shift.getEmployee() != null) {
+				employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(), k -> new ArrayList<>())
+						.add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+			} else {
+				unassignedShiftViewList.add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+			}
+		}
+		availabilityRosterView.setEmployeeIdToShiftViewListMap(employeeIdToShiftViewListMap);
+		availabilityRosterView.setUnassignedShiftViewList(unassignedShiftViewList);
+		Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewListMap = new LinkedHashMap<>(
+				employeeList.size());
+		List<EmployeeAvailability> employeeAvailabilityList = employeeAvailabilityRepository.filterWithEmployee(
+				tenantId, employeeSet, startDate.atStartOfDay(timeZone).toOffsetDateTime(),
+				endDate.atStartOfDay(timeZone).toOffsetDateTime());
 
-        return availabilityRosterView;
-    }
+		for (EmployeeAvailability employeeAvailability : employeeAvailabilityList) {
+			employeeIdToAvailabilityViewListMap
+					.computeIfAbsent(employeeAvailability.getEmployee().getId(), k -> new ArrayList<>())
+					.add(new EmployeeAvailabilityView(timeZone, employeeAvailability));
+		}
+		availabilityRosterView.setEmployeeIdToAvailabilityViewListMap(employeeIdToAvailabilityViewListMap);
 
-    // ************************************************************************
-    // Roster
-    // ************************************************************************
+		// TODO FIXME race condition solverManager's bestSolution might differ from the
+		// one we just fetched so the
+		// score might be inaccurate.
+		availabilityRosterView.setScore(roster.getScore());
+		availabilityRosterView.setRosterState(getRosterState(tenantId));
+		availabilityRosterView.setIndictmentSummary(indictmentUtils.getIndictmentSummaryForRoster(roster));
 
-    @Transactional
-    public Roster buildRoster(Integer tenantId) {
-        ZoneId zoneId = getRosterState(tenantId).getTimeZone();
-        List<Skill> skillList = skillRepository.findAllByTenantId(tenantId);
-        List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
-        List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId, PageRequest.of(0,
-                                                                                                    Integer.MAX_VALUE));
-        List<EmployeeAvailability> employeeAvailabilityList = employeeAvailabilityRepository.findAllByTenantId(tenantId)
-                .stream()
-                .map(ea -> ea.inTimeZone(zoneId))
-                .collect(Collectors.toList());
+		return availabilityRosterView;
+	}
 
-        List<Shift> shiftList = shiftRepository.findAllByTenantId(tenantId)
-                .stream()
-                .map(s -> s.inTimeZone(zoneId))
-                .collect(Collectors.toList());
+	//// *************************************************
+	//// VEHİCLE AVAİLABİLİTY
+	//// *************************************************
+	
+	@Transactional
+	public AvailabilityRosterViewVehicle getCurrentAvailabilityRosterViewVehicle(Integer tenantId, Integer pageNumber,
+			Integer numberOfItemsPerPage) {
+		RosterState rosterState = getRosterState(tenantId);
+		LocalDate startDate = rosterState.getLastHistoricDate();
+		LocalDate endDate = rosterState.getFirstUnplannedDate();
+		return getAvailabilityRosterViewVehicle(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
+	}
+	
 
-        Roster roster = new Roster((long) tenantId, tenantId, rosterConstraintConfigurationRepository
-                .findByTenantId(tenantId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "No RosterConstraintConfiguration entity found with tenantId(" + tenantId + ").")),
-                                   skillList, spotList, employeeList, employeeAvailabilityList,
-                                   getRosterState(tenantId), shiftList);
+	@Transactional
+	public AvailabilityRosterViewVehicle getAvailabilityRosterViewVehicle(Integer tenantId, Integer pageNumber,
+			Integer numberOfItemsPerPage, String startDateString, String endDateString) {
+		LocalDate startDate = LocalDate.parse(startDateString);
+		LocalDate endDate = LocalDate.parse(endDateString);
+		return getAvailabilityRosterViewVehicle(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
+	}
+	
+	@Transactional
+	public AvailabilityRosterViewVehicle getAvailabilityRosterViewForVehicle(Integer tenantId, String startDateString,
+			String endDateString, List<Vehicle> vehicleList) {
+		LocalDate startDate = LocalDate.parse(startDateString);
+		LocalDate endDate = LocalDate.parse(endDateString);
+		if (vehicleList == null) {
+			throw new IllegalArgumentException("The vehicleList (" + vehicleList + ") must not be null.");
+		}
+		return getAvailabilityRosterViewVehicle(tenantId, startDate, endDate, vehicleList);
+	}
 
-        ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector();
-        scoreDirector.setWorkingSolution(roster);
-        roster.setScore((HardMediumSoftLongScore) scoreDirector.calculateScore());
-        return roster;
-    }
+	private AvailabilityRosterViewVehicle getAvailabilityRosterViewVehicle(final Integer tenantId, final LocalDate startDate,
+			final LocalDate endDate, final Pagination pagination) {
+		Pageable vehiclePage = PageRequest.of(pagination.getPageNumber(), pagination.getNumberOfItemsPerPage());
+		final List<Vehicle> vehicleList = vehicleRepository.findAllByTenantId(tenantId, vehiclePage);
 
-    @Transactional
-    public void updateShiftsOfRoster(Roster newRoster) {
-        Integer tenantId = newRoster.getTenantId();
-        // TODO HACK avoids optimistic locking exception while solve(), but it circumvents optimistic locking completely
-        Map<Long, Employee> employeeIdMap = employeeRepository.findAllByTenantId(tenantId,
-                                                                                 PageRequest.of(0, Integer.MAX_VALUE))
-                .stream()
-                .collect(Collectors.toMap(Employee::getId, Function.identity()));
+		return getAvailabilityRosterViewVehicle(tenantId, startDate, endDate, vehicleList);
+	}
 
-        Map<Long, Shift> shiftIdMap = shiftRepository.findAllByTenantId(tenantId)
-                .stream()
-                .collect(Collectors.toMap(Shift::getId, Function.identity()));
+	private AvailabilityRosterViewVehicle getAvailabilityRosterViewVehicle(Integer tenantId, LocalDate startDate, LocalDate endDate,
+			List<Vehicle> vehicleList) {
+		AvailabilityRosterViewVehicle availabilityRosterViewVehicle = new AvailabilityRosterViewVehicle(tenantId, startDate, endDate);
+		List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
+		availabilityRosterViewVehicle.setSpotList(spotList);
 
-        for (Shift shift : newRoster.getShiftList()) {
-            Shift attachedShift = shiftIdMap.get(shift.getId());
-            if (attachedShift == null) {
-                continue;
-            }
-            attachedShift.setEmployee((shift.getEmployee() == null) ?
-                                              null : employeeIdMap.get(shift.getEmployee().getId()));
-        }
-    }
+		availabilityRosterViewVehicle.setVehicleList(vehicleList);
 
-    // ************************************************************************
-    // Solver
-    // ************************************************************************
+		Map<Long, List<ShiftView>> vehicleIdToShiftViewListMap = new LinkedHashMap<>(vehicleList.size());
+		List<ShiftView> unassignedShiftViewList = new ArrayList<>();
+		Set<Vehicle> vehicleSet = new HashSet<>(vehicleList);
+		ZoneId timeZone = getRosterState(tenantId).getTimeZone();
 
-    public void solveRoster(Integer tenantId) {
-        solverManager.solve(tenantId);
-    }
+		List<Shift> shiftList = shiftRepository.filterWithVehicles(tenantId, vehicleSet,
+				startDate.atStartOfDay(timeZone).toOffsetDateTime(), endDate.atStartOfDay(timeZone).toOffsetDateTime());
 
-    public void replanRoster(Integer tenantId) {
-        solverManager.replan(tenantId);
-    }
+		Roster roster = solverManager.getRoster(tenantId);
+		if (roster == null) {
+			roster = buildRoster(tenantId);
+		}
+		Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
 
-    public SolverStatus getSolverStatus(Integer tenantId) {
-        return solverManager.getSolverStatus(tenantId);
-    }
+		for (Shift shift : shiftList) {
+			Indictment indictment = indictmentMap.get(shift);
+			if (shift.getEmployee() != null) {
+				vehicleIdToShiftViewListMap.computeIfAbsent(shift.getVehicle().getId(), k -> new ArrayList<>())
+						.add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+			} else {
+				unassignedShiftViewList.add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+			}
+		}
+		availabilityRosterViewVehicle.setVehicleIdToShiftViewListMap(vehicleIdToShiftViewListMap);
+		availabilityRosterViewVehicle.setUnassignedShiftViewList(unassignedShiftViewList);
+		Map<Long, List<VehicleAvailabilityView>> vehicleIdToAvailabilityViewListMap = new LinkedHashMap<>(
+				vehicleList.size());
+		List<VehicleAvailability> vehicleAvailabilityList = vehicleAvailabilityRepository.filterWithVehicle(
+				tenantId, vehicleSet, startDate.atStartOfDay(timeZone).toOffsetDateTime(),
+				endDate.atStartOfDay(timeZone).toOffsetDateTime());
 
-    public void terminateRosterEarly(Integer tenantId) {
-        solverManager.terminate(tenantId);
-    }
+		for (VehicleAvailability vehicleAvailability : vehicleAvailabilityList) {
+			vehicleIdToAvailabilityViewListMap
+					.computeIfAbsent(vehicleAvailability.getVehicle().getId(), k -> new ArrayList<>())
+					.add(new VehicleAvailabilityView(timeZone, vehicleAvailability));
+		}
+		availabilityRosterViewVehicle.setVehicleIdToAvailabilityViewListMap(vehicleIdToAvailabilityViewListMap);
 
-    // ************************************************************************
-    // Publish
-    // ************************************************************************
+		// TODO FIXME race condition solverManager's bestSolution might differ from the
+		// one we just fetched so the
+		// score might be inaccurate.
+		availabilityRosterViewVehicle.setScore(roster.getScore());
+		availabilityRosterViewVehicle.setRosterState(getRosterState(tenantId));
+		availabilityRosterViewVehicle.setIndictmentSummary(indictmentUtils.getIndictmentSummaryForRoster(roster));
 
-    @Transactional
-    public PublishResult publishAndProvision(Integer tenantId) {
-        RosterState rosterState = getRosterState(tenantId);
-        LocalDate publishFrom = rosterState.getFirstDraftDate();
-        LocalDate publishTo = publishFrom.plusDays(rosterState.getPublishLength());
-        LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
+		return availabilityRosterViewVehicle;
+	}
 
-        // Publish
-        ZoneId timeZone = rosterState.getTimeZone();
-        List<Shift> publishedShifts = shiftRepository
-                .findAllByTenantIdBetweenDates(tenantId,
-                                               publishFrom.atStartOfDay(timeZone).toOffsetDateTime(),
-                                               publishTo.atStartOfDay(timeZone).toOffsetDateTime());
-        publishedShifts.forEach(s -> s.setOriginalEmployee(s.getEmployee()));
-        shiftRepository.saveAll(publishedShifts);
-        rosterState.setFirstDraftDate(publishTo);
+	// ************************************************************************
+	// Roster
+	// ************************************************************************
 
-        // Provision
-        List<ShiftTemplate> shiftTemplateList = shiftTemplateRepository.findAllByTenantId(tenantId);
-        Map<Integer, List<ShiftTemplate>> dayOffsetToShiftTemplateListMap = shiftTemplateList.stream()
-                .collect(groupingBy(ShiftTemplate::getStartDayOffset));
+	@Transactional
+	public Roster buildRoster(Integer tenantId) {
+		ZoneId zoneId = getRosterState(tenantId).getTimeZone();
+		List<Skill> skillList = skillRepository.findAllByTenantId(tenantId);
+		List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
+		List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId,
+				PageRequest.of(0, Integer.MAX_VALUE));
+		List<EmployeeAvailability> employeeAvailabilityList = employeeAvailabilityRepository.findAllByTenantId(tenantId)
+				.stream().map(ea -> ea.inTimeZone(zoneId)).collect(Collectors.toList());
+		
+		List<Vehicle> vehicleList = vehicleRepository.findAllByTenantId(tenantId,
+				PageRequest.of(0, Integer.MAX_VALUE));
+		List<VehicleAvailability> vehicleAvailabilityList = vehicleAvailabilityRepository.findAllByTenantId(tenantId)
+				.stream().map(ea -> ea.inTimeZone(zoneId)).collect(Collectors.toList());
 
-        int dayOffset = rosterState.getUnplannedRotationOffset();
-        LocalDate shiftDate = firstUnplannedDate;
-        for (int i = 0; i < rosterState.getPublishLength(); i++) {
-            List<ShiftTemplate> dayShiftTemplateList = dayOffsetToShiftTemplateListMap.getOrDefault(
-                    dayOffset, Collections.emptyList());
-            for (ShiftTemplate shiftTemplate : dayShiftTemplateList) {
-                Shift shift = shiftTemplate.createShiftOnDate(shiftDate, rosterState.getRotationLength(),
-                                                              rosterState.getTimeZone(), false);
-                shiftRepository.save(shift);
-            }
-            shiftDate = shiftDate.plusDays(1);
-            dayOffset = (dayOffset + 1) % rosterState.getRotationLength();
-        }
-        rosterState.setUnplannedRotationOffset(dayOffset);
-        return new PublishResult(publishFrom, publishTo);
-    }
+		List<Shift> shiftList = shiftRepository.findAllByTenantId(tenantId).stream().map(s -> s.inTimeZone(zoneId))
+				.collect(Collectors.toList());
 
-    @Transactional
-    public void commitChanges(Integer tenantId) {
-        RosterState rosterState = getRosterState(tenantId);
-        LocalDate publishFrom = LocalDate.now();
-        LocalDate publishTo = rosterState.getFirstDraftDate();
+		Roster roster = new Roster((long) tenantId, tenantId,
+				rosterConstraintConfigurationRepository.findByTenantId(tenantId)
+						.orElseThrow(() -> new EntityNotFoundException(
+								"No RosterConstraintConfiguration entity found with tenantId(" + tenantId + ").")),
+				skillList, spotList, employeeList, employeeAvailabilityList, vehicleList, vehicleAvailabilityList,
+				getRosterState(tenantId), shiftList);
 
-        // Publish
-        ZoneId timeZone = rosterState.getTimeZone();
-        List<Shift> publishedShifts = shiftRepository
-                .findAllByTenantIdBetweenDates(tenantId,
-                                               publishFrom.atStartOfDay(timeZone).toOffsetDateTime(),
-                                               publishTo.atStartOfDay(timeZone).toOffsetDateTime());
-        publishedShifts.forEach(s -> s.setOriginalEmployee(s.getEmployee()));
-        shiftRepository.saveAll(publishedShifts);
-    }
+		ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector();
+		scoreDirector.setWorkingSolution(roster);
+		roster.setScore((HardMediumSoftLongScore) scoreDirector.calculateScore());
+		return roster;
+	}
+
+	@Transactional
+	public void updateShiftsOfRoster(Roster newRoster) {
+		Integer tenantId = newRoster.getTenantId();
+		// TODO HACK avoids optimistic locking exception while solve(), but it
+		// circumvents optimistic locking completely
+		Map<Long, Employee> employeeIdMap = employeeRepository
+				.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE)).stream()
+				.collect(Collectors.toMap(Employee::getId, Function.identity()));
+
+		Map<Long, Vehicle> vehicleIdMap = vehicleRepository
+				.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE)).stream()
+				.collect(Collectors.toMap(Vehicle::getId, Function.identity()));
+
+		Map<Long, Shift> shiftIdMap = shiftRepository.findAllByTenantId(tenantId).stream()
+				.collect(Collectors.toMap(Shift::getId, Function.identity()));
+
+		for (Shift shift : newRoster.getShiftList()) {
+			Shift attachedShift = shiftIdMap.get(shift.getId());
+			if (attachedShift == null) {
+				continue;
+			}
+			attachedShift
+					.setEmployee((shift.getEmployee() == null) ? null : employeeIdMap.get(shift.getEmployee().getId()));
+			attachedShift
+					.setVehicle((shift.getVehicle() == null) ? null : vehicleIdMap.get(shift.getVehicle().getId()));
+		}
+	}
+
+	// ************************************************************************
+	// Solver
+	// ************************************************************************
+
+	public void solveRoster(Integer tenantId) {
+		solverManager.solve(tenantId);
+	}
+
+	public void replanRoster(Integer tenantId) {
+		solverManager.replan(tenantId);
+	}
+
+	public SolverStatus getSolverStatus(Integer tenantId) {
+		return solverManager.getSolverStatus(tenantId);
+	}
+
+	public void terminateRosterEarly(Integer tenantId) {
+		solverManager.terminate(tenantId);
+	}
+
+	// ************************************************************************
+	// Publish
+	// ************************************************************************
+
+	@Transactional
+	public PublishResult publishAndProvision(Integer tenantId) {
+		RosterState rosterState = getRosterState(tenantId);
+		LocalDate publishFrom = rosterState.getFirstDraftDate();
+		LocalDate publishTo = publishFrom.plusDays(rosterState.getPublishLength());
+		LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
+
+		// Publish
+		ZoneId timeZone = rosterState.getTimeZone();
+		List<Shift> publishedShifts = shiftRepository.findAllByTenantIdBetweenDates(tenantId,
+				publishFrom.atStartOfDay(timeZone).toOffsetDateTime(),
+				publishTo.atStartOfDay(timeZone).toOffsetDateTime());
+		publishedShifts.forEach(s -> s.setOriginalEmployee(s.getEmployee()));
+		shiftRepository.saveAll(publishedShifts);
+		rosterState.setFirstDraftDate(publishTo);
+
+		// Provision
+		List<ShiftTemplate> shiftTemplateList = shiftTemplateRepository.findAllByTenantId(tenantId);
+		Map<Integer, List<ShiftTemplate>> dayOffsetToShiftTemplateListMap = shiftTemplateList.stream()
+				.collect(groupingBy(ShiftTemplate::getStartDayOffset));
+
+		int dayOffset = rosterState.getUnplannedRotationOffset();
+		LocalDate shiftDate = firstUnplannedDate;
+		for (int i = 0; i < rosterState.getPublishLength(); i++) {
+			List<ShiftTemplate> dayShiftTemplateList = dayOffsetToShiftTemplateListMap.getOrDefault(dayOffset,
+					Collections.emptyList());
+			for (ShiftTemplate shiftTemplate : dayShiftTemplateList) {
+				Shift shift = shiftTemplate.createShiftOnDate(shiftDate, rosterState.getRotationLength(),
+						rosterState.getTimeZone(), false, false);
+				shiftRepository.save(shift);
+			}
+			shiftDate = shiftDate.plusDays(1);
+			dayOffset = (dayOffset + 1) % rosterState.getRotationLength();
+		}
+		rosterState.setUnplannedRotationOffset(dayOffset);
+		return new PublishResult(publishFrom, publishTo);
+	}
+
+	@Transactional
+	public void commitChanges(Integer tenantId) {
+		RosterState rosterState = getRosterState(tenantId);
+		LocalDate publishFrom = LocalDate.now();
+		LocalDate publishTo = rosterState.getFirstDraftDate();
+
+		// Publish
+		ZoneId timeZone = rosterState.getTimeZone();
+		List<Shift> publishedShifts = shiftRepository.findAllByTenantIdBetweenDates(tenantId,
+				publishFrom.atStartOfDay(timeZone).toOffsetDateTime(),
+				publishTo.atStartOfDay(timeZone).toOffsetDateTime());
+		publishedShifts.forEach(s -> s.setOriginalEmployee(s.getEmployee()));
+		shiftRepository.saveAll(publishedShifts);
+	}
 }

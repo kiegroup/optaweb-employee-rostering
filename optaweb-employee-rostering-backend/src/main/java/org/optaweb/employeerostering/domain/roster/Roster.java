@@ -34,145 +34,157 @@ import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
+import org.optaweb.employeerostering.domain.vehicle.Vehicle;
+import org.optaweb.employeerostering.domain.vehicle.VehicleAvailability;
 
 @PlanningSolution
 public class Roster extends AbstractPersistable {
 
-    @ConstraintConfigurationProvider
-    private RosterConstraintConfiguration rosterConstraintConfiguration;
+	@ConstraintConfigurationProvider
+	private RosterConstraintConfiguration rosterConstraintConfiguration;
 
+	@ProblemFactCollectionProperty
+	private List<Skill> skillList;
+	@ProblemFactCollectionProperty
+	private List<Spot> spotList;
+	@ProblemFactCollectionProperty
+	@ValueRangeProvider(id = "employeeRange")
+	private List<Employee> employeeList;
+	@ProblemFactCollectionProperty
+	private List<EmployeeAvailability> employeeAvailabilityList;
+	
     @ProblemFactCollectionProperty
-    private List<Skill> skillList;
+    @ValueRangeProvider(id = "vehicleRange")
+    private List<Vehicle> vehicleList;
     @ProblemFactCollectionProperty
-    private List<Spot> spotList;
-    @ProblemFactCollectionProperty
-    @ValueRangeProvider(id = "employeeRange")
-    private List<Employee> employeeList;
-    @ProblemFactCollectionProperty
-    private List<EmployeeAvailability> employeeAvailabilityList;
+    private List<VehicleAvailability> vehicleAvailabilityList;
 
-    @ProblemFactProperty
-    private RosterState rosterState;
+	@ProblemFactProperty
+	private RosterState rosterState;
 
-    @PlanningEntityCollectionProperty
-    private List<Shift> shiftList;
+	@PlanningEntityCollectionProperty
+	private List<Shift> shiftList;
 
-    @PlanningScore
-    private HardMediumSoftLongScore score = null;
+	@PlanningScore
+	private HardMediumSoftLongScore score = null;
 
-    private boolean isNondisruptivePlanning;
-    private OffsetDateTime nondisruptiveReplanFrom;
+	private boolean isNondisruptivePlanning;
+	private OffsetDateTime nondisruptiveReplanFrom;
 
-    @SuppressWarnings("unused")
-    public Roster() {
-    }
+	@SuppressWarnings("unused")
+	public Roster() {
+	}
 
-    public Roster(Long id, Integer tenantId, RosterConstraintConfiguration rosterConstraintConfiguration,
-                  List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
-                  List<EmployeeAvailability> employeeAvailabilityList,
-                  RosterState rosterState, List<Shift> shiftList) {
-        this(id, tenantId, rosterConstraintConfiguration, skillList, spotList, employeeList, employeeAvailabilityList,
-             rosterState, shiftList, false, null);
-    }
+	public Roster(Long id, Integer tenantId, RosterConstraintConfiguration rosterConstraintConfiguration,
+			List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
+			List<EmployeeAvailability> employeeAvailabilityList, List<Vehicle> vehicleList,
+			List<VehicleAvailability> vehicleAvailabilityList, RosterState rosterState, List<Shift> shiftList) {
+		this(id, tenantId, rosterConstraintConfiguration, skillList, spotList, employeeList, employeeAvailabilityList,
+				vehicleList, vehicleAvailabilityList, rosterState, shiftList, false, null);
+	}
 
-    public Roster(Long id, Integer tenantId, RosterConstraintConfiguration rosterConstraintConfiguration,
-                  List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
-                  List<EmployeeAvailability> employeeAvailabilityList,
-                  RosterState rosterState, List<Shift> shiftList, boolean isNondisruptivePlanning,
-                  OffsetDateTime nondisruptiveReplanFrom) {
-        super(id, tenantId);
-        this.rosterConstraintConfiguration = rosterConstraintConfiguration;
-        this.skillList = skillList;
-        this.spotList = spotList;
-        this.employeeList = employeeList;
-        this.employeeAvailabilityList = employeeAvailabilityList;
-        this.rosterState = rosterState;
-        this.shiftList = shiftList;
-        this.isNondisruptivePlanning = isNondisruptivePlanning;
-        this.nondisruptiveReplanFrom = nondisruptiveReplanFrom;
-    }
+	public Roster(Long id, Integer tenantId, RosterConstraintConfiguration rosterConstraintConfiguration,
+			List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
+			List<EmployeeAvailability> employeeAvailabilityList, List<Vehicle> vehicleList,
+			List<VehicleAvailability> vehicleAvailabilityList, RosterState rosterState, List<Shift> shiftList,
+			boolean isNondisruptivePlanning, OffsetDateTime nondisruptiveReplanFrom) {
+		super(id, tenantId);
+		this.rosterConstraintConfiguration = rosterConstraintConfiguration;
+		this.skillList = skillList;
+		this.spotList = spotList;
+		this.employeeList = employeeList;
+		this.employeeAvailabilityList = employeeAvailabilityList;
 
-    // ************************************************************************
-    // Simple getters and setters
-    // ************************************************************************
+		this.vehicleList = vehicleList;
+		this.vehicleAvailabilityList = vehicleAvailabilityList;
 
-    public RosterConstraintConfiguration getRosterConstraintConfiguration() {
-        return rosterConstraintConfiguration;
-    }
+		this.rosterState = rosterState;
+		this.shiftList = shiftList;
+		this.isNondisruptivePlanning = isNondisruptivePlanning;
+		this.nondisruptiveReplanFrom = nondisruptiveReplanFrom;
+	}
 
-    public void setRosterConstraintConfiguration(RosterConstraintConfiguration rosterConstraintConfiguration) {
-        this.rosterConstraintConfiguration = rosterConstraintConfiguration;
-    }
+	// ************************************************************************
+	// Simple getters and setters
+	// ************************************************************************
 
-    public List<Skill> getSkillList() {
-        return skillList;
-    }
+	public RosterConstraintConfiguration getRosterConstraintConfiguration() {
+		return rosterConstraintConfiguration;
+	}
 
-    public void setSkillList(List<Skill> skillList) {
-        this.skillList = skillList;
-    }
+	public void setRosterConstraintConfiguration(RosterConstraintConfiguration rosterConstraintConfiguration) {
+		this.rosterConstraintConfiguration = rosterConstraintConfiguration;
+	}
 
-    public List<Spot> getSpotList() {
-        return spotList;
-    }
+	public List<Skill> getSkillList() {
+		return skillList;
+	}
 
-    public void setSpotList(List<Spot> spotList) {
-        this.spotList = spotList;
-    }
+	public void setSkillList(List<Skill> skillList) {
+		this.skillList = skillList;
+	}
 
-    public List<Employee> getEmployeeList() {
-        return employeeList;
-    }
+	public List<Spot> getSpotList() {
+		return spotList;
+	}
 
-    public void setEmployeeList(List<Employee> employeeList) {
-        this.employeeList = employeeList;
-    }
+	public void setSpotList(List<Spot> spotList) {
+		this.spotList = spotList;
+	}
 
-    public List<EmployeeAvailability> getEmployeeAvailabilityList() {
-        return employeeAvailabilityList;
-    }
+	public List<Employee> getEmployeeList() {
+		return employeeList;
+	}
 
-    public void setEmployeeAvailabilityList(List<EmployeeAvailability> employeeAvailabilityList) {
-        this.employeeAvailabilityList = employeeAvailabilityList;
-    }
+	public void setEmployeeList(List<Employee> employeeList) {
+		this.employeeList = employeeList;
+	}
 
-    public RosterState getRosterState() {
-        return rosterState;
-    }
+	public List<EmployeeAvailability> getEmployeeAvailabilityList() {
+		return employeeAvailabilityList;
+	}
 
-    public void setRosterState(RosterState rosterState) {
-        this.rosterState = rosterState;
-    }
+	public void setEmployeeAvailabilityList(List<EmployeeAvailability> employeeAvailabilityList) {
+		this.employeeAvailabilityList = employeeAvailabilityList;
+	}
 
-    public List<Shift> getShiftList() {
-        return shiftList;
-    }
+	public RosterState getRosterState() {
+		return rosterState;
+	}
 
-    public void setShiftList(List<Shift> shiftList) {
-        this.shiftList = shiftList;
-    }
+	public void setRosterState(RosterState rosterState) {
+		this.rosterState = rosterState;
+	}
 
-    public HardMediumSoftLongScore getScore() {
-        return score;
-    }
+	public List<Shift> getShiftList() {
+		return shiftList;
+	}
 
-    public void setScore(HardMediumSoftLongScore score) {
-        this.score = score;
-    }
+	public void setShiftList(List<Shift> shiftList) {
+		this.shiftList = shiftList;
+	}
 
-    public boolean isNondisruptivePlanning() {
-        return isNondisruptivePlanning;
-    }
+	public HardMediumSoftLongScore getScore() {
+		return score;
+	}
 
-    public void setNondisruptivePlanning(boolean isNondisruptivePlanning) {
-        this.isNondisruptivePlanning = isNondisruptivePlanning;
-    }
+	public void setScore(HardMediumSoftLongScore score) {
+		this.score = score;
+	}
 
-    public OffsetDateTime getNondisruptiveReplanFrom() {
-        return nondisruptiveReplanFrom;
-    }
+	public boolean isNondisruptivePlanning() {
+		return isNondisruptivePlanning;
+	}
 
-    public void setNondisruptiveReplanFrom(OffsetDateTime undistruptiveReplanFrom) {
-        this.nondisruptiveReplanFrom = undistruptiveReplanFrom;
-    }
+	public void setNondisruptivePlanning(boolean isNondisruptivePlanning) {
+		this.isNondisruptivePlanning = isNondisruptivePlanning;
+	}
+
+	public OffsetDateTime getNondisruptiveReplanFrom() {
+		return nondisruptiveReplanFrom;
+	}
+
+	public void setNondisruptiveReplanFrom(OffsetDateTime undistruptiveReplanFrom) {
+		this.nondisruptiveReplanFrom = undistruptiveReplanFrom;
+	}
 }

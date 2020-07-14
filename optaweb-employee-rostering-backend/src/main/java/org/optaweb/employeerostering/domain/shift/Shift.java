@@ -29,6 +29,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
@@ -39,17 +40,21 @@ import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.vehicle.Vehicle;
 
 @Entity
 @PlanningEntity(pinningFilter = PinningShiftFilter.class)
 public class Shift extends AbstractPersistable {
 
     private final AtomicLong lengthInMinutes = new AtomicLong(-1);
+    
     @ManyToOne
     private Employee rotationEmployee;
+    
     @NotNull
     @ManyToOne
     private Spot spot;
+    
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "ShiftRequiredSkillSet",
@@ -57,10 +62,13 @@ public class Shift extends AbstractPersistable {
             inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id")
     )
     private Set<Skill> requiredSkillSet;
+    
     @NotNull
     private OffsetDateTime startDateTime;
+    
     @NotNull
     private OffsetDateTime endDateTime;
+    
     @PlanningPin
     private boolean pinnedByUser = false;
 
@@ -70,22 +78,40 @@ public class Shift extends AbstractPersistable {
 
     @ManyToOne
     private Employee originalEmployee = null;
+    
+    
+    ////VEHICLE START
+    @ManyToOne
+    private Vehicle rotationVehicle;
+    
+    @PlanningPin
+    private boolean pinnedVehicleByUser = false;
+
+    @ManyToOne
+    @PlanningVariable(valueRangeProviderRefs = "vehicleRange", nullable = true)
+    private Vehicle vehicle = null;
+
+    @ManyToOne
+    private Vehicle originalVehicle = null;
+    
+    ////VEHICLE END
 
     @SuppressWarnings("unused")
     public Shift() {
     }
 
     public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        this(tenantId, spot, startDateTime, endDateTime, null);
+        this(tenantId, spot, startDateTime, endDateTime, null, null);
     }
 
     public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime,
-            Employee rotationEmployee) {
-        this(tenantId, spot, startDateTime, endDateTime, rotationEmployee, new HashSet<>(), null);
+            Employee rotationEmployee, Vehicle rotationVehicle) {
+        this(tenantId, spot, startDateTime, endDateTime, rotationEmployee, new HashSet<>(), null, rotationVehicle, null);
     }
 
     public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime,
-            Employee rotationEmployee, Set<Skill> requiredSkillSet, Employee originalEmployee) {
+            Employee rotationEmployee, Set<Skill> requiredSkillSet, Employee originalEmployee,
+            Vehicle rotationVehicle, Vehicle originalVehicle) {
         super(tenantId);
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
@@ -93,18 +119,23 @@ public class Shift extends AbstractPersistable {
         this.rotationEmployee = rotationEmployee;
         this.requiredSkillSet = requiredSkillSet;
         this.originalEmployee = originalEmployee;
+
+        this.rotationVehicle = rotationVehicle;
+        this.originalVehicle = originalVehicle;
+        
     }
 
     public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot) {
-        this(zoneId, shiftView, spot, null);
+        this(zoneId, shiftView, spot, null, null);
     }
 
-    public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot, Employee rotationEmployee) {
-        this(zoneId, shiftView, spot, rotationEmployee, new HashSet<>(), null);
+    public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot, Employee rotationEmployee, Vehicle rotationVehicle) {
+        this(zoneId, shiftView, spot, rotationEmployee, new HashSet<>(), null, null, null);
     }
 
-    public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot, Employee rotationEmployee,
-            Set<Skill> requiredSkillSet, Employee originalEmployee) {
+    public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot,
+    		Employee rotationEmployee, Set<Skill> requiredSkillSet, Employee originalEmployee,
+    		Vehicle rotationVehicle, Vehicle originalVehicle) {
         super(shiftView);
         this.startDateTime = OffsetDateTime.of(shiftView.getStartDateTime(),
                 zoneId.getRules().getOffset(shiftView.getStartDateTime()));
@@ -115,6 +146,9 @@ public class Shift extends AbstractPersistable {
         this.rotationEmployee = rotationEmployee;
         this.requiredSkillSet = requiredSkillSet;
         this.originalEmployee = originalEmployee;
+        
+        this.rotationVehicle = rotationVehicle;
+        this.originalVehicle = originalVehicle;
     }
 
     @Override
@@ -219,9 +253,42 @@ public class Shift extends AbstractPersistable {
         this.requiredSkillSet = requiredSkillSet;
     }
 
-    public Shift inTimeZone(ZoneId zoneId) {
-        Shift out = new Shift(zoneId, new ShiftView(zoneId, this), getSpot(), getRotationEmployee(),
-                getRequiredSkillSet(), getOriginalEmployee());
+    public Vehicle getRotationVehicle() {
+		return rotationVehicle;
+	}
+
+	public void setRotationVehicle(Vehicle rotationVehicle) {
+		this.rotationVehicle = rotationVehicle;
+	}
+
+	public boolean isPinnedVehicleByUser() {
+		return pinnedVehicleByUser;
+	}
+
+	public void setPinnedVehicleByUser(boolean pinnedVehicleByUser) {
+		this.pinnedVehicleByUser = pinnedVehicleByUser;
+	}
+
+	public Vehicle getVehicle() {
+		return vehicle;
+	}
+
+	public void setVehicle(Vehicle vehicle) {
+		this.vehicle = vehicle;
+	}
+
+	public Vehicle getOriginalVehicle() {
+		return originalVehicle;
+	}
+
+	public void setOriginalVehicle(Vehicle originalVehicle) {
+		this.originalVehicle = originalVehicle;
+	}
+
+	public Shift inTimeZone(ZoneId zoneId) {
+        Shift out = new Shift(zoneId, new ShiftView(zoneId, this), getSpot(), 
+        		getRotationEmployee(), getRequiredSkillSet(), getOriginalEmployee(), 
+        		getRotationVehicle(), getOriginalVehicle());
         out.setEmployee(getEmployee());
         return out;
     }

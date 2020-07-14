@@ -25,6 +25,7 @@ import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftL
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.vehicle.Vehicle;
 import org.optaweb.employeerostering.domain.violation.IndictmentSummary;
 
 public class AbstractRosterView {
@@ -39,6 +40,8 @@ public class AbstractRosterView {
     protected List<Spot> spotList;
     @NotNull
     protected List<Employee> employeeList;
+    @NotNull
+    protected List<Vehicle> vehicleList;
     @NotNull
     protected RosterState rosterState;
 
@@ -117,4 +120,12 @@ public class AbstractRosterView {
     public void setRosterState(RosterState rosterState) {
         this.rosterState = rosterState;
     }
+
+	public List<Vehicle> getVehicleList() {
+		return vehicleList;
+	}
+
+	public void setVehicleList(List<Vehicle> vehicleList) {
+		this.vehicleList = vehicleList;
+	}
 }

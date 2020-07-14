@@ -19,7 +19,6 @@ package org.optaweb.employeerostering.service.admin;
 import org.optaweb.employeerostering.service.contract.ContractRepository;
 import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityRepository;
 import org.optaweb.employeerostering.service.employee.EmployeeRepository;
-import org.optaweb.employeerostering.service.roster.RosterGenerator;
 import org.optaweb.employeerostering.service.roster.RosterStateRepository;
 import org.optaweb.employeerostering.service.rotation.ShiftTemplateRepository;
 import org.optaweb.employeerostering.service.shift.ShiftRepository;
@@ -44,7 +43,6 @@ public class AdminService {
     private RosterStateRepository rosterStateRepository;
     private TenantRepository tenantRepository;
 
-    private RosterGenerator rosterGenerator;
 
     public AdminService(ShiftRepository shiftRepository,
                         EmployeeAvailabilityRepository employeeAvailabilityRepository,
@@ -55,8 +53,7 @@ public class AdminService {
                         SkillRepository skillRepository,
                         RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
                         RosterStateRepository rosterStateRepository,
-                        TenantRepository tenantRepository,
-                        RosterGenerator rosterGenerator) {
+                        TenantRepository tenantRepository) {
         this.shiftRepository = shiftRepository;
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
         this.shiftTemplateRepository = shiftTemplateRepository;
@@ -67,14 +64,12 @@ public class AdminService {
         this.rosterConstraintConfigurationRepository = rosterConstraintConfigurationRepository;
         this.rosterStateRepository = rosterStateRepository;
         this.tenantRepository = tenantRepository;
-        this.rosterGenerator = rosterGenerator;
     }
 
     @Transactional
     public void resetApplication() {
         // IMPORTANT: Delete entries that has Many-to-One relations first, otherwise we break referential integrity
         deleteAllEntities();
-        rosterGenerator.setUpGeneratedData();
     }
 
     private void deleteAllEntities() {

@@ -29,84 +29,100 @@ import org.optaweb.employeerostering.domain.skill.Skill;
 
 public class ShiftTemplateView extends AbstractPersistable {
 
-    private Long spotId;
-    private List<Long> requiredSkillSetIdList;
+	private Long spotId;
+	private List<Long> requiredSkillSetIdList;
 
-    private Long rotationEmployeeId;
-    private Duration durationBetweenRotationStartAndTemplateStart;
-    private Duration shiftTemplateDuration;
+	private Long rotationEmployeeId;
+	private Duration durationBetweenRotationStartAndTemplateStart;
+	private Duration shiftTemplateDuration;
 
-    public ShiftTemplateView() {
-    }
+	private Long rotationVehicleId;
 
-    public ShiftTemplateView(Integer rotationLength, ShiftTemplate shiftTemplate) {
-        super(shiftTemplate);
-        this.spotId = shiftTemplate.getSpot().getId();
-        this.rotationEmployeeId = (shiftTemplate.getRotationEmployee() != null) ?
-                shiftTemplate.getRotationEmployee().getId() : null;
-        this.durationBetweenRotationStartAndTemplateStart = Duration
-                .ofDays(shiftTemplate.getStartDayOffset()).plusSeconds(shiftTemplate
-                                                                               .getStartTime().toSecondOfDay());
-        this.shiftTemplateDuration = Duration
-                .ofDays((shiftTemplate.getEndDayOffset() < shiftTemplate.getStartDayOffset()) ? rotationLength : 0)
-                .plusDays(shiftTemplate.getEndDayOffset() - shiftTemplate.getStartDayOffset())
-                .plusSeconds(shiftTemplate.getEndTime().toSecondOfDay())
-                .minusSeconds(shiftTemplate.getStartTime().toSecondOfDay());
+	public ShiftTemplateView() {
+	}
 
-        this.requiredSkillSetIdList = shiftTemplate.getRequiredSkillSet().stream()
-                .map(Skill::getId).sorted().collect(Collectors.toCollection(ArrayList::new));
-    }
+	public ShiftTemplateView(Integer rotationLength, ShiftTemplate shiftTemplate) {
+		super(shiftTemplate);
+		this.spotId = shiftTemplate.getSpot().getId();
+		this.rotationEmployeeId = (shiftTemplate.getRotationEmployee() != null)
+				? shiftTemplate.getRotationEmployee().getId()
+				: null;
+		this.durationBetweenRotationStartAndTemplateStart = Duration.ofDays(shiftTemplate.getStartDayOffset())
+				.plusSeconds(shiftTemplate.getStartTime().toSecondOfDay());
+		this.shiftTemplateDuration = Duration
+				.ofDays((shiftTemplate.getEndDayOffset() < shiftTemplate.getStartDayOffset()) ? rotationLength : 0)
+				.plusDays(shiftTemplate.getEndDayOffset() - shiftTemplate.getStartDayOffset())
+				.plusSeconds(shiftTemplate.getEndTime().toSecondOfDay())
+				.minusSeconds(shiftTemplate.getStartTime().toSecondOfDay());
 
-    public ShiftTemplateView(Integer tenantId, Long spotId, Duration durationBetweenRotationStartAndTemplateStart,
-                             Duration shiftTemplateDuration, Long rotationEmployeeId,
-                             List<Long> requiredSkillSetIdList) {
-        super(tenantId);
-        this.spotId = spotId;
-        this.durationBetweenRotationStartAndTemplateStart = durationBetweenRotationStartAndTemplateStart;
-        this.shiftTemplateDuration = shiftTemplateDuration;
-        this.rotationEmployeeId = rotationEmployeeId;
-        this.requiredSkillSetIdList = requiredSkillSetIdList;
-    }
+		this.requiredSkillSetIdList = shiftTemplate.getRequiredSkillSet().stream().map(Skill::getId).sorted()
+				.collect(Collectors.toCollection(ArrayList::new));
 
-    public Long getSpotId() {
-        return spotId;
-    }
+		this.rotationVehicleId = (shiftTemplate.getRotationVehicle() != null)
+				? shiftTemplate.getRotationVehicle().getId()
+				: null;
+	}
 
-    public void setSpotId(Long spotId) {
-        this.spotId = spotId;
-    }
+	public ShiftTemplateView(Integer tenantId, Long spotId, Duration durationBetweenRotationStartAndTemplateStart,
+			Duration shiftTemplateDuration, Long rotationEmployeeId, List<Long> requiredSkillSetIdList,
+			Long rotationVehicleId) {
+		super(tenantId);
+		this.spotId = spotId;
+		this.durationBetweenRotationStartAndTemplateStart = durationBetweenRotationStartAndTemplateStart;
+		this.shiftTemplateDuration = shiftTemplateDuration;
+		this.rotationEmployeeId = rotationEmployeeId;
+		this.requiredSkillSetIdList = requiredSkillSetIdList;
 
-    public Long getRotationEmployeeId() {
-        return rotationEmployeeId;
-    }
+		this.rotationVehicleId = rotationVehicleId;
+	}
 
-    public void setRotationEmployeeId(Long rotationEmployeeId) {
-        this.rotationEmployeeId = rotationEmployeeId;
-    }
+	public Long getSpotId() {
+		return spotId;
+	}
 
-    @JsonSerialize(using = DurationSerializer.class)
-    public Duration getDurationBetweenRotationStartAndTemplateStart() {
-        return durationBetweenRotationStartAndTemplateStart;
-    }
+	public void setSpotId(Long spotId) {
+		this.spotId = spotId;
+	}
 
-    public void setDurationBetweenRotationStartAndTemplateStart(Duration durationBetweenRotationStartAndTemplateStart) {
-        this.durationBetweenRotationStartAndTemplateStart = durationBetweenRotationStartAndTemplateStart;
-    }
+	public Long getRotationEmployeeId() {
+		return rotationEmployeeId;
+	}
 
-    @JsonSerialize(using = DurationSerializer.class)
-    public Duration getShiftTemplateDuration() {
-        return shiftTemplateDuration;
-    }
+	public void setRotationEmployeeId(Long rotationEmployeeId) {
+		this.rotationEmployeeId = rotationEmployeeId;
+	}
 
-    public void setShiftTemplateDuration(Duration shiftTemplateDuration) {
-        this.shiftTemplateDuration = shiftTemplateDuration;
-    }
+	@JsonSerialize(using = DurationSerializer.class)
+	public Duration getDurationBetweenRotationStartAndTemplateStart() {
+		return durationBetweenRotationStartAndTemplateStart;
+	}
 
-    public List<Long> getRequiredSkillSetIdList() {
-        return requiredSkillSetIdList;
-    }
+	public void setDurationBetweenRotationStartAndTemplateStart(Duration durationBetweenRotationStartAndTemplateStart) {
+		this.durationBetweenRotationStartAndTemplateStart = durationBetweenRotationStartAndTemplateStart;
+	}
 
-    public void setRequiredSkillSetIdList(List<Long> requiredSkillSetIdList) {
-        this.requiredSkillSetIdList = requiredSkillSetIdList;
-    }
+	@JsonSerialize(using = DurationSerializer.class)
+	public Duration getShiftTemplateDuration() {
+		return shiftTemplateDuration;
+	}
+
+	public void setShiftTemplateDuration(Duration shiftTemplateDuration) {
+		this.shiftTemplateDuration = shiftTemplateDuration;
+	}
+
+	public List<Long> getRequiredSkillSetIdList() {
+		return requiredSkillSetIdList;
+	}
+
+	public void setRequiredSkillSetIdList(List<Long> requiredSkillSetIdList) {
+		this.requiredSkillSetIdList = requiredSkillSetIdList;
+	}
+
+	public Long getRotationVehicleId() {
+		return rotationVehicleId;
+	}
+
+	public void setRotationVehicleId(Long rotationVehicleId) {
+		this.rotationVehicleId = rotationVehicleId;
+	}
 }

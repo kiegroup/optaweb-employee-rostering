@@ -23,6 +23,7 @@ import java.util.Set;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.vehicle.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -85,6 +86,22 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
             " order by sa.startDateTime, s.name, e.name")
     List<Shift> filterWithEmployees(@Param("tenantId") Integer tenantId,
                                     @Param("employeeSet") Set<Employee> employeeSet,
+                                    @Param("startDateTime") OffsetDateTime startDateTime,
+                                    @Param("endDateTime") OffsetDateTime endDateTime);
+    
+    
+    @Query("select distinct sa from Shift sa" +
+            " left join fetch sa.spot s" +
+            " left join fetch sa.rotationVehicle re" +
+            " left join fetch sa.originalVehicle oe" +
+            " left join fetch sa.vehicle e" +
+            " where sa.tenantId = :tenantId" +
+            " and sa.vehicle IN :vehicleSet" +
+            " and sa.endDateTime >= :startDateTime" +
+            " and sa.startDateTime < :endDateTime" +
+            " order by sa.startDateTime, s.name, e.name")
+    List<Shift> filterWithVehicles(@Param("tenantId") Integer tenantId,
+                                    @Param("vehicleSet") Set<Vehicle> vehicleSet,
                                     @Param("startDateTime") OffsetDateTime startDateTime,
                                     @Param("endDateTime") OffsetDateTime endDateTime);
 }

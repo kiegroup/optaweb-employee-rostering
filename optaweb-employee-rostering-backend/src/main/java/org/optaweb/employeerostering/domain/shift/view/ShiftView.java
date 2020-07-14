@@ -33,6 +33,7 @@ import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.vehicle.Vehicle;
 import org.optaweb.employeerostering.domain.violation.ContractMinutesViolation;
 import org.optaweb.employeerostering.domain.violation.DesiredTimeslotForEmployeeReward;
 import org.optaweb.employeerostering.domain.violation.NoBreakViolation;
@@ -75,28 +76,43 @@ public class ShiftView extends AbstractPersistable {
 
     private Long employeeId = null;
     private Long originalEmployeeId = null;
+    
+    
+    
+    
+    private Long rotationVehicleId;    
+    private boolean pinnedVehicleByUser = false;
+    private Long vehicleId = null;
+    private Long originalVehicleId = null;
+    
+    
 
     @SuppressWarnings("unused")
     public ShiftView() {
     }
 
     public ShiftView(Integer tenantId, Spot spot, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        this(tenantId, spot, startDateTime, endDateTime, null);
+        this(tenantId, spot, startDateTime, endDateTime, null, null);
     }
 
     public ShiftView(Integer tenantId, Spot spot, LocalDateTime startDateTime, LocalDateTime endDateTime,
-                     Employee rotationEmployee) {
-        this(tenantId, spot, startDateTime, endDateTime, null, new ArrayList<>(), null);
+                     Employee rotationEmployee, Vehicle rotationVehicle) {
+        this(tenantId, spot, startDateTime, endDateTime, null, new ArrayList<>(), null, null, null);
     }
 
     public ShiftView(Integer tenantId, Spot spot, LocalDateTime startDateTime, LocalDateTime endDateTime,
-                     Employee rotationEmployee, List<Long> requiredSkillSetIdList, Employee originalEmployee) {
+                     Employee rotationEmployee, List<Long> requiredSkillSetIdList, Employee originalEmployee,
+                     Vehicle rotationVehicle, Vehicle originalVehicle) {
         super(tenantId);
         this.spotId = spot.getId();
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.rotationEmployeeId = (rotationEmployee == null) ? null : rotationEmployee.getId();
         this.originalEmployeeId = (originalEmployee == null) ? null : originalEmployee.getId();
+        
+
+        this.rotationVehicleId = (rotationVehicle == null) ? null : rotationVehicle.getId();
+        this.originalVehicleId = (originalVehicle == null) ? null : originalVehicle.getId();
 
         this.requiredSkillViolationList = null;
         this.shiftEmployeeConflictList = null;
@@ -136,6 +152,11 @@ public class ShiftView extends AbstractPersistable {
         this.rotationEmployeeId = (shift.getRotationEmployee() == null) ? null : shift.getRotationEmployee().getId();
         this.employeeId = (shift.getEmployee() == null) ? null : shift.getEmployee().getId();
         this.originalEmployeeId = (shift.getOriginalEmployee() == null) ? null : shift.getOriginalEmployee().getId();
+        
+        this.pinnedVehicleByUser = shift.isPinnedVehicleByUser();
+        this.rotationVehicleId = (shift.getRotationVehicle() == null) ? null : shift.getRotationVehicle().getId();
+        this.vehicleId = (shift.getVehicle() == null) ? null : shift.getVehicle().getId();
+        this.originalVehicleId = (shift.getOriginalVehicle() == null) ? null : shift.getOriginalVehicle().getId();
 
         this.requiredSkillViolationList = requiredSkillViolationList;
         this.shiftEmployeeConflictList = shiftEmployeeConflictList;
@@ -226,7 +247,39 @@ public class ShiftView extends AbstractPersistable {
         this.originalEmployeeId = originalEmployeeId;
     }
 
-    public List<RequiredSkillViolation> getRequiredSkillViolationList() {
+    public Long getRotationVehicleId() {
+		return rotationVehicleId;
+	}
+
+	public void setRotationVehicleId(Long rotationVehicleId) {
+		this.rotationVehicleId = rotationVehicleId;
+	}
+
+	public boolean isPinnedVehicleByUser() {
+		return pinnedVehicleByUser;
+	}
+
+	public void setPinnedVehicleByUser(boolean pinnedVehicleByUser) {
+		this.pinnedVehicleByUser = pinnedVehicleByUser;
+	}
+
+	public Long getVehicleId() {
+		return vehicleId;
+	}
+
+	public void setVehicleId(Long vehicleId) {
+		this.vehicleId = vehicleId;
+	}
+
+	public Long getOriginalVehicleId() {
+		return originalVehicleId;
+	}
+
+	public void setOriginalVehicleId(Long originalVehicleId) {
+		this.originalVehicleId = originalVehicleId;
+	}
+
+	public List<RequiredSkillViolation> getRequiredSkillViolationList() {
         return requiredSkillViolationList;
     }
 
