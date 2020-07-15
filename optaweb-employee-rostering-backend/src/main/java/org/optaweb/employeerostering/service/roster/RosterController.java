@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.service.roster;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -224,8 +225,18 @@ public class RosterController {
     // ************************************************************************
     // Publish
     // ************************************************************************
+    
+    @ApiOperation("Provision shifts from particular time buckets into the given period")
+    @PostMapping("/provision")
+    public void provision(@PathVariable @Min(0) Integer tenantId,
+                          @RequestParam Integer startRotationOffset, @RequestParam String fromDate,
+                          @RequestParam String toDate, @RequestBody List<Long> timeBucketIdList) {
+        rosterService.provision(tenantId, startRotationOffset, LocalDate.parse(fromDate), LocalDate.parse(toDate),
+                                timeBucketIdList);
+    }
 
-    @ApiOperation("Publish the next set of draft shifts and create a new draft shift from the rotation template")
+    
+    @ApiOperation("Publish the next set of draft shifts and create new draft shifts from the rotation template")
     @PostMapping("/publishAndProvision")
     public ResponseEntity<PublishResult> publishAndProvision(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(rosterService.publishAndProvision(tenantId), HttpStatus.OK);
