@@ -41,6 +41,7 @@ import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
 import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from './ShiftEvent';
 import EditShiftModal from './EditShiftModal';
 import ExportScheduleModal from './ExportScheduleModal';
+import { ProvisionShiftsModal } from './ProvisionShiftsModal';
 
 interface StateProps {
   tenantId: number;
@@ -108,6 +109,7 @@ export type Props = RouteComponentProps & StateProps & DispatchProps & WithTrans
 interface State {
   isCreatingOrEditingShift: boolean;
   isExportingSchedule: boolean;
+  isProvisioningShifts: boolean;
   selectedShift?: Shift;
   firstLoad: boolean;
 }
@@ -124,6 +126,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     this.state = {
       isCreatingOrEditingShift: false,
       isExportingSchedule: false,
+      isProvisioningShifts: false,
       firstLoad: true,
     };
   }
@@ -268,6 +271,15 @@ export class ShiftRosterPage extends React.Component<Props, State> {
         || { constraintToCountMap: {}, constraintToScoreImpactMap: {} };
     const actions = [
       { name: t('publish'), action: this.props.publishRoster, isDisabled: this.props.isSolving },
+      {
+        name: t('provision'),
+        action: () => {
+          this.setState({
+            isProvisioningShifts: true,
+          });
+        },
+        isDisabled: this.props.isSolving,
+      },
       { name: this.props.isSolving ? t('terminateEarly') : t('schedule'),
         action: this.props.isSolving ? this.props.terminateSolvingRosterEarly : this.props.solveRoster },
       { name: t('refresh'),
@@ -358,6 +370,12 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           onClose={() => {
             this.setState({ isExportingSchedule: false });
           }}
+          defaultFromDate={startDate}
+          defaultToDate={endDate}
+        />
+        <ProvisionShiftsModal
+          isOpen={this.state.isProvisioningShifts}
+          onClose={() => this.setState({ isProvisioningShifts: false })}
           defaultFromDate={startDate}
           defaultToDate={endDate}
         />

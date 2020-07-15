@@ -99,6 +99,11 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
             "name": "Trans(i18nKey=publish)",
           },
           Object {
+            "action": [Function],
+            "isDisabled": false,
+            "name": "Trans(i18nKey=provision)",
+          },
+          Object {
             "action": [MockFunction],
             "name": "Trans(i18nKey=schedule)",
           },
@@ -127,6 +132,12 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
     onSave={[Function]}
   />
   <Connect(ExportScheduleModal)
+    defaultFromDate={2018-07-01T00:00:00.000Z}
+    defaultToDate={2018-07-07T23:59:59.999Z}
+    isOpen={false}
+    onClose={[Function]}
+  />
+  <ProvisionShiftsModal
     defaultFromDate={2018-07-01T00:00:00.000Z}
     defaultToDate={2018-07-07T23:59:59.999Z}
     isOpen={false}
@@ -343,6 +354,11 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
             "name": "Trans(i18nKey=publish)",
           },
           Object {
+            "action": [Function],
+            "isDisabled": false,
+            "name": "Trans(i18nKey=provision)",
+          },
+          Object {
             "action": [MockFunction],
             "name": "Trans(i18nKey=schedule)",
           },
@@ -371,6 +387,12 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
     onSave={[Function]}
   />
   <Connect(ExportScheduleModal)
+    defaultFromDate={2018-07-01T00:00:00.000Z}
+    defaultToDate={2018-07-07T23:59:59.999Z}
+    isOpen={false}
+    onClose={[Function]}
+  />
+  <ProvisionShiftsModal
     defaultFromDate={2018-07-01T00:00:00.000Z}
     defaultToDate={2018-07-07T23:59:59.999Z}
     isOpen={false}
@@ -615,6 +637,11 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
             "name": "Trans(i18nKey=publish)",
           },
           Object {
+            "action": [Function],
+            "isDisabled": true,
+            "name": "Trans(i18nKey=provision)",
+          },
+          Object {
             "action": [MockFunction],
             "name": "Trans(i18nKey=terminateEarly)",
           },
@@ -643,6 +670,12 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
     onSave={[Function]}
   />
   <Connect(ExportScheduleModal)
+    defaultFromDate={2018-07-01T00:00:00.000Z}
+    defaultToDate={2018-07-07T23:59:59.999Z}
+    isOpen={false}
+    onClose={[Function]}
+  />
+  <ProvisionShiftsModal
     defaultFromDate={2018-07-01T00:00:00.000Z}
     defaultToDate={2018-07-07T23:59:59.999Z}
     isOpen={false}

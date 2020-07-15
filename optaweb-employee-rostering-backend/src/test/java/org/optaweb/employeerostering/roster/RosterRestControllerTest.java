@@ -186,6 +186,17 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
     private ResponseEntity<Void> commitChanges() {
         return restTemplate.postForEntity(rosterPathURI + "commitChanges", null, Void.class, TENANT_ID);
     }
+    
+    private ResponseEntity<Void> provision(Integer startRotationOffset, LocalDate fromDate,
+                                           LocalDate toDate, List<Long> timeBucketIdList) {
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "provision")
+                .queryParam("startRotationOffset", startRotationOffset.toString())
+                .queryParam("fromDate", fromDate.toString())
+                .queryParam("toDate", toDate.toString())
+                .build()
+                .expand(Collections.singletonMap("tenantId", TENANT_ID));
+        return restTemplate.postForEntity(uriComponents.toUriString(), timeBucketIdList, Void.class, TENANT_ID);
+    }
 
     private Spot addSpot(String name) {
         SpotView spotView = new SpotView(TENANT_ID, name, Collections.emptySet());
@@ -459,6 +470,31 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         assertThat(availabilityRosterView.getEndDate()).isEqualTo(endDate);
         assertThat(availabilityRosterView.getEmployeeIdToAvailabilityViewListMap()).isEmpty();
         assertThat(availabilityRosterView.getTenantId()).isEqualTo(TENANT_ID);
+    }
+    
+    @Test
+    public void testProvision() {
+        createTestRoster();
+        
+        // To date before from date should result in an error
+        ResponseEntity<Void> publishResultResponseEntity = provision(0, LocalDate.of(2000, 1, 5),
+                                                                     LocalDate.of(2000, 1, 1),
+                                                                     Collections.emptyList());
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        
+        // Negative rotation start offset should result in an error
+        publishResultResponseEntity = provision(-5, LocalDate.of(2000, 1, 5),
+                                                LocalDate.of(2000, 1, 5),
+                                                Collections.emptyList());
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        
+        // rotation start offset over rotation length should result in an error
+        publishResultResponseEntity = provision(9001, LocalDate.of(2000, 1, 5),
+                                                LocalDate.of(2000, 1, 5),
+                                                Collections.emptyList());
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        
+        // TODO: Create time buckets and verify provisioning actually works
     }
 
     @Test

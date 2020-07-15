@@ -31,6 +31,7 @@ import { employeeSelectors } from 'store/employee';
 import { spotSelectors } from 'store/spot';
 import { serializeLocalDate } from 'store/rest/DataSerialization';
 import { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
+import { TimeBucket } from 'domain/TimeBucket';
 import {
   SetRosterStateIsLoadingAction, SetRosterStateAction,
   SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction,
@@ -245,6 +246,26 @@ ThunkCommandFactory<void, SetRosterStateIsLoadingAction | SetRosterStateAction> 
       lastHistoricDate: new Date(newRosterState.lastHistoricDate),
     }));
     dispatch(actions.setRosterStateIsLoading(false));
+  });
+};
+
+export interface ProvisionParams {
+  startRotationOffset: number;
+  fromDate: Date;
+  toDate: Date;
+  timeBucketList: TimeBucket[];
+}
+export const provision:
+ThunkCommandFactory<ProvisionParams, AddAlertAction> = params => (dispatch, state, client) => {
+  const tenantId = state().tenantData.currentTenantId;
+  return client.post<void>(`/tenant/${tenantId}/roster/provision?startRotationOffset=${params.startRotationOffset
+  }&fromDate=${moment(params.fromDate).format('YYYY-MM-DD')}&toDate=${
+    moment(params.toDate).format('YYYY-MM-DD')}`, params.timeBucketList.map(tb => tb.id)).then(() => {
+    dispatch(operations.refreshShiftRoster());
+    dispatch(alert.showSuccessMessage('provision', {
+      from: moment(params.fromDate).format('LL'),
+      to: moment(params.toDate).format('LL'),
+    }));
   });
 };
 
