@@ -81,20 +81,8 @@ public class TimeBucket extends AbstractPersistable {
     public TimeBucket(Integer tenantId, Spot spot, LocalTime startTime, LocalTime endTime,
                       Set<Skill> additionalSkillSet,
                       Set<DayOfWeek> repeatOnDaySet, DayOfWeek startOfWeek, int rotationLength) {
-        super(tenantId);
-        this.spot = spot;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.additionalSkillSet = additionalSkillSet;
-        this.repeatOnDaySet = repeatOnDaySet;
-        this.seatList = new ArrayList<>(rotationLength);
-        DayOfWeek rotationDay = startOfWeek;
-        for (int i = 0; i < rotationLength; i++) {
-            if (repeatOnDaySet.contains(rotationDay)) {
-                seatList.add(new Seat(i,null));
-            }
-            rotationDay = rotationDay.plus(1);
-        }
+        this(tenantId, spot, startTime, endTime, additionalSkillSet, repeatOnDaySet,
+             generateDefaultSeatList(startOfWeek, repeatOnDaySet, rotationLength));
     }
     
     public TimeBucket(Integer tenantId, Spot spot, LocalTime startTime, LocalTime endTime,
@@ -109,6 +97,26 @@ public class TimeBucket extends AbstractPersistable {
         this.seatList = new ArrayList<>(seatList);
     }
     
+    // ********************************************************************************************
+    // Constructor default utils
+    // ********************************************************************************************  
+    
+    private static List<Seat> generateDefaultSeatList(DayOfWeek startOfWeek, Set<DayOfWeek> repeatOnDaySet,
+                                                      int rotationLength) {
+        List<Seat> seatList = new ArrayList<>();
+        DayOfWeek rotationDay = startOfWeek;
+        for (int i = 0; i < rotationLength; i++) {
+            if (repeatOnDaySet.contains(rotationDay)) {
+                seatList.add(new Seat(i,null));
+            }
+            rotationDay = rotationDay.plus(1);
+        }
+        return seatList;
+    }
+    
+    // ********************************************************************************************
+    // Getters and Setters
+    // ********************************************************************************************   
     
     public Spot getSpot() {
         return spot;
@@ -179,32 +187,27 @@ public class TimeBucket extends AbstractPersistable {
     
     public Optional<Shift> createShiftForOffset(LocalDate startDate, int offset, ZoneId zoneId,
                                                 boolean defaultToRotationEmployee) {
-        Optional<Seat> maybeSeat = seatList.stream().filter(seat -> seat.getDayInRotation() == offset).findAny();
-        
-        if (!maybeSeat.isPresent()) {
-            return Optional.empty();
-        }
-        Seat seat = maybeSeat.get();
-        LocalDateTime startDateTime = startDate.atTime(getStartTime());
-        LocalDate endDate;
-        
-        if (getStartTime().isBefore(getEndTime())) {
-            // Ex: 9am-5pm
-            endDate = startDate;
-        } else {
-            // Ex: 9pm-6am
-            endDate = startDate.plusDays(1);
-        }
-        LocalDateTime endDateTime = endDate.atTime(getEndTime());
+        return seatList.stream().filter(seat -> seat.getDayInRotation() == offset).findAny().map(seat -> {
+            LocalDateTime startDateTime = startDate.atTime(getStartTime());
+            LocalDate endDate = (getStartTime().isBefore(getEndTime())) ?
+                    startDate  : // Ex: 9am - 5pm
+                    startDate.plusDays(1); // Ex: 9pm - 5am
+            
+            LocalDateTime endDateTime = endDate.atTime(getEndTime());
 
-        OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime,
-                                                               zoneId.getRules().getOffset(startDateTime));
-        OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime, zoneId.getRules().getOffset(endDateTime));
-        Shift shift = new Shift(getTenantId(), getSpot(), startOffsetDateTime, endOffsetDateTime, seat.getEmployee(),
-                                new HashSet<>(additionalSkillSet), null);
-        if (defaultToRotationEmployee) {
-            shift.setEmployee(seat.getEmployee());
-        }
-        return Optional.of(shift);
+            OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime,
+                                                                   zoneId.getRules().getOffset(startDateTime));
+            OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime,
+                                                                 zoneId.getRules().getOffset(endDateTime));
+            
+            Shift shift = new Shift(getTenantId(), getSpot(), startOffsetDateTime,
+                                    endOffsetDateTime, seat.getEmployee(),
+                                    new HashSet<>(additionalSkillSet), null);
+            
+            if (defaultToRotationEmployee) {
+                shift.setEmployee(seat.getEmployee());
+            }
+            return shift;
+        });
     }
 }
