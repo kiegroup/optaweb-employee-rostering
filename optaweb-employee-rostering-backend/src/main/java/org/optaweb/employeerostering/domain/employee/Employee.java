@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,7 +35,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
-import org.optaweb.employeerostering.domain.common.ColorUtils;
+import org.optaweb.employeerostering.domain.common.HighContrastColor;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.skill.Skill;
 
@@ -77,8 +78,8 @@ public class Employee extends AbstractPersistable {
                     Set<Skill> skillProficiencySet) {
         super(tenantId);
         this.name = name;
-        this.shortId = Arrays.stream(name.split(" ")).limit(3).reduce("", (a,b) -> a + b.charAt(0));
-        this.color = ColorUtils.getRandomColor(name);
+        this.shortId = generateShortIdFromName(name);
+        this.color = HighContrastColor.generateColorFromHashcode(name);
         this.contract = contract;
         this.skillProficiencySet = skillProficiencySet;
     }
@@ -104,6 +105,16 @@ public class Employee extends AbstractPersistable {
     @Override
     public String toString() {
         return name;
+    }
+    
+    // ************************************************************************
+    // Constructor default utils
+    // ************************************************************************
+    private static String generateShortIdFromName(String name) {
+        return Arrays.stream(name.split(" ")) // Separate name where there spaces ("Amy Cole" -> ["Amy", "Cole])
+                     .limit(3) // Limit to the first three parts
+                     .map(s -> s.substring(0, 1)) // Get the first character of the part
+                     .collect(Collectors.joining("")); // Join the parts together
     }
 
     // ************************************************************************
