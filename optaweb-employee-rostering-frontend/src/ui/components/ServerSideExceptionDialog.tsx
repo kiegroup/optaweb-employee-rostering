@@ -17,7 +17,6 @@ import * as React from 'react';
 import { ServerSideExceptionInfo } from 'types';
 import { Text, Title, Button, ButtonVariant, Modal } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { v4 as uuid } from 'uuid';
 
 function createStackTrace(exceptionInfo: ServerSideExceptionInfo|null): JSX.Element {
   if (exceptionInfo === null) {
@@ -29,9 +28,13 @@ function createStackTrace(exceptionInfo: ServerSideExceptionInfo|null): JSX.Elem
       <Title size="md">
         {`${exceptionInfo.exceptionClass}: ${exceptionInfo.exceptionMessage}`}
       </Title>
-      {exceptionInfo.stackTrace.map(line => (
-        <Text key={uuid()}>{line}</Text>
-      ))}
+      <Text
+        style={{
+          whiteSpace: 'pre-wrap',
+        }}
+      >
+        {exceptionInfo.stackTrace.join('\n')}
+      </Text>
       {
         exceptionInfo.exceptionCause ? (
           <>

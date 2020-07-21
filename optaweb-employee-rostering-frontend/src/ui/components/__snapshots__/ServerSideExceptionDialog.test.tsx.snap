@@ -37,19 +37,15 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Alert co
       Error1: message1
     </Title>
     <Text
-      key="uuid-1"
+      style={
+        Object {
+          "whiteSpace": "pre-wrap",
+        }
+      }
     >
       1.1
-    </Text>
-    <Text
-      key="uuid-2"
-    >
-      1.2
-    </Text>
-    <Text
-      key="uuid-3"
-    >
-      1.3
+1.2
+1.3
     </Text>
     <Text>
       Caused By
@@ -60,19 +56,15 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Alert co
       Error2: message2
     </Title>
     <Text
-      key="uuid-4"
+      style={
+        Object {
+          "whiteSpace": "pre-wrap",
+        }
+      }
     >
       2.1
-    </Text>
-    <Text
-      key="uuid-5"
-    >
-      2.2
-    </Text>
-    <Text
-      key="uuid-6"
-    >
-      2.3
+2.2
+2.3
     </Text>
   </Modal>
 </Fragment>
@@ -115,19 +107,15 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Modal co
       Error1: message1
     </Title>
     <Text
-      key="uuid-13"
+      style={
+        Object {
+          "whiteSpace": "pre-wrap",
+        }
+      }
     >
       1.1
-    </Text>
-    <Text
-      key="uuid-14"
-    >
-      1.2
-    </Text>
-    <Text
-      key="uuid-15"
-    >
-      1.3
+1.2
+1.3
     </Text>
     <Text>
       Caused By
@@ -138,19 +126,15 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Modal co
       Error2: message2
     </Title>
     <Text
-      key="uuid-16"
+      style={
+        Object {
+          "whiteSpace": "pre-wrap",
+        }
+      }
     >
       2.1
-    </Text>
-    <Text
-      key="uuid-17"
-    >
-      2.2
-    </Text>
-    <Text
-      key="uuid-18"
-    >
-      2.3
+2.2
+2.3
     </Text>
   </Modal>
 </Fragment>
