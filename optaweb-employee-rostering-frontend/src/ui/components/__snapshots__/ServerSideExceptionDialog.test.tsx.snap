@@ -2,7 +2,7 @@
 
 exports[`ServerSideExceptionDialog should render an ServerSideException Alert correctly 1`] = `
 <Fragment>
-  Trans(i18nKey=error1, ["hi"])
+  Trans(i18nKey=error1, {"0":"hi","joinArrays":"\\n"})
   <Component
     aria-label="Show Stack Trace"
     onClick={[Function]}
@@ -80,7 +80,7 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Alert co
 
 exports[`ServerSideExceptionDialog should render an ServerSideException Modal correctly 1`] = `
 <Fragment>
-  Trans(i18nKey=error1, ["hi"])
+  Trans(i18nKey=error1, {"0":"hi","joinArrays":"\\n"})
   <Component
     aria-label="Show Stack Trace"
     onClick={[Function]}

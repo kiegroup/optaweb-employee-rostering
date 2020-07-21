@@ -8,3 +8,7 @@ selectAdditionalSkills: Select Additional Skills...
 originalEmployee: Original Employee
 none: None
 isPinned: Is Pinned
+
+noStartTime: Shift must have a start time
+noEndTime: Shift must have an end time
+belowMinDuration: Shift must have a duration of at least 30 minutes

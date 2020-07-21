@@ -28,25 +28,13 @@ public class ConstraintViolatedException extends RuntimeException {
 
     private final Object invalidObject;
     private final Class<?> validatedClass;
-    private final ConstraintViolation<?>[] constraintViolations;
+    private final Set<ConstraintViolation<Object>> constraintViolations;
 
     public ConstraintViolatedException(Object invalidObject, Class<?> validatedClass,
                                        Set<ConstraintViolation<Object>> violationSet) {
         this.invalidObject = invalidObject;
         this.validatedClass = validatedClass;
-        this.constraintViolations = violationSet.toArray(new ConstraintViolation[0]);
-    }
-
-    public Object getInvalidObject() {
-        return invalidObject;
-    }
-
-    public Class<?> getValidatedClass() {
-        return validatedClass;
-    }
-
-    public ConstraintViolation<?>[] getConstraintViolations() {
-        return constraintViolations;
+        this.constraintViolations = violationSet;
     }
 
     @Override
@@ -63,7 +51,7 @@ public class ConstraintViolatedException extends RuntimeException {
     }
 
     public List<String> getI18nMessageParameters() {
-        List<String> out = new ArrayList<>(1 + constraintViolations.length);
+        List<String> out = new ArrayList<>(1 + constraintViolations.size());
         out.add(validatedClass.getSimpleName());
 
         for (ConstraintViolation<?> cv : constraintViolations) {
