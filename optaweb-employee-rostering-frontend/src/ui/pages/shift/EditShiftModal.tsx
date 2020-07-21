@@ -129,16 +129,16 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
       {
         noStartDate: {
           predicate: shift => shift.startDateTime !== undefined,
-          errorMsg: () => 'Shift must have a start date time',
+          errorMsg: () => t('noStartTime'),
         },
         noEndDate: {
           predicate: shift => shift.endDateTime !== undefined,
-          errorMsg: () => 'Shift must have a end date time',
+          errorMsg: () => t('noEndTime'),
         },
         durationLessThan30Minutes: {
           predicate: shift => !(shift.startDateTime && shift.endDateTime)
             || moment(shift.endDateTime).diff(shift.startDateTime, 'minutes') >= 30,
-          errorMsg: () => 'Shift must have a duration of at least 30 minutes.',
+          errorMsg: () => t('belowMinDuration'),
         },
       });
 

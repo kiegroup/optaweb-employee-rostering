@@ -27,7 +27,7 @@ import org.optaweb.employeerostering.domain.exception.ConstraintViolatedExceptio
 
 public class AbstractRestService {
 
-    Validator validator;
+    private Validator validator;
 
     public AbstractRestService(Validator validator) {
         this.validator = validator;
