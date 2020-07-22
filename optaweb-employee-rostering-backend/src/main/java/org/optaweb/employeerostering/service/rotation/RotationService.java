@@ -24,8 +24,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
-import javax.validation.Validator;
 import javax.validation.Valid;
+import javax.validation.Validator;
 import javax.validation.constraints.Min;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
@@ -60,10 +60,10 @@ public class RotationService extends AbstractRestService {
                            EmployeeService employeeService) {
         super(validator);
         this.timeBucketRepository = timeBucketRepository;
-        
+
         this.tenantService = tenantService;
         Assert.notNull(tenantService, "tenantService must not be null");
-        
+
         this.rosterService = rosterService;
         Assert.notNull(rosterService, "rosterService must not be null.");
 
@@ -99,6 +99,7 @@ public class RotationService extends AbstractRestService {
         return new TimeBucketView(timeBucket);
     }
 
+    @Transactional
     public Boolean deleteTimeBucket(@Min(0) Integer tenantId, @Min(0) Long id) {
         Optional<TimeBucket> timeBucketOptional = timeBucketRepository.findById(id);
 
@@ -111,59 +112,56 @@ public class RotationService extends AbstractRestService {
         return true;
     }
 
+    @Transactional
     public TimeBucketView createTimeBucket(@Min(0) Integer tenantId, @Valid TimeBucketView timeBucketView) {
         Spot spot = spotService.getSpot(tenantId, timeBucketView.getSpotId());
         Set<Skill> additionalSkillSet = getRequiredSkillSet(tenantId, timeBucketView);
         Integer rotationLength = rosterService.getRosterState(tenantId).getRotationLength();
-        
+
         Set<DayOfWeek> repeatOnDaySet = timeBucketView.getRepeatOnDaySetList().stream().collect(Collectors.toSet());
         TimeBucket timeBucket;
-        
-        if (timeBucketView.getSeatList() != null) {
-            List<Seat> seatList = timeBucketView.getSeatList().stream()
-                    .map(seat -> {
-                            if (seat.getEmployeeId() != null) {
-                                Employee employee = employeeService.getEmployee(tenantId, seat.getEmployeeId());
-                                return new Seat(seat.getDayInRotation(), employee);
-                            }
-                            else {
-                                return new Seat(seat.getDayInRotation(), null);
-                            }
-                    }).collect(Collectors.toList());
-            timeBucket = new TimeBucket(timeBucketView.getTenantId(),
-                                        spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
-                                        additionalSkillSet, repeatOnDaySet, seatList);
-        }
-        else {
-            DayOfWeek startOfWeek = tenantService.getRosterConstraintConfiguration(tenantId).getWeekStartDay();
-            timeBucket = new TimeBucket(timeBucketView.getTenantId(),
-                                        spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
-                                        additionalSkillSet, repeatOnDaySet, startOfWeek, rotationLength);
-        }
-        
 
-        
-        validateBean(tenantId, timeBucket);
-        timeBucketRepository.save(timeBucket);
-        return new TimeBucketView(timeBucket);
-    }
-
-    public TimeBucketView updateTimeBucket(@Min(0) Integer tenantId, @Valid TimeBucketView timeBucketView) {
-        Spot spot = spotService.getSpot(tenantId, timeBucketView.getSpotId());
-        Set<Skill> additionalSkillSet = getRequiredSkillSet(tenantId, timeBucketView);
-        Integer rotationLength = rosterService.getRosterState(tenantId).getRotationLength();
-        
-        Set<DayOfWeek> repeatOnDaySet = timeBucketView.getRepeatOnDaySetList().stream().collect(Collectors.toSet());
-        TimeBucket newTimeBucket;
-        
         if (timeBucketView.getSeatList() != null) {
             List<Seat> seatList = timeBucketView.getSeatList().stream()
                     .map(seat -> {
                         if (seat.getEmployeeId() != null) {
                             Employee employee = employeeService.getEmployee(tenantId, seat.getEmployeeId());
                             return new Seat(seat.getDayInRotation(), employee);
+                        } else {
+                            return new Seat(seat.getDayInRotation(), null);
                         }
-                        else {
+                    }).collect(Collectors.toList());
+            timeBucket = new TimeBucket(timeBucketView.getTenantId(),
+                                        spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                                        additionalSkillSet, repeatOnDaySet, seatList);
+        } else {
+            DayOfWeek startOfWeek = tenantService.getRosterConstraintConfiguration(tenantId).getWeekStartDay();
+            timeBucket = new TimeBucket(timeBucketView.getTenantId(),
+                                        spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                                        additionalSkillSet, repeatOnDaySet, startOfWeek, rotationLength);
+        }
+
+        validateBean(tenantId, timeBucket);
+        timeBucketRepository.save(timeBucket);
+        return new TimeBucketView(timeBucket);
+    }
+
+    @Transactional
+    public TimeBucketView updateTimeBucket(@Min(0) Integer tenantId, @Valid TimeBucketView timeBucketView) {
+        Spot spot = spotService.getSpot(tenantId, timeBucketView.getSpotId());
+        Set<Skill> additionalSkillSet = getRequiredSkillSet(tenantId, timeBucketView);
+        Integer rotationLength = rosterService.getRosterState(tenantId).getRotationLength();
+
+        Set<DayOfWeek> repeatOnDaySet = timeBucketView.getRepeatOnDaySetList().stream().collect(Collectors.toSet());
+        TimeBucket newTimeBucket;
+
+        if (timeBucketView.getSeatList() != null) {
+            List<Seat> seatList = timeBucketView.getSeatList().stream()
+                    .map(seat -> {
+                        if (seat.getEmployeeId() != null) {
+                            Employee employee = employeeService.getEmployee(tenantId, seat.getEmployeeId());
+                            return new Seat(seat.getDayInRotation(), employee);
+                        } else {
                             return new Seat(seat.getDayInRotation(), null);
                         }
                     }).collect(Collectors.toList());
@@ -172,8 +170,7 @@ public class RotationService extends AbstractRestService {
                                            additionalSkillSet, repeatOnDaySet, seatList);
             newTimeBucket.setId(timeBucketView.getId());
             newTimeBucket.setVersion(timeBucketView.getVersion());
-        }
-        else {
+        } else {
             DayOfWeek startOfWeek = tenantService.getRosterConstraintConfiguration(tenantId).getWeekStartDay();
             newTimeBucket = new TimeBucket(timeBucketView.getTenantId(),
                                            spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
@@ -181,15 +178,13 @@ public class RotationService extends AbstractRestService {
             newTimeBucket.setId(timeBucketView.getId());
             newTimeBucket.setVersion(timeBucketView.getVersion());
         }
-        
 
-        
         validateBean(tenantId, newTimeBucket);
 
         TimeBucket oldTimeBucket = timeBucketRepository
                 .findById(newTimeBucket.getId())
                 .orElseThrow(() -> new EntityNotFoundException("TimeBucket entity with ID (" +
-                        newTimeBucket.getId() + ") not found."));
+                                                                       newTimeBucket.getId() + ") not found."));
 
         if (!oldTimeBucket.getTenantId().equals(newTimeBucket.getTenantId())) {
             throw new IllegalStateException("TimeBucket entity with tenantId (" + oldTimeBucket.getTenantId() +
