@@ -835,6 +835,7 @@ exports[`EditEmployeeStubListModal component should render correctly 1`] = `
         Cancel
       </Unknown>,
       <Unknown
+        isDisabled={false}
         onClick={[Function]}
         variant="primary"
       >
@@ -1134,7 +1135,9 @@ exports[`EmployeeStubList Component should render correctly 1`] = `
             onClick={[Function]}
           />
         </FlexItem>
-        <GridItem>
+        <GridItem
+          key="4"
+        >
           <EmployeeStub
             color="#FFFFFF"
             employee={
@@ -1162,7 +1165,9 @@ exports[`EmployeeStubList Component should render correctly 1`] = `
             onClick={[Function]}
           />
         </GridItem>
-        <GridItem>
+        <GridItem
+          key="5"
+        >
           <EmployeeStub
             color="#000000"
             employee={
@@ -1213,47 +1218,41 @@ exports[`EmployeeStubList Component should render correctly 1`] = `
       Array [
         Object {
           "color": "#FFFFFF",
-          "employee": Object {
-            "color": "#FFFFFF",
-            "contract": Object {
-              "id": 5,
-              "maximumMinutesPerDay": 10,
-              "maximumMinutesPerMonth": 500,
-              "maximumMinutesPerWeek": 70,
-              "maximumMinutesPerYear": 6000,
-              "name": "Basic Contract",
-              "tenantId": 0,
-              "version": 0,
-            },
-            "id": 4,
-            "name": "Employee 1",
-            "shortId": "e1",
-            "skillProficiencySet": Array [],
+          "contract": Object {
+            "id": 5,
+            "maximumMinutesPerDay": 10,
+            "maximumMinutesPerMonth": 500,
+            "maximumMinutesPerWeek": 70,
+            "maximumMinutesPerYear": 6000,
+            "name": "Basic Contract",
             "tenantId": 0,
             "version": 0,
           },
+          "id": 4,
+          "name": "Employee 1",
+          "shortId": "e1",
+          "skillProficiencySet": Array [],
+          "tenantId": 0,
+          "version": 0,
         },
         Object {
           "color": "#000000",
-          "employee": Object {
-            "color": "#000000",
-            "contract": Object {
-              "id": 5,
-              "maximumMinutesPerDay": 10,
-              "maximumMinutesPerMonth": 500,
-              "maximumMinutesPerWeek": 70,
-              "maximumMinutesPerYear": 6000,
-              "name": "Basic Contract",
-              "tenantId": 0,
-              "version": 0,
-            },
+          "contract": Object {
             "id": 5,
-            "name": "Employee 2",
-            "shortId": "e2",
-            "skillProficiencySet": Array [],
+            "maximumMinutesPerDay": 10,
+            "maximumMinutesPerMonth": 500,
+            "maximumMinutesPerWeek": 70,
+            "maximumMinutesPerYear": 6000,
+            "name": "Basic Contract",
             "tenantId": 0,
             "version": 0,
           },
+          "id": 5,
+          "name": "Employee 2",
+          "shortId": "e2",
+          "skillProficiencySet": Array [],
+          "tenantId": 0,
+          "version": 0,
         },
       ]
     }

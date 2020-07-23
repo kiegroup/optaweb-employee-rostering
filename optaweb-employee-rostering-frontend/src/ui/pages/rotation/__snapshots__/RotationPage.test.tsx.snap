@@ -44,30 +44,27 @@ exports[`Rotation Page It should render correctly 1`] = `
   <EmployeeStubList
     onStubSelect={[Function]}
     onUpdateStubList={[Function]}
-    selectedStub={null}
+    selectedStub="NO_SHIFT"
     stubList={
       Array [
         Object {
           "color": "#FFFFFF",
-          "employee": Object {
-            "color": "#FFFFFF",
-            "contract": Object {
-              "id": 5,
-              "maximumMinutesPerDay": 10,
-              "maximumMinutesPerMonth": 500,
-              "maximumMinutesPerWeek": 70,
-              "maximumMinutesPerYear": 6000,
-              "name": "Basic Contract",
-              "tenantId": 0,
-              "version": 0,
-            },
-            "id": 4,
-            "name": "Employee 1",
-            "shortId": "e1",
-            "skillProficiencySet": Array [],
+          "contract": Object {
+            "id": 5,
+            "maximumMinutesPerDay": 10,
+            "maximumMinutesPerMonth": 500,
+            "maximumMinutesPerWeek": 70,
+            "maximumMinutesPerYear": 6000,
+            "name": "Basic Contract",
             "tenantId": 0,
             "version": 0,
           },
+          "id": 4,
+          "name": "Employee 1",
+          "shortId": "e1",
+          "skillProficiencySet": Array [],
+          "tenantId": 0,
+          "version": 0,
         },
       ]
     }
@@ -82,12 +79,12 @@ exports[`Rotation Page It should render correctly 1`] = `
     }
   >
     <FlexItem
-      key="uuid-1"
+      key="22"
     >
       <SeatJigsaw
         onDeleteTimeBucket={[Function]}
         onUpdateTimeBucket={[Function]}
-        selectedStub={null}
+        selectedStub="NO_SHIFT"
         timeBucket={
           Object {
             "additionalSkillSet": Array [],

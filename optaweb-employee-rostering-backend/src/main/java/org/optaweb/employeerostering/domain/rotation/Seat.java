@@ -21,6 +21,11 @@ import javax.persistence.ManyToOne;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
 
+/**
+ * A Seat is a shift to create in a time bucket for a particular day
+ * in the rotation, with an optional employee as the default employee
+ * for said shift.
+ */
 @Embeddable
 public class Seat {
     

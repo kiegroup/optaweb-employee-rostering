@@ -99,11 +99,12 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
                             seatList: [
                               ...props.timeBucket.seatList
                                 .filter(other => other.dayInRotation !== weekDay + weekNumber * 7),
-                              ...(props.selectedStub
+                              ...(props.selectedStub !== 'NO_SHIFT'
                                 ? [
                                   {
                                     dayInRotation: weekDay + weekNumber * 7,
-                                    employee: props.selectedStub.employee,
+                                    employee: props.selectedStub !== 'SHIFT_WITH_NO_EMPLOYEE'
+                                      ? props.selectedStub : null,
                                   },
                                 ] : []),
                             ],
@@ -115,11 +116,12 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
                             seatList: [
                               ...props.timeBucket.seatList
                                 .filter(other => other.dayInRotation !== weekDay + weekNumber * 7),
-                              ...(props.selectedStub
+                              ...(props.selectedStub !== 'NO_SHIFT'
                                 ? [
                                   {
                                     dayInRotation: weekDay + weekNumber * 7,
-                                    employee: props.selectedStub.employee,
+                                    employee: props.selectedStub !== 'SHIFT_WITH_NO_EMPLOYEE'
+                                      ? props.selectedStub : null,
                                   },
                                 ] : []),
                             ],
@@ -133,11 +135,12 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
                               seatList: [
                                 ...props.timeBucket.seatList
                                   .filter(other => other.dayInRotation !== weekDay + weekNumber * 7),
-                                ...(props.selectedStub
+                                ...(props.selectedStub !== 'NO_SHIFT'
                                   ? [
                                     {
                                       dayInRotation: weekDay + weekNumber * 7,
-                                      employee: props.selectedStub.employee,
+                                      employee: props.selectedStub !== 'SHIFT_WITH_NO_EMPLOYEE'
+                                        ? props.selectedStub : null,
                                     },
                                   ] : []),
                               ],

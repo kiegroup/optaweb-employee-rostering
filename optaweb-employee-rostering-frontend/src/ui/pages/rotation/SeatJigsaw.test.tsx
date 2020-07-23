@@ -106,8 +106,8 @@ describe('SeatJigsaw Component', () => {
     });
   });
 
-  it('should erase employee in seat on click if stub is null', () => {
-    const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub={null} />);
+  it('should erase employee in seat on click if stub is no_shift', () => {
+    const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub="NO_SHIFT" />);
 
     seatJigsaw.find('[type="button"]').first().simulate('click');
     expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
@@ -116,8 +116,8 @@ describe('SeatJigsaw Component', () => {
     });
   });
 
-  it('should erase employee in seat on mouseDown if stub is null', () => {
-    const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub={null} />);
+  it('should erase employee in seat on mouseDown if stub is no_shift', () => {
+    const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub="NO_SHIFT" />);
 
     seatJigsaw.find('[type="button"]').first().simulate('mouseDown');
     expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
@@ -126,8 +126,8 @@ describe('SeatJigsaw Component', () => {
     });
   });
 
-  it('should erase employee in seat on mouseMove with left button down if stub is null', () => {
-    const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub={null} />);
+  it('should erase employee in seat on mouseMove with left button down if stub is no_shift', () => {
+    const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub="NO_SHIFT" />);
 
     seatJigsaw.find('[type="button"]').first().simulate('mouseMove', { buttons: 1 });
     expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
@@ -135,6 +135,37 @@ describe('SeatJigsaw Component', () => {
       seatList: [],
     });
   });
+
+  it('should erase employee in seat on click if stub is unassigned_shift', () => {
+    const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub="SHIFT_WITH_NO_EMPLOYEE" />);
+
+    seatJigsaw.find('[type="button"]').last().simulate('click');
+    expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
+      ...timeBucket,
+      seatList: [...timeBucket.seatList, { dayInRotation: 6, employee: null }],
+    });
+  });
+
+  it('should erase employee in seat on mouseDown if stub is unassigned_shift', () => {
+    const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub="SHIFT_WITH_NO_EMPLOYEE" />);
+
+    seatJigsaw.find('[type="button"]').last().simulate('mouseDown');
+    expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
+      ...timeBucket,
+      seatList: [...timeBucket.seatList, { dayInRotation: 6, employee: null }],
+    });
+  });
+
+  it('should erase employee in seat on mouseMove with left button down if stub is unassigned_shift', () => {
+    const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub="SHIFT_WITH_NO_EMPLOYEE" />);
+
+    seatJigsaw.find('[type="button"]').last().simulate('mouseMove', { buttons: 1 });
+    expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
+      ...timeBucket,
+      seatList: [...timeBucket.seatList, { dayInRotation: 6, employee: null }],
+    });
+  });
+
 
   it('should not set employee in seat on mouseMove without left button down', () => {
     const seatJigsaw = shallow(<SeatJigsaw {...baseProps} />);
@@ -203,7 +234,7 @@ const timeBucket: TimeBucket = {
 };
 
 const baseProps: SeatJigsawProps = {
-  selectedStub: { color: employee.color, employee },
+  selectedStub: employee,
   timeBucket,
   onUpdateTimeBucket: jest.fn(),
   onDeleteTimeBucket: jest.fn(),

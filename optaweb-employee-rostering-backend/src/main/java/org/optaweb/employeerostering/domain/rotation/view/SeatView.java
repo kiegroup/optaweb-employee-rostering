@@ -25,7 +25,7 @@ public class SeatView {
     public SeatView() {}
     
     public SeatView(Seat seat) {
-        this.setDayInRotation(seat.getDayInRotation());
+        this.dayInRotation = seat.getDayInRotation();
         this.employeeId = (seat.getEmployee() != null)? seat.getEmployee().getId() : null;
     }
 
