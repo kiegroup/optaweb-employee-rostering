@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,6 +47,9 @@ import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.roster.view.AvailabilityRosterView;
 import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
 import org.optaweb.employeerostering.domain.roster.view.ShiftRosterView;
+import org.optaweb.employeerostering.domain.rotation.Seat;
+import org.optaweb.employeerostering.domain.rotation.TimeBucket;
+import org.optaweb.employeerostering.domain.rotation.view.TimeBucketView;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
@@ -78,6 +82,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
     private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
     private final String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
     private final String shiftPathURI = "http://localhost:8080/rest/tenant/{tenantId}/shift/";
+    private final String rotationPathURI = "http://localhost:8080/rest/tenant/{tenantId}/rotation/";
     private final String employeeAvailabilityPathURI =
             "http://localhost:8080/rest/tenant/{tenantId}/employee/availability/";
 
@@ -186,16 +191,18 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
     private ResponseEntity<Void> commitChanges() {
         return restTemplate.postForEntity(rosterPathURI + "commitChanges", null, Void.class, TENANT_ID);
     }
-    
-    private ResponseEntity<Void> provision(Integer startRotationOffset, LocalDate fromDate,
+
+    private ResponseEntity<Void> provision(Integer tenantId, Integer startRotationOffset, LocalDate fromDate,
                                            LocalDate toDate, List<Long> timeBucketIdList) {
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "provision")
                 .queryParam("startRotationOffset", startRotationOffset.toString())
                 .queryParam("fromDate", fromDate.toString())
                 .queryParam("toDate", toDate.toString())
                 .build()
-                .expand(Collections.singletonMap("tenantId", TENANT_ID));
-        return restTemplate.postForEntity(uriComponents.toUriString(), timeBucketIdList, Void.class, TENANT_ID);
+                .expand(Collections.singletonMap("tenantId", tenantId));
+        System.out.println(uriComponents.toUriString());
+        System.out.println(timeBucketIdList.stream().map(id -> id.toString()).collect(Collectors.joining(", ")));
+        return restTemplate.postForEntity(uriComponents.toUriString(), timeBucketIdList, Void.class);
     }
 
     private Spot addSpot(String name) {
@@ -211,6 +218,11 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
     private Employee addEmployee(String name, Contract contract) {
         Employee employee = new Employee(TENANT_ID, name, contract, Collections.emptySet());
         return restTemplate.postForEntity(employeePathURI + "add", employee, Employee.class, TENANT_ID).getBody();
+    }
+
+    private TimeBucketView addTimeBucket(TimeBucketView timeBucket) {
+        return restTemplate.postForEntity(rotationPathURI + "add", timeBucket, TimeBucketView.class,
+                                          TENANT_ID).getBody();
     }
 
     private ShiftView addShift(Spot spot, Employee employee, LocalDateTime startDateTime,
@@ -471,30 +483,75 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         assertThat(availabilityRosterView.getEmployeeIdToAvailabilityViewListMap()).isEmpty();
         assertThat(availabilityRosterView.getTenantId()).isEqualTo(TENANT_ID);
     }
-    
+
     @Test
     public void testProvision() {
-        createTestRoster();
-        
+        createTestTenant();
+
         // To date before from date should result in an error
-        ResponseEntity<Void> publishResultResponseEntity = provision(0, LocalDate.of(2000, 1, 5),
+        ResponseEntity<Void> publishResultResponseEntity = provision(TENANT_ID, 0, LocalDate.of(2000, 1, 5),
                                                                      LocalDate.of(2000, 1, 1),
                                                                      Collections.emptyList());
         assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-        
+
         // Negative rotation start offset should result in an error
-        publishResultResponseEntity = provision(-5, LocalDate.of(2000, 1, 5),
+        publishResultResponseEntity = provision(TENANT_ID, -5, LocalDate.of(2000, 1, 5),
                                                 LocalDate.of(2000, 1, 5),
                                                 Collections.emptyList());
         assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-        
+
         // rotation start offset over rotation length should result in an error
-        publishResultResponseEntity = provision(9001, LocalDate.of(2000, 1, 5),
+        publishResultResponseEntity = provision(TENANT_ID, 9001, LocalDate.of(2000, 1, 5),
                                                 LocalDate.of(2000, 1, 5),
                                                 Collections.emptyList());
         assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-        
-        // TODO: Create time buckets and verify provisioning actually works
+
+        Spot spot = addSpot("Spot");
+        Contract contract = addContract("Contract");
+        Employee employee = addEmployee("Employee", contract);
+        TimeBucketView timeBucketView = addTimeBucket(
+                new TimeBucketView(new TimeBucket(TENANT_ID, spot, LocalTime.of(9, 0), LocalTime.of(17, 0),
+                                                  Collections.emptySet(),
+                                                  Collections.emptySet(),
+                                                  Collections.singletonList(new Seat(0, employee)))));
+
+        LocalDate fromDate = LocalDate.of(2000, 1, 5);
+        LocalDate toDate = LocalDate.of(2000, 1, 5);
+
+        // time bucket from different tenant should fail
+        publishResultResponseEntity = provision(0, 0, fromDate,
+                                                toDate,
+                                                Collections.singletonList(timeBucketView).stream()
+                                                        .map(TimeBucketView::getId).collect(Collectors.toList()));
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        // Test valid request
+        assertThat(timeBucketView.getTenantId()).isEqualTo(TENANT_ID);
+        publishResultResponseEntity = provision(TENANT_ID, 0, fromDate,
+                                                toDate,
+                                                Collections.singletonList(timeBucketView).stream()
+                                                        .map(TimeBucketView::getId).collect(Collectors.toList()));
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        ResponseEntity<ShiftRosterView> shiftRosterViewResponse = getShiftRosterViewFor(fromDate.toString(),
+                                                                                        toDate.plusDays(1).toString(),
+                                                                                        Collections
+                                                                                                .singletonList(spot));
+        ShiftRosterView shiftRosterView = shiftRosterViewResponse.getBody();
+        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(shiftRosterView).isNotNull();
+        assertThat(shiftRosterView.getSpotList()).containsExactly(spot);
+
+        assertThat(shiftRosterView.getSpotIdToShiftViewListMap()).hasSize(1);
+        assertThat(shiftRosterView.getSpotIdToShiftViewListMap().get(spot.getId())).hasSize(1);
+        ShiftView shift = shiftRosterView.getSpotIdToShiftViewListMap().get(spot.getId()).get(0);
+
+        assertThat(shift.getSpotId()).isEqualTo(spot.getId());
+        assertThat(shift.getStartDateTime().toLocalDate()).isEqualTo(fromDate);
+        assertThat(shift.getEndDateTime().toLocalDate()).isEqualTo(fromDate);
+
+        assertThat(shift.getStartDateTime().toLocalTime()).isEqualTo(timeBucketView.getStartTime());
+        assertThat(shift.getEndDateTime().toLocalTime()).isEqualTo(timeBucketView.getEndTime());
     }
 
     @Test
