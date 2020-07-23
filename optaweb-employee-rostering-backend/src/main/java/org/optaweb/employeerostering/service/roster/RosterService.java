@@ -390,21 +390,21 @@ public class RosterService extends AbstractRestService {
                           LocalDate toDate, List<Long> timeBucketIdList) {
         RosterState rosterState = getRosterState(tenantId);
         List<TimeBucket> timeBucketList = timeBucketRepository.findAllById(timeBucketIdList);
-        if (timeBucketList.stream().anyMatch(tb -> tb.getTenantId() != tenantId)) {
+        if (timeBucketList.stream().anyMatch(tb -> !tb.getTenantId().equals(tenantId))) {
             throw new IllegalArgumentException("Can only provision shifts from timebuckets from the same tenant");
         }
         if (startRotationOffset > rosterState.getRotationLength()) {
             throw new IllegalArgumentException("startRotationOffset (" + startRotationOffset
-                                               + ") is greater than the rotation length ("
-                                               + rosterState.getRotationLength() +")");
+                                                       + ") is greater than the rotation length ("
+                                                       + rosterState.getRotationLength() + ")");
         }
         if (startRotationOffset < 0) {
             throw new IllegalArgumentException("startRotationOffset (" + startRotationOffset
-                                               + ") is negative"); 
+                                                       + ") is negative");
         }
         if (toDate.isBefore(fromDate)) {
             throw new IllegalArgumentException("toDate (" + toDate.toString() + ") is before fromDate ("
-                                               + fromDate.toString() + ")");
+                                                       + fromDate.toString() + ")");
         }
 
         int dayOffset = startRotationOffset;
@@ -413,13 +413,13 @@ public class RosterService extends AbstractRestService {
             for (TimeBucket timeBucket : timeBucketList) {
                 timeBucket.createShiftForOffset(shiftDate, dayOffset,
                                                 rosterState.getTimeZone(), false)
-                          .ifPresent(shiftRepository::save);
+                        .ifPresent(shiftRepository::save);
             }
             shiftDate = shiftDate.plusDays(1);
             dayOffset = (dayOffset + 1) % rosterState.getRotationLength();
         }
     }
-    
+
     @Transactional
     public PublishResult publishAndProvision(Integer tenantId) {
         RosterState rosterState = getRosterState(tenantId);
@@ -441,8 +441,8 @@ public class RosterService extends AbstractRestService {
         provision(tenantId, rosterState.getUnplannedRotationOffset(), firstUnplannedDate,
                   firstUnplannedDate.plusDays(rosterState.getPublishLength() - 1),
                   timeBucketRepository.findAllByTenantId(tenantId).stream()
-                      .map(TimeBucket::getId).collect(Collectors.toList()));
-        
+                          .map(TimeBucket::getId).collect(Collectors.toList()));
+
         return new PublishResult(publishFrom, publishTo);
     }
 
