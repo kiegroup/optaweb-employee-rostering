@@ -187,7 +187,7 @@ describe('ColorPicker component', () => {
 describe('EditEmployeeStubListModal component', () => {
   const baseProps: EditEmployeeStubListModalProps = {
     isVisible: true,
-    currentStubList: [{ color: employee.color, employee }],
+    currentStubList: [employee],
     onClose: jest.fn(),
     onUpdateStubList: jest.fn(),
   };
@@ -223,20 +223,14 @@ describe('EditEmployeeStubListModal component', () => {
 
     editEmployeeStubListModal.find(Modal).prop('actions')[1].props.onClick();
     expect(baseProps.onClose).toBeCalled();
-    expect(baseProps.onUpdateStubList).toBeCalledWith([{ color: newEmployee.color, employee: newEmployee }]);
+    expect(baseProps.onUpdateStubList).toBeCalledWith([newEmployee]);
   });
 });
 
 describe('EmployeeStubList Component', () => {
-  const stub1: Stub = {
-    color: employee.color,
-    employee,
-  };
+  const stub1: Stub = employee;
 
-  const stub2: Stub = {
-    color: newEmployee.color,
-    employee: newEmployee,
-  };
+  const stub2: Stub = newEmployee;
 
   const baseProps: EmployeeStubListProps = {
     selectedStub: stub1,
@@ -258,19 +252,19 @@ describe('EmployeeStubList Component', () => {
   it('clicking on the first employee stub should set the employee stub to null', () => {
     const employeeStubList = shallow(<EmployeeStubList {...baseProps} />);
     employeeStubList.find(EmployeeStub).first().simulate('click');
-    expect(baseProps.onStubSelect).toBeCalledWith(null);
+    expect(baseProps.onStubSelect).toBeCalledWith('NO_SHIFT');
   });
 
   it('clicking on the second employee stub should set the employee stub to Unassigned (stub with null employee)',
     () => {
       const employeeStubList = shallow(<EmployeeStubList {...baseProps} />);
       employeeStubList.find(EmployeeStub).at(1).simulate('click');
-      expect(baseProps.onStubSelect).toBeCalledWith({ color: '#FFFFFF', employee: null });
+      expect(baseProps.onStubSelect).toBeCalledWith('SHIFT_WITH_NO_EMPLOYEE');
     });
 
   it('clicking on the employee stub should set the employee stub to it', () => {
     const employeeStubList = shallow(<EmployeeStubList {...baseProps} />);
-    employeeStubList.find(EmployeeStub).filterWhere(wrapper => wrapper.prop('employee') === stub2.employee)
+    employeeStubList.find(EmployeeStub).filterWhere(wrapper => wrapper.prop('employee') === stub2)
       .simulate('click');
     expect(baseProps.onStubSelect).toBeCalledWith(stub2);
   });

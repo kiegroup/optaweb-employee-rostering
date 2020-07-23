@@ -28,7 +28,6 @@ import { timeBucketOperations, timeBucketSelectors } from 'store/rotation';
 import { useTranslation, Trans } from 'react-i18next';
 import { CubesIcon, PlusIcon } from '@patternfly/react-icons';
 import { useHistory } from 'react-router';
-import { v4 as uuid } from 'uuid';
 import { useUrlState } from 'util/FunctionalComponentUtils';
 import { rosterSelectors } from 'store/roster';
 import { tenantSelectors } from 'store/tenant';
@@ -50,7 +49,7 @@ export const RotationPage: React.FC<{}> = () => {
 
   const dispatch = useDispatch();
 
-  const [selectedStub, setSelectedStub] = useState<Stub|null>(null);
+  const [selectedStub, setSelectedStub] = useState<Stub>('NO_SHIFT');
   const [isEditingTimeBuckets, setIsEditingTimeBuckets] = useState(false);
 
   const [shownSpotName, setShownSpotName] = useUrlState('spot', (spotList.length > 0) ? spotList[0].name : undefined);
@@ -68,21 +67,15 @@ export const RotationPage: React.FC<{}> = () => {
     return employeesInTimeBuckets;
   }, [shownTimeBuckets]);
 
-  const [stubList, setStubList] = useState<Stub[]>(getEmployeesInTimeBuckets().map(employee => ({
-    employee,
-    color: employee.color,
-  })));
+  const [stubList, setStubList] = useState<Stub[]>(getEmployeesInTimeBuckets());
 
   React.useEffect(() => {
     const theShownSpot = spotList.find(s => s.name === shownSpotName);
     const theShownTimeBuckets = theShownSpot ? timeBucketList.filter(tb => tb.spot.id === theShownSpot.id) : [];
     if (oldShownTimeBuckets.current !== theShownTimeBuckets.map(tb => tb.id).join(',')) {
       oldShownTimeBuckets.current = theShownTimeBuckets.map(tb => tb.id).join(',');
-      setStubList(getEmployeesInTimeBuckets().map(employee => ({
-        employee,
-        color: employee.color,
-      })));
-      setSelectedStub(null);
+      setStubList(getEmployeesInTimeBuckets());
+      setSelectedStub('NO_SHIFT');
     }
   },
   [oldShownTimeBuckets, shownSpotName, spotList, timeBucketList, getEmployeesInTimeBuckets]);
@@ -131,7 +124,7 @@ export const RotationPage: React.FC<{}> = () => {
 
       <Flex breakpointMods={[{ modifier: FlexModifiers.column }]}>
         {shownTimeBuckets.map(timeBucket => (
-          <FlexItem key={uuid()}>
+          <FlexItem key={timeBucket.id}>
             <SeatJigsaw
               selectedStub={selectedStub}
               timeBucket={timeBucket}

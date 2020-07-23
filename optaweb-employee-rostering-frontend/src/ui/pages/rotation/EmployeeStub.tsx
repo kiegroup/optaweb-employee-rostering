@@ -22,12 +22,13 @@ import {
 } from '@patternfly/react-core';
 import {
   UsersIcon, UserIcon, AngleDownIcon, TrashIcon,
-  EditIcon, ExclamationTriangleIcon,
+  EditIcon,
 } from '@patternfly/react-icons';
 import { Employee } from 'domain/Employee';
-import { v4 as uuidv4 } from 'uuid';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import Color from 'color';
+import { v4 as uuid } from 'uuid';
+import { useListValidators } from 'util/ValidationUtils';
 
 export interface EmployeeNickNameProps {
   employee: Employee | null;
@@ -85,11 +86,6 @@ export const EmployeeStub: React.FC<EmployeeStubProps> = props => (
     <EmployeeNickName employee={props.employee} />
   </button>
 );
-
-export interface Stub {
-  employee: Employee | null;
-  color: string;
-}
 
 const defaultColorList = ['red', 'orange', 'gold', 'green', 'cyan', 'blue', 'purple'].flatMap(colorFamily => (
   ['600', '500', '400', '300', '200', '100'].map(value => `var(--pf-global--palette--${colorFamily}-${value})`)
@@ -149,6 +145,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = props => (
   </Popover>
 );
 
+export type Stub = Employee | 'SHIFT_WITH_NO_EMPLOYEE' | 'NO_SHIFT';
 export interface EditEmployeeStubListModalProps {
   isVisible: boolean;
   currentStubList: Stub[];
@@ -156,11 +153,25 @@ export interface EditEmployeeStubListModalProps {
   onUpdateStubList: (stubList: Stub[]) => void;
 }
 export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps> = (props) => {
-  const [editedStubList, setEditedStubList] = React.useState([...props.currentStubList]);
+  const [editedStubList, setEditedStubList] = React.useState<{ key: string; stub: Stub }[]>(
+    props.currentStubList.map(stub => ({ key: uuid(), stub })),
+  );
   const employeeList = useSelector(employeeSelectors.getEmployeeList);
+  const { isValid, showValidationErrors } = useListValidators(editedStubList, {
+    noUnassignedStub: {
+      predicate: stub => stub.stub !== 'SHIFT_WITH_NO_EMPLOYEE',
+      errorMsg: () => 'All stubs must have an employee',
+    },
+    noDuplicateStub: {
+      predicate: stub => typeof stub.stub === 'string'
+        || editedStubList.filter(other => typeof other.stub !== 'string'
+          && other.stub.id === (stub.stub as Employee).id && stub !== other).length === 0,
+      errorMsg: stub => `Multiple stubs have employee ${(stub.stub as Employee).name}`,
+    },
+  });
 
   React.useEffect(() => {
-    setEditedStubList([...props.currentStubList]);
+    setEditedStubList(props.currentStubList.map(stub => ({ key: uuid(), stub })));
   }, [props.currentStubList, props.isVisible]);
 
   return (
@@ -182,9 +193,10 @@ export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps>
         (
           <Button
             key={1}
+            isDisabled={!isValid}
             variant="primary"
             onClick={() => {
-              props.onUpdateStubList(editedStubList);
+              props.onUpdateStubList(editedStubList.map(stub => stub.stub));
               props.onClose();
             }}
           >
@@ -195,7 +207,7 @@ export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps>
     >
       <Flex breakpointMods={[{ modifier: FlexModifiers.column }]}>
         {editedStubList.map((stub, index) => (
-          <FlexItem key={uuidv4()}>
+          <FlexItem key={stub.key}>
             <Split>
               <SplitItem>
                 <InputGroup>
@@ -209,31 +221,19 @@ export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps>
                     <TypeaheadSelectInput
                       emptyText="Select an employee..."
                       options={employeeList}
-                      value={stub.employee}
-                      optionToStringMap={o => (o ? o.name : 'Unassigned')}
+                      value={stub.stub}
+                      optionToStringMap={o => ((typeof o === 'string') ? 'Unassigned' : o.name)}
                       autoSize={false}
                       onChange={(employee) => {
                         setEditedStubList([
                           ...editedStubList.filter((_, i) => i < index),
-                          {
-                            ...stub,
-                            employee: employee || null,
-                            color: employee ? employee.color : '',
-                          },
+                          { key: stub.key, stub: employee || 'SHIFT_WITH_NO_EMPLOYEE' },
                           ...editedStubList.filter((_, i) => i > index),
                         ]);
                       }}
                     />
                   </span>
-                  { (stub.employee === null || stub.color === ''
-                     || editedStubList.filter(s => s.employee !== null
-                       && s.employee.id === (stub.employee as Employee).id).length !== 1)
-                    && (
-                      <InputGroupText>
-                        <ExclamationTriangleIcon />
-                      </InputGroupText>
-                    )
-                  }
+                  {showValidationErrors(index, 'noDuplicateStub', 'noUnassignedStub')}
                 </InputGroup>
               </SplitItem>
               <SplitItem isFilled><span /></SplitItem>
@@ -256,11 +256,7 @@ export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps>
             onClick={() => {
               setEditedStubList([
                 ...editedStubList,
-                {
-                  employee: null,
-                  color: defaultColorList[((editedStubList.length * 6) % defaultColorList.length)
-                    + (Math.max(5 - 3 * Math.floor(editedStubList.length / defaultColorList.length), 0))],
-                },
+                { key: uuid(), stub: 'SHIFT_WITH_NO_EMPLOYEE' },
               ]);
             }}
           >
@@ -273,9 +269,9 @@ export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps>
 };
 
 export interface EmployeeStubListProps {
-  selectedStub: Stub | null;
+  selectedStub: Stub;
   stubList: Stub[];
-  onStubSelect: (stub: Stub | null) => void;
+  onStubSelect: (stub: Stub) => void;
   onUpdateStubList: (stubList: Stub[]) => void;
 }
 
@@ -296,26 +292,28 @@ export const EmployeeStubList: React.FC<EmployeeStubListProps> = (props) => {
           <Flex breakpointMods={[{ modifier: FlexModifiers['align-items-stretch'] }]}>
             <FlexItem>
               <EmployeeStub
-                isSelected={props.selectedStub === null}
+                isSelected={props.selectedStub === 'NO_SHIFT'}
                 employee={null}
                 color="gray"
-                onClick={() => props.onStubSelect(null)}
+                onClick={() => props.onStubSelect('NO_SHIFT')}
               />
             </FlexItem>
             <FlexItem>
               <EmployeeStub
-                isSelected={props.selectedStub !== null && props.selectedStub.employee === null}
+                isSelected={props.selectedStub === 'SHIFT_WITH_NO_EMPLOYEE'}
                 employee={null}
                 color="#FFFFFF"
-                onClick={() => props.onStubSelect({ color: '#FFFFFF', employee: null })}
+                onClick={() => props.onStubSelect('SHIFT_WITH_NO_EMPLOYEE')}
               />
             </FlexItem>
             {props.stubList.map(stub => (
-              <GridItem>
+              <GridItem
+                key={typeof stub === 'string' ? stub : stub.id}
+              >
                 <EmployeeStub
                   isSelected={props.selectedStub === stub}
-                  employee={stub.employee}
-                  color={stub.color}
+                  employee={stub as Employee}
+                  color={(stub as Employee).color}
                   onClick={() => props.onStubSelect(stub)}
                 />
               </GridItem>

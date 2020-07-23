@@ -118,9 +118,9 @@ describe('Rotation Page', () => {
     expect(mockUrlState.get('spot')).toEqual(spot.name);
     expect(rotationPage.find(TypeaheadSelectInput).prop('value')).toEqual(spot);
     expect(rotationPage.find(EditTimeBucketModal).prop('isOpen')).toEqual(false);
-    expect(rotationPage.find(EmployeeStubList).prop('selectedStub')).toEqual(null);
-    expect(rotationPage.find(EmployeeStubList).prop('stubList')).toEqual([{ color: employee.color, employee }]);
-    expect(rotationPage.find(SeatJigsaw).prop('selectedStub')).toEqual(null);
+    expect(rotationPage.find(EmployeeStubList).prop('selectedStub')).toEqual('NO_SHIFT');
+    expect(rotationPage.find(EmployeeStubList).prop('stubList')).toEqual([employee]);
+    expect(rotationPage.find(SeatJigsaw).prop('selectedStub')).toEqual('NO_SHIFT');
     expect(rotationPage.find(SeatJigsaw).prop('timeBucket')).toEqual(timeBucket);
     expect(rotationPage).toMatchSnapshot();
   });
@@ -130,7 +130,7 @@ describe('Rotation Page', () => {
     const rotationPage = shallow(<RotationPage />);
     expect(rotationPage.find(TypeaheadSelectInput).prop('value')).toEqual(newSpot);
     expect(rotationPage.find(EditTimeBucketModal).prop('isOpen')).toEqual(false);
-    expect(rotationPage.find(EmployeeStubList).prop('selectedStub')).toEqual(null);
+    expect(rotationPage.find(EmployeeStubList).prop('selectedStub')).toEqual('NO_SHIFT');
     expect(rotationPage.find(EmployeeStubList).prop('stubList')).toEqual([]);
     expect(rotationPage.find(SeatJigsaw).exists()).toEqual(false);
   });
@@ -138,7 +138,7 @@ describe('Rotation Page', () => {
   it('should set spot in url', () => {
     const rotationPage = shallow(<RotationPage />);
     expect(rotationPage.find(TypeaheadSelectInput).prop('value')).toEqual(spot);
-    expect(rotationPage.find(EmployeeStubList).prop('stubList')).toEqual([{ color: employee.color, employee }]);
+    expect(rotationPage.find(EmployeeStubList).prop('stubList')).toEqual([employee]);
     expect(rotationPage.find(SeatJigsaw).prop('timeBucket')).toEqual(timeBucket);
 
     rotationPage.find(TypeaheadSelectInput).prop('onChange')(newSpot);
@@ -150,27 +150,34 @@ describe('Rotation Page', () => {
 
   it('should update stub when stub changed', () => {
     const rotationPage = shallow(<RotationPage />);
-    expect(rotationPage.find(EmployeeStubList).prop('selectedStub')).toEqual(null);
-    expect(rotationPage.find(SeatJigsaw).prop('selectedStub')).toEqual(null);
+    expect(rotationPage.find(EmployeeStubList).prop('selectedStub')).toEqual('NO_SHIFT');
+    expect(rotationPage.find(SeatJigsaw).prop('selectedStub')).toEqual('NO_SHIFT');
 
-    const myStub: Stub = { color: '#000000', employee };
+    const myStub: Stub = employee;
     rotationPage.find(EmployeeStubList).prop('onStubSelect')(myStub);
 
     expect(rotationPage.find(EmployeeStubList).prop('selectedStub')).toEqual(myStub);
     expect(rotationPage.find(SeatJigsaw).prop('selectedStub')).toEqual(myStub);
 
-    rotationPage.find(EmployeeStubList).prop('onStubSelect')(null);
+    rotationPage.find(EmployeeStubList).prop('onStubSelect')('NO_SHIFT');
 
-    expect(rotationPage.find(EmployeeStubList).prop('selectedStub')).toEqual(null);
-    expect(rotationPage.find(SeatJigsaw).prop('selectedStub')).toEqual(null);
+    expect(rotationPage.find(EmployeeStubList).prop('selectedStub')).toEqual('NO_SHIFT');
+    expect(rotationPage.find(SeatJigsaw).prop('selectedStub')).toEqual('NO_SHIFT');
   });
 
   it('should update stub list when stub list changed', () => {
     const rotationPage = shallow(<RotationPage />);
-    expect(rotationPage.find(EmployeeStubList).prop('selectedStub')).toEqual(null);
-    expect(rotationPage.find(SeatJigsaw).prop('selectedStub')).toEqual(null);
+    expect(rotationPage.find(EmployeeStubList).prop('selectedStub')).toEqual('NO_SHIFT');
+    expect(rotationPage.find(SeatJigsaw).prop('selectedStub')).toEqual('NO_SHIFT');
 
-    const myStubList: Stub[] = [{ color: '#000000', employee }, { color: '#FAFAFA', employee }];
+    const otherEmployee: Employee = {
+      ...employee,
+      id: 9012,
+      name: 'Other',
+      shortId: 'O',
+      color: '#000000',
+    };
+    const myStubList: Stub[] = [employee, otherEmployee];
     rotationPage.find(EmployeeStubList).simulate('updateStubList', myStubList);
 
     expect(rotationPage.find(EmployeeStubList).prop('stubList')).toEqual(myStubList);
