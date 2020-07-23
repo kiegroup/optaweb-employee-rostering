@@ -99,7 +99,7 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
         onEventDrop={(dropLocation: { event: T; start: string|Date; end: string|Date }) => {
           if (isDay(moment(dropLocation.start).toDate(), moment(dropLocation.end).toDate())) {
             props.onUpdateEvent(dropLocation.event, moment(dropLocation.start).toDate(),
-              moment(dropLocation.end).add(1, 'day').toDate());
+              moment(dropLocation.end).toDate());
           } else if (moment(dropLocation.start).dayOfYear() !== moment(dropLocation.end).dayOfYear()) {
             props.onUpdateEvent(dropLocation.event, moment(dropLocation.start).toDate(), moment(dropLocation.start)
               .add(
