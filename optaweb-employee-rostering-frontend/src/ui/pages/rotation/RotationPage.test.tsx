@@ -39,9 +39,6 @@ const mockHistory = jest.fn();
 const mockDispatch = jest.fn();
 const mockUseState = useState;
 
-// Mock useEffect so it runs on render
-jest.spyOn(React, 'useEffect').mockImplementation(f => f());
-
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useSelector: jest.fn().mockImplementation(selector => mockSelectorReturnValue.get(selector)),
@@ -93,10 +90,14 @@ function mockUrl(name: string, value: string) {
 }
 
 describe('Rotation Page', () => {
+  beforeAll(() => jest.spyOn(React, 'useEffect').mockImplementation(React.useLayoutEffect));
+  afterAll(() => (React.useEffect as any).mockRestore());
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockSelectorReturnValue.clear();
     mockUrlState.clear();
+
     mockSelector(tenantSelectors.getTenantId, 0);
     mockSelector(rosterSelectors.getRosterState, rosterState);
     mockSelector(timeBucketSelectors.isLoading, false);
