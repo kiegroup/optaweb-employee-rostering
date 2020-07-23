@@ -166,7 +166,7 @@ export const ProvisionShiftsModal: React.FC<ProvisionShiftsModalProps> = (props)
           </Button>,
           <Button
             variant={ButtonVariant.primary}
-            key={0}
+            key={1}
             onClick={() => {
               dispatch(rosterOperations.provision({
                 startRotationOffset: rotationOffset,
