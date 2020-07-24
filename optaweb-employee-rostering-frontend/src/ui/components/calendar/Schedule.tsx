@@ -119,7 +119,7 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
           const origEventEnd = moment(props.startAccessor(resizeInfo.event));
           if (isDay(moment(resizeInfo.start).toDate(), moment(resizeInfo.end).toDate())) {
             props.onUpdateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), moment(resizeInfo.end)
-              .add(1, 'day').toDate());
+              .toDate());
           } else if (origEventStart.dayOfYear() !== moment(resizeInfo.start).dayOfYear()) {
             props.onUpdateEvent(resizeInfo.event, origEventStart.toDate(), moment(resizeInfo.end).toDate());
           } else if (origEventEnd.dayOfYear() !== moment(resizeInfo.end).dayOfYear()) {
