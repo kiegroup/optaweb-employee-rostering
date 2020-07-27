@@ -180,7 +180,7 @@ public class RosterService extends AbstractRestService {
         // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched, so the
         //  score might be inaccurate
         Roster roster = solverManager.getRoster(tenantId);
-        if (roster == null) {
+        if (roster == null || solverManager.getSolverStatus(tenantId) != SolverStatus.SOLVING) {
             roster = buildRoster(tenantId);
         }
         Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
@@ -268,7 +268,7 @@ public class RosterService extends AbstractRestService {
                                                                     endDate.atStartOfDay(timeZone).toOffsetDateTime());
 
         Roster roster = solverManager.getRoster(tenantId);
-        if (roster == null) {
+        if (roster == null || solverManager.getSolverStatus(tenantId) != SolverStatus.SOLVING) {
             roster = buildRoster(tenantId);
         }
         Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
