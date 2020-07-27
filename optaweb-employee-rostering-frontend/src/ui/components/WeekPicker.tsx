@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 import React from 'react';
-// @ts-ignore
-import DatePicker from '@wojtekmaj/react-daterange-picker';
+import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import { HistoryIcon } from '@patternfly/react-icons';
+import { HistoryIcon, CalendarIcon } from '@patternfly/react-icons';
 import './WeekPicker.css';
-import { Button, ButtonVariant } from '@patternfly/react-core';
+import { Button, ButtonVariant, Text } from '@patternfly/react-core';
 
 export interface WeekPickerProps {
   value: Date;
   minDate?: Date;
   maxDate?: Date;
   onChange: (weekStartDate: Date, weekEndDate: Date) => void;
-}
-
-export interface WeekPickerState {
-  isOpen: boolean;
 }
 
 function getFirstDayInWeek(dateInWeek: Date): Date {
@@ -40,12 +35,7 @@ function getLastDayInWeek(dateInWeek: Date): Date {
   return moment(dateInWeek).endOf('week').toDate();
 }
 
-export default class WeekPicker extends React.Component<WeekPickerProps, WeekPickerState> {
-  constructor(props: WeekPickerProps) {
-    super(props);
-    this.state = { isOpen: false };
-  }
-
+export default class WeekPicker extends React.Component<WeekPickerProps> {
   goToCurrentWeek() {
     this.goToWeekContaining(new Date());
   }
@@ -53,15 +43,53 @@ export default class WeekPicker extends React.Component<WeekPickerProps, WeekPic
   goToWeekContaining(date: Date) {
     if (this.props.minDate && getFirstDayInWeek(date) < getFirstDayInWeek(this.props.minDate)) {
       this.goToWeekContaining(this.props.minDate);
-    } else if (this.props.maxDate && getLastDayInWeek(date) > getLastDayInWeek(this.props.maxDate)) {
+      return;
+    } if (this.props.maxDate && getLastDayInWeek(date) > getLastDayInWeek(this.props.maxDate)) {
       this.goToWeekContaining(this.props.maxDate);
+      return;
     }
     this.props.onChange(getFirstDayInWeek(date), getLastDayInWeek(date));
-    this.setState({ isOpen: false });
   }
 
   render() {
-    const locale = moment.locale();
+    const DateRangeInputElement = (dateRangeInputProps?: { value?: Date; onClick?: () => void }) => (
+      <div
+        className="pf-c-form-control"
+        style={{
+          display: 'grid',
+          height: 'auto',
+          gridTemplateColumns: '1fr auto auto',
+          alignItems: 'center',
+        }}
+      >
+        <Text
+          onClick={dateRangeInputProps ? dateRangeInputProps.onClick : undefined}
+        >
+          {
+            `${moment(getFirstDayInWeek(this.props.value)).format('L')} - ${
+              moment(getLastDayInWeek(this.props.value)).format('L')}`
+          }
+        </Text>
+        <Button
+          style={{
+            color: 'black',
+          }}
+          onClick={() => this.goToCurrentWeek()}
+          variant="link"
+        >
+          <HistoryIcon />
+        </Button>
+        <Button
+          style={{
+            color: 'black',
+          }}
+          onClick={dateRangeInputProps ? dateRangeInputProps.onClick : undefined}
+          variant="link"
+        >
+          <CalendarIcon />
+        </Button>
+      </div>
+    );
     return (
       <div className="week-picker-container">
         <Button
@@ -90,20 +118,19 @@ export default class WeekPicker extends React.Component<WeekPickerProps, WeekPic
           </svg>
         </Button>
         <DatePicker
-          className="week-picker"
-          locale={
-            /* moment intreprets "en" as "en-US", this intreprets "en" as "en-GB" */
-            locale === 'en' ? 'en-US' : locale
-          }
-          value={[getFirstDayInWeek(this.props.value), getLastDayInWeek(this.props.value)]}
-          onChange={() => this.goToCurrentWeek()}
-          onClickDay={(value: Date) => this.goToWeekContaining(value)}
-          onCalendarOpen={() => this.setState({ isOpen: true })}
-          onCalendarClose={() => this.setState({ isOpen: false })}
+          selected={getFirstDayInWeek(this.props.value)}
+          startDate={getFirstDayInWeek(this.props.value)}
+          endDate={getLastDayInWeek(this.props.value)}
+          onChange={(date) => {
+            if (date !== null) {
+              this.goToWeekContaining(date);
+            } else {
+              this.goToCurrentWeek();
+            }
+          }}
           minDate={this.props.minDate}
           maxDate={this.props.maxDate}
-          isOpen={this.state.isOpen}
-          clearIcon={<HistoryIcon />}
+          customInput={<DateRangeInputElement />}
           required
         />
         <Button
