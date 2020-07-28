@@ -73,9 +73,9 @@ oc start-build backend --from-dir=${dir_backend} --follow
 # -- new app
 oc new-app backend
 # -- use PostgreSQL secret
-oc set env dc/backend --from=secret/postgresql
+oc set env deployment/backend --from=secret/postgresql
 # -- activate production profile
-oc set env dc/backend SPRING_PROFILES_ACTIVE=production
+oc set env deployment/backend SPRING_PROFILES_ACTIVE=production
 
 # Frontend
 # -- binary build
