@@ -2,6 +2,8 @@
 skillProficiencies: Skill Proficiencies
 selectAContract: Select a contract...
 selectSkillProficiencies: Select skill proficiencies...
+color: Color
+shortId: Short Id
 noContracts:
   <0>There are no Contracts</0>
   <1>

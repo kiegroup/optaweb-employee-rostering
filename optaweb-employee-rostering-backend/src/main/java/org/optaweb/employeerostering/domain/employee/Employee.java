@@ -55,7 +55,7 @@ public class Employee extends AbstractPersistable {
     
     @NotNull
     @Size(min = 7, max = 7)
-    @Pattern(regexp = "^#[0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F]$")
+    @Pattern(regexp = "^#[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]$")
     private String color;
     
     @NotNull
@@ -110,7 +110,7 @@ public class Employee extends AbstractPersistable {
     // ************************************************************************
     // Constructor default utils
     // ************************************************************************
-    private static String generateShortIdFromName(String name) {
+    public static String generateShortIdFromName(String name) {
         return Arrays.stream(name.split(" ")) // Separate name where there spaces ("Amy Cole" -> ["Amy", "Cole])
                      .limit(3) // Limit to the first three parts
                      .map(s -> s.substring(0, 1)) // Get the first character of the part
