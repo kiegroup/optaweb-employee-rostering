@@ -69,8 +69,9 @@ public class EmployeeService extends AbstractRestService {
     // ************************************************************************
 
     public Employee convertFromEmployeeView(Integer tenantId, EmployeeView employeeView) {
-        Employee employee = new Employee(employeeView.getTenantId(), employeeView.getName(), employeeView.getContract(),
-                                         employeeView.getSkillProficiencySet());
+        Employee employee = new Employee(employeeView.getTenantId(), employeeView.getName(),
+                                         employeeView.getContract(), employeeView.getSkillProficiencySet(),
+                                         employeeView.getShortId(), employeeView.getColor());
         validateEmployee(tenantId, employee);
         employee.setId(employeeView.getId());
         employee.setVersion(employeeView.getVersion());
@@ -132,6 +133,8 @@ public class EmployeeService extends AbstractRestService {
         oldEmployee.setName(newEmployee.getName());
         oldEmployee.setSkillProficiencySet(newEmployee.getSkillProficiencySet());
         oldEmployee.setContract(newEmployee.getContract());
+        oldEmployee.setShortId(newEmployee.getShortId());
+        oldEmployee.setColor(newEmployee.getColor());
         return employeeRepository.save(oldEmployee);
     }
 

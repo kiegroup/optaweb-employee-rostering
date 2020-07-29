@@ -183,6 +183,7 @@ public class ShiftService extends AbstractRestService {
         oldShift.setEndDateTime(newShift.getEndDateTime());
         oldShift.setPinnedByUser(newShift.isPinnedByUser());
         oldShift.setEmployee(newShift.getEmployee());
+        oldShift.setRequiredSkillSet(newShift.getRequiredSkillSet());
 
         // Flush to increase version number before we duplicate it to ShiftView
         Shift updatedShift = shiftRepository.saveAndFlush(oldShift);

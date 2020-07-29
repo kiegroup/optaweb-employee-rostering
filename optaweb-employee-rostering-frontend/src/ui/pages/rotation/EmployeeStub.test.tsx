@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ import { Employee } from 'domain/Employee';
 import { AppState } from 'store/types';
 import { employeeSelectors } from 'store/employee';
 import { shallow } from 'enzyme';
-import { Button, Modal, Popover, GridItem } from '@patternfly/react-core';
+import { Button, Modal } from '@patternfly/react-core';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import {
   EmployeeNickNameProps, EmployeeNickName, EmployeeStubProps, EmployeeStub,
-  ColorPickerProps, ColorPicker, EditEmployeeStubListModalProps, EditEmployeeStubListModal,
+  EditEmployeeStubListModalProps, EditEmployeeStubListModal,
   EmployeeStubListProps, Stub, EmployeeStubList,
 } from './EmployeeStub';
 
@@ -156,31 +156,6 @@ describe('EmployeeStub Component', () => {
   it('It have a thick blue outline if selected', () => {
     const employeeStub = shallow(<EmployeeStub {...baseProps} isSelected />);
     expect(employeeStub.prop('style').outline).toEqual('5px solid var(--pf-global--primary-color--100)');
-  });
-});
-
-describe('ColorPicker component', () => {
-  const baseProps: ColorPickerProps = {
-    currentColor: 'red',
-    onChangeColor: jest.fn(),
-  };
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should render correctly', () => {
-    const colorPicker = shallow(<ColorPicker {...baseProps} />);
-    expect(colorPicker).toMatchSnapshot();
-  });
-
-  it('should set color on click', () => {
-    const colorPicker = shallow(<ColorPicker {...baseProps} />);
-    const newColor = 'var(--pf-global--palette--orange-400)';
-    shallow(colorPicker.find(Popover).prop('bodyContent') as React.ReactElement).find(GridItem)
-      .filterWhere(gi => gi.childAt(0).prop('style').backgroundColor === newColor)
-      .simulate('click');
-
-    expect(baseProps.onChangeColor).toBeCalledWith(newColor);
   });
 });
 

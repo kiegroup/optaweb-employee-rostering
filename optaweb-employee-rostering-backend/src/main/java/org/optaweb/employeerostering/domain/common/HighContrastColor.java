@@ -20,38 +20,38 @@ import java.util.Objects;
 
 public enum HighContrastColor {
     // Patternfly Red
-    DARK_RED("#7D1007"),
-    RED("#A30000"),
-    LIGHT_RED("#C9190B"),
+    DARK_RED("#7d1007"),
+    RED("#a30000"),
+    LIGHT_RED("#c9190b"),
         
     // Patternfly Blue
-    DARK_BLUE("#2B9AF3"),
-    BLUE("#73BCF7"),
-    LIGHT_BLUE("#BEE1F4"),
+    DARK_BLUE("#2b9af3"),
+    BLUE("#73bcf7"),
+    LIGHT_BLUE("#bee1f4"),
         
     // Patternfly Yellow
-    DARK_YELLOW("#F4C145"),
-    YELLOW("#F6D173"),
-    LIGHT_YELLOW("#F9E0A2"),
+    DARK_YELLOW("#f4c145"),
+    YELLOW("#f6d173"),
+    LIGHT_YELLOW("#f9e0a2"),
         
     // Patternfly Orange
-    DARK_ORANGE("#EC7A08"),
-    ORANGE("#EF9234"),
-    LIGHT_ORANGE("#F4B678"),
+    DARK_ORANGE("#ec7a08"),
+    ORANGE("#ef9234"),
+    LIGHT_ORANGE("#f4b678"),
         
     // Patternfly Green
-    DARK_GREEN("#6EC664"),
-    GREEN("#95D58E"),
-    LIGHT_GREEN("#BDE5B8"),
+    DARK_GREEN("#6ec664"),
+    GREEN("#95d58e"),
+    LIGHT_GREEN("#bde5b8"),
         
     // Patternfly Purple
-    DARK_PURPLE("#A18FFF"),
-    PURPLE("#B2A3FF"),
-    LIGHT_PURPLE("#CBC1FF"),
+    DARK_PURPLE("#a18fff"),
+    PURPLE("#b2a3ff"),
+    LIGHT_PURPLE("#cbc1ff"),
         
     // Patternfly Cyan
-    DARK_CYAN("#A2D9D9"), 
-    CYAN("#73C5C5"),
+    DARK_CYAN("#a2d9d9"), 
+    CYAN("#73c5c5"),
     LIGHT_CYAN("#009596");
     
     String colorInHex;

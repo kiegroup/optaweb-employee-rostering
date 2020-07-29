@@ -246,24 +246,18 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <ColorPicker
+                  <StatefulColorPicker
                     currentColor="#FFFFFF"
                     onChangeColor={[Function]}
                   />
                 }
                 isEditing={false}
                 viewer={
-                  <Text>
-                    #FFFFFF
-                    <span
-                      style={
-                        Object {
-                          "color": "#FFFFFF",
-                          "width": "30px",
-                        }
-                      }
-                    />
-                  </Text>
+                  <ColorPicker
+                    currentColor="#FFFFFF"
+                    isDisabled={true}
+                    onChangeColor={[Function]}
+                  />
                 }
               />,
             },
@@ -519,24 +513,18 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <ColorPicker
+                  <StatefulColorPicker
                     currentColor="#FFFFFF"
                     onChangeColor={[Function]}
                   />
                 }
                 isEditing={false}
                 viewer={
-                  <Text>
-                    #FFFFFF
-                    <span
-                      style={
-                        Object {
-                          "color": "#FFFFFF",
-                          "width": "30px",
-                        }
-                      }
-                    />
-                  </Text>
+                  <ColorPicker
+                    currentColor="#FFFFFF"
+                    isDisabled={true}
+                    onChangeColor={[Function]}
+                  />
                 }
               />,
             },
@@ -778,7 +766,7 @@ exports[`Employees page should render the editor correctly 1`] = `
   <td
     key="4"
   >
-    <ColorPicker
+    <StatefulColorPicker
       currentColor="#FFFFFF"
       key="4"
       onChangeColor={[Function]}
@@ -865,19 +853,12 @@ exports[`Employees page should render the viewer correctly 1`] = `
   <td
     key="4"
   >
-    <Text
+    <ColorPicker
+      currentColor="#FFFFFF"
+      isDisabled={true}
       key="4"
-    >
-      #FFFFFF
-      <span
-        style={
-          Object {
-            "color": "#FFFFFF",
-            "width": "30px",
-          }
-        }
-      />
-    </Text>
+      onChangeColor={[Function]}
+    />
   </td>
 </tr>
 `;

@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ColorPicker component should render correctly 1`] = `
+<Popover
+  appendTo={[Function]}
+  aria-label="Select Color..."
+  bodyContent={
+    <ColorPicker
+      color="#ff0000"
+      colors={
+        Array [
+          "#7D1007",
+          "#A30000",
+          "#C9190B",
+          "#2B9AF3",
+          "#73BCF7",
+          "#BEE1F4",
+          "#F4C145",
+          "#F6D173",
+          "#F9E0A2",
+          "#EC7A08",
+          "#EF9234",
+          "#F4B678",
+          "#6EC664",
+          "#95D58E",
+          "#BDE5B8",
+          "#A18FFF",
+          "#B2A3FF",
+          "#CBC1FF",
+          "#A2D9D9",
+          "#73C5C5",
+          "#009596",
+        ]
+      }
+      onChange={[Function]}
+      styles={Object {}}
+      triangle="hide"
+      width={170}
+    />
+  }
+  boundary="window"
+  className=""
+  closeBtnAriaLabel="Close"
+  distance={25}
+  enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  footerContent={null}
+  headerContent={null}
+  hideOnOutsideClick={true}
+  isVisible={false}
+  maxWidth="calc(2rem + 18.75rem)"
+  onHidden={[Function]}
+  onHide={[Function]}
+  onMount={[Function]}
+  onShow={[Function]}
+  onShown={[Function]}
+  position="top"
+  shouldClose={[Function]}
+  tippyProps={Object {}}
+  zIndex={9999}
+>
+  <Component
+    onClick={[Function]}
+    style={
+      Object {
+        "backgroundColor": "#ff0000",
+        "color": "white",
+        "width": "100%",
+      }
+    }
+  >
+    #ff0000
+  </Component>
+</Popover>
+`;

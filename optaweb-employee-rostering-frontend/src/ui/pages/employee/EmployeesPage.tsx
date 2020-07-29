@@ -40,7 +40,7 @@ import { connect } from 'react-redux';
 import { Skill } from 'domain/Skill';
 import { Contract } from 'domain/Contract';
 import { StatefulTypeaheadSelectInput } from 'ui/components/TypeaheadSelectInput';
-import { Predicate, Sorter, ReadonlyPartial } from 'types';
+import { Predicate, Sorter, ReadonlyPartial, doNothing } from 'types';
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 import { StatefulMultiTypeaheadSelectInput } from 'ui/components/MultiTypeaheadSelectInput';
@@ -48,7 +48,7 @@ import { CubesIcon, ArrowIcon } from '@patternfly/react-icons';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { withTranslation, WithTranslation, Trans } from 'react-i18next';
 import moment from 'moment';
-import { ColorPicker } from '../rotation/EmployeeStub';
+import { ColorPicker, StatefulColorPicker } from 'ui/components/ColorPicker';
 
 interface StateProps extends DataTableProps<Employee> {
   tenantId: number;
@@ -123,15 +123,12 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         ))}
       </ChipGroup>,
       <Text key={3}>{data.shortId}</Text>,
-      <Text key={4}>
-        {data.color}
-        <span
-          style={{
-            color: data.color,
-            width: '30px',
-          }}
-        />
-      </Text>,
+      <ColorPicker
+        key={4}
+        currentColor={data.color}
+        onChangeColor={doNothing}
+        isDisabled
+      />,
     ];
   }
 
@@ -173,10 +170,12 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         aria-label="shortId"
         onChange={value => setProperty('shortId', value)}
       />,
-      <ColorPicker
+      <StatefulColorPicker
         key={4}
         currentColor={data.color ? data.color : '#FFFFFF'}
-        onChangeColor={value => setProperty('color', value)}
+        onChangeColor={(value) => {
+          setProperty('color', value);
+        }}
       />,
     ];
   }
@@ -184,7 +183,9 @@ export class EmployeesPage extends DataTable<Employee, Props> {
   isDataComplete(editedValue: ReadonlyPartial<Employee>): editedValue is Employee {
     return editedValue.name !== undefined
       && editedValue.contract !== undefined
-      && editedValue.skillProficiencySet !== undefined;
+      && editedValue.skillProficiencySet !== undefined
+      && editedValue.shortId !== undefined
+      && editedValue.color !== undefined;
   }
 
   isValid(editedValue: Employee): boolean {
@@ -198,7 +199,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
   }
 
   getSorters(): (Sorter<Employee> | null)[] {
-    return [stringSorter(e => e.name), stringSorter(e => e.contract.name), null, null];
+    return [stringSorter(e => e.name), stringSorter(e => e.contract.name), null, null, null];
   }
 
   updateData(data: Employee): void {

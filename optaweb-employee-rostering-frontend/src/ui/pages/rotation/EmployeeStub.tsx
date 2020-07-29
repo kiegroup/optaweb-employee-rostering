@@ -17,18 +17,18 @@ import React from 'react';
 import { employeeSelectors } from 'store/employee';
 import { useSelector } from 'react-redux';
 import {
-  Text, Grid, GridItem, Modal, InputGroup, Button, Popover,
+  Text, GridItem, Modal, InputGroup, Button,
   SplitItem, Split, InputGroupText, FlexItem, Flex, FlexModifiers, Bullseye,
 } from '@patternfly/react-core';
 import {
-  UsersIcon, UserIcon, AngleDownIcon, TrashIcon,
+  UsersIcon, UserIcon, TrashIcon,
   EditIcon,
 } from '@patternfly/react-icons';
 import { Employee } from 'domain/Employee';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
-import Color from 'color';
 import { v4 as uuid } from 'uuid';
 import { useListValidators } from 'util/ValidationUtils';
+import { getColor } from 'ui/components/ColorPicker';
 
 export interface EmployeeNickNameProps {
   employee: Employee | null;
@@ -46,17 +46,6 @@ export const EmployeeNickName: React.FC<EmployeeNickNameProps> = (props) => {
     </Bullseye>
   );
 };
-
-export function getColor(color: string): Color {
-  if (color.startsWith('var')) {
-    // CSS variable
-    return Color(getComputedStyle(document.documentElement)
-      .getPropertyValue(color.substring(4, color.length - 1)).trim());
-  }
-
-  return Color(color);
-}
-
 
 export interface EmployeeStubProps {
   isSelected: boolean;
@@ -85,64 +74,6 @@ export const EmployeeStub: React.FC<EmployeeStubProps> = props => (
   >
     <EmployeeNickName employee={props.employee} />
   </button>
-);
-
-const defaultColorList = ['red', 'orange', 'gold', 'green', 'cyan', 'blue', 'purple'].flatMap(colorFamily => (
-  ['600', '500', '400', '300', '200', '100'].map(value => `var(--pf-global--palette--${colorFamily}-${value})`)
-));
-
-export interface ColorPickerProps {
-  currentColor: string;
-  onChangeColor: (newColor: string) => void;
-}
-export const ColorPicker: React.FC<ColorPickerProps> = props => (
-  <Popover
-    aria-label="color-select"
-    bodyContent={(
-      <Grid>
-        {defaultColorList.map(color => (
-          <GridItem
-            key={color}
-            span={2}
-            rowSpan={2}
-            onClick={() => {
-              props.onChangeColor(color);
-            }}
-          >
-            <span
-              style={{
-                width: '30px',
-                height: '30px',
-                display: 'inline-block',
-                borderRadius: '50%',
-                backgroundColor: color,
-                border: '1px solid var(--pf-global--palette--black-300)',
-              }}
-            />
-          </GridItem>
-        ))}
-      </Grid>
-    )}
-    position="bottom"
-  >
-    <InputGroup
-      style={{
-        width: '100px',
-      }}
-    >
-      <Button
-        variant="control"
-        style={{
-          backgroundColor: props.currentColor,
-        }}
-      />
-      <Button
-        variant="control"
-      >
-        <AngleDownIcon />
-      </Button>
-    </InputGroup>
-  </Popover>
 );
 
 export type Stub = Employee | 'SHIFT_WITH_NO_EMPLOYEE' | 'NO_SHIFT';
