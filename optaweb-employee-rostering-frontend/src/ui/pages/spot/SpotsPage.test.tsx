@@ -109,7 +109,7 @@ describe('Spots page', () => {
     expect(spotsPage.getSorters()[1]).toBeNull();
   });
 
-  it('should treat incompleted data as incomplete', () => {
+  it('should treat incomplete data as incomplete', () => {
     const spotsPage = new SpotsPage(twoSpots);
 
     const noName = { tenantId: 0, requiredSkillSet: [] };

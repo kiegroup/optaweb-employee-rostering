@@ -31,10 +31,10 @@ public class UnavailableEmployeeViolation implements ConstraintMatchView {
 
     }
 
-    public UnavailableEmployeeViolation(Shift shift, EmployeeAvailability employeeAvaliability,
+    public UnavailableEmployeeViolation(Shift shift, EmployeeAvailability employeeAvailability,
                                         HardMediumSoftLongScore score) {
         this.shift = shift;
-        this.employeeAvailability = employeeAvaliability;
+        this.employeeAvailability = employeeAvailability;
         this.score = score;
     }
 

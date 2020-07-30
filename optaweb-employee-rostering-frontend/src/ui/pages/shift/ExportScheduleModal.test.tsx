@@ -58,7 +58,7 @@ describe('Export Schedule Modal', () => {
     expect(urlButton.prop('href')).toEqual('_blank');
   });
 
-  it('should export with new params if user change fields', () => {
+  it('should export with new params if user changes fields', () => {
     const editShiftModal = shallow(<ExportScheduleModal
       {...baseProps}
     />);

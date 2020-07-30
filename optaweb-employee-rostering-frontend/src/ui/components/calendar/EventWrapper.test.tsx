@@ -32,7 +32,7 @@ describe('EventWrapper', () => {
     expect(eventWrapper).toMatchSnapshot();
   });
 
-  it('should render correctly when the event continues from eariler', () => {
+  it('should render correctly when the event continues from earlier', () => {
     const eventWrapper = shallow(
       <EventWrapper
         continuesEarlier

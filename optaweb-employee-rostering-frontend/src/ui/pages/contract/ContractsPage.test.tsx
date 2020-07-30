@@ -141,7 +141,7 @@ describe('Contracts page', () => {
     expect(list.sort(sorter)).toEqual(twoContracts.tableData);
   });
 
-  it('should treat incompleted data as incomplete', () => {
+  it('should treat incomplete data as incomplete', () => {
     const contractsPage = new ContractsPage(twoContracts);
 
     const noName = { ...twoContracts.tableData[1], name: undefined };

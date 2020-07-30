@@ -74,7 +74,7 @@ describe('DataTable component', () => {
     expect(toJson(table)).toMatchSnapshot();
   });
 
-  it('should set new row data to intial state if no row is being added', () => {
+  it('should set new row data to initial state if no row is being added', () => {
     const dataTable = new MockDataTable(twoRows);
     dataTable.getInitialStateForNewRow.mockReturnValue({ name: 'Hi' });
     dataTable.setState = jest.fn();
@@ -85,7 +85,7 @@ describe('DataTable component', () => {
     expect(dataTable.setState).toBeCalledWith({ newRowData: { name: 'Hi' } });
   });
 
-  it('should not set new row data to intial state if no row is being added', () => {
+  it('should not set new row data to initial state if no row is being added', () => {
     const dataTable = mount(<MockDataTable {...twoRows} />);
     dataTable.setState({ newRowData: { name: 'Hi' } });
     (dataTable.instance() as MockDataTable).setState = jest.fn();

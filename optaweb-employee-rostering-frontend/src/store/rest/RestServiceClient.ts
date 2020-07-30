@@ -87,7 +87,7 @@ export default class RestServiceClient {
       }
       return Promise.resolve(res.data);
     }
-    if (res.status >= 502 && res.status <= 504) { // 502-504 are gateway releated responses
+    if (res.status >= 502 && res.status <= 504) { // 502-504 are gateway related responses
       this.handleError({
         isAxiosError: true,
       });

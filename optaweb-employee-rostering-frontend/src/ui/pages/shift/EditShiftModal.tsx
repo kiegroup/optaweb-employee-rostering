@@ -220,7 +220,7 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
             />
           </InputGroup>
           <InputGroup>
-            <Label>{t('addtionalSkills')}</Label>
+            <Label>{t('additionalSkills')}</Label>
             <MultiTypeaheadSelectInput
               aria-label="Additional Skills"
               emptyText={t('selectAdditionalSkills')}

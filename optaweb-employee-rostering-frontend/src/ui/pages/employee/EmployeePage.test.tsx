@@ -181,7 +181,7 @@ describe('Employees page', () => {
     expect(noEmployees.history.push).toBeCalledWith('/0/contracts');
   });
 
-  it('should treat incompleted data as incomplete', () => {
+  it('should treat incomplete data as incomplete', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
     const noName = {
       tenantId: 0,

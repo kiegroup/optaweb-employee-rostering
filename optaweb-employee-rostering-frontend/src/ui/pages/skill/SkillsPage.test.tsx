@@ -101,7 +101,7 @@ describe('Skills page', () => {
     expect(list.sort(sorter)).toEqual(twoSkills.tableData);
   });
 
-  it('should treat incompleted data as incomplete', () => {
+  it('should treat incomplete data as incomplete', () => {
     const skillsPage = new SkillsPage(twoSkills);
 
     const noName: ReadonlyPartial<Skill> = { tenantId: 0 };
