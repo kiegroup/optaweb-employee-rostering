@@ -52,44 +52,54 @@ export default class WeekPicker extends React.Component<WeekPickerProps> {
   }
 
   render() {
-    const DateRangeInputElement = (dateRangeInputProps?: { value?: Date; onClick?: () => void }) => (
-      <div
-        className="pf-c-form-control"
-        style={{
-          display: 'grid',
-          height: 'auto',
-          gridTemplateColumns: '1fr auto auto',
-          alignItems: 'center',
-        }}
-      >
-        <Text
-          onClick={dateRangeInputProps ? dateRangeInputProps.onClick : undefined}
-        >
-          {
-            `${moment(getFirstDayInWeek(this.props.value)).format('L')} - ${
-              moment(getLastDayInWeek(this.props.value)).format('L')}`
-          }
-        </Text>
-        <Button
+    type DatePickerCustomInputProps = { value?: Date; onClick?: () => void };
+
+    // (the stateless functional component is defined in a class component, where
+    //  this = the class this, so it okay to use "this" here)
+    /* eslint-disable react/no-this-in-sfc */
+    const DateRangeInputElement = React.forwardRef<HTMLDivElement, DatePickerCustomInputProps>(
+      (dateRangeInputProps, ref) => (
+        <div
+          ref={ref}
+          className="pf-c-form-control"
           style={{
-            color: 'black',
+            display: 'grid',
+            height: 'auto',
+            gridTemplateColumns: '1fr auto auto',
+            alignItems: 'center',
           }}
-          onClick={() => this.goToCurrentWeek()}
-          variant="link"
         >
-          <HistoryIcon />
-        </Button>
-        <Button
-          style={{
-            color: 'black',
-          }}
-          onClick={dateRangeInputProps ? dateRangeInputProps.onClick : undefined}
-          variant="link"
-        >
-          <CalendarIcon />
-        </Button>
-      </div>
+          <Text
+            onClick={dateRangeInputProps ? dateRangeInputProps.onClick : undefined}
+          >
+            {
+              `${moment(getFirstDayInWeek(this.props.value)).format('L')} - ${
+                moment(getLastDayInWeek(this.props.value)).format('L')}`
+            }
+          </Text>
+          <Button
+            style={{
+              color: 'black',
+            }}
+            onClick={() => this.goToCurrentWeek()}
+            variant="link"
+          >
+            <HistoryIcon />
+          </Button>
+          <Button
+            style={{
+              color: 'black',
+            }}
+            onClick={dateRangeInputProps ? dateRangeInputProps.onClick : undefined}
+            variant="link"
+          >
+            <CalendarIcon />
+          </Button>
+        </div>
+      ),
     );
+    /* eslint-enable react/no-this-in-sfc */
+
     return (
       <div className="week-picker-container">
         <Button
