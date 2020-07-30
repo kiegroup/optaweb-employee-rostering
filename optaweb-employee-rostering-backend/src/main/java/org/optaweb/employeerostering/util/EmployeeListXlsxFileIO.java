@@ -29,7 +29,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.optaweb.employeerostering.domain.common.HighContrastColor;
 import org.optaweb.employeerostering.domain.contract.Contract;
+import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
@@ -82,6 +84,8 @@ public class EmployeeListXlsxFileIO {
                                 }))
                                 .collect(Collectors.toCollection(HashSet::new)));
                 employee.setContract(defaultContract);
+                employee.setShortId(Employee.generateShortIdFromName(employee.getName()));
+                employee.setColor(HighContrastColor.generateColorFromHashcode(employee.getName()));
                 out.add(employee);
             }
             return out;

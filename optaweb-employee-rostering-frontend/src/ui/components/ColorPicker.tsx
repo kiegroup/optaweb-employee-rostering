@@ -19,7 +19,7 @@ import { BlockPicker } from 'react-color';
 import Color from 'color';
 
 
-const defaultColorList = [
+export const defaultColorList = [
   // Patternfly Red
 
   '#7d1007', // Dark Red
