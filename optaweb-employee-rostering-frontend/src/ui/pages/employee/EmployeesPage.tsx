@@ -48,7 +48,7 @@ import { CubesIcon, ArrowIcon } from '@patternfly/react-icons';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { withTranslation, WithTranslation, Trans } from 'react-i18next';
 import moment from 'moment';
-import { ColorPicker, StatefulColorPicker } from 'ui/components/ColorPicker';
+import { ColorPicker, StatefulColorPicker, defaultColorList } from 'ui/components/ColorPicker';
 
 interface StateProps extends DataTableProps<Employee> {
   tenantId: number;
@@ -135,17 +135,26 @@ export class EmployeesPage extends DataTable<Employee, Props> {
   getInitialStateForNewRow(): Partial<Employee> {
     return {
       skillProficiencySet: [],
+      color: defaultColorList[Math.floor(Math.random() * defaultColorList.length)],
     };
   }
 
   editDataRow(data: ReadonlyPartial<Employee>, setProperty: PropertySetter<Employee>): React.ReactNode[] {
+    const shortIdInputRef = React.createRef<HTMLInputElement>();
     return [
       <TextInput
         key={0}
         name="name"
         defaultValue={data.name}
         aria-label="Name"
-        onChange={value => setProperty('name', value)}
+        onChange={(value) => {
+          setProperty('name', value);
+          if (shortIdInputRef.current === null || shortIdInputRef.current.value === '') {
+            const shortIdFull = value.split(' ').map(s => s.charAt(0)).join('');
+            const shortId = shortIdFull.substring(0, Math.min(3, shortIdFull.length));
+            setProperty('shortId', shortId);
+          }
+        }}
       />,
       <StatefulTypeaheadSelectInput
         key={1}
@@ -164,11 +173,14 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         onChange={selected => setProperty('skillProficiencySet', selected)}
       />,
       <TextInput
+        ref={shortIdInputRef}
         key={3}
         name="shortId"
         defaultValue={data.shortId}
         aria-label="shortId"
-        onChange={value => setProperty('shortId', value)}
+        onChange={(value) => {
+          setProperty('shortId', value);
+        }}
       />,
       <StatefulColorPicker
         key={4}

@@ -63,6 +63,7 @@ describe('Employees page', () => {
     nameCol.simulate('change', 'Test');
     expect(setProperty).toBeCalled();
     expect(setProperty).toBeCalledWith('name', 'Test');
+    expect(setProperty).toBeCalledWith('shortId', 'T');
 
     setProperty.mockClear();
     const contractCol = mount(editor[1] as React.ReactElement);
@@ -79,6 +80,23 @@ describe('Employees page', () => {
     });
     expect(setProperty).toBeCalled();
     expect(setProperty).toBeCalledWith('skillProficiencySet', [twoEmployees.skillList[0]]);
+
+    setProperty.mockClear();
+    const shortIdCol = shallow(editor[3] as React.ReactElement);
+    shortIdCol.simulate('change', 'ID');
+    expect(setProperty).toBeCalledWith('shortId', 'ID');
+
+    setProperty.mockClear();
+    // Mount and set props on shortIdCol so the ref is updated
+    mount(editor[3] as React.ReactElement).setProps({ value: 'ID' });
+    nameCol.simulate('change', 'Mimi');
+    expect(setProperty).toBeCalledWith('name', 'Mimi');
+    expect(setProperty).not.toBeCalledWith('shortId', expect.any(String));
+
+    setProperty.mockClear();
+    const colorCol = shallow(editor[4] as React.ReactElement);
+    colorCol.simulate('changeColor', '#ffffff');
+    expect(setProperty).toBeCalledWith('color', '#ffffff');
   });
 
   it('should call addEmployee on addData', () => {
