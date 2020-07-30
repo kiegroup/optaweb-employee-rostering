@@ -82,7 +82,7 @@ exports[`WeekPicker component should render correctly 1`] = `
   </Component>
   <t
     allowSameDay={false}
-    customInput={<DateRangeInputElement />}
+    customInput={<ForwardRef />}
     dateFormat="MM/dd/yyyy"
     dateFormatCalendar="LLLL yyyy"
     disabled={false}
