@@ -59,7 +59,7 @@ exports[`EventWrapper should render correctly when the event continues both befo
 </div>
 `;
 
-exports[`EventWrapper should render correctly when the event continues from eariler 1`] = `
+exports[`EventWrapper should render correctly when the event continues from earlier 1`] = `
 <div
   className="class continues-from-previous-day"
   style={

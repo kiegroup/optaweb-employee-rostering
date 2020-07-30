@@ -72,8 +72,8 @@ describe('ShiftEvent', () => {
     expect(toJson(contractMinutesViolations)).toMatchSnapshot();
   });
 
-  it('getUnavaliableEmployeeViolations should render correctly', () => {
-    const unavaliableAvailability: EmployeeAvailability = {
+  it('getUnavailableEmployeeViolations should render correctly', () => {
+    const unavailableAvailability: EmployeeAvailability = {
       ...baseEmployeeAvailability,
       state: 'UNAVAILABLE',
     };
@@ -81,7 +81,7 @@ describe('ShiftEvent', () => {
       ...baseShift,
       unavailableEmployeeViolationList: [{
         score: { hardScore: -1, mediumScore: 0, softScore: 0 },
-        employeeAvailability: unavaliableAvailability,
+        employeeAvailability: unavailableAvailability,
         shift: baseShift,
       }],
     };

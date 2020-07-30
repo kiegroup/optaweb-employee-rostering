@@ -5774,7 +5774,7 @@ exports[`ShiftEvent getUnassignedShiftPenalties should render correctly 1`] = `
 </UnassignedShiftPenalties>
 `;
 
-exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`] = `
+exports[`ShiftEvent getUnavailableEmployeeViolations should render correctly 1`] = `
 <UnavailableEmployeeViolations
   contractMinutesViolationPenaltyList={Array []}
   desiredTimeslotForEmployeeRewardList={Array []}

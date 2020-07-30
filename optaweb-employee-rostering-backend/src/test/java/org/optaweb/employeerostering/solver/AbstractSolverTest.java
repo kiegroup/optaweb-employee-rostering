@@ -383,7 +383,7 @@ public abstract class AbstractSolverTest {
     }
 
     @Test(timeout = 600000)
-    public void testEmployeeAvilabilityConstraints() {
+    public void testEmployeeAvailabilityConstraints() {
         for (EmployeeAvailabilityState state : EmployeeAvailabilityState.values()) {
             testAvailabilityConstraint(state);
         }
