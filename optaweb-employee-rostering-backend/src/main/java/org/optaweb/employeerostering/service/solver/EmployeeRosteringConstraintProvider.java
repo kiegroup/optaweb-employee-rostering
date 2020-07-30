@@ -24,7 +24,6 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Objects;
 import java.util.function.Function;
 
-import com.google.common.base.Functions;
 import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
@@ -188,7 +187,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     Constraint monthlyMinutesMustNotExceedContractMaximum(ConstraintFactory constraintFactory) {
         return constraintFactory.from(Employee.class)
                 .filter(employee -> employee.getContract().getMaximumMinutesPerMonth() != null)
-                .join(Shift.class, equal(Functions.identity(), Shift::getEmployee))
+                .join(Shift.class, equal(Function.identity(), Shift::getEmployee))
                 .groupBy((employee, shift) -> employee,
                         (employee, shift) -> YearMonth.from(shift.getStartDateTime()),
                         sumDuration((employee, shift) ->
@@ -203,7 +202,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     Constraint yearlyMinutesMustNotExceedContractMaximum(ConstraintFactory constraintFactory) {
         return constraintFactory.from(Employee.class)
                 .filter(employee -> employee.getContract().getMaximumMinutesPerYear() != null)
-                .join(Shift.class, equal(Functions.identity(), Shift::getEmployee))
+                .join(Shift.class, equal(Function.identity(), Shift::getEmployee))
                 .groupBy((employee, shift) -> employee,
                         (employee, shift) -> shift.getStartDateTime().getYear(),
                         sumDuration((employee, shift) -> between(shift.getStartDateTime(), shift.getEndDateTime())))
