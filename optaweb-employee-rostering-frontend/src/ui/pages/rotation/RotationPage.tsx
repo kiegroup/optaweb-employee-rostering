@@ -70,6 +70,12 @@ export const RotationPage: React.FC<{}> = () => {
   const [stubList, setStubList] = useState<Stub[]>(getEmployeesInTimeBuckets());
 
   React.useEffect(() => {
+    if (shownSpot === undefined && spotList.length > 0) {
+      setShownSpotName(spotList[0].name);
+    }
+  }, [spotList, shownSpot, setShownSpotName]);
+
+  React.useEffect(() => {
     const theShownSpot = spotList.find(s => s.name === shownSpotName);
     const theShownTimeBuckets = theShownSpot ? timeBucketList.filter(tb => tb.spot.id === theShownSpot.id) : [];
     if (oldShownTimeBuckets.current !== theShownTimeBuckets.map(tb => tb.id).join(',')) {
