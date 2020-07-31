@@ -27,8 +27,6 @@ import { TimeBucket } from 'domain/TimeBucket';
 import { EditTimeBucketModal } from './EditTimeBucketModal';
 import { Stub, EmployeeNickName } from './EmployeeStub';
 
-/* tslint:disable:no-nested-ternary react/no-array-index-key */
-
 export interface SeatJigsawProps {
   selectedStub: Stub | null;
   timeBucket: TimeBucket;
