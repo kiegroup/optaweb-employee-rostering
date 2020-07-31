@@ -193,18 +193,21 @@ exports[`EmployeeNickName Component It should render correctly without an employ
 
 exports[`EmployeeStub Component It should render correctly with an employee 1`] = `
 <button
+  className="pf-c-button"
   onClick={[MockFunction]}
   style={
     Object {
+      "alignItems": "center",
       "backgroundColor": "#FF0000",
       "color": "white",
       "cursor": "pointer",
-      "height": "30px",
+      "display": "flex",
+      "height": "50px",
       "marginTop": "10px",
       "outline": "1px solid black",
       "overflow": "hidden",
       "textOrientation": "upright",
-      "width": "20px",
+      "width": "30px",
       "writingMode": "vertical-rl",
     }
   }
@@ -239,18 +242,21 @@ exports[`EmployeeStub Component It should render correctly with an employee 1`] 
 
 exports[`EmployeeStub Component It should render correctly without an employee 1`] = `
 <button
+  className="pf-c-button"
   onClick={[MockFunction]}
   style={
     Object {
+      "alignItems": "center",
       "backgroundColor": "#FF0000",
       "color": "white",
       "cursor": "pointer",
-      "height": "30px",
+      "display": "flex",
+      "height": "50px",
       "marginTop": "10px",
       "outline": "1px solid black",
       "overflow": "hidden",
       "textOrientation": "upright",
-      "width": "20px",
+      "width": "30px",
       "writingMode": "vertical-rl",
     }
   }

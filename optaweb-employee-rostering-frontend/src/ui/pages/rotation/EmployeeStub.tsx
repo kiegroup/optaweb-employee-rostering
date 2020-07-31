@@ -55,9 +55,11 @@ export interface EmployeeStubProps {
 }
 export const EmployeeStub: React.FC<EmployeeStubProps> = props => (
   <button
+    className="pf-c-button"
     style={{
-      width: '20px',
-      height: '30px',
+      display: 'flex',
+      width: '30px',
+      height: '50px',
       marginTop: '10px',
       overflow: 'hidden',
       outline: `${props.isSelected ? 5 : 1}px solid ${props.isSelected
@@ -65,6 +67,7 @@ export const EmployeeStub: React.FC<EmployeeStubProps> = props => (
       cursor: 'pointer',
       writingMode: 'vertical-rl',
       textOrientation: 'upright',
+      alignItems: 'center',
       backgroundColor: props.color,
       color: getColor(props.color).isLight() ? 'black' : 'white',
     }}
