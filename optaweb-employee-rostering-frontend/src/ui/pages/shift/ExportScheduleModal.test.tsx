@@ -26,49 +26,49 @@ import { ExportScheduleModal } from './ExportScheduleModal';
 
 describe('Export Schedule Modal', () => {
   it('should render correctly when closed', () => {
-    const editShiftModal = shallow(<ExportScheduleModal
+    const exportScheduleModal = shallow(<ExportScheduleModal
       {...baseProps}
       isOpen={false}
     />);
-    expect(toJson(editShiftModal)).toMatchSnapshot();
+    expect(toJson(exportScheduleModal)).toMatchSnapshot();
   });
 
   it('should render correctly when opened', () => {
-    const editShiftModal = shallow(<ExportScheduleModal
+    const exportScheduleModal = shallow(<ExportScheduleModal
       {...baseProps}
     />);
-    expect(toJson(editShiftModal)).toMatchSnapshot();
+    expect(toJson(exportScheduleModal)).toMatchSnapshot();
   });
 
   it('should export the schedule with default from and to date with the full spot list by default', () => {
-    const editShiftModal = shallow(<ExportScheduleModal
+    const exportScheduleModal = shallow(<ExportScheduleModal
       {...baseProps}
     />);
-    const urlButton = shallow(editShiftModal.find(Modal).prop('actions')[1]);
+    const urlButton = shallow(exportScheduleModal.find(Modal).prop('actions')[1]);
     expect(urlButton.prop('href'))
       .toEqual(getExportUrlFor(baseProps.defaultFromDate, baseProps.defaultToDate, baseProps.spotList));
   });
 
   it('should export to _blank if spot list is empty', () => {
-    const editShiftModal = shallow(<ExportScheduleModal
+    const exportScheduleModal = shallow(<ExportScheduleModal
       {...baseProps}
       spotList={[]}
     />);
-    const urlButton = shallow(editShiftModal.find(Modal).prop('actions')[1]);
+    const urlButton = shallow(exportScheduleModal.find(Modal).prop('actions')[1]);
     expect(urlButton.prop('href')).toEqual('_blank');
   });
 
   it('should export with new params if user changes fields', () => {
-    const editShiftModal = shallow(<ExportScheduleModal
+    const exportScheduleModal = shallow(<ExportScheduleModal
       {...baseProps}
     />);
 
     const newFromDate = moment('2020-08-01').toDate();
-    editShiftModal.find(DatePicker).filter('[aria-label="Trans(i18nKey=fromDate)"]')
+    exportScheduleModal.find(DatePicker).filter('[aria-label="Trans(i18nKey=fromDate)"]')
       .simulate('change', newFromDate);
 
     const newToDate = moment('2021-07-02').toDate();
-    editShiftModal.find(DatePicker).filter('[aria-label="Trans(i18nKey=toDate)"]')
+    exportScheduleModal.find(DatePicker).filter('[aria-label="Trans(i18nKey=toDate)"]')
       .simulate('change', moment(newToDate).toDate());
 
     const otherSpot: Spot = {
@@ -79,8 +79,8 @@ describe('Export Schedule Modal', () => {
       requiredSkillSet: [],
     };
 
-    editShiftModal.find(MultiTypeaheadSelectInput).simulate('change', [spot, otherSpot]);
-    const urlButton = shallow(editShiftModal.find(Modal).prop('actions')[1]);
+    exportScheduleModal.find(MultiTypeaheadSelectInput).simulate('change', [spot, otherSpot]);
+    const urlButton = shallow(exportScheduleModal.find(Modal).prop('actions')[1]);
     expect(urlButton.prop('href'))
       .toEqual(getExportUrlFor(newFromDate, newToDate, [spot, otherSpot]));
   });
