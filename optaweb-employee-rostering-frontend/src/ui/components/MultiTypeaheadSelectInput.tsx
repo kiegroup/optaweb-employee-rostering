@@ -27,10 +27,6 @@ export interface MultiTypeaheadSelectProps<T> {
   autoSize?: boolean;
 }
 
-export interface MultiTypeaheadSelectState {
-  isExpanded: boolean;
-}
-
 const StatefulMultiTypeaheadSelectInput: React.FC<MultiTypeaheadSelectProps<any>> = (props) => {
   const [value, setValue] = React.useState(props.value);
   return (
