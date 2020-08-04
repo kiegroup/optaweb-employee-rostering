@@ -271,51 +271,6 @@
             </execution>
           </executions>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.1.0</version>
-          <executions>
-            <execution>
-              <id>validate</id>
-              <phase>validate</phase>
-              <goals>
-                <goal>check</goal>
-              </goals>
-              <configuration>
-                <checkstyleRules>
-                  <module name="Checker">
-                    <!-- Checks for whitespace. -->
-                    <module name="FileTabCharacter">
-                      <property name="severity" value="error"/>
-                      <property name="eachLine" value="true"/>
-                    </module>
-                    <module name="TreeWalker">
-                      <!-- Import settings: getting rid of redundant import, forbid star notation,
-                           defined order of imports. -->
-                      <module name="RedundantImport"/>
-                      <module name="AvoidStarImport">
-                        <property name="allowClassImports" value="false"/>
-                        <property name="allowStaticMemberImports" value="false"/>
-                      </module>
-                      <module name="NeedBraces">
-                        <property name="tokens" value="LITERAL_IF, LITERAL_ELSE, LITERAL_FOR, LITERAL_WHILE, LITERAL_DO"/>
-                      </module>
-                      <module name="EqualsHashCode"/>
-                    </module>
-                    <module name="RegexpHeader">
-                      <property name="header" value="${checkstyle.header.template}"/>
-                      <property name="fileExtensions" value="java"/>
-                    </module>
-                  </module>
-                </checkstyleRules>
-                <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                <includeResources>true</includeResources>
-                <includeTestResources>true</includeTestResources>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
       </plugins>
     </pluginManagement>
     
@@ -327,10 +282,6 @@
       <plugin>
         <groupId>net.revelc.code</groupId>
         <artifactId>impsort-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
