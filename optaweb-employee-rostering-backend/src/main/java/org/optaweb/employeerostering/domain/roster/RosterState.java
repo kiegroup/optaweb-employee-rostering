@@ -28,10 +28,11 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class RosterState extends AbstractPersistable {
@@ -66,9 +67,9 @@ public class RosterState extends AbstractPersistable {
     }
 
     public RosterState(Integer tenantId, Integer publishNotice, LocalDate firstDraftDate, Integer publishLength,
-                       Integer draftLength, Integer unplannedRotationOffset, Integer rotationLength,
-                       LocalDate lastHistoricDate,
-                       ZoneId timeZone) {
+            Integer draftLength, Integer unplannedRotationOffset, Integer rotationLength,
+            LocalDate lastHistoricDate,
+            ZoneId timeZone) {
         super(tenantId);
         this.publishNotice = publishNotice;
         this.firstDraftDate = firstDraftDate;
@@ -83,13 +84,13 @@ public class RosterState extends AbstractPersistable {
     @JsonIgnore
     public boolean isHistoric(OffsetDateTime dateTime) {
         return dateTime.isBefore(OffsetDateTime.of(getFirstPublishedDate().atTime(LocalTime.MIDNIGHT),
-                                                   dateTime.getOffset()));
+                dateTime.getOffset()));
     }
 
     @JsonIgnore
     public boolean isDraft(OffsetDateTime dateTime) {
         return !dateTime.isBefore(OffsetDateTime.of(getFirstDraftDate().atTime(LocalTime.MIDNIGHT),
-                                                    dateTime.getOffset()));
+                dateTime.getOffset()));
     }
 
     @JsonIgnore

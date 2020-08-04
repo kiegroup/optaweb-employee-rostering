@@ -64,20 +64,20 @@ public class ExceptionDataMapper {
 
     public enum ExceptionData {
         GENERIC_EXCEPTION("ServerSideException.generic", HttpStatus.INTERNAL_SERVER_ERROR, Throwable.class,
-                          t -> Collections.emptyList()),
+                t -> Collections.emptyList()),
         ENTITY_CONSTRAINT_VIOLATION("ServerSideException.entityConstraintViolation", HttpStatus.BAD_REQUEST,
-                                    ConstraintViolatedException.class,
-                                    t -> ((ConstraintViolatedException) t).getI18nMessageParameters()),
+                ConstraintViolatedException.class,
+                t -> ((ConstraintViolatedException) t).getI18nMessageParameters()),
         ILLEGAL_ARGUMENT("ServerSideException.illegalArgument", HttpStatus.INTERNAL_SERVER_ERROR,
-                         IllegalArgumentException.class,
-                         t -> Collections.singletonList(t.getMessage())),
+                IllegalArgumentException.class,
+                t -> Collections.singletonList(t.getMessage())),
         NULL_POINTER("ServerSideException.nullPointer", HttpStatus.INTERNAL_SERVER_ERROR,
-                     NullPointerException.class, t -> Collections.emptyList()),
+                NullPointerException.class, t -> Collections.emptyList()),
         ENTITY_NOT_FOUND("ServerSideException.entityNotFound", HttpStatus.NOT_FOUND,
-                         EntityNotFoundException.class,
-                         t -> Collections.singletonList(t.getMessage())),
+                EntityNotFoundException.class,
+                t -> Collections.singletonList(t.getMessage())),
         TRANSACTION_ROLLBACK("ServerSideException.rollback", HttpStatus.CONFLICT, DataIntegrityViolationException.class,
-                             t -> Collections.emptyList());
+                t -> Collections.emptyList());
 
         private String i18nKey;
         private HttpStatus statusCode;
@@ -85,7 +85,7 @@ public class ExceptionDataMapper {
         private Function<Throwable, List<String>> parameterMapping;
 
         ExceptionData(String i18nKey, HttpStatus statusCode, Class<? extends Throwable> exceptionClass,
-                      Function<Throwable, List<String>> parameterMapping) {
+                Function<Throwable, List<String>> parameterMapping) {
             this.i18nKey = i18nKey;
             this.statusCode = statusCode;
             this.exceptionClass = exceptionClass;
@@ -106,7 +106,7 @@ public class ExceptionDataMapper {
 
         public ServerSideExceptionInfo getServerSideExceptionInfoFromException(Throwable exception) {
             return new ServerSideExceptionInfo(exception, i18nKey,
-                                               parameterMapping.apply(exception).toArray(new String[0]));
+                    parameterMapping.apply(exception).toArray(new String[0]));
         }
     }
 }

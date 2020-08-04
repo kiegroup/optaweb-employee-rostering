@@ -16,6 +16,8 @@
 
 package org.optaweb.employeerostering.tenant;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -38,8 +40,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -65,13 +65,13 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
 
     private ResponseEntity<RosterConstraintConfiguration> getRosterConstraintParametrization(Integer tenantId) {
         return restTemplate.getForEntity(tenantPathURI + tenantId + "/config/constraint",
-                                         RosterConstraintConfiguration.class);
+                RosterConstraintConfiguration.class);
     }
 
     private ResponseEntity<RosterConstraintConfiguration> updateRosterConstraintParametrization(
             Integer tenantId, RosterConstraintConfigurationView rosterConstraintConfigurationView) {
         return restTemplate.postForEntity(tenantPathURI + tenantId + "/config/constraint/update",
-                                          rosterConstraintConfigurationView, RosterConstraintConfiguration.class);
+                rosterConstraintConfigurationView, RosterConstraintConfiguration.class);
     }
 
     private ResponseEntity<List> getSupportedTimezones() {
@@ -91,7 +91,7 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
     @Test
     public void tenantCrudTest() {
         RosterStateView rosterStateView = new RosterStateView(0, 0, LocalDate.of(2000, 01, 01), 0, 0, 0, 2,
-                                                              LocalDate.of(2000, 01, 02), ZoneId.of("America/Toronto"));
+                LocalDate.of(2000, 01, 02), ZoneId.of("America/Toronto"));
         rosterStateView.setTenant(new Tenant("tenant"));
         ResponseEntity<Tenant> postResponse = addTenant(rosterStateView);
         assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);

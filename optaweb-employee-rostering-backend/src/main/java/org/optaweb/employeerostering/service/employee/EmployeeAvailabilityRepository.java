@@ -49,7 +49,7 @@ public interface EmployeeAvailabilityRepository extends JpaRepository<EmployeeAv
             " and ea.startDateTime < :endDateTime" +
             " order by e.name, ea.startDateTime")
     List<EmployeeAvailability> filterWithEmployee(@Param("tenantId") Integer tenantId,
-                                                  @Param("employeeSet") Set<Employee> employeeSet,
-                                                  @Param("startDateTime") OffsetDateTime startDateTime,
-                                                  @Param("endDateTime") OffsetDateTime endDateTime);
+            @Param("employeeSet") Set<Employee> employeeSet,
+            @Param("startDateTime") OffsetDateTime startDateTime,
+            @Param("endDateTime") OffsetDateTime endDateTime);
 }

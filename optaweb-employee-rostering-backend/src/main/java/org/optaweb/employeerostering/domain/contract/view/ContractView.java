@@ -39,7 +39,7 @@ public class ContractView extends AbstractPersistable {
     }
 
     public ContractView(Integer tenantId, String name, Integer maximumMinutesPerDay, Integer maximumMinutesPerWeek,
-                        Integer maximumMinutesPerMonth, Integer maximumMinutesPerYear) {
+            Integer maximumMinutesPerMonth, Integer maximumMinutesPerYear) {
         super(tenantId);
         this.name = name;
         this.maximumMinutesPerDay = maximumMinutesPerDay;

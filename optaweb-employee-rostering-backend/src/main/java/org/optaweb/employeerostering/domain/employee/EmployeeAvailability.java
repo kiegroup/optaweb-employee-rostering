@@ -28,12 +28,13 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "employee_id", "startDateTime", "endDateTime"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "tenantId", "employee_id", "startDateTime", "endDateTime" }))
 // TODO: Single Responsibility Principle - acts as both domain entity and JSON-serializable entity
 public class EmployeeAvailability extends AbstractPersistable {
 
@@ -54,7 +55,7 @@ public class EmployeeAvailability extends AbstractPersistable {
     }
 
     public EmployeeAvailability(Integer tenantId, Employee employee, OffsetDateTime startDateTime,
-                                OffsetDateTime endDateTime) {
+            OffsetDateTime endDateTime) {
         super(tenantId);
         this.employee = employee;
         this.startDateTime = startDateTime;
@@ -65,9 +66,9 @@ public class EmployeeAvailability extends AbstractPersistable {
         super(employeeAvailabilityView);
         this.employee = employee;
         this.startDateTime = OffsetDateTime.of(employeeAvailabilityView.getStartDateTime(),
-                                             zoneId.getRules().getOffset(employeeAvailabilityView.getStartDateTime()));
+                zoneId.getRules().getOffset(employeeAvailabilityView.getStartDateTime()));
         this.endDateTime = OffsetDateTime.of(employeeAvailabilityView.getEndDateTime(),
-                                             zoneId.getRules().getOffset(employeeAvailabilityView.getEndDateTime()));
+                zoneId.getRules().getOffset(employeeAvailabilityView.getEndDateTime()));
         this.state = employeeAvailabilityView.getState();
     }
 

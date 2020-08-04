@@ -28,16 +28,16 @@ import org.optaweb.employeerostering.domain.employee.Employee;
  */
 @Embeddable
 public class Seat {
-    
+
     private Integer dayInRotation;
-    
+
     @ManyToOne
     private Employee employee;
-    
+
     public Seat() {
-        
+
     }
-    
+
     public Seat(Integer dayInRotation, Employee employee) {
         this.setDayInRotation(dayInRotation);
         this.employee = employee;
@@ -47,7 +47,6 @@ public class Seat {
         return employee;
     }
 
-    
     public void setEmployee(Employee employee) {
         this.employee = employee;
     }

@@ -36,8 +36,7 @@ import org.optaweb.employeerostering.domain.spot.Spot;
 
 public final class ShiftRosterXlsxFileIO {
 
-    public static final DateTimeFormatter DATE_TIME_FORMATTER
-            = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.ENGLISH);
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.ENGLISH);
 
     // Cannot build instances of this, so private empty constructor
     private ShiftRosterXlsxFileIO() {

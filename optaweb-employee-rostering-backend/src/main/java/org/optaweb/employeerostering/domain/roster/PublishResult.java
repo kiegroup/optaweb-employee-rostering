@@ -36,16 +36,13 @@ public class PublishResult {
         return publishedFromDate;
     }
 
-
     public void setPublishedFromDate(LocalDate publishedFromDate) {
         this.publishedFromDate = publishedFromDate;
     }
 
-
     public LocalDate getPublishedToDate() {
         return publishedToDate;
     }
-
 
     public void setPublishedToDate(LocalDate publishedToDate) {
         this.publishedToDate = publishedToDate;

@@ -29,7 +29,7 @@ import javax.validation.constraints.Size;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "name" }))
 public class Tenant {
 
     @Id
@@ -45,7 +45,8 @@ public class Tenant {
     private String name;
 
     @SuppressWarnings("unused")
-    public Tenant() {}
+    public Tenant() {
+    }
 
     public Tenant(String name) {
         this.name = name;

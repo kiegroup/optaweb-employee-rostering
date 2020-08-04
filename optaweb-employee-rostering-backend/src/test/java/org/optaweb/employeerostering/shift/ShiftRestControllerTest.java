@@ -16,6 +16,8 @@
 
 package org.optaweb.employeerostering.shift;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -41,8 +43,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureTestDatabase
@@ -58,8 +58,8 @@ public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServ
 
     private ResponseEntity<List<ShiftView>> getShifts(Integer tenantId) {
         return restTemplate.exchange(shiftPathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<ShiftView>>() {
-                                     }, tenantId);
+                new ParameterizedTypeReference<List<ShiftView>>() {
+                }, tenantId);
     }
 
     private ResponseEntity<ShiftView> getShift(Integer tenantId, Long id) {
@@ -103,16 +103,16 @@ public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServ
     @Test
     public void shiftCrudTest() {
         ResponseEntity<Spot> spotResponseEntity = addSpot(TENANT_ID, new SpotView(TENANT_ID, "spot",
-                                                                                  Collections.emptySet()));
+                Collections.emptySet()));
         Spot spot = spotResponseEntity.getBody();
 
         ResponseEntity<Contract> contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "contract"));
         Contract contract = contractResponseEntity.getBody();
 
         ResponseEntity<Employee> rotationEmployeeResponseEntity = addEmployee(TENANT_ID,
-                                                                              new Employee(TENANT_ID,
-                                                                                           "rotationEmployee", contract,
-                                                                                           Collections.emptySet()));
+                new Employee(TENANT_ID,
+                        "rotationEmployee", contract,
+                        Collections.emptySet()));
         Employee rotationEmployee = rotationEmployeeResponseEntity.getBody();
 
         LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);

@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "tenantId", "name" }))
 public class Skill extends AbstractPersistable {
 
     @NotNull

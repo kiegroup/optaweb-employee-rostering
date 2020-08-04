@@ -15,26 +15,6 @@
  */
 package org.optaweb.employeerostering.service.solver;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.YearMonth;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Objects;
-import java.util.function.Function;
-
-import org.optaplanner.core.api.score.stream.Constraint;
-import org.optaplanner.core.api.score.stream.ConstraintFactory;
-import org.optaplanner.core.api.score.stream.ConstraintProvider;
-import org.optaplanner.core.api.score.stream.bi.BiConstraintStream;
-import org.optaplanner.core.api.score.stream.uni.UniConstraintStream;
-import org.optaweb.employeerostering.domain.employee.Employee;
-import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
-import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
-import org.optaweb.employeerostering.domain.shift.Shift;
-import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
-
 import static java.time.Duration.between;
 import static org.optaplanner.core.api.score.stream.ConstraintCollectors.sumDuration;
 import static org.optaplanner.core.api.score.stream.Joiners.equal;
@@ -57,6 +37,26 @@ import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfig
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Objects;
+import java.util.function.Function;
+
+import org.optaplanner.core.api.score.stream.Constraint;
+import org.optaplanner.core.api.score.stream.ConstraintFactory;
+import org.optaplanner.core.api.score.stream.ConstraintProvider;
+import org.optaplanner.core.api.score.stream.bi.BiConstraintStream;
+import org.optaplanner.core.api.score.stream.uni.UniConstraintStream;
+import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
+import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
+import org.optaweb.employeerostering.domain.shift.Shift;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 
 /**
  * Designed to match the DRL exactly.
@@ -85,7 +85,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
 
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
-        return new Constraint[]{
+        return new Constraint[] {
                 requiredSkillForShift(constraintFactory),
                 unavailableEmployeeTimeSlot(constraintFactory),
                 noOverlappingShifts(constraintFactory),
@@ -158,13 +158,12 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                 .join(Shift.class, equal(Function.identity(), Shift::getEmployee))
                 .groupBy((employee, shift) -> employee,
                         (employee, shift) -> shift.getStartDateTime().toLocalDate(),
-                        sumDuration((employee, shift) ->
-                                between(shift.getStartDateTime(), shift.getEndDateTime())))
-                .filter((employee, firstDayOfWeek, totalWorkingTime) ->
-                        totalWorkingTime.toMinutes() > employee.getContract().getMaximumMinutesPerDay())
+                        sumDuration((employee, shift) -> between(shift.getStartDateTime(), shift.getEndDateTime())))
+                .filter((employee, firstDayOfWeek,
+                        totalWorkingTime) -> totalWorkingTime.toMinutes() > employee.getContract().getMaximumMinutesPerDay())
                 .penalizeConfigurableLong(CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
-                        (employee, firstDayOfWeek, totalWorkingTime) ->
-                                totalWorkingTime.toMinutes() - employee.getContract().getMaximumMinutesPerDay());
+                        (employee, firstDayOfWeek, totalWorkingTime) -> totalWorkingTime.toMinutes()
+                                - employee.getContract().getMaximumMinutesPerDay());
     }
 
     Constraint weeklyMinutesMustNotExceedContractMaximum(ConstraintFactory constraintFactory) {
@@ -173,15 +172,15 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                 .filter((configuration, employee) -> employee.getContract().getMaximumMinutesPerWeek() != null)
                 .join(Shift.class, equal((configuration, employee) -> employee, Shift::getEmployee))
                 .groupBy((configuration, employee, shift) -> employee,
-                        (configuration, employee, shift) ->
-                                extractFirstDayOfWeek(configuration.getWeekStartDay(), shift.getStartDateTime()),
-                        sumDuration((configuration, employee, shift) ->
-                                between(shift.getStartDateTime(), shift.getEndDateTime())))
-                .filter((employee, firstDayOfWeek, totalWorkingTime) ->
-                        totalWorkingTime.toMinutes() > employee.getContract().getMaximumMinutesPerWeek())
+                        (configuration, employee, shift) -> extractFirstDayOfWeek(configuration.getWeekStartDay(),
+                                shift.getStartDateTime()),
+                        sumDuration(
+                                (configuration, employee, shift) -> between(shift.getStartDateTime(), shift.getEndDateTime())))
+                .filter((employee, firstDayOfWeek,
+                        totalWorkingTime) -> totalWorkingTime.toMinutes() > employee.getContract().getMaximumMinutesPerWeek())
                 .penalizeConfigurableLong(CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
-                        (employee, firstDayOfWeek, totalWorkingTime) ->
-                                totalWorkingTime.toMinutes() - employee.getContract().getMaximumMinutesPerWeek());
+                        (employee, firstDayOfWeek, totalWorkingTime) -> totalWorkingTime.toMinutes()
+                                - employee.getContract().getMaximumMinutesPerWeek());
     }
 
     Constraint monthlyMinutesMustNotExceedContractMaximum(ConstraintFactory constraintFactory) {
@@ -190,13 +189,12 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                 .join(Shift.class, equal(Function.identity(), Shift::getEmployee))
                 .groupBy((employee, shift) -> employee,
                         (employee, shift) -> YearMonth.from(shift.getStartDateTime()),
-                        sumDuration((employee, shift) ->
-                                between(shift.getStartDateTime(), shift.getEndDateTime())))
-                .filter((employee, firstDayOfWeek, totalWorkingTime) ->
-                        totalWorkingTime.toMinutes() > employee.getContract().getMaximumMinutesPerMonth())
+                        sumDuration((employee, shift) -> between(shift.getStartDateTime(), shift.getEndDateTime())))
+                .filter((employee, firstDayOfWeek,
+                        totalWorkingTime) -> totalWorkingTime.toMinutes() > employee.getContract().getMaximumMinutesPerMonth())
                 .penalizeConfigurableLong(CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
-                        (employee, firstDayOfWeek, totalWorkingTime) ->
-                                totalWorkingTime.toMinutes() - employee.getContract().getMaximumMinutesPerMonth());
+                        (employee, firstDayOfWeek, totalWorkingTime) -> totalWorkingTime.toMinutes()
+                                - employee.getContract().getMaximumMinutesPerMonth());
     }
 
     Constraint yearlyMinutesMustNotExceedContractMaximum(ConstraintFactory constraintFactory) {
@@ -206,11 +204,11 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                 .groupBy((employee, shift) -> employee,
                         (employee, shift) -> shift.getStartDateTime().getYear(),
                         sumDuration((employee, shift) -> between(shift.getStartDateTime(), shift.getEndDateTime())))
-                .filter((employee, firstDayOfWeek, totalWorkingTime) ->
-                        totalWorkingTime.toMinutes() > employee.getContract().getMaximumMinutesPerYear())
+                .filter((employee, firstDayOfWeek,
+                        totalWorkingTime) -> totalWorkingTime.toMinutes() > employee.getContract().getMaximumMinutesPerYear())
                 .penalizeConfigurableLong(CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
-                        (employee, firstDayOfWeek, totalWorkingTime) ->
-                                totalWorkingTime.toMinutes() - employee.getContract().getMaximumMinutesPerYear());
+                        (employee, firstDayOfWeek, totalWorkingTime) -> totalWorkingTime.toMinutes()
+                                - employee.getContract().getMaximumMinutesPerYear());
     }
 
     Constraint assignEveryShift(ConstraintFactory constraintFactory) {

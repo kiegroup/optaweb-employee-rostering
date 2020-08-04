@@ -68,18 +68,18 @@ public class Roster extends AbstractPersistable {
     }
 
     public Roster(Long id, Integer tenantId, RosterConstraintConfiguration rosterConstraintConfiguration,
-                  List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
-                  List<EmployeeAvailability> employeeAvailabilityList,
-                  RosterState rosterState, List<Shift> shiftList) {
+            List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
+            List<EmployeeAvailability> employeeAvailabilityList,
+            RosterState rosterState, List<Shift> shiftList) {
         this(id, tenantId, rosterConstraintConfiguration, skillList, spotList, employeeList, employeeAvailabilityList,
-             rosterState, shiftList, false, null);
+                rosterState, shiftList, false, null);
     }
 
     public Roster(Long id, Integer tenantId, RosterConstraintConfiguration rosterConstraintConfiguration,
-                  List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
-                  List<EmployeeAvailability> employeeAvailabilityList,
-                  RosterState rosterState, List<Shift> shiftList, boolean isNondisruptivePlanning,
-                  OffsetDateTime nondisruptiveReplanFrom) {
+            List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
+            List<EmployeeAvailability> employeeAvailabilityList,
+            RosterState rosterState, List<Shift> shiftList, boolean isNondisruptivePlanning,
+            OffsetDateTime nondisruptiveReplanFrom) {
         super(id, tenantId);
         this.rosterConstraintConfiguration = rosterConstraintConfiguration;
         this.skillList = skillList;

@@ -27,9 +27,9 @@ import org.optaweb.employeerostering.domain.skill.Skill;
 public class EmployeeView extends AbstractPersistable {
 
     private String name;
-    
+
     private String shortId;
-    
+
     private String color;
 
     private Contract contract;
@@ -39,9 +39,9 @@ public class EmployeeView extends AbstractPersistable {
     @SuppressWarnings("unused")
     public EmployeeView() {
     }
-    
+
     public EmployeeView(Integer tenantId, String name, Contract contract,
-                        Set<Skill> skillProficiencySet) {
+            Set<Skill> skillProficiencySet) {
         super(tenantId);
         this.name = name;
         this.contract = contract;
@@ -51,7 +51,7 @@ public class EmployeeView extends AbstractPersistable {
     }
 
     public EmployeeView(Integer tenantId, String name, Contract contract,
-                        Set<Skill> skillProficiencySet, String shortId, String color) {
+            Set<Skill> skillProficiencySet, String shortId, String color) {
         super(tenantId);
         this.name = name;
         this.contract = contract;

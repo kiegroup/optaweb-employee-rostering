@@ -37,7 +37,7 @@ public class SystemPropertiesRetriever {
                 return ZoneId.of(zoneIdProperty);
             } catch (DateTimeException e) {
                 throw new IllegalStateException("The system property (" + ZONE_ID_SYSTEM_PROPERTY
-                                                        + ") has an invalid value (" + zoneIdProperty + ").", e);
+                        + ") has an invalid value (" + zoneIdProperty + ").", e);
             }
         }
         return ZoneId.systemDefault();
@@ -48,10 +48,9 @@ public class SystemPropertiesRetriever {
         if (initialDataProperty != null) {
             try {
                 return InitialData.valueOf(initialDataProperty);
-            }
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 throw new IllegalStateException("The system property (" + INITIAL_DATA_PROPERTY
-                                                        + ") has an invalid value (" + initialDataProperty + ").", e);
+                        + ") has an invalid value (" + initialDataProperty + ").", e);
             }
         }
         return InitialData.DEMO_DATA;

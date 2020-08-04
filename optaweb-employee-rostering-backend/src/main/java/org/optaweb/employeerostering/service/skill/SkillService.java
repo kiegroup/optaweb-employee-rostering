@@ -87,11 +87,11 @@ public class SkillService extends AbstractRestService {
         Skill oldSkill = skillRepository
                 .findById(newSkill.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Skill entity with ID (" + newSkill.getId() + ") not " +
-                                                                       "found."));
+                        "found."));
 
         if (!oldSkill.getTenantId().equals(newSkill.getTenantId())) {
             throw new IllegalStateException("Skill entity with tenantId (" + oldSkill.getTenantId() +
-                                                    ") cannot change tenants.");
+                    ") cannot change tenants.");
         }
 
         oldSkill.setName(newSkill.getName());

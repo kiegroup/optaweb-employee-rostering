@@ -26,12 +26,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}),
-        @UniqueConstraint(columnNames = {"id"})})
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "tenantId", "name" }),
+        @UniqueConstraint(columnNames = { "id" }) })
 // TODO: Single Responsibility Principle - acts as both domain entity and JSON-serializable entity
 public class Contract extends AbstractPersistable {
 
@@ -71,7 +72,7 @@ public class Contract extends AbstractPersistable {
     }
 
     public Contract(Integer tenantId, String name, Integer maximumMinutesPerDay, Integer maximumMinutesPerWeek,
-                    Integer maximumMinutesPerMonth, Integer maximumMinutesPerYear) {
+            Integer maximumMinutesPerMonth, Integer maximumMinutesPerYear) {
 
         super(tenantId);
         this.name = name;

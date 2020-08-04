@@ -31,7 +31,8 @@ public class ShiftRosterView extends AbstractRosterView {
     protected Map<Long, List<ShiftView>> spotIdToShiftViewListMap;
 
     @SuppressWarnings("unused")
-    public ShiftRosterView() {}
+    public ShiftRosterView() {
+    }
 
     public ShiftRosterView(Integer tenantId) {
         this.tenantId = tenantId;

@@ -21,8 +21,6 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.springframework.http.HttpStatus;
@@ -37,6 +35,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/spot")
@@ -73,14 +74,14 @@ public class SpotController {
     @ApiOperation("Add a new spot")
     @PostMapping("/add")
     public ResponseEntity<Spot> createSpot(@PathVariable @Min(0) Integer tenantId,
-                                           @RequestBody @Valid SpotView spotView) {
+            @RequestBody @Valid SpotView spotView) {
         return new ResponseEntity<>(spotService.createSpot(tenantId, spotView), HttpStatus.OK);
     }
 
     @ApiOperation("Update a spot")
     @PostMapping("/update")
     public ResponseEntity<Spot> updateSpot(@PathVariable @Min(0) Integer tenantId,
-                                           @RequestBody @Valid SpotView spotView) {
+            @RequestBody @Valid SpotView spotView) {
         return new ResponseEntity<>(spotService.updateSpot(tenantId, spotView), HttpStatus.OK);
     }
 }

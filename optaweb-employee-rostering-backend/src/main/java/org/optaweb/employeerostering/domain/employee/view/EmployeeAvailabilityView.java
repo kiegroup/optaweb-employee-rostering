@@ -21,13 +21,14 @@ import java.time.ZoneId;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.common.DateTimeUtils;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 public class EmployeeAvailabilityView extends AbstractPersistable {
 
@@ -42,10 +43,11 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
     private EmployeeAvailabilityState state;
 
     @SuppressWarnings("unused")
-    public EmployeeAvailabilityView() {}
+    public EmployeeAvailabilityView() {
+    }
 
     public EmployeeAvailabilityView(Integer tenantId, Employee employee, LocalDateTime startDateTime,
-                                    LocalDateTime endDateTime, EmployeeAvailabilityState state) {
+            LocalDateTime endDateTime, EmployeeAvailabilityState state) {
         super(tenantId);
         this.employeeId = employee.getId();
         this.startDateTime = startDateTime;

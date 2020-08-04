@@ -16,12 +16,12 @@
 
 package org.optaweb.employeerostering.util;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class HierarchyTreeTest {
 

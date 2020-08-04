@@ -41,10 +41,10 @@ public class ContractService extends AbstractRestService {
     public Contract convertFromView(Integer tenantId, ContractView contractView) {
         validateBean(tenantId, contractView);
         Contract contract = new Contract(tenantId, contractView.getName(),
-                                         contractView.getMaximumMinutesPerDay(),
-                                         contractView.getMaximumMinutesPerWeek(),
-                                         contractView.getMaximumMinutesPerMonth(),
-                                         contractView.getMaximumMinutesPerYear());
+                contractView.getMaximumMinutesPerDay(),
+                contractView.getMaximumMinutesPerWeek(),
+                contractView.getMaximumMinutesPerMonth(),
+                contractView.getMaximumMinutesPerYear());
         contract.setId(contractView.getId());
         contract.setVersion(contractView.getVersion());
         return contract;
@@ -91,11 +91,11 @@ public class ContractService extends AbstractRestService {
         Contract oldContract = contractRepository
                 .findById(newContract.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Contract entity with ID (" + newContract.getId() +
-                                                                       ") not found."));
+                        ") not found."));
 
         if (!oldContract.getTenantId().equals(newContract.getTenantId())) {
             throw new IllegalStateException("Contract entity with tenantId (" + oldContract.getTenantId()
-                                                    + ") cannot change tenants.");
+                    + ") cannot change tenants.");
         }
 
         oldContract.setName(newContract.getName());

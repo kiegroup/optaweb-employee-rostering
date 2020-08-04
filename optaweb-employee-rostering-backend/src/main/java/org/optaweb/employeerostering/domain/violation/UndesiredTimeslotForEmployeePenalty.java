@@ -32,7 +32,7 @@ public class UndesiredTimeslotForEmployeePenalty implements ConstraintMatchView 
     }
 
     public UndesiredTimeslotForEmployeePenalty(Shift shift, EmployeeAvailability employeeAvailability,
-                                               HardMediumSoftLongScore score) {
+            HardMediumSoftLongScore score) {
         this.shift = shift;
         this.employeeAvailability = employeeAvailability;
         this.score = score;

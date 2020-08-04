@@ -40,24 +40,24 @@ import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.skill.Skill;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "tenantId", "name" }))
 public class Employee extends AbstractPersistable {
 
     @NotNull
     @Size(min = 1, max = 120)
     @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
     private String name;
-    
+
     @NotNull
     @Size(min = 1, max = 3)
     @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
     private String shortId;
-    
+
     @NotNull
     @Size(min = 7, max = 7)
     @Pattern(regexp = "^#[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]$")
     private String color;
-    
+
     @NotNull
     @ManyToOne
     private Contract contract;
@@ -66,8 +66,7 @@ public class Employee extends AbstractPersistable {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "EmployeeSkillProficiencySet",
             joinColumns = @JoinColumn(name = "employeeId", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id"))
     private Set<Skill> skillProficiencySet;
 
     @SuppressWarnings("unused")
@@ -75,7 +74,7 @@ public class Employee extends AbstractPersistable {
     }
 
     public Employee(Integer tenantId, String name, Contract contract,
-                    Set<Skill> skillProficiencySet) {
+            Set<Skill> skillProficiencySet) {
         super(tenantId);
         this.name = name;
         this.shortId = generateShortIdFromName(name);
@@ -83,9 +82,9 @@ public class Employee extends AbstractPersistable {
         this.contract = contract;
         this.skillProficiencySet = skillProficiencySet;
     }
-    
+
     public Employee(Integer tenantId, String name, Contract contract,
-                    Set<Skill> skillProficiencySet, String shortId, String color) {
+            Set<Skill> skillProficiencySet, String shortId, String color) {
         super(tenantId);
         this.name = name;
         this.shortId = shortId;
@@ -106,15 +105,15 @@ public class Employee extends AbstractPersistable {
     public String toString() {
         return name;
     }
-    
+
     // ************************************************************************
     // Constructor default utils
     // ************************************************************************
     public static String generateShortIdFromName(String name) {
         return Arrays.stream(name.split(" ")) // Separate name where there spaces ("Amy Cole" -> ["Amy", "Cole])
-                     .limit(3) // Limit to the first three parts
-                     .map(s -> s.substring(0, 1)) // Get the first character of the part
-                     .collect(Collectors.joining("")); // Join the parts together
+                .limit(3) // Limit to the first three parts
+                .map(s -> s.substring(0, 1)) // Get the first character of the part
+                .collect(Collectors.joining("")); // Join the parts together
     }
 
     // ************************************************************************
@@ -145,12 +144,10 @@ public class Employee extends AbstractPersistable {
         this.contract = contract;
     }
 
-    
     public String getShortId() {
         return shortId;
     }
 
-    
     public void setShortId(String shortId) {
         this.shortId = shortId;
     }

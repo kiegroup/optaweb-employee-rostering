@@ -37,10 +37,9 @@ public class DroolsSolverTest extends AbstractSolverTest {
     @Override
     public SolverFactory<Roster> getSolverFactory() {
         return SolverFactory.create(solverConfig.copyConfig()
-                                            .withTerminationConfig(
-                                                    new TerminationConfig()
-                                                            .withBestScoreLimit(AbstractSolverTest
-                                                                                        .BEST_SCORE_TERMINATION_LIMIT)
-                                                            .withScoreCalculationCountLimit(10000L)));
+                .withTerminationConfig(
+                        new TerminationConfig()
+                                .withBestScoreLimit(AbstractSolverTest.BEST_SCORE_TERMINATION_LIMIT)
+                                .withScoreCalculationCountLimit(10000L)));
     }
 }

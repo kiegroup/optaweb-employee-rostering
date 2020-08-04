@@ -21,8 +21,6 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.springframework.http.HttpStatus;
@@ -37,6 +35,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/contract")
@@ -61,28 +62,28 @@ public class ContractController {
     @ApiOperation("Get a contract by id")
     @GetMapping("/{id}")
     public ResponseEntity<Contract> getContract(@PathVariable @Min(0) Integer tenantId,
-                                                @PathVariable @Min(0) Long id) {
+            @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(contractService.getContract(tenantId, id), HttpStatus.OK);
     }
 
     @ApiOperation("Delete a contract")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteContract(@PathVariable @Min(0) Integer tenantId,
-                                                  @PathVariable @Min(0) Long id) {
+            @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(contractService.deleteContract(tenantId, id), HttpStatus.OK);
     }
 
     @ApiOperation("Add a new contract")
     @PostMapping("/add")
     public ResponseEntity<Contract> createContract(@PathVariable @Min(0) Integer tenantId,
-                                                   @RequestBody @Valid ContractView contractView) {
+            @RequestBody @Valid ContractView contractView) {
         return new ResponseEntity<>(contractService.createContract(tenantId, contractView), HttpStatus.OK);
     }
 
     @ApiOperation("Update a contract")
     @PostMapping("/update")
     public ResponseEntity<Contract> updateContract(@PathVariable @Min(0) Integer tenantId,
-                                                   @RequestBody @Valid ContractView contractView) {
+            @RequestBody @Valid ContractView contractView) {
         return new ResponseEntity<>(contractService.updateContract(tenantId, contractView), HttpStatus.OK);
     }
 }

@@ -27,7 +27,7 @@ import org.springframework.stereotype.Repository;
 public interface TenantRepository extends JpaRepository<Tenant, Integer> {
 
     @Query("select t from Tenant t " +
-            // Deliberately order by id instead of name to use generated order
+    // Deliberately order by id instead of name to use generated order
             "order by t.id")
     List<Tenant> findAll();
 }

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package org.optaweb.employeerostering.domain.shift;
 
 import org.optaplanner.core.api.domain.entity.PinningFilter;

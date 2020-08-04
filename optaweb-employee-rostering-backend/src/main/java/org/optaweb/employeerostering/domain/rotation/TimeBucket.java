@@ -45,49 +45,48 @@ import org.optaweb.employeerostering.domain.spot.Spot;
 public class TimeBucket extends AbstractPersistable {
     private LocalTime startTime;
     private LocalTime endTime;
-    
+
     @ManyToOne
     private Spot spot;
-    
+
     @OneToMany
     private Set<Skill> additionalSkillSet;
-    
+
     @ElementCollection
     @CollectionTable(name = "repeat_on_day_set",
-        joinColumns = {
-        @JoinColumn(name = "day_id",
-            referencedColumnName = "id",
-            foreignKey=@ForeignKey(name="DAY_FK",
-            foreignKeyDefinition = "FOREIGN KEY (day_id) references public.time_bucket (id)" +
-            " ON UPDATE NO ACTION ON DELETE CASCADE"))
-        }
-    )
+            joinColumns = {
+                    @JoinColumn(name = "day_id",
+                            referencedColumnName = "id",
+                            foreignKey = @ForeignKey(name = "DAY_FK",
+                                    foreignKeyDefinition = "FOREIGN KEY (day_id) references public.time_bucket (id)" +
+                                            " ON UPDATE NO ACTION ON DELETE CASCADE"))
+            })
     private Set<DayOfWeek> repeatOnDaySet;
-    
+
     @ElementCollection
     @CollectionTable(name = "seat_list",
-        joinColumns = {
-        @JoinColumn(name = "seat_id",
-            referencedColumnName = "id",
-            foreignKey=@ForeignKey(name="SEAT_FK",
-            foreignKeyDefinition = "FOREIGN KEY (seat_id) references public.time_bucket (id)" +
-            " ON UPDATE NO ACTION ON DELETE CASCADE"))
-        }
-    )
+            joinColumns = {
+                    @JoinColumn(name = "seat_id",
+                            referencedColumnName = "id",
+                            foreignKey = @ForeignKey(name = "SEAT_FK",
+                                    foreignKeyDefinition = "FOREIGN KEY (seat_id) references public.time_bucket (id)" +
+                                            " ON UPDATE NO ACTION ON DELETE CASCADE"))
+            })
     private List<Seat> seatList;
-    
-    public TimeBucket() {}
-    
-    public TimeBucket(Integer tenantId, Spot spot, LocalTime startTime, LocalTime endTime,
-                      Set<Skill> additionalSkillSet,
-                      Set<DayOfWeek> repeatOnDaySet, DayOfWeek startOfWeek, int rotationLength) {
-        this(tenantId, spot, startTime, endTime, additionalSkillSet, repeatOnDaySet,
-             generateDefaultSeatList(startOfWeek, repeatOnDaySet, rotationLength));
+
+    public TimeBucket() {
     }
-    
+
     public TimeBucket(Integer tenantId, Spot spot, LocalTime startTime, LocalTime endTime,
-                      Set<Skill> additionalSkillSet,
-                      Set<DayOfWeek> repeatOnDaySet, List<Seat> seatList) {
+            Set<Skill> additionalSkillSet,
+            Set<DayOfWeek> repeatOnDaySet, DayOfWeek startOfWeek, int rotationLength) {
+        this(tenantId, spot, startTime, endTime, additionalSkillSet, repeatOnDaySet,
+                generateDefaultSeatList(startOfWeek, repeatOnDaySet, rotationLength));
+    }
+
+    public TimeBucket(Integer tenantId, Spot spot, LocalTime startTime, LocalTime endTime,
+            Set<Skill> additionalSkillSet,
+            Set<DayOfWeek> repeatOnDaySet, List<Seat> seatList) {
         super(tenantId);
         this.spot = spot;
         this.startTime = startTime;
@@ -96,33 +95,32 @@ public class TimeBucket extends AbstractPersistable {
         this.repeatOnDaySet = repeatOnDaySet;
         this.seatList = new ArrayList<>(seatList);
     }
-    
+
     // ********************************************************************************************
     // Constructor default utils
     // ********************************************************************************************  
-    
+
     private static List<Seat> generateDefaultSeatList(DayOfWeek startOfWeek, Set<DayOfWeek> repeatOnDaySet,
-                                                      int rotationLength) {
+            int rotationLength) {
         List<Seat> seatList = new ArrayList<>();
         DayOfWeek rotationDay = startOfWeek;
         for (int i = 0; i < rotationLength; i++) {
             if (repeatOnDaySet.contains(rotationDay)) {
-                seatList.add(new Seat(i,null));
+                seatList.add(new Seat(i, null));
             }
             rotationDay = rotationDay.plus(1);
         }
         return seatList;
     }
-    
+
     // ********************************************************************************************
     // Getters and Setters
     // ********************************************************************************************   
-    
+
     public Spot getSpot() {
         return spot;
     }
-    
-    
+
     public void setSpot(Spot spot) {
         this.spot = spot;
     }
@@ -131,47 +129,38 @@ public class TimeBucket extends AbstractPersistable {
         return startTime;
     }
 
-    
     public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    
     public LocalTime getEndTime() {
         return endTime;
     }
 
-    
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
 
-    
     public Set<Skill> getAdditionalSkillSet() {
         return additionalSkillSet;
     }
 
-    
     public void setAdditionalSkillSet(Set<Skill> additionalSkillSet) {
         this.additionalSkillSet = additionalSkillSet;
     }
 
-    
     public Set<DayOfWeek> getRepeatOnDaySet() {
         return repeatOnDaySet;
     }
 
-    
     public void setRepeatOnDaySet(Set<DayOfWeek> repeatOnDaySet) {
         this.repeatOnDaySet = repeatOnDaySet;
     }
 
-    
     public List<Seat> getSeatList() {
         return seatList;
     }
 
-    
     public void setSeatList(List<Seat> seatList) {
         this.seatList = seatList;
     }
@@ -182,28 +171,27 @@ public class TimeBucket extends AbstractPersistable {
         setEndTime(updatedTimeBucket.getEndTime());
         setAdditionalSkillSet(updatedTimeBucket.getAdditionalSkillSet());
         setRepeatOnDaySet(updatedTimeBucket.getRepeatOnDaySet());
-        setSeatList(updatedTimeBucket.getSeatList());   
+        setSeatList(updatedTimeBucket.getSeatList());
     }
-    
+
     public Optional<Shift> createShiftForOffset(LocalDate startDate, int offset, ZoneId zoneId,
-                                                boolean defaultToRotationEmployee) {
+            boolean defaultToRotationEmployee) {
         return seatList.stream().filter(seat -> seat.getDayInRotation() == offset).findAny().map(seat -> {
             LocalDateTime startDateTime = startDate.atTime(getStartTime());
-            LocalDate endDate = (getStartTime().isBefore(getEndTime())) ?
-                    startDate  : // Ex: 9am - 5pm
-                    startDate.plusDays(1); // Ex: 9pm - 5am
-            
+            LocalDate endDate = (getStartTime().isBefore(getEndTime())) ? startDate : // Ex: 9am - 5pm
+            startDate.plusDays(1); // Ex: 9pm - 5am
+
             LocalDateTime endDateTime = endDate.atTime(getEndTime());
 
             OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime,
-                                                                   zoneId.getRules().getOffset(startDateTime));
+                    zoneId.getRules().getOffset(startDateTime));
             OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime,
-                                                                 zoneId.getRules().getOffset(endDateTime));
-            
+                    zoneId.getRules().getOffset(endDateTime));
+
             Shift shift = new Shift(getTenantId(), getSpot(), startOffsetDateTime,
-                                    endOffsetDateTime, seat.getEmployee(),
-                                    new HashSet<>(additionalSkillSet), null);
-            
+                    endOffsetDateTime, seat.getEmployee(),
+                    new HashSet<>(additionalSkillSet), null);
+
             if (defaultToRotationEmployee) {
                 shift.setEmployee(seat.getEmployee());
             }

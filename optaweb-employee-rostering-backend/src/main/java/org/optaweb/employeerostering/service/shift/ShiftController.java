@@ -21,10 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -38,6 +35,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/shift")
@@ -74,14 +74,14 @@ public class ShiftController {
     @ApiOperation("Add a new shift")
     @PostMapping("/add")
     public ResponseEntity<ShiftView> createShift(@PathVariable @Min(0) Integer tenantId,
-                                                 @RequestBody @Valid ShiftView shiftView) {
+            @RequestBody @Valid ShiftView shiftView) {
         return new ResponseEntity<>(shiftService.createShift(tenantId, shiftView), HttpStatus.OK);
     }
 
     @ApiOperation("Update a shift")
     @PutMapping("/update")
     public ResponseEntity<ShiftView> updateShift(@PathVariable @Min(0) Integer tenantId,
-                                                 @RequestBody @Valid ShiftView shiftView) {
+            @RequestBody @Valid ShiftView shiftView) {
         return new ResponseEntity<>(shiftService.updateShift(tenantId, shiftView), HttpStatus.OK);
     }
 }
