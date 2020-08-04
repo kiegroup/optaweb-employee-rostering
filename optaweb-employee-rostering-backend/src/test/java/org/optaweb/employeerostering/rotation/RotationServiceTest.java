@@ -16,11 +16,13 @@
 
 package org.optaweb.employeerostering.rotation;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,8 +48,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -57,10 +58,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
     private static final Logger logger = LoggerFactory.getLogger(RotationServiceTest.class);
-    
+
     @Autowired
     private ObjectMapper objectMapper;
-    
+
     @Autowired
     private MockMvc mvc;
 
@@ -88,8 +89,8 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
     @Test
     public void getTimeBucketListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/rotation/", TENANT_ID)
-                            .accept(MediaType.APPLICATION_JSON))
+                .get("/rest/tenant/{tenantId}/rotation/", TENANT_ID)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk());
     }
@@ -99,15 +100,15 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
         TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spot, LocalTime.of(9, 0),
-                                                                          LocalTime.of(17, 0),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptyList()));
+                LocalTime.of(17, 0),
+                Collections.emptySet(),
+                Collections.emptySet(),
+                Collections.emptyList()));
         TimeBucketView persistedTimeBucket = rotationService.createTimeBucket(TENANT_ID, timeBucketView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, persistedTimeBucket.getId())
-                            .accept(MediaType.APPLICATION_JSON))
+                .get("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, persistedTimeBucket.getId())
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
@@ -122,8 +123,8 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, 0)
-                            .accept(MediaType.APPLICATION_JSON))
+                .get("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, 0)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
@@ -135,15 +136,15 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
         TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spot, LocalTime.of(9, 0),
-                                                                          LocalTime.of(17, 0),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptyList()));
+                LocalTime.of(17, 0),
+                Collections.emptySet(),
+                Collections.emptySet(),
+                Collections.emptyList()));
         TimeBucketView persistedTimeBucket = rotationService.createTimeBucket(TENANT_ID, timeBucketView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .delete("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, persistedTimeBucket.getId())
-                            .accept(MediaType.APPLICATION_JSON))
+                .delete("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, persistedTimeBucket.getId())
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
@@ -155,10 +156,10 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
         TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spot, LocalTime.of(9, 0),
-                                                                          LocalTime.of(17, 0),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptyList()));
+                LocalTime.of(17, 0),
+                Collections.emptySet(),
+                Collections.emptySet(),
+                Collections.emptyList()));
         TimeBucketView persistedTimeBucket = rotationService.createTimeBucket(TENANT_ID, timeBucketView);
 
         String timeBucketName = "[TimeBucket-" + persistedTimeBucket.getId() + "]";
@@ -168,8 +169,8 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         String exceptionClass = "java.lang.IllegalStateException";
 
         mvc.perform(MockMvcRequestBuilders
-                            .delete("/rest/tenant/{tenantId}/rotation/{id}", 0, persistedTimeBucket.getId())
-                            .accept(MediaType.APPLICATION_JSON))
+                .delete("/rest/tenant/{tenantId}/rotation/{id}", 0, persistedTimeBucket.getId())
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
@@ -181,17 +182,17 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
         TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spot, LocalTime.of(9, 0),
-                                                                          LocalTime.of(17, 0),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptyList()));
+                LocalTime.of(17, 0),
+                Collections.emptySet(),
+                Collections.emptySet(),
+                Collections.emptyList()));
         String body = objectMapper.writeValueAsString(timeBucketView);
-        
+
         mvc.perform(MockMvcRequestBuilders
-                            .post("/rest/tenant/{tenantId}/rotation/add", TENANT_ID)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body)
-                            .accept(MediaType.APPLICATION_JSON))
+                .post("/rest/tenant/{tenantId}/rotation/add", TENANT_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
@@ -205,10 +206,10 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
         TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(0, spot, LocalTime.of(9, 0),
-                                                                          LocalTime.of(17, 0),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptyList()));
+                LocalTime.of(17, 0),
+                Collections.emptySet(),
+                Collections.emptySet(),
+                Collections.emptyList()));
         String body = objectMapper.writeValueAsString(timeBucketView);
 
         String timeBucketName = "[TimeBucket-null]";
@@ -218,9 +219,9 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         String exceptionClass = "java.lang.IllegalStateException";
 
         mvc.perform(MockMvcRequestBuilders
-                            .post("/rest/tenant/{tenantId}/rotation/add", TENANT_ID)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body))
+                .post("/rest/tenant/{tenantId}/rotation/add", TENANT_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
@@ -233,26 +234,26 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spotB = createSpot(TENANT_ID, "B", Collections.emptySet());
 
         TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spotA, LocalTime.of(9, 0),
-                                                                          LocalTime.of(17, 0),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptyList()));
-        
+                LocalTime.of(17, 0),
+                Collections.emptySet(),
+                Collections.emptySet(),
+                Collections.emptyList()));
+
         TimeBucketView persistedTimeBucket = rotationService.createTimeBucket(TENANT_ID, timeBucketView);
 
         TimeBucketView updatedTimeBucket = new TimeBucketView(new TimeBucket(TENANT_ID, spotB, LocalTime.of(9, 0),
-                                                                             LocalTime.of(17, 0),
-                                                                             Collections.emptySet(),
-                                                                             Collections.emptySet(),
-                                                                             Collections.emptyList()));
+                LocalTime.of(17, 0),
+                Collections.emptySet(),
+                Collections.emptySet(),
+                Collections.emptyList()));
         updatedTimeBucket.setId(persistedTimeBucket.getId());
         String body = objectMapper.writeValueAsString(updatedTimeBucket);
 
         mvc.perform(MockMvcRequestBuilders
-                            .put("/rest/tenant/{tenantId}/rotation/update", TENANT_ID)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body)
-                            .accept(MediaType.APPLICATION_JSON))
+                .put("/rest/tenant/{tenantId}/rotation/update", TENANT_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
@@ -269,17 +270,17 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
         TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spot, LocalTime.of(9, 0),
-                                                                          LocalTime.of(17, 0),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptySet(),
-                                                                          Collections.emptyList()));
+                LocalTime.of(17, 0),
+                Collections.emptySet(),
+                Collections.emptySet(),
+                Collections.emptyList()));
         timeBucketView.setId(0L);
         String body = objectMapper.writeValueAsString(timeBucketView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .put("/rest/tenant/{tenantId}/rotation/update", TENANT_ID)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body))
+                .put("/rest/tenant/{tenantId}/rotation/update", TENANT_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))

@@ -32,7 +32,7 @@ public class UnavailableEmployeeViolation implements ConstraintMatchView {
     }
 
     public UnavailableEmployeeViolation(Shift shift, EmployeeAvailability employeeAvailability,
-                                        HardMediumSoftLongScore score) {
+            HardMediumSoftLongScore score) {
         this.shift = shift;
         this.employeeAvailability = employeeAvailability;
         this.score = score;

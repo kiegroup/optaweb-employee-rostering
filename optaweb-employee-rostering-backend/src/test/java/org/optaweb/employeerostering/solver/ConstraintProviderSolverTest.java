@@ -39,14 +39,13 @@ public class ConstraintProviderSolverTest extends AbstractSolverTest {
     @Override
     public SolverFactory<Roster> getSolverFactory() {
         return SolverFactory.create(solverConfig.copyConfig()
-                                            .withScoreDirectorFactory(
-                                                    new ScoreDirectorFactoryConfig()
-                                                            .withConstraintProviderClass(
-                                                                    EmployeeRosteringConstraintProvider.class))
-                                            .withTerminationConfig(
-                                                    new TerminationConfig()
-                                                            .withBestScoreLimit(AbstractSolverTest
-                                                                                        .BEST_SCORE_TERMINATION_LIMIT)
-                                                            .withScoreCalculationCountLimit(10000L)));
+                .withScoreDirectorFactory(
+                        new ScoreDirectorFactoryConfig()
+                                .withConstraintProviderClass(
+                                        EmployeeRosteringConstraintProvider.class))
+                .withTerminationConfig(
+                        new TerminationConfig()
+                                .withBestScoreLimit(AbstractSolverTest.BEST_SCORE_TERMINATION_LIMIT)
+                                .withScoreCalculationCountLimit(10000L)));
     }
 }

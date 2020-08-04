@@ -41,15 +41,17 @@ public class AbstractEntityRequireTenantRestServiceTest {
 
     /**
      * Create a tenant with timezone zoneId
+     * 
      * @param zoneId the timezone for the tenant to be in, not null
      */
     protected Tenant createTestTenant(ZoneId zoneId) {
         return createTestTenant(new RosterStateView(null, 7, LocalDate.of(2000, 1, 1), 7, 24, 0, 7,
-                                                    LocalDate.of(1999, 12, 24), zoneId));
+                LocalDate.of(1999, 12, 24), zoneId));
     }
 
     /**
      * Create a tenant with the specified roster state
+     * 
      * @param rosterStateView the initial roster state for the tenant, not null
      */
     protected Tenant createTestTenant(RosterStateView rosterStateView) {

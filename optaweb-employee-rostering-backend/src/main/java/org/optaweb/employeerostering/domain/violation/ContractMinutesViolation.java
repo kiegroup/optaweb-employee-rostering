@@ -16,9 +16,10 @@
 
 package org.optaweb.employeerostering.domain.violation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaweb.employeerostering.domain.employee.Employee;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ContractMinutesViolation implements ConstraintMatchView {
 
@@ -33,7 +34,7 @@ public class ContractMinutesViolation implements ConstraintMatchView {
     }
 
     public ContractMinutesViolation(Employee employee, Type type, Long minutesWorked,
-                                    HardMediumSoftLongScore score) {
+            HardMediumSoftLongScore score) {
         this.employee = employee;
         this.type = type;
         this.minutesWorked = minutesWorked;

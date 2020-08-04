@@ -81,7 +81,7 @@ public class WannabeSolverManager implements ApplicationRunner {
             solver.terminateEarly();
         } else {
             throw new IllegalStateException("The roster with tenantId (" + tenantId
-                                                    + ") is not being solved currently.");
+                    + ") is not being solved currently.");
         }
     }
 
@@ -100,7 +100,7 @@ public class WannabeSolverManager implements ApplicationRunner {
             scoreDirector.calculateScore();
             Map<String, ConstraintMatchTotal> constraintMatchTotalMap = scoreDirector.getConstraintMatchTotalMap();
             String CONSTRAINT_ID = ConstraintMatchTotal.composeConstraintId(IndictmentUtils.CONSTRAINT_MATCH_PACKAGE,
-                                                                            "Unavailable time slot for an employee");
+                    "Unavailable time slot for an employee");
             constraintMatchTotalMap.get(CONSTRAINT_ID)
                     .getConstraintMatchSet()
                     .forEach(cm -> {
@@ -121,7 +121,7 @@ public class WannabeSolverManager implements ApplicationRunner {
         tenantIdToSolverStateMap.compute(tenantId, (k, solverStatus) -> {
             if (solverStatus != null && solverStatus != SolverStatus.TERMINATED) {
                 throw new IllegalStateException("The roster with tenantId (" + tenantId + ") is already solving " +
-                                                        "with solverStatus (" + solverStatus + ").");
+                        "with solverStatus (" + solverStatus + ").");
             }
             return SolverStatus.SCHEDULED;
         });

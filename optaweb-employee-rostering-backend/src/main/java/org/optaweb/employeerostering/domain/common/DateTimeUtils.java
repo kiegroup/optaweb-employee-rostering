@@ -29,7 +29,7 @@ public class DateTimeUtils {
 
     public static LocalDateTime toLocalDateTimeInZone(OffsetDateTime dateTime, ZoneId zoneId) {
         return LocalDateTime.ofEpochSecond(dateTime.toEpochSecond(), dateTime.getNano(),
-                                           zoneId.getRules().getOffset(dateTime.toInstant()));
+                zoneId.getRules().getOffset(dateTime.toInstant()));
     }
 
     public static boolean sameWeek(DayOfWeek weekStarting, OffsetDateTime dateTime1, OffsetDateTime dateTime2) {

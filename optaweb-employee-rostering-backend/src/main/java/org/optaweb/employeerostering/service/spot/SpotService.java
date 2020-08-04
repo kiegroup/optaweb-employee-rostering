@@ -88,11 +88,11 @@ public class SpotService extends AbstractRestService {
         Spot oldSpot = spotRepository
                 .findById(newSpot.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Spot entity with ID (" + newSpot.getId() +
-                                                                       ") not found."));
+                        ") not found."));
 
         if (!oldSpot.getTenantId().equals(newSpot.getTenantId())) {
             throw new IllegalStateException("Spot entity with tenantId (" + oldSpot.getTenantId()
-                                                    + ") cannot change tenants.");
+                    + ") cannot change tenants.");
         }
 
         oldSpot.setName(newSpot.getName());

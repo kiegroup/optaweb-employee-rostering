@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.common.DateTimeUtils;
@@ -43,6 +41,9 @@ import org.optaweb.employeerostering.domain.violation.ShiftEmployeeConflict;
 import org.optaweb.employeerostering.domain.violation.UnassignedShiftPenalty;
 import org.optaweb.employeerostering.domain.violation.UnavailableEmployeeViolation;
 import org.optaweb.employeerostering.domain.violation.UndesiredTimeslotForEmployeePenalty;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 public class ShiftView extends AbstractPersistable {
 
@@ -85,12 +86,12 @@ public class ShiftView extends AbstractPersistable {
     }
 
     public ShiftView(Integer tenantId, Spot spot, LocalDateTime startDateTime, LocalDateTime endDateTime,
-                     Employee rotationEmployee) {
+            Employee rotationEmployee) {
         this(tenantId, spot, startDateTime, endDateTime, null, new ArrayList<>(), null);
     }
 
     public ShiftView(Integer tenantId, Spot spot, LocalDateTime startDateTime, LocalDateTime endDateTime,
-                     Employee rotationEmployee, List<Long> requiredSkillSetIdList, Employee originalEmployee) {
+            Employee rotationEmployee, List<Long> requiredSkillSetIdList, Employee originalEmployee) {
         super(tenantId);
         this.spotId = spot.getId();
         this.startDateTime = startDateTime;
@@ -116,16 +117,16 @@ public class ShiftView extends AbstractPersistable {
     }
 
     public ShiftView(ZoneId zoneId, Shift shift, List<RequiredSkillViolation> requiredSkillViolationList,
-                     List<UnavailableEmployeeViolation> unavailableEmployeeViolationList,
-                     List<ShiftEmployeeConflict> shiftEmployeeConflictList,
-                     List<DesiredTimeslotForEmployeeReward> desiredTimeslotForEmployeeRewardList,
-                     List<UndesiredTimeslotForEmployeePenalty> undesiredTimeslotForEmployeePenaltyList,
-                     List<RotationViolationPenalty> rotationViolationPenaltyList,
-                     List<UnassignedShiftPenalty> unassignedShiftPenaltyList,
-                     List<ContractMinutesViolation> contractMinutesViolationPenaltyList,
-                     List<NoBreakViolation> noBreakViolationList,
-                     List<PublishedShiftReassignedPenalty> publishedShiftReassignedPenaltyList,
-                     HardMediumSoftLongScore indictmentScore) {
+            List<UnavailableEmployeeViolation> unavailableEmployeeViolationList,
+            List<ShiftEmployeeConflict> shiftEmployeeConflictList,
+            List<DesiredTimeslotForEmployeeReward> desiredTimeslotForEmployeeRewardList,
+            List<UndesiredTimeslotForEmployeePenalty> undesiredTimeslotForEmployeePenaltyList,
+            List<RotationViolationPenalty> rotationViolationPenaltyList,
+            List<UnassignedShiftPenalty> unassignedShiftPenaltyList,
+            List<ContractMinutesViolation> contractMinutesViolationPenaltyList,
+            List<NoBreakViolation> noBreakViolationList,
+            List<PublishedShiftReassignedPenalty> publishedShiftReassignedPenaltyList,
+            HardMediumSoftLongScore indictmentScore) {
         super(shift);
         this.spotId = shift.getSpot().getId();
         this.requiredSkillSetIdList = shift.getRequiredSkillSet().stream()
@@ -238,8 +239,7 @@ public class ShiftView extends AbstractPersistable {
         return unavailableEmployeeViolationList;
     }
 
-    public void setUnavailableEmployeeViolationList
-            (List<UnavailableEmployeeViolation> unavailableEmployeeViolationList) {
+    public void setUnavailableEmployeeViolationList(List<UnavailableEmployeeViolation> unavailableEmployeeViolationList) {
         this.unavailableEmployeeViolationList = unavailableEmployeeViolationList;
     }
 
@@ -263,8 +263,8 @@ public class ShiftView extends AbstractPersistable {
         return desiredTimeslotForEmployeeRewardList;
     }
 
-    public void setDesiredTimeslotForEmployeeRewardList
-            (List<DesiredTimeslotForEmployeeReward> desiredTimeslotForEmployeeRewardList) {
+    public void setDesiredTimeslotForEmployeeRewardList(
+            List<DesiredTimeslotForEmployeeReward> desiredTimeslotForEmployeeRewardList) {
         this.desiredTimeslotForEmployeeRewardList = desiredTimeslotForEmployeeRewardList;
     }
 
@@ -272,8 +272,8 @@ public class ShiftView extends AbstractPersistable {
         return undesiredTimeslotForEmployeePenaltyList;
     }
 
-    public void setUndesiredTimeslotForEmployeePenaltyList
-            (List<UndesiredTimeslotForEmployeePenalty> undesiredTimeslotForEmployeePenaltyList) {
+    public void setUndesiredTimeslotForEmployeePenaltyList(
+            List<UndesiredTimeslotForEmployeePenalty> undesiredTimeslotForEmployeePenaltyList) {
         this.undesiredTimeslotForEmployeePenaltyList = undesiredTimeslotForEmployeePenaltyList;
     }
 
@@ -297,8 +297,7 @@ public class ShiftView extends AbstractPersistable {
         return contractMinutesViolationPenaltyList;
     }
 
-    public void setContractMinutesViolationPenaltyList
-            (List<ContractMinutesViolation> contractMinutesViolationPenaltyList) {
+    public void setContractMinutesViolationPenaltyList(List<ContractMinutesViolation> contractMinutesViolationPenaltyList) {
         this.contractMinutesViolationPenaltyList = contractMinutesViolationPenaltyList;
     }
 

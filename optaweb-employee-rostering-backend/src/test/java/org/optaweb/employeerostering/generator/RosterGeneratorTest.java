@@ -16,6 +16,8 @@
 
 package org.optaweb.employeerostering.generator;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.List;
 
 import org.junit.After;
@@ -40,8 +42,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureTestDatabase
@@ -65,37 +65,44 @@ public class RosterGeneratorTest {
 
     private ResponseEntity<List<Skill>> getSkills(Integer tenantId) {
         return restTemplate.exchange(skillPathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<Skill>>() {}, tenantId);
+                new ParameterizedTypeReference<List<Skill>>() {
+                }, tenantId);
     }
 
     private ResponseEntity<List<Spot>> getSpots(Integer tenantId) {
         return restTemplate.exchange(spotPathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<Spot>>() {}, tenantId);
+                new ParameterizedTypeReference<List<Spot>>() {
+                }, tenantId);
     }
 
     private ResponseEntity<List<Contract>> getContracts(Integer tenantId) {
         return restTemplate.exchange(contractPathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<Contract>>() {}, tenantId);
+                new ParameterizedTypeReference<List<Contract>>() {
+                }, tenantId);
     }
 
     private ResponseEntity<List<Employee>> getEmployees(Integer tenantId) {
         return restTemplate.exchange(employeePathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<Employee>>() {}, tenantId);
+                new ParameterizedTypeReference<List<Employee>>() {
+                }, tenantId);
     }
 
     private ResponseEntity<List<TimeBucketView>> getTimeBuckets(Integer tenantId) {
         return restTemplate.exchange(rotationPathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<TimeBucketView>>() {}, tenantId);
+                new ParameterizedTypeReference<List<TimeBucketView>>() {
+                }, tenantId);
     }
 
     private ResponseEntity<List<ShiftView>> getShifts(Integer tenantId) {
         return restTemplate.exchange(shiftPathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<ShiftView>>() {}, tenantId);
+                new ParameterizedTypeReference<List<ShiftView>>() {
+                }, tenantId);
     }
 
     private ResponseEntity<List<Tenant>> getTenants() {
         return restTemplate.exchange(tenantPathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<Tenant>>() {});
+                new ParameterizedTypeReference<List<Tenant>>() {
+                });
     }
 
     @Before

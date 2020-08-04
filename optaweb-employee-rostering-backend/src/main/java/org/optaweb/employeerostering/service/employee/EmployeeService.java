@@ -53,10 +53,10 @@ public class EmployeeService extends AbstractRestService {
     private final EmployeeListXlsxFileIO employeeListXlsxFileIO;
 
     public EmployeeService(Validator validator,
-                           EmployeeRepository employeeRepository,
-                           EmployeeAvailabilityRepository employeeAvailabilityRepository,
-                           RosterStateRepository rosterStateRepository,
-                           EmployeeListXlsxFileIO employeeListXlsxFileIO) {
+            EmployeeRepository employeeRepository,
+            EmployeeAvailabilityRepository employeeAvailabilityRepository,
+            RosterStateRepository rosterStateRepository,
+            EmployeeListXlsxFileIO employeeListXlsxFileIO) {
         super(validator);
         this.employeeRepository = employeeRepository;
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
@@ -70,8 +70,8 @@ public class EmployeeService extends AbstractRestService {
 
     public Employee convertFromEmployeeView(Integer tenantId, EmployeeView employeeView) {
         Employee employee = new Employee(employeeView.getTenantId(), employeeView.getName(),
-                                         employeeView.getContract(), employeeView.getSkillProficiencySet(),
-                                         employeeView.getShortId(), employeeView.getColor());
+                employeeView.getContract(), employeeView.getSkillProficiencySet(),
+                employeeView.getShortId(), employeeView.getColor());
         validateEmployee(tenantId, employee);
         employee.setId(employeeView.getId());
         employee.setVersion(employeeView.getVersion());
@@ -121,11 +121,11 @@ public class EmployeeService extends AbstractRestService {
         Employee oldEmployee = employeeRepository
                 .findById(newEmployee.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Employee entity with ID (" + newEmployee.getId() +
-                                                                       ") not found."));
+                        ") not found."));
 
         if (!oldEmployee.getTenantId().equals(newEmployee.getTenantId())) {
             throw new IllegalStateException("Employee entity with tenantId (" + oldEmployee.getTenantId()
-                                                    + ") cannot change tenants.");
+                    + ") cannot change tenants.");
         }
 
         validateEmployee(tenantId, newEmployee);
@@ -173,7 +173,7 @@ public class EmployeeService extends AbstractRestService {
         for (Skill skill : employee.getSkillProficiencySet()) {
             if (!Objects.equals(skill.getTenantId(), tenantId)) {
                 throw new IllegalStateException("The tenantId (" + tenantId + ") does not match the skillProficiency ("
-                                                        + skill + ")'s tenantId (" + skill.getTenantId() + ").");
+                        + skill + ")'s tenantId (" + skill.getTenantId() + ").");
             }
         }
     }
@@ -183,22 +183,21 @@ public class EmployeeService extends AbstractRestService {
     // ************************************************************************
 
     private EmployeeAvailability convertFromEmployeeAvailabilityView(Integer tenantId,
-                                                                     EmployeeAvailabilityView
-                                                                             employeeAvailabilityView) {
+            EmployeeAvailabilityView employeeAvailabilityView) {
         validateBean(tenantId, employeeAvailabilityView);
 
         Employee employee = employeeRepository
                 .findById(employeeAvailabilityView.getEmployeeId())
                 .orElseThrow(() -> new EntityNotFoundException("Employee entity with ID (" +
-                                                                       employeeAvailabilityView.getEmployeeId() +
-                                                                       ") not found."));
+                        employeeAvailabilityView.getEmployeeId() +
+                        ") not found."));
 
         validateBean(tenantId, employee);
 
         RosterState rosterState = rosterStateRepository
                 .findByTenantId(tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("RosterState entity with tenantId (" +
-                                                                       tenantId + ") not found."));
+                        tenantId + ") not found."));
 
         EmployeeAvailability employeeAvailability =
                 new EmployeeAvailability(rosterState.getTimeZone(), employeeAvailabilityView, employee);
@@ -211,47 +210,47 @@ public class EmployeeService extends AbstractRestService {
         EmployeeAvailability employeeAvailability = employeeAvailabilityRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No EmployeeAvailability entity found with ID (" + id +
-                                                                       ")."));
+                        ")."));
 
         validateBean(tenantId, employeeAvailability);
 
         RosterState rosterState = rosterStateRepository
                 .findByTenantId(tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("No RosterState entity found with tenantId (" +
-                                                                       tenantId + ")."));
+                        tenantId + ")."));
         return new EmployeeAvailabilityView(rosterState.getTimeZone(), employeeAvailability);
     }
 
     @Transactional
     public EmployeeAvailabilityView createEmployeeAvailability(Integer tenantId,
-                                                               EmployeeAvailabilityView employeeAvailabilityView) {
+            EmployeeAvailabilityView employeeAvailabilityView) {
         EmployeeAvailability employeeAvailability = convertFromEmployeeAvailabilityView(tenantId,
-                                                                                        employeeAvailabilityView);
+                employeeAvailabilityView);
         employeeAvailabilityRepository.save(employeeAvailability);
 
         RosterState rosterState = rosterStateRepository
                 .findByTenantId(tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("No RosterState entity found with tenantId (" +
-                                                                       tenantId + ")."));
+                        tenantId + ")."));
         return new EmployeeAvailabilityView(rosterState.getTimeZone(), employeeAvailability);
     }
 
     @Transactional
     public EmployeeAvailabilityView updateEmployeeAvailability(Integer tenantId,
-                                                               EmployeeAvailabilityView employeeAvailabilityView) {
+            EmployeeAvailabilityView employeeAvailabilityView) {
         EmployeeAvailability newEmployeeAvailability = convertFromEmployeeAvailabilityView(tenantId,
-                                                                                           employeeAvailabilityView);
+                employeeAvailabilityView);
 
         EmployeeAvailability oldEmployeeAvailability = employeeAvailabilityRepository
                 .findById(newEmployeeAvailability.getId())
                 .orElseThrow(() -> new EntityNotFoundException("EmployeeAvailability entity with ID (" +
-                                                                       newEmployeeAvailability.getId() +
-                                                                       ") not found."));
+                        newEmployeeAvailability.getId() +
+                        ") not found."));
 
         if (!oldEmployeeAvailability.getTenantId().equals(newEmployeeAvailability.getTenantId())) {
             throw new IllegalStateException("EmployeeAvailability entity with tenantId (" +
-                                                    newEmployeeAvailability.getTenantId() +
-                                                    ") cannot change tenants.");
+                    newEmployeeAvailability.getTenantId() +
+                    ") cannot change tenants.");
         }
         validateBean(tenantId, newEmployeeAvailability);
 
@@ -267,7 +266,7 @@ public class EmployeeService extends AbstractRestService {
         RosterState rosterState = rosterStateRepository
                 .findByTenantId(tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("No RosterState entity found with tenantId (" +
-                                                                       tenantId + ")."));
+                        tenantId + ")."));
         return new EmployeeAvailabilityView(rosterState.getTimeZone(), updatedEmployeeAvailability);
     }
 

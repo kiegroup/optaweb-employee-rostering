@@ -16,6 +16,8 @@
 
 package org.optaweb.employeerostering.employee;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,8 +45,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureTestDatabase
@@ -61,8 +61,8 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
 
     private ResponseEntity<List<Employee>> getEmployees(Integer tenantId) {
         return restTemplate.exchange(employeePathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<Employee>>() {
-                                     }, tenantId);
+                new ParameterizedTypeReference<List<Employee>>() {
+                }, tenantId);
     }
 
     private ResponseEntity<Employee> getEmployee(Integer tenantId, Long id) {
@@ -97,17 +97,16 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
         restTemplate.delete(employeeAvailabilityPathURI + id, tenantId);
     }
 
-    private ResponseEntity<EmployeeAvailabilityView> addEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView
-            employeeAvailabilityView) {
+    private ResponseEntity<EmployeeAvailabilityView> addEmployeeAvailability(Integer tenantId,
+            EmployeeAvailabilityView employeeAvailabilityView) {
         return restTemplate.postForEntity(employeeAvailabilityPathURI + "add", employeeAvailabilityView,
-                                          EmployeeAvailabilityView.class, tenantId);
+                EmployeeAvailabilityView.class, tenantId);
     }
 
     private ResponseEntity<EmployeeAvailabilityView> updateEmployeeAvailability(Integer tenantId,
-                                                                                HttpEntity<EmployeeAvailabilityView>
-                                                                                        request) {
+            HttpEntity<EmployeeAvailabilityView> request) {
         return restTemplate.exchange(employeeAvailabilityPathURI + "update", HttpMethod.PUT, request,
-                                     EmployeeAvailabilityView.class, tenantId);
+                EmployeeAvailabilityView.class, tenantId);
     }
 
     @Before
@@ -148,7 +147,7 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
         assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
 
         Employee updatedEmployee = new Employee(TENANT_ID, "updatedEmployee", contractA,
-                                                testSkillSet);
+                testSkillSet);
         updatedEmployee.setId(postResponse.getBody().getId());
         ResponseEntity<Employee> putResponse = updateEmployee(TENANT_ID, updatedEmployee);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -174,29 +173,29 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
         Contract contract = contractResponseEntity.getBody();
 
         ResponseEntity<Employee> employeeResponseEntity = addEmployee(TENANT_ID,
-                                                                      new Employee(TENANT_ID, "employee",
-                                                                                   contract,
-                                                                                   Collections.emptySet()));
+                new Employee(TENANT_ID, "employee",
+                        contract,
+                        Collections.emptySet()));
         Employee employee = employeeResponseEntity.getBody();
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);
         LocalDateTime endDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
         ResponseEntity<EmployeeAvailabilityView> postResponse =
                 addEmployeeAvailability(TENANT_ID, new EmployeeAvailabilityView(TENANT_ID, employee,
-                                                                                startDateTime,
-                                                                                endDateTime,
-                                                                                EmployeeAvailabilityState.UNAVAILABLE));
+                        startDateTime,
+                        endDateTime,
+                        EmployeeAvailabilityState.UNAVAILABLE));
         assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         ResponseEntity<EmployeeAvailabilityView> getResponse = getEmployeeAvailability(TENANT_ID,
-                                                                                       postResponse.getBody().getId());
+                postResponse.getBody().getId());
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(getResponse.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
 
         EmployeeAvailabilityView newEmployeeAvailabilityView =
                 new EmployeeAvailabilityView(TENANT_ID, employee,
-                                             startDateTime, endDateTime,
-                                             EmployeeAvailabilityState.DESIRED);
+                        startDateTime, endDateTime,
+                        EmployeeAvailabilityState.DESIRED);
         newEmployeeAvailabilityView.setId(postResponse.getBody().getId());
         HttpEntity<EmployeeAvailabilityView> request = new HttpEntity<>(newEmployeeAvailabilityView);
         ResponseEntity<EmployeeAvailabilityView> putResponse = updateEmployeeAvailability(TENANT_ID, request);

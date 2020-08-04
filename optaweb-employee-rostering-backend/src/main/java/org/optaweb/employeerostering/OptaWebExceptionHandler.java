@@ -32,11 +32,11 @@ public class OptaWebExceptionHandler extends ResponseEntityExceptionHandler {
         this.exceptionDataMapper = exceptionDataMapper;
     }
 
-    @ExceptionHandler(value = {Exception.class, RuntimeException.class})
+    @ExceptionHandler(value = { Exception.class, RuntimeException.class })
     protected ResponseEntity<ServerSideExceptionInfo> handleException(Throwable t, WebRequest request) {
         final ExceptionDataMapper.ExceptionData exceptionData =
                 exceptionDataMapper.getExceptionDataForExceptionClass(t.getClass());
         return new ResponseEntity<>(exceptionData.getServerSideExceptionInfoFromException(t),
-                                    exceptionData.getStatusCode());
+                exceptionData.getStatusCode());
     }
 }

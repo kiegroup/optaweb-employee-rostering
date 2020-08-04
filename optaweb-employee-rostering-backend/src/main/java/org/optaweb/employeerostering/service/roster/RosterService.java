@@ -79,13 +79,13 @@ public class RosterService extends AbstractRestService {
     private IndictmentUtils indictmentUtils;
 
     public RosterService(Validator validator,
-                         RosterStateRepository rosterStateRepository, SkillRepository skillRepository,
-                         SpotRepository spotRepository, EmployeeRepository employeeRepository,
-                         EmployeeAvailabilityRepository employeeAvailabilityRepository,
-                         ShiftRepository shiftRepository,
-                         RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
-                         TimeBucketRepository timeBucketRepository,
-                         WannabeSolverManager solverManager, IndictmentUtils indictmentUtils) {
+            RosterStateRepository rosterStateRepository, SkillRepository skillRepository,
+            SpotRepository spotRepository, EmployeeRepository employeeRepository,
+            EmployeeAvailabilityRepository employeeAvailabilityRepository,
+            ShiftRepository shiftRepository,
+            RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
+            TimeBucketRepository timeBucketRepository,
+            WannabeSolverManager solverManager, IndictmentUtils indictmentUtils) {
         super(validator);
         this.rosterStateRepository = rosterStateRepository;
         this.skillRepository = skillRepository;
@@ -108,7 +108,7 @@ public class RosterService extends AbstractRestService {
         RosterState rosterState = rosterStateRepository
                 .findByTenantId(tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("No RosterState entity found with tenantId (" +
-                                                                       tenantId + ")."));
+                        tenantId + ")."));
         validateBean(tenantId, rosterState);
         return rosterState;
     }
@@ -119,7 +119,7 @@ public class RosterService extends AbstractRestService {
 
     @Transactional
     public ShiftRosterView getCurrentShiftRosterView(Integer tenantId, Integer pageNumber,
-                                                     Integer numberOfItemsPerPage) {
+            Integer numberOfItemsPerPage) {
         RosterState rosterState = getRosterState(tenantId);
         LocalDate startDate = rosterState.getFirstPublishedDate();
         LocalDate endDate = rosterState.getFirstUnplannedDate();
@@ -128,17 +128,17 @@ public class RosterService extends AbstractRestService {
 
     @Transactional
     public ShiftRosterView getShiftRosterView(final Integer tenantId, Integer pageNumber, Integer numberOfItemsPerPage,
-                                              final String startDateString,
-                                              final String endDateString) {
+            final String startDateString,
+            final String endDateString) {
 
         return getShiftRosterView(tenantId, LocalDate.parse(startDateString), LocalDate.parse(endDateString),
-                                  Pagination.of(pageNumber, numberOfItemsPerPage));
+                Pagination.of(pageNumber, numberOfItemsPerPage));
     }
 
     private ShiftRosterView getShiftRosterView(final Integer tenantId,
-                                               final LocalDate startDate,
-                                               final LocalDate endDate,
-                                               final Pagination pagination) {
+            final LocalDate startDate,
+            final LocalDate endDate,
+            final Pagination pagination) {
 
         Pageable spotPage = PageRequest.of(pagination.getPageNumber(), pagination.getNumberOfItemsPerPage());
         final List<Spot> spots = spotRepository.findAllByTenantId(tenantId, spotPage);
@@ -148,7 +148,7 @@ public class RosterService extends AbstractRestService {
 
     @Transactional
     public ShiftRosterView getShiftRosterViewFor(Integer tenantId, String startDateString, String endDateString,
-                                                 List<Spot> spotList) {
+            List<Spot> spotList) {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
         if (spotList == null) {
@@ -159,19 +159,19 @@ public class RosterService extends AbstractRestService {
     }
 
     private ShiftRosterView getShiftRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate,
-                                               List<Spot> spotList) {
+            List<Spot> spotList) {
         ShiftRosterView shiftRosterView = new ShiftRosterView(tenantId, startDate, endDate);
         shiftRosterView.setSpotList(spotList);
         List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId, PageRequest.of(0,
-                                                                                                    Integer.MAX_VALUE));
+                Integer.MAX_VALUE));
         shiftRosterView.setEmployeeList(employeeList);
 
         Set<Spot> spotSet = new HashSet<>(spotList);
         ZoneId timeZone = getRosterState(tenantId).getTimeZone();
 
         List<Shift> shiftList = shiftRepository.filterWithSpots(tenantId, spotSet,
-                                                                startDate.atStartOfDay(timeZone).toOffsetDateTime(),
-                                                                endDate.atStartOfDay(timeZone).toOffsetDateTime());
+                startDate.atStartOfDay(timeZone).toOffsetDateTime(),
+                endDate.atStartOfDay(timeZone).toOffsetDateTime());
 
         Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
         // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched, so the
@@ -202,8 +202,8 @@ public class RosterService extends AbstractRestService {
 
     @Transactional
     public AvailabilityRosterView getCurrentAvailabilityRosterView(Integer tenantId,
-                                                                   Integer pageNumber,
-                                                                   Integer numberOfItemsPerPage) {
+            Integer pageNumber,
+            Integer numberOfItemsPerPage) {
         RosterState rosterState = getRosterState(tenantId);
         LocalDate startDate = rosterState.getLastHistoricDate();
         LocalDate endDate = rosterState.getFirstUnplannedDate();
@@ -212,10 +212,10 @@ public class RosterService extends AbstractRestService {
 
     @Transactional
     public AvailabilityRosterView getAvailabilityRosterView(Integer tenantId,
-                                                            Integer pageNumber,
-                                                            Integer numberOfItemsPerPage,
-                                                            String startDateString,
-                                                            String endDateString) {
+            Integer pageNumber,
+            Integer numberOfItemsPerPage,
+            String startDateString,
+            String endDateString) {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
         return getAvailabilityRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
@@ -223,9 +223,9 @@ public class RosterService extends AbstractRestService {
 
     @Transactional
     public AvailabilityRosterView getAvailabilityRosterViewFor(Integer tenantId,
-                                                               String startDateString,
-                                                               String endDateString,
-                                                               List<Employee> employeeList) {
+            String startDateString,
+            String endDateString,
+            List<Employee> employeeList) {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
         if (employeeList == null) {
@@ -235,9 +235,9 @@ public class RosterService extends AbstractRestService {
     }
 
     private AvailabilityRosterView getAvailabilityRosterView(final Integer tenantId,
-                                                             final LocalDate startDate,
-                                                             final LocalDate endDate,
-                                                             final Pagination pagination) {
+            final LocalDate startDate,
+            final LocalDate endDate,
+            final Pagination pagination) {
 
         Pageable employeePage = PageRequest.of(pagination.getPageNumber(), pagination.getNumberOfItemsPerPage());
         final List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId, employeePage);
@@ -246,9 +246,9 @@ public class RosterService extends AbstractRestService {
     }
 
     private AvailabilityRosterView getAvailabilityRosterView(Integer tenantId,
-                                                             LocalDate startDate,
-                                                             LocalDate endDate,
-                                                             List<Employee> employeeList) {
+            LocalDate startDate,
+            LocalDate endDate,
+            List<Employee> employeeList) {
         AvailabilityRosterView availabilityRosterView = new AvailabilityRosterView(tenantId, startDate, endDate);
         List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
         availabilityRosterView.setSpotList(spotList);
@@ -261,8 +261,8 @@ public class RosterService extends AbstractRestService {
         ZoneId timeZone = getRosterState(tenantId).getTimeZone();
 
         List<Shift> shiftList = shiftRepository.filterWithEmployees(tenantId, employeeSet,
-                                                                    startDate.atStartOfDay(timeZone).toOffsetDateTime(),
-                                                                    endDate.atStartOfDay(timeZone).toOffsetDateTime());
+                startDate.atStartOfDay(timeZone).toOffsetDateTime(),
+                endDate.atStartOfDay(timeZone).toOffsetDateTime());
 
         Roster roster = solverManager.getRoster(tenantId);
         if (roster == null || solverManager.getSolverStatus(tenantId) != SolverStatus.SOLVING) {
@@ -274,7 +274,7 @@ public class RosterService extends AbstractRestService {
             Indictment indictment = indictmentMap.get(shift);
             if (shift.getEmployee() != null) {
                 employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(),
-                                                             k -> new ArrayList<>())
+                        k -> new ArrayList<>())
                         .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
             } else {
                 unassignedShiftViewList.add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
@@ -286,12 +286,12 @@ public class RosterService extends AbstractRestService {
                 employeeList.size());
         List<EmployeeAvailability> employeeAvailabilityList =
                 employeeAvailabilityRepository.filterWithEmployee(tenantId, employeeSet,
-                                                                  startDate.atStartOfDay(timeZone).toOffsetDateTime(),
-                                                                  endDate.atStartOfDay(timeZone).toOffsetDateTime());
+                        startDate.atStartOfDay(timeZone).toOffsetDateTime(),
+                        endDate.atStartOfDay(timeZone).toOffsetDateTime());
 
         for (EmployeeAvailability employeeAvailability : employeeAvailabilityList) {
             employeeIdToAvailabilityViewListMap.computeIfAbsent(employeeAvailability.getEmployee().getId(),
-                                                                k -> new ArrayList<>())
+                    k -> new ArrayList<>())
                     .add(new EmployeeAvailabilityView(timeZone, employeeAvailability));
         }
         availabilityRosterView.setEmployeeIdToAvailabilityViewListMap(employeeIdToAvailabilityViewListMap);
@@ -315,7 +315,7 @@ public class RosterService extends AbstractRestService {
         List<Skill> skillList = skillRepository.findAllByTenantId(tenantId);
         List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
         List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId, PageRequest.of(0,
-                                                                                                    Integer.MAX_VALUE));
+                Integer.MAX_VALUE));
         List<EmployeeAvailability> employeeAvailabilityList = employeeAvailabilityRepository.findAllByTenantId(tenantId)
                 .stream()
                 .map(ea -> ea.inTimeZone(zoneId))
@@ -330,8 +330,8 @@ public class RosterService extends AbstractRestService {
                 .findByTenantId(tenantId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "No RosterConstraintConfiguration entity found with tenantId(" + tenantId + ").")),
-                                   skillList, spotList, employeeList, employeeAvailabilityList,
-                                   getRosterState(tenantId), shiftList);
+                skillList, spotList, employeeList, employeeAvailabilityList,
+                getRosterState(tenantId), shiftList);
 
         ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector();
         scoreDirector.setWorkingSolution(roster);
@@ -344,7 +344,7 @@ public class RosterService extends AbstractRestService {
         Integer tenantId = newRoster.getTenantId();
         // TODO HACK avoids optimistic locking exception while solve(), but it circumvents optimistic locking completely
         Map<Long, Employee> employeeIdMap = employeeRepository.findAllByTenantId(tenantId,
-                                                                                 PageRequest.of(0, Integer.MAX_VALUE))
+                PageRequest.of(0, Integer.MAX_VALUE))
                 .stream()
                 .collect(Collectors.toMap(Employee::getId, Function.identity()));
 
@@ -357,8 +357,7 @@ public class RosterService extends AbstractRestService {
             if (attachedShift == null) {
                 continue;
             }
-            attachedShift.setEmployee((shift.getEmployee() == null) ?
-                                              null : employeeIdMap.get(shift.getEmployee().getId()));
+            attachedShift.setEmployee((shift.getEmployee() == null) ? null : employeeIdMap.get(shift.getEmployee().getId()));
         }
     }
 
@@ -387,7 +386,7 @@ public class RosterService extends AbstractRestService {
     // ************************************************************************
     @Transactional
     public void provision(Integer tenantId, Integer startRotationOffset, LocalDate fromDate,
-                          LocalDate toDate, List<Long> timeBucketIdList) {
+            LocalDate toDate, List<Long> timeBucketIdList) {
         RosterState rosterState = getRosterState(tenantId);
         List<TimeBucket> timeBucketList = timeBucketRepository.findAllById(timeBucketIdList);
         if (timeBucketList.stream().anyMatch(tb -> !tb.getTenantId().equals(tenantId))) {
@@ -395,16 +394,16 @@ public class RosterService extends AbstractRestService {
         }
         if (startRotationOffset > rosterState.getRotationLength()) {
             throw new IllegalArgumentException("startRotationOffset (" + startRotationOffset
-                                                       + ") is greater than the rotation length ("
-                                                       + rosterState.getRotationLength() + ")");
+                    + ") is greater than the rotation length ("
+                    + rosterState.getRotationLength() + ")");
         }
         if (startRotationOffset < 0) {
             throw new IllegalArgumentException("startRotationOffset (" + startRotationOffset
-                                                       + ") is negative");
+                    + ") is negative");
         }
         if (toDate.isBefore(fromDate)) {
             throw new IllegalArgumentException("toDate (" + toDate.toString() + ") is before fromDate ("
-                                                       + fromDate.toString() + ")");
+                    + fromDate.toString() + ")");
         }
 
         int dayOffset = startRotationOffset;
@@ -412,7 +411,7 @@ public class RosterService extends AbstractRestService {
         while (!shiftDate.isAfter(toDate)) {
             for (TimeBucket timeBucket : timeBucketList) {
                 timeBucket.createShiftForOffset(shiftDate, dayOffset,
-                                                rosterState.getTimeZone(), false)
+                        rosterState.getTimeZone(), false)
                         .ifPresent(shiftRepository::save);
             }
             shiftDate = shiftDate.plusDays(1);
@@ -431,17 +430,17 @@ public class RosterService extends AbstractRestService {
         ZoneId timeZone = rosterState.getTimeZone();
         List<Shift> publishedShifts = shiftRepository
                 .findAllByTenantIdBetweenDates(tenantId,
-                                               publishFrom.atStartOfDay(timeZone).toOffsetDateTime(),
-                                               publishTo.atStartOfDay(timeZone).toOffsetDateTime());
+                        publishFrom.atStartOfDay(timeZone).toOffsetDateTime(),
+                        publishTo.atStartOfDay(timeZone).toOffsetDateTime());
         publishedShifts.forEach(s -> s.setOriginalEmployee(s.getEmployee()));
         shiftRepository.saveAll(publishedShifts);
         rosterState.setFirstDraftDate(publishTo);
 
         // Provision
         provision(tenantId, rosterState.getUnplannedRotationOffset(), firstUnplannedDate,
-                  firstUnplannedDate.plusDays(rosterState.getPublishLength() - 1),
-                  timeBucketRepository.findAllByTenantId(tenantId).stream()
-                          .map(TimeBucket::getId).collect(Collectors.toList()));
+                firstUnplannedDate.plusDays(rosterState.getPublishLength() - 1),
+                timeBucketRepository.findAllByTenantId(tenantId).stream()
+                        .map(TimeBucket::getId).collect(Collectors.toList()));
 
         return new PublishResult(publishFrom, publishTo);
     }
@@ -456,8 +455,8 @@ public class RosterService extends AbstractRestService {
         ZoneId timeZone = rosterState.getTimeZone();
         List<Shift> publishedShifts = shiftRepository
                 .findAllByTenantIdBetweenDates(tenantId,
-                                               publishFrom.atStartOfDay(timeZone).toOffsetDateTime(),
-                                               publishTo.atStartOfDay(timeZone).toOffsetDateTime());
+                        publishFrom.atStartOfDay(timeZone).toOffsetDateTime(),
+                        publishTo.atStartOfDay(timeZone).toOffsetDateTime());
         publishedShifts.forEach(s -> s.setOriginalEmployee(s.getEmployee()));
         shiftRepository.saveAll(publishedShifts);
     }

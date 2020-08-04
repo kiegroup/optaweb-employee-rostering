@@ -16,6 +16,8 @@
 
 package org.optaweb.employeerostering.spot;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -36,8 +38,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureTestDatabase
@@ -50,8 +50,8 @@ public class SpotRestControllerTest extends AbstractEntityRequireTenantRestServi
 
     private ResponseEntity<List<Spot>> getSpots(Integer tenantId) {
         return restTemplate.exchange(spotPathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<Spot>>() {
-                                     }, tenantId);
+                new ParameterizedTypeReference<List<Spot>>() {
+                }, tenantId);
     }
 
     private ResponseEntity<Spot> getSpot(Integer tenantId, Long id) {

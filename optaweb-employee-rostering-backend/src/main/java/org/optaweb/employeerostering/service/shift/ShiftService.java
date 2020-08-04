@@ -57,9 +57,9 @@ public class ShiftService extends AbstractRestService {
     private IndictmentUtils indictmentUtils;
 
     public ShiftService(Validator validator,
-                        ShiftRepository shiftRepository, SpotRepository spotRepository,
-                        SkillService skillService, EmployeeRepository employeeRepository,
-                        RosterService rosterService, IndictmentUtils indictmentUtils) {
+            ShiftRepository shiftRepository, SpotRepository spotRepository,
+            SkillService skillService, EmployeeRepository employeeRepository,
+            RosterService rosterService, IndictmentUtils indictmentUtils) {
         super(validator);
         this.shiftRepository = shiftRepository;
         this.spotRepository = spotRepository;
@@ -92,7 +92,7 @@ public class ShiftService extends AbstractRestService {
         Indictment indictment = indictmentUtils.getIndictmentMapForRoster(
                 rosterService.buildRoster(tenantId)).get(shift);
         return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(), shift,
-                                                          indictment);
+                indictment);
     }
 
     private Shift convertFromView(Integer tenantId, ShiftView shiftView) {
@@ -101,7 +101,7 @@ public class ShiftService extends AbstractRestService {
         Spot spot = spotRepository
                 .findById(shiftView.getSpotId())
                 .orElseThrow(() -> new EntityNotFoundException("No Spot entity found with ID (" + shiftView.getSpotId()
-                                                                       + ")."));
+                        + ")."));
 
         validateBean(tenantId, spot);
 
@@ -111,9 +111,9 @@ public class ShiftService extends AbstractRestService {
             rotationEmployee = employeeRepository
                     .findById(rotationEmployeeId)
                     .orElseThrow(() -> new EntityNotFoundException("ShiftView (" + shiftView +
-                                                                           ") has an non-existing " +
-                                                                           "rotationEmployeeId (" +
-                                                                           rotationEmployeeId + ")."));
+                            ") has an non-existing " +
+                            "rotationEmployeeId (" +
+                            rotationEmployeeId + ")."));
             validateBean(tenantId, rotationEmployee);
         }
 
@@ -123,9 +123,9 @@ public class ShiftService extends AbstractRestService {
             originalEmployee = employeeRepository
                     .findById(originalEmployeeId)
                     .orElseThrow(() -> new EntityNotFoundException("ShiftView (" + shiftView +
-                                                                           ") has an non-existing " +
-                                                                           "originalEmployeeId (" +
-                                                                           originalEmployeeId + ")."));
+                            ") has an non-existing " +
+                            "originalEmployeeId (" +
+                            originalEmployeeId + ")."));
             validateBean(tenantId, originalEmployee);
         }
 
@@ -134,7 +134,7 @@ public class ShiftService extends AbstractRestService {
                 .collect(Collectors.toCollection(HashSet::new));
 
         Shift shift = new Shift(rosterService.getRosterState(tenantId).getTimeZone(), shiftView, spot,
-                                rotationEmployee, requiredSkillSet, originalEmployee);
+                rotationEmployee, requiredSkillSet, originalEmployee);
         shift.setPinnedByUser(shiftView.isPinnedByUser());
 
         Long employeeId = shiftView.getEmployeeId();
@@ -142,8 +142,8 @@ public class ShiftService extends AbstractRestService {
             Employee employee = employeeRepository
                     .findById(employeeId)
                     .orElseThrow(() -> new EntityNotFoundException("ShiftView (" + shiftView +
-                                                                           ") has an non-existing employeeId (" +
-                                                                           employeeId + ")."));
+                            ") has an non-existing employeeId (" +
+                            employeeId + ")."));
             validateBean(tenantId, employee);
             shift.setEmployee(employee);
         }
@@ -160,7 +160,7 @@ public class ShiftService extends AbstractRestService {
         Indictment indictment = indictmentUtils.getIndictmentMapForRoster(
                 rosterService.buildRoster(tenantId)).get(persistedShift);
         return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(),
-                                                          persistedShift, indictment);
+                persistedShift, indictment);
     }
 
     @Transactional
@@ -169,11 +169,11 @@ public class ShiftService extends AbstractRestService {
         Shift oldShift = shiftRepository
                 .findById(newShift.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Shift entity with ID (" + newShift.getId() + ") not " +
-                                                                       "found."));
+                        "found."));
 
         if (!oldShift.getTenantId().equals(newShift.getTenantId())) {
             throw new IllegalStateException("Shift entity with tenantId (" + oldShift.getTenantId()
-                                                    + ") cannot change tenants.");
+                    + ") cannot change tenants.");
         }
 
         oldShift.setRotationEmployee(newShift.getRotationEmployee());
@@ -191,7 +191,7 @@ public class ShiftService extends AbstractRestService {
         Indictment indictment = indictmentUtils.getIndictmentMapForRoster(
                 rosterService.buildRoster(tenantId)).get(updatedShift);
         return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(),
-                                                          updatedShift, indictment);
+                updatedShift, indictment);
     }
 
     @Transactional

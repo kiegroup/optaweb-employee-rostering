@@ -31,7 +31,7 @@ public class ConstraintViolatedException extends RuntimeException {
     private final Set<ConstraintViolation<Object>> constraintViolations;
 
     public ConstraintViolatedException(Object invalidObject, Class<?> validatedClass,
-                                       Set<ConstraintViolation<Object>> violationSet) {
+            Set<ConstraintViolation<Object>> violationSet) {
         this.invalidObject = invalidObject;
         this.validatedClass = validatedClass;
         this.constraintViolations = violationSet;
@@ -40,7 +40,7 @@ public class ConstraintViolatedException extends RuntimeException {
     @Override
     public String getMessage() {
         StringBuilder sb = new StringBuilder(validatedClass.getSimpleName() + " " + invalidObject.toString() +
-                                                     " violates the following constraints:\n");
+                " violates the following constraints:\n");
         for (ConstraintViolation<?> cv : constraintViolations) {
             sb.append(cv.getMessage());
             sb.append("\n");

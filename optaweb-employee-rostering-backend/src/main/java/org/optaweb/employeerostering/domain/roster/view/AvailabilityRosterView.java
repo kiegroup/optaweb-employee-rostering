@@ -38,7 +38,8 @@ public class AvailabilityRosterView extends AbstractRosterView {
     private List<ShiftView> unassignedShiftViewList;
 
     @SuppressWarnings("unused")
-    public AvailabilityRosterView() {}
+    public AvailabilityRosterView() {
+    }
 
     public AvailabilityRosterView(Integer tenantId) {
         this.tenantId = tenantId;
@@ -66,8 +67,8 @@ public class AvailabilityRosterView extends AbstractRosterView {
         return employeeIdToAvailabilityViewListMap;
     }
 
-    public void setEmployeeIdToAvailabilityViewListMap(Map<Long, List<EmployeeAvailabilityView>>
-                                                               employeeIdToAvailabilityViewListMap) {
+    public void setEmployeeIdToAvailabilityViewListMap(
+            Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewListMap) {
         this.employeeIdToAvailabilityViewListMap = employeeIdToAvailabilityViewListMap;
     }
 

@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * a subclass of the Hierarchy. Can be used to find the most specific class
  * an object is applicable to (example: in a Hierarchy tree containing Throwable and RuntimeException,
  * IllegalStateException should map to RuntimeException, not Throwable).
+ * 
  * @param <K> The type of the key element in the Hierarchy
  * @param <V> The type of the value element in the Hierarchy
  */
@@ -42,19 +43,20 @@ public class HierarchyTree<K, V> {
 
     /**
      * Puts the hierarchy class into the Hierarchy tree.
+     * 
      * @param key The key of the hierarchy class, determines where it is put into the tree.
      * @param value The value of the hierarchy class.
      */
     public void putInHierarchy(K key, V value) {
         HierarchyNode newChild = new HierarchyNode(key, value);
         Collection<HierarchyNode> subclassesOfNewChild = hierarchyDisjointClasses.stream()
-                .filter(c -> hierarchyRelation.getHierarchyRelationshipBetween(newChild.classKey, c.classKey) ==
-                        HierarchyRelationship.IS_ABOVE)
+                .filter(c -> hierarchyRelation.getHierarchyRelationshipBetween(newChild.classKey,
+                        c.classKey) == HierarchyRelationship.IS_ABOVE)
                 .collect(Collectors.toList());
         if (subclassesOfNewChild.isEmpty()) {
             Optional<HierarchyNode> superclassOfNewChild = hierarchyDisjointClasses.stream()
-                    .filter(c -> hierarchyRelation.getHierarchyRelationshipBetween(newChild.classKey, c.classKey) ==
-                            HierarchyRelationship.IS_BELOW)
+                    .filter(c -> hierarchyRelation.getHierarchyRelationshipBetween(newChild.classKey,
+                            c.classKey) == HierarchyRelationship.IS_BELOW)
                     .findAny();
             if (superclassOfNewChild.isPresent()) {
                 superclassOfNewChild.get().addChild(newChild);
@@ -73,6 +75,7 @@ public class HierarchyTree<K, V> {
      * If it belongs to multiple hierarchy branches (example: in the divisibility hierarchy tree
      * with classes "2" and "3", "6" belongs to both "2" and "3"), it returns the value of the most specific
      * hierarchy class of a random branch.
+     * 
      * @param key What to find the most specific hierarchy class of.
      * @return The value of the most specific hierarchy class of key.
      */
@@ -80,9 +83,9 @@ public class HierarchyTree<K, V> {
         List<HierarchyNode> superclassesOfItem = hierarchyDisjointClasses.stream()
                 .filter(c -> {
                     HierarchyRelationship relationship = hierarchyRelation.getHierarchyRelationshipBetween(key,
-                                                                                                           c.classKey);
-                    return relationship == HierarchyRelationship.IS_BELOW || relationship ==
-                            HierarchyRelationship.IS_THE_SAME_AS;
+                            c.classKey);
+                    return relationship == HierarchyRelationship.IS_BELOW
+                            || relationship == HierarchyRelationship.IS_THE_SAME_AS;
                 })
                 .collect(Collectors.toList());
 
@@ -93,8 +96,7 @@ public class HierarchyTree<K, V> {
             for (HierarchyNode superclassOfItem : superclassesOfItem.subList(1, superclassesOfItem.size())) {
                 HierarchyNode mostSpecificInstanceInSuperclass = superclassOfItem.findHierarchyClassOf(key);
                 if (hierarchyRelation.getHierarchyRelationshipBetween(mostSpecificInstanceInSuperclass.classKey,
-                                                                      mostSpecificInstance.classKey)
-                        == HierarchyRelationship.IS_BELOW) {
+                        mostSpecificInstance.classKey) == HierarchyRelationship.IS_BELOW) {
                     mostSpecificInstance = mostSpecificInstanceInSuperclass;
                 }
             }
@@ -115,19 +117,19 @@ public class HierarchyTree<K, V> {
         }
 
         public void addChild(HierarchyNode newChild) {
-            if (hierarchyRelation.getHierarchyRelationshipBetween(newChild.classKey, classKey) !=
-                    HierarchyRelationship.IS_BELOW) {
+            if (hierarchyRelation.getHierarchyRelationshipBetween(newChild.classKey,
+                    classKey) != HierarchyRelationship.IS_BELOW) {
                 throw new IllegalArgumentException("The child you tried to add (" + newChild.classKey +
-                                                           ") is not a descendant of root (" + classKey + ").");
+                        ") is not a descendant of root (" + classKey + ").");
             }
             Collection<HierarchyNode> subclassesOfNewChild = hierarchySubclasses.stream()
-                    .filter(c -> hierarchyRelation.getHierarchyRelationshipBetween(newChild.classKey, c.classKey) ==
-                            HierarchyRelationship.IS_ABOVE)
+                    .filter(c -> hierarchyRelation.getHierarchyRelationshipBetween(newChild.classKey,
+                            c.classKey) == HierarchyRelationship.IS_ABOVE)
                     .collect(Collectors.toList());
             if (subclassesOfNewChild.isEmpty()) {
                 Optional<HierarchyNode> superclassOfNewChild = hierarchySubclasses.stream()
-                        .filter(c -> hierarchyRelation.getHierarchyRelationshipBetween(newChild.classKey, c.classKey) ==
-                                HierarchyRelationship.IS_BELOW)
+                        .filter(c -> hierarchyRelation.getHierarchyRelationshipBetween(newChild.classKey,
+                                c.classKey) == HierarchyRelationship.IS_BELOW)
                         .findAny();
                 if (superclassOfNewChild.isPresent()) {
                     superclassOfNewChild.get().addChild(newChild);
@@ -143,17 +145,17 @@ public class HierarchyTree<K, V> {
 
         public HierarchyNode findHierarchyClassOf(K key) {
             HierarchyRelationship classRelationship = hierarchyRelation.getHierarchyRelationshipBetween(key, classKey);
-            if (!(classRelationship == HierarchyRelationship.IS_BELOW || classRelationship ==
-                    HierarchyRelationship.IS_THE_SAME_AS)) {
+            if (!(classRelationship == HierarchyRelationship.IS_BELOW
+                    || classRelationship == HierarchyRelationship.IS_THE_SAME_AS)) {
                 throw new IllegalArgumentException("The item (" + key + ") is not a descendant of root (" +
-                                                           classKey + ").");
+                        classKey + ").");
             }
             List<HierarchyNode> superclassesOfItem = hierarchySubclasses.stream()
                     .filter(c -> {
                         HierarchyRelationship relationship = hierarchyRelation.getHierarchyRelationshipBetween(
                                 key, c.classKey);
-                        return relationship == HierarchyRelationship.IS_BELOW || relationship ==
-                                HierarchyRelationship.IS_THE_SAME_AS;
+                        return relationship == HierarchyRelationship.IS_BELOW
+                                || relationship == HierarchyRelationship.IS_THE_SAME_AS;
                     })
                     .collect(Collectors.toList());
 
@@ -164,8 +166,7 @@ public class HierarchyTree<K, V> {
                 for (HierarchyNode superclassOfItem : superclassesOfItem.subList(1, superclassesOfItem.size())) {
                     HierarchyNode mostSpecificInstanceInSuperclass = superclassOfItem.findHierarchyClassOf(key);
                     if (hierarchyRelation.getHierarchyRelationshipBetween(mostSpecificInstanceInSuperclass.classKey,
-                                                                          mostSpecificInstance.classKey)
-                            == HierarchyRelationship.IS_BELOW) {
+                            mostSpecificInstance.classKey) == HierarchyRelationship.IS_BELOW) {
                         mostSpecificInstance = mostSpecificInstanceInSuperclass;
                     }
                 }

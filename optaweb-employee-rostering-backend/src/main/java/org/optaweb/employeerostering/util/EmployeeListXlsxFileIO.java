@@ -46,7 +46,7 @@ public class EmployeeListXlsxFileIO {
     private final SkillService skillService;
 
     private final ContractService contractService;
-    
+
     @Autowired
     public EmployeeListXlsxFileIO(SkillService skillService, ContractService contractService) {
         this.skillService = skillService;
@@ -54,7 +54,7 @@ public class EmployeeListXlsxFileIO {
     }
 
     public List<EmployeeView> getEmployeeListFromExcelFile(Integer tenantId,
-                                                           InputStream excelFileStream) throws IOException {
+            InputStream excelFileStream) throws IOException {
         try (Workbook workbook = new XSSFWorkbook(excelFileStream)) {
             Sheet worksheet = workbook.getSheetAt(0);
             List<EmployeeView> out = new ArrayList<>(worksheet.getPhysicalNumberOfRows() - 1);

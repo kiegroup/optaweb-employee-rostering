@@ -51,8 +51,8 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
             " and sa.startDateTime < :endDateTime" +
             " order by sa.startDateTime, s.name, e.name")
     List<Shift> findAllByTenantIdBetweenDates(@Param("tenantId") Integer tenantId,
-                                              @Param("startDateTime") OffsetDateTime startDateTime,
-                                              @Param("endDateTime") OffsetDateTime endDateTime);
+            @Param("startDateTime") OffsetDateTime startDateTime,
+            @Param("endDateTime") OffsetDateTime endDateTime);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from Shift s" +
@@ -70,8 +70,8 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
             " and sa.startDateTime < :endDateTime" +
             " order by sa.startDateTime, s.name, e.name")
     List<Shift> filterWithSpots(@Param("tenantId") Integer tenantId, @Param("spotSet") Set<Spot> spotSet,
-                                @Param("startDateTime") OffsetDateTime startDateTime,
-                                @Param("endDateTime") OffsetDateTime endDateTime);
+            @Param("startDateTime") OffsetDateTime startDateTime,
+            @Param("endDateTime") OffsetDateTime endDateTime);
 
     @Query("select distinct sa from Shift sa" +
             " left join fetch sa.spot s" +
@@ -84,7 +84,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
             " and sa.startDateTime < :endDateTime" +
             " order by sa.startDateTime, s.name, e.name")
     List<Shift> filterWithEmployees(@Param("tenantId") Integer tenantId,
-                                    @Param("employeeSet") Set<Employee> employeeSet,
-                                    @Param("startDateTime") OffsetDateTime startDateTime,
-                                    @Param("endDateTime") OffsetDateTime endDateTime);
+            @Param("employeeSet") Set<Employee> employeeSet,
+            @Param("startDateTime") OffsetDateTime startDateTime,
+            @Param("endDateTime") OffsetDateTime endDateTime);
 }

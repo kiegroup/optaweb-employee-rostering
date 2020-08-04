@@ -47,16 +47,16 @@ public class AdminService {
     private RosterGenerator rosterGenerator;
 
     public AdminService(ShiftRepository shiftRepository,
-                        EmployeeAvailabilityRepository employeeAvailabilityRepository,
-                        TimeBucketRepository timeBucketRepository,
-                        EmployeeRepository employeeRepository,
-                        ContractRepository contractRepository,
-                        SpotRepository spotRepository,
-                        SkillRepository skillRepository,
-                        RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
-                        RosterStateRepository rosterStateRepository,
-                        TenantRepository tenantRepository,
-                        RosterGenerator rosterGenerator) {
+            EmployeeAvailabilityRepository employeeAvailabilityRepository,
+            TimeBucketRepository timeBucketRepository,
+            EmployeeRepository employeeRepository,
+            ContractRepository contractRepository,
+            SpotRepository spotRepository,
+            SkillRepository skillRepository,
+            RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
+            RosterStateRepository rosterStateRepository,
+            TenantRepository tenantRepository,
+            RosterGenerator rosterGenerator) {
         this.shiftRepository = shiftRepository;
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
         this.timeBucketRepository = timeBucketRepository;

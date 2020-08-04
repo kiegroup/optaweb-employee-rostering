@@ -21,8 +21,6 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.springframework.http.HttpStatus;
@@ -37,6 +35,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/skill")
@@ -73,14 +74,14 @@ public class SkillController {
     @ApiOperation("Add a new skill")
     @PostMapping("/add")
     public ResponseEntity<Skill> createSkill(@PathVariable @Min(0) Integer tenantId,
-                                             @RequestBody @Valid SkillView skillView) {
+            @RequestBody @Valid SkillView skillView) {
         return new ResponseEntity<>(skillService.createSkill(tenantId, skillView), HttpStatus.OK);
     }
 
     @ApiOperation("Update a skill")
     @PostMapping("/update")
     public ResponseEntity<Skill> updateSkill(@PathVariable @Min(0) Integer tenantId,
-                                             @RequestBody @Valid SkillView skillView) {
+            @RequestBody @Valid SkillView skillView) {
         return new ResponseEntity<>(skillService.updateSkill(tenantId, skillView), HttpStatus.OK);
     }
 }

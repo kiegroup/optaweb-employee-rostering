@@ -55,9 +55,9 @@ public class RotationService extends AbstractRestService {
     private final EmployeeService employeeService;
 
     public RotationService(Validator validator,
-                           TimeBucketRepository timeBucketRepository, RosterService rosterService,
-                           TenantService tenantService, SpotService spotService, SkillService skillService,
-                           EmployeeService employeeService) {
+            TimeBucketRepository timeBucketRepository, RosterService rosterService,
+            TenantService tenantService, SpotService spotService, SkillService skillService,
+            EmployeeService employeeService) {
         super(validator);
         this.timeBucketRepository = timeBucketRepository;
 
@@ -132,13 +132,13 @@ public class RotationService extends AbstractRestService {
                         }
                     }).collect(Collectors.toList());
             timeBucket = new TimeBucket(timeBucketView.getTenantId(),
-                                        spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
-                                        additionalSkillSet, repeatOnDaySet, seatList);
+                    spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                    additionalSkillSet, repeatOnDaySet, seatList);
         } else {
             DayOfWeek startOfWeek = tenantService.getRosterConstraintConfiguration(tenantId).getWeekStartDay();
             timeBucket = new TimeBucket(timeBucketView.getTenantId(),
-                                        spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
-                                        additionalSkillSet, repeatOnDaySet, startOfWeek, rotationLength);
+                    spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                    additionalSkillSet, repeatOnDaySet, startOfWeek, rotationLength);
         }
 
         validateBean(tenantId, timeBucket);
@@ -166,15 +166,15 @@ public class RotationService extends AbstractRestService {
                         }
                     }).collect(Collectors.toList());
             newTimeBucket = new TimeBucket(timeBucketView.getTenantId(),
-                                           spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
-                                           additionalSkillSet, repeatOnDaySet, seatList);
+                    spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                    additionalSkillSet, repeatOnDaySet, seatList);
             newTimeBucket.setId(timeBucketView.getId());
             newTimeBucket.setVersion(timeBucketView.getVersion());
         } else {
             DayOfWeek startOfWeek = tenantService.getRosterConstraintConfiguration(tenantId).getWeekStartDay();
             newTimeBucket = new TimeBucket(timeBucketView.getTenantId(),
-                                           spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
-                                           additionalSkillSet, repeatOnDaySet, startOfWeek, rotationLength);
+                    spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
+                    additionalSkillSet, repeatOnDaySet, startOfWeek, rotationLength);
             newTimeBucket.setId(timeBucketView.getId());
             newTimeBucket.setVersion(timeBucketView.getVersion());
         }
@@ -184,11 +184,11 @@ public class RotationService extends AbstractRestService {
         TimeBucket oldTimeBucket = timeBucketRepository
                 .findById(newTimeBucket.getId())
                 .orElseThrow(() -> new EntityNotFoundException("TimeBucket entity with ID (" +
-                                                                       newTimeBucket.getId() + ") not found."));
+                        newTimeBucket.getId() + ") not found."));
 
         if (!oldTimeBucket.getTenantId().equals(newTimeBucket.getTenantId())) {
             throw new IllegalStateException("TimeBucket entity with tenantId (" + oldTimeBucket.getTenantId() +
-                                                    ") cannot change tenants.");
+                    ") cannot change tenants.");
         }
 
         oldTimeBucket.setValuesFromTimeBucket(newTimeBucket);

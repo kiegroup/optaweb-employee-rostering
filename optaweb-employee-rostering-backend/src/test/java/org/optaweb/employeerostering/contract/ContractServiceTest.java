@@ -16,7 +16,11 @@
 
 package org.optaweb.employeerostering.contract;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,10 +42,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -71,8 +72,8 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
     @Test
     public void getContractListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/contract/", TENANT_ID)
-                            .accept(MediaType.APPLICATION_JSON))
+                .get("/rest/tenant/{tenantId}/contract/", TENANT_ID)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk());
     }
@@ -85,12 +86,12 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         Integer maximumMinutesPerYear = 12000;
 
         ContractView contractView = new ContractView(TENANT_ID, "contract", maximumMinutesPerDay, maximumMinutesPerWeek,
-                                                     maximumMinutesPerMonth, maximumMinutesPerYear);
+                maximumMinutesPerMonth, maximumMinutesPerYear);
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
-                            .accept(MediaType.APPLICATION_JSON))
+                .get("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
@@ -107,8 +108,8 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, 0)
-                            .accept(MediaType.APPLICATION_JSON))
+                .get("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, 0)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
@@ -125,8 +126,8 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/contract/{id}", 0, contract.getId())
-                            .accept(MediaType.APPLICATION_JSON))
+                .get("/rest/tenant/{tenantId}/contract/{id}", 0, contract.getId())
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
@@ -139,8 +140,8 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
-                            .accept(MediaType.APPLICATION_JSON))
+                .delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
@@ -150,7 +151,7 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
     @Test
     public void deleteNonExistentContractTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders.delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, 0)
-                            .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
@@ -166,8 +167,8 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         Contract contract = contractService.createContract(TENANT_ID, contractView);
         mvc.perform(MockMvcRequestBuilders
-                            .delete("/rest/tenant/{tenantId}/contract/{id}", 0, contract.getId())
-                            .accept(MediaType.APPLICATION_JSON))
+                .delete("/rest/tenant/{tenantId}/contract/{id}", 0, contract.getId())
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
@@ -182,14 +183,14 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         Integer maximumMinutesPerYear = 12000;
 
         ContractView contractView = new ContractView(TENANT_ID, "contract", maximumMinutesPerDay, maximumMinutesPerWeek,
-                                                     maximumMinutesPerMonth, maximumMinutesPerYear);
+                maximumMinutesPerMonth, maximumMinutesPerYear);
         String body = (new ObjectMapper()).writeValueAsString(contractView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .post("/rest/tenant/{tenantId}/contract/add", TENANT_ID)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body)
-                            .accept(MediaType.APPLICATION_JSON))
+                .post("/rest/tenant/{tenantId}/contract/add", TENANT_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
@@ -209,9 +210,9 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         String body = (new ObjectMapper()).writeValueAsString(contractView);
         mvc.perform(MockMvcRequestBuilders
-                            .post("/rest/tenant/{tenantId}/contract/add", 0)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body))
+                .post("/rest/tenant/{tenantId}/contract/add", 0)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
@@ -229,16 +230,16 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
         ContractView updatedContractView = new ContractView(TENANT_ID, "updatedContract", maximumMinutesPerDay,
-                                                            maximumMinutesPerWeek,
-                                                            maximumMinutesPerMonth, maximumMinutesPerYear);
+                maximumMinutesPerWeek,
+                maximumMinutesPerMonth, maximumMinutesPerYear);
         updatedContractView.setId(contract.getId());
         String body = (new ObjectMapper()).writeValueAsString(updatedContractView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body)
-                            .accept(MediaType.APPLICATION_JSON))
+                .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
@@ -261,9 +262,9 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         ContractView updatedContractView = new ContractView(TENANT_ID, "updatedContract");
         String body = (new ObjectMapper()).writeValueAsString(updatedContractView);
         mvc.perform(MockMvcRequestBuilders
-                            .post("/rest/tenant/{tenantId}/contract/update", 0)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body))
+                .post("/rest/tenant/{tenantId}/contract/update", 0)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
@@ -279,9 +280,9 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         contractView.setId(0L);
         String body = (new ObjectMapper()).writeValueAsString(contractView);
         mvc.perform(MockMvcRequestBuilders
-                            .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body))
+                .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
@@ -300,9 +301,9 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         updatedContract.setId(contract.getId());
         String body = (new ObjectMapper()).writeValueAsString(updatedContract);
         mvc.perform(MockMvcRequestBuilders
-                            .post("/rest/tenant/{tenantId}/contract/update", 0)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body))
+                .post("/rest/tenant/{tenantId}/contract/update", 0)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))

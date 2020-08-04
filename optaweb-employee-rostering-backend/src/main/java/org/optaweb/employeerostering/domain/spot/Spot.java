@@ -33,8 +33,8 @@ import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.skill.Skill;
 
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}),
-        @UniqueConstraint(columnNames = {"id"})})
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "tenantId", "name" }),
+        @UniqueConstraint(columnNames = { "id" }) })
 public class Spot extends AbstractPersistable {
 
     @NotNull
@@ -46,8 +46,7 @@ public class Spot extends AbstractPersistable {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "SpotRequiredSkillSet",
             joinColumns = @JoinColumn(name = "spotId", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id"))
     private Set<Skill> requiredSkillSet;
 
     @SuppressWarnings("unused")

@@ -49,8 +49,8 @@ public class RosterStateView extends AbstractPersistable {
     }
 
     public RosterStateView(Integer tenantId, Integer publishNotice, LocalDate firstDraftDate, Integer publishLength,
-                       Integer draftLength, Integer unplannedRotationOffset, Integer rotationLength,
-                       LocalDate lastHistoricDate, ZoneId timeZone) {
+            Integer draftLength, Integer unplannedRotationOffset, Integer rotationLength,
+            LocalDate lastHistoricDate, ZoneId timeZone) {
         super(tenantId);
         this.publishNotice = publishNotice;
         this.firstDraftDate = firstDraftDate;

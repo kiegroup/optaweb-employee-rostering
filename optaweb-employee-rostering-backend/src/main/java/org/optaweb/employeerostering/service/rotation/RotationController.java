@@ -21,8 +21,6 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.rotation.view.TimeBucketView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +35,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/rotation")
@@ -61,30 +62,28 @@ public class RotationController {
     @ApiOperation("Get a shift template by id")
     @GetMapping("/{id}")
     public ResponseEntity<TimeBucketView> getTimeBucket(@PathVariable @Min(0) Integer tenantId,
-                                                              @PathVariable @Min(0) Long id) {
+            @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(rotationService.getTimeBucket(tenantId, id), HttpStatus.OK);
     }
 
     @ApiOperation("Delete a shift template")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteTimeBucket(@PathVariable @Min(0) Integer tenantId,
-                                                       @PathVariable @Min(0) Long id) {
+            @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(rotationService.deleteTimeBucket(tenantId, id), HttpStatus.OK);
     }
 
     @ApiOperation("Add a new shift template")
     @PostMapping("/add")
     public ResponseEntity<TimeBucketView> createTimeBucket(@PathVariable @Min(0) Integer tenantId,
-                                                                 @RequestBody @Valid
-                                                                 TimeBucketView timeBucketView) {
+            @RequestBody @Valid TimeBucketView timeBucketView) {
         return new ResponseEntity<>(rotationService.createTimeBucket(tenantId, timeBucketView), HttpStatus.OK);
     }
 
     @ApiOperation("Update a shift template")
     @PutMapping("/update")
     public ResponseEntity<TimeBucketView> updateTimeBucket(@PathVariable @Min(0) Integer tenantId,
-                                                                 @RequestBody @Valid
-                                                                 TimeBucketView timeBucketView) {
+            @RequestBody @Valid TimeBucketView timeBucketView) {
         return new ResponseEntity<>(rotationService.updateTimeBucket(tenantId, timeBucketView), HttpStatus.OK);
     }
 }

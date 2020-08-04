@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.roster.PublishResult;
 import org.optaweb.employeerostering.domain.roster.RosterState;
@@ -52,6 +50,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/roster")
@@ -87,25 +88,21 @@ public class RosterController {
     @ApiOperation("Get the current shift roster view")
     @GetMapping("/shiftRosterView/current")
     public ResponseEntity<ShiftRosterView> getCurrentShiftRosterView(@PathVariable @Min(0) Integer tenantId,
-                                                                     @RequestParam(name = "p", required = false)
-                                                                             Integer pageNumber,
-                                                                     @RequestParam(name = "n", required = false)
-                                                                             Integer numberOfItemsPerPage) {
+            @RequestParam(name = "p", required = false) Integer pageNumber,
+            @RequestParam(name = "n", required = false) Integer numberOfItemsPerPage) {
         return new ResponseEntity<>(rosterService.getCurrentShiftRosterView(tenantId, pageNumber,
-                                                                            numberOfItemsPerPage), HttpStatus.OK);
+                numberOfItemsPerPage), HttpStatus.OK);
     }
 
     @ApiOperation("Get a shift roster view between two dates")
     @GetMapping("/shiftRosterView")
     public ResponseEntity<ShiftRosterView> getShiftRosterView(@PathVariable @Min(0) Integer tenantId,
-                                                              @RequestParam(name = "p", required = false)
-                                                                      Integer pageNumber,
-                                                              @RequestParam(name = "n", required = false)
-                                                                      Integer numberOfItemsPerPage,
-                                                              @RequestParam(name = "startDate") String startDateString,
-                                                              @RequestParam(name = "endDate") String endDateString) {
+            @RequestParam(name = "p", required = false) Integer pageNumber,
+            @RequestParam(name = "n", required = false) Integer numberOfItemsPerPage,
+            @RequestParam(name = "startDate") String startDateString,
+            @RequestParam(name = "endDate") String endDateString) {
         return new ResponseEntity<>(rosterService.getShiftRosterView(tenantId, pageNumber, numberOfItemsPerPage,
-                                                                     startDateString, endDateString), HttpStatus.OK);
+                startDateString, endDateString), HttpStatus.OK);
     }
 
     // TODO: find out if there a way to pass lists in GET requests
@@ -113,22 +110,20 @@ public class RosterController {
     @ApiOperation("Get a shift roster view between two dates for a subset of the spots")
     @PostMapping("/shiftRosterView/for")
     public ResponseEntity<ShiftRosterView> getShiftRosterViewFor(@PathVariable @Min(0) Integer tenantId,
-                                                                 @RequestParam(name = "startDate")
-                                                                         String startDateString,
-                                                                 @RequestParam(name = "endDate") String endDateString,
-                                                                 @RequestBody @Valid List<Spot> spots) {
+            @RequestParam(name = "startDate") String startDateString,
+            @RequestParam(name = "endDate") String endDateString,
+            @RequestBody @Valid List<Spot> spots) {
         return new ResponseEntity<>(rosterService.getShiftRosterViewFor(tenantId, startDateString, endDateString,
-                                                                        spots), HttpStatus.OK);
+                spots), HttpStatus.OK);
     }
 
     @ApiOperation("Get a shift roster view between two dates for a subset of the spots as an excel file")
     @GetMapping(value = "/shiftRosterView/excel",
             produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     public ResponseEntity<byte[]> getShiftRosterViewAsExcel(@PathVariable @Min(0) Integer tenantId,
-                                                            @RequestParam(name = "startDate")
-                                                                    String startDateString,
-                                                            @RequestParam(name = "endDate") String endDateString,
-                                                            @RequestParam(name = "spotList") String spotListString) {
+            @RequestParam(name = "startDate") String startDateString,
+            @RequestParam(name = "endDate") String endDateString,
+            @RequestParam(name = "spotList") String spotListString) {
         Set<Long> spotIdSet = Arrays.stream(spotListString.split(",")).map(Long::parseLong)
                 .collect(Collectors.toSet());
         List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE))
@@ -136,23 +131,23 @@ public class RosterController {
                 .collect(Collectors.toList());
 
         if (spotList.size() != spotIdSet.size()) {
-            return new ResponseEntity<>(new byte[]{},
-                                        HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new byte[] {},
+                    HttpStatus.BAD_REQUEST);
         }
         ShiftRosterView shiftRosterView = rosterService.getShiftRosterViewFor(tenantId, startDateString, endDateString,
-                                                                              spotList);
+                spotList);
         try {
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.setContentDisposition(ContentDisposition.builder("attachment")
-                                                          .filename("Roster-" + startDateString + "--" +
-                                                                            endDateString + ".xlsx")
-                                                          .build());
+                    .filename("Roster-" + startDateString + "--" +
+                            endDateString + ".xlsx")
+                    .build());
             return new ResponseEntity<>(ShiftRosterXlsxFileIO.getExcelBytesForShiftRoster(shiftRosterView),
-                                        responseHeaders,
-                                        HttpStatus.OK);
+                    responseHeaders,
+                    HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<>(new byte[]{},
-                                        HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new byte[] {},
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -166,8 +161,8 @@ public class RosterController {
             @PathVariable @Min(0) Integer tenantId, @RequestParam(name = "p", required = false) Integer pageNumber,
             @RequestParam(name = "n", required = false) Integer numberOfItemsPerPage) {
         return new ResponseEntity<>(rosterService.getCurrentAvailabilityRosterView(tenantId, pageNumber,
-                                                                                   numberOfItemsPerPage),
-                                    HttpStatus.OK);
+                numberOfItemsPerPage),
+                HttpStatus.OK);
     }
 
     @ApiOperation("Get an availability roster view between two dates")
@@ -178,8 +173,8 @@ public class RosterController {
             @RequestParam(name = "startDate") String startDateString,
             @RequestParam(name = "endDate") String endDateString) {
         return new ResponseEntity<>(rosterService.getAvailabilityRosterView(tenantId, pageNumber, numberOfItemsPerPage,
-                                                                            startDateString, endDateString),
-                                    HttpStatus.OK);
+                startDateString, endDateString),
+                HttpStatus.OK);
     }
 
     @ApiOperation("Get an availability roster view between two dates for a subset of the employees")
@@ -189,8 +184,8 @@ public class RosterController {
             @PathVariable @Min(0) Integer tenantId, @RequestParam(name = "startDate") String startDateString,
             @RequestParam(name = "endDate") String endDateString, @RequestBody @Valid List<Employee> employees) {
         return new ResponseEntity<>(rosterService.getAvailabilityRosterViewFor(tenantId, startDateString,
-                                                                               endDateString, employees),
-                                    HttpStatus.OK);
+                endDateString, employees),
+                HttpStatus.OK);
     }
 
     // ************************************************************************
@@ -225,17 +220,16 @@ public class RosterController {
     // ************************************************************************
     // Publish
     // ************************************************************************
-    
+
     @ApiOperation("Provision shifts from particular time buckets into the given period")
     @PostMapping("/provision")
     public void provision(@PathVariable @Min(0) Integer tenantId,
-                          @RequestParam Integer startRotationOffset, @RequestParam String fromDate,
-                          @RequestParam String toDate, @RequestBody List<Long> timeBucketIdList) {
+            @RequestParam Integer startRotationOffset, @RequestParam String fromDate,
+            @RequestParam String toDate, @RequestBody List<Long> timeBucketIdList) {
         rosterService.provision(tenantId, startRotationOffset, LocalDate.parse(fromDate), LocalDate.parse(toDate),
-                                timeBucketIdList);
+                timeBucketIdList);
     }
 
-    
     @ApiOperation("Publish the next set of draft shifts and create new draft shifts from the rotation template")
     @PostMapping("/publishAndProvision")
     public ResponseEntity<PublishResult> publishAndProvision(@PathVariable @Min(0) Integer tenantId) {

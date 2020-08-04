@@ -36,8 +36,8 @@ public class AbstractRestService {
     private void validateTenantIdParameter(Integer tenantId, AbstractPersistable persistable) {
         if (!Objects.equals(persistable.getTenantId(), tenantId)) {
             throw new IllegalStateException("The tenantId (" + tenantId + ") does not match the persistable ("
-                                                    + persistable + ")'s tenantId ("
-                                                    + persistable.getTenantId() + ").");
+                    + persistable + ")'s tenantId ("
+                    + persistable.getTenantId() + ").");
         }
     }
 
