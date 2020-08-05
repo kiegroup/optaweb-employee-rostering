@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -264,7 +264,7 @@ describe('SpotTimeBucketSelect', () => {
     let checkbox = spotTimeBucketSelect.find(Checkbox).filter('[id="Spot-toggle-all"]');
     expect(checkbox.prop('isChecked')).toEqual(null);
 
-    checkbox.simulate('change');
+    checkbox.simulate('change', true);
 
     expect(spotTimeBucketSelectProps.onUpdateSelectedTimeBucketList).toBeCalledWith([timeBucket, otherTimeBucket]);
 
@@ -276,7 +276,7 @@ describe('SpotTimeBucketSelect', () => {
     checkbox = spotTimeBucketSelect.find(Checkbox).filter('[id="Spot-toggle-all"]');
     expect(checkbox.prop('isChecked')).toEqual(true);
 
-    checkbox.simulate('change');
+    checkbox.simulate('change', false);
 
     expect(spotTimeBucketSelectProps.onUpdateSelectedTimeBucketList).toBeCalledWith([]);
 
@@ -288,24 +288,39 @@ describe('SpotTimeBucketSelect', () => {
     checkbox = spotTimeBucketSelect.find(Checkbox).filter('[id="Spot-toggle-all"]');
     expect(checkbox.prop('isChecked')).toEqual(false);
 
-    checkbox.simulate('change');
+    checkbox.simulate('change', true);
 
     expect(spotTimeBucketSelectProps.onUpdateSelectedTimeBucketList).toBeCalledWith([timeBucket, otherTimeBucket]);
   });
 
   it('clicking the AccordianToggle should toggle if it expanded', () => {
     const spotTimeBucketSelect = shallow(<SpotTimeBucketSelect {...spotTimeBucketSelectProps} />);
+    const targetIsCurrentTargetEvent = { currentTarget: 0, target: 0 };
+    const targetIsNotCurrentTargetEvent = { currentTarget: 0, target: 1 };
+
     let accordianToggle = spotTimeBucketSelect.find(AccordionToggle);
     let accordianContent = spotTimeBucketSelect.find(AccordionContent);
     expect(accordianToggle.prop('isExpanded')).toEqual(false);
     expect(accordianContent.prop('isHidden')).toEqual(true);
-    accordianToggle.simulate('click');
+    accordianToggle.simulate('click', targetIsCurrentTargetEvent);
 
     accordianToggle = spotTimeBucketSelect.find(AccordionToggle);
     accordianContent = spotTimeBucketSelect.find(AccordionContent);
     expect(accordianToggle.prop('isExpanded')).toEqual(true);
     expect(accordianContent.prop('isHidden')).toEqual(false);
-    accordianToggle.simulate('click');
+    accordianToggle.simulate('click', targetIsNotCurrentTargetEvent);
+
+    accordianToggle = spotTimeBucketSelect.find(AccordionToggle);
+    accordianContent = spotTimeBucketSelect.find(AccordionContent);
+    expect(accordianToggle.prop('isExpanded')).toEqual(true);
+    expect(accordianContent.prop('isHidden')).toEqual(false);
+    accordianToggle.simulate('click', targetIsCurrentTargetEvent);
+
+    accordianToggle = spotTimeBucketSelect.find(AccordionToggle);
+    accordianContent = spotTimeBucketSelect.find(AccordionContent);
+    expect(accordianToggle.prop('isExpanded')).toEqual(false);
+    expect(accordianContent.prop('isHidden')).toEqual(true);
+    accordianToggle.simulate('click', targetIsNotCurrentTargetEvent);
 
     accordianToggle = spotTimeBucketSelect.find(AccordionToggle);
     accordianContent = spotTimeBucketSelect.find(AccordionContent);
@@ -317,7 +332,7 @@ describe('SpotTimeBucketSelect', () => {
     const spotTimeBucketSelect = shallow(<SpotTimeBucketSelect {...spotTimeBucketSelectProps} />);
     const checkbox = spotTimeBucketSelect.find(Checkbox).filter(`[id="timebucket-${timeBucket.id}-toggle"]`);
     expect(checkbox.prop('isChecked')).toEqual(true);
-    checkbox.simulate('change');
+    checkbox.simulate('change', false);
     expect(spotTimeBucketSelectProps.onUpdateSelectedTimeBucketList).toBeCalledWith([]);
   });
 
@@ -325,7 +340,7 @@ describe('SpotTimeBucketSelect', () => {
     const spotTimeBucketSelect = shallow(<SpotTimeBucketSelect {...spotTimeBucketSelectProps} />);
     const checkbox = spotTimeBucketSelect.find(Checkbox).filter(`[id="timebucket-${otherTimeBucket.id}-toggle"]`);
     expect(checkbox.prop('isChecked')).toEqual(false);
-    checkbox.simulate('change');
+    checkbox.simulate('change', true);
     expect(spotTimeBucketSelectProps.onUpdateSelectedTimeBucketList).toBeCalledWith([timeBucket, otherTimeBucket]);
   });
 });

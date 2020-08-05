@@ -200,8 +200,6 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
                 .queryParam("toDate", toDate.toString())
                 .build()
                 .expand(Collections.singletonMap("tenantId", tenantId));
-        System.out.println(uriComponents.toUriString());
-        System.out.println(timeBucketIdList.stream().map(id -> id.toString()).collect(Collectors.joining(", ")));
         return restTemplate.postForEntity(uriComponents.toUriString(), timeBucketIdList, Void.class);
     }
 
@@ -521,8 +519,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         // time bucket from different tenant should fail
         publishResultResponseEntity = provision(0, 0, fromDate,
                                                 toDate,
-                                                Collections.singletonList(timeBucketView).stream()
-                                                        .map(TimeBucketView::getId).collect(Collectors.toList()));
+                                                Collections.singletonList(timeBucketView.getId()));
         assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
         // Test valid request

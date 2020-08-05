@@ -164,6 +164,10 @@ editShiftsInShiftRoster:
     the action you tried to perform would change the start and end time of the shift,
     instead of assigning the employee to another shift, which is probably not what you want.
 
+provision:
+  title: Sucessfully Provisioned Shifts
+  message: Shifts were successfully provisioned for the date range {{from}} to {{to}}.
+
 generic:
   title: Exception
   message: "{{message}}"
