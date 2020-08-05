@@ -51,7 +51,11 @@ export const SpotTimeBucketSelect: React.FC<SpotTimeBucketSelectProps> = (props)
     <AccordionItem>
       <AccordionToggle
         id={props.spot.name}
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={(e) => {
+          if (e.currentTarget === e.target) {
+            setIsExpanded(!isExpanded);
+          }
+        }}
         isExpanded={isExpanded}
       >
         <span>
@@ -67,13 +71,13 @@ export const SpotTimeBucketSelect: React.FC<SpotTimeBucketSelectProps> = (props)
             id={`${props.spot.name}-toggle-all`}
             isChecked={spotAllTimeBucketChecked as boolean /* Patternfly example use null for minus, yet it not in
             their typescript definition as a valid value */}
-            onChange={() => {
-              if (spotAllTimeBucketChecked === true) {
-                props.onUpdateSelectedTimeBucketList(props.selectedTimeBucketList
-                  .filter(tb => !timeBucketListForSpot.includes(tb)));
-              } else {
+            onChange={(isChecked) => {
+              if (isChecked) {
                 props.onUpdateSelectedTimeBucketList(props.selectedTimeBucketList.concat(timeBucketListForSpot
                   .filter(tb => !props.selectedTimeBucketList.includes(tb))));
+              } else {
+                props.onUpdateSelectedTimeBucketList(props.selectedTimeBucketList
+                  .filter(tb => !timeBucketListForSpot.includes(tb)));
               }
             }}
           />
