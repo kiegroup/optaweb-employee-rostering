@@ -284,21 +284,7 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <!-- Fail the build in CI if code does not follow the standards. -->
-      <id>validate-formatting-ci</id>
-      <activation>
-        <property>
-          <name>env.CI</name>
-        </property>
-      </activation>
-      <properties>
-        <formatter.goal>validate</formatter.goal>
-        <impsort.goal>check</impsort.goal>
-      </properties>
-    </profile>
-    
+    </profile> 
   </profiles>
 
 </project>
