@@ -28,6 +28,7 @@ import { SeatJigsaw, SeatJigsawProps } from './SeatJigsaw';
 import { EditTimeBucketModal } from './EditTimeBucketModal';
 
 const mockSelectorReturnValue = new Map();
+jest.useFakeTimers();
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useSelector: jest.fn().mockImplementation(selector => mockSelectorReturnValue.get(selector)),
@@ -36,6 +37,15 @@ jest.mock('react-redux', () => ({
 function mockSelector<T>(selector: (state: AppState) => T, value: T): void {
   mockSelectorReturnValue.set(selector, value);
 }
+
+const mockPendingRunners: Function[] = [];
+jest.mock('util/FunctionalComponentUtils', () => ({
+  useInterval: (fun: Function) => { mockPendingRunners[0] = fun; },
+}));
+const runPendingRunners = () => {
+  mockPendingRunners.forEach(f => f());
+  mockPendingRunners.splice(0, mockPendingRunners.length);
+};
 
 describe('SeatJigsaw Component', () => {
   beforeEach(() => {
@@ -80,6 +90,7 @@ describe('SeatJigsaw Component', () => {
     const seatJigsaw = shallow(<SeatJigsaw {...baseProps} />);
 
     seatJigsaw.find('[type="button"]').last().simulate('click');
+    runPendingRunners();
     expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
       ...timeBucket,
       seatList: [...timeBucket.seatList, { dayInRotation: 6, employee }],
@@ -90,6 +101,7 @@ describe('SeatJigsaw Component', () => {
     const seatJigsaw = shallow(<SeatJigsaw {...baseProps} />);
 
     seatJigsaw.find('[type="button"]').last().simulate('mouseDown');
+    runPendingRunners();
     expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
       ...timeBucket,
       seatList: [...timeBucket.seatList, { dayInRotation: 6, employee }],
@@ -100,6 +112,7 @@ describe('SeatJigsaw Component', () => {
     const seatJigsaw = shallow(<SeatJigsaw {...baseProps} />);
 
     seatJigsaw.find('[type="button"]').last().simulate('mouseMove', { buttons: 1 });
+    runPendingRunners();
     expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
       ...timeBucket,
       seatList: [...timeBucket.seatList, { dayInRotation: 6, employee }],
@@ -110,6 +123,7 @@ describe('SeatJigsaw Component', () => {
     const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub="NO_SHIFT" />);
 
     seatJigsaw.find('[type="button"]').first().simulate('click');
+    runPendingRunners();
     expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
       ...timeBucket,
       seatList: [],
@@ -120,6 +134,7 @@ describe('SeatJigsaw Component', () => {
     const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub="NO_SHIFT" />);
 
     seatJigsaw.find('[type="button"]').first().simulate('mouseDown');
+    runPendingRunners();
     expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
       ...timeBucket,
       seatList: [],
@@ -130,6 +145,7 @@ describe('SeatJigsaw Component', () => {
     const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub="NO_SHIFT" />);
 
     seatJigsaw.find('[type="button"]').first().simulate('mouseMove', { buttons: 1 });
+    runPendingRunners();
     expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
       ...timeBucket,
       seatList: [],
@@ -140,6 +156,7 @@ describe('SeatJigsaw Component', () => {
     const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub="SHIFT_WITH_NO_EMPLOYEE" />);
 
     seatJigsaw.find('[type="button"]').last().simulate('click');
+    runPendingRunners();
     expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
       ...timeBucket,
       seatList: [...timeBucket.seatList, { dayInRotation: 6, employee: null }],
@@ -150,6 +167,7 @@ describe('SeatJigsaw Component', () => {
     const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub="SHIFT_WITH_NO_EMPLOYEE" />);
 
     seatJigsaw.find('[type="button"]').last().simulate('mouseDown');
+    runPendingRunners();
     expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
       ...timeBucket,
       seatList: [...timeBucket.seatList, { dayInRotation: 6, employee: null }],
@@ -160,6 +178,7 @@ describe('SeatJigsaw Component', () => {
     const seatJigsaw = shallow(<SeatJigsaw {...baseProps} selectedStub="SHIFT_WITH_NO_EMPLOYEE" />);
 
     seatJigsaw.find('[type="button"]').last().simulate('mouseMove', { buttons: 1 });
+    runPendingRunners();
     expect(baseProps.onUpdateTimeBucket).toBeCalledWith({
       ...timeBucket,
       seatList: [...timeBucket.seatList, { dayInRotation: 6, employee: null }],
@@ -171,9 +190,11 @@ describe('SeatJigsaw Component', () => {
     const seatJigsaw = shallow(<SeatJigsaw {...baseProps} />);
 
     seatJigsaw.find('[type="button"]').last().simulate('mouseMove', { buttons: 2 });
+    runPendingRunners();
     expect(baseProps.onUpdateTimeBucket).not.toBeCalled();
 
     seatJigsaw.find('[type="button"]').last().simulate('mouseMove', { buttons: 0 });
+    runPendingRunners();
     expect(baseProps.onUpdateTimeBucket).not.toBeCalled();
   });
 });

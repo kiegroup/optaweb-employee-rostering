@@ -25,6 +25,7 @@ import { useSelector } from 'react-redux';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { TimeBucket } from 'domain/TimeBucket';
 import { useTranslation } from 'react-i18next';
+import { useInterval } from 'util/FunctionalComponentUtils';
 import { EditTimeBucketModal } from './EditTimeBucketModal';
 import { Stub, EmployeeNickName } from './EmployeeStub';
 
@@ -35,11 +36,68 @@ export interface SeatJigsawProps {
   onDeleteTimeBucket: () => void;
 }
 
+export const UPDATE_TIMEBUCKET_INTERVAL_DELAY = 5000;
 export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
   const [isEditingTimeBucket, setIsEditingTimeBucket] = React.useState(false);
+  const [editedTimeBucket, setEditedTimeBucket] = React.useState(props.timeBucket);
+
+  // Update from props when timebucket id or version changes
+  React.useEffect(() => {
+    if (props.timeBucket.version !== editedTimeBucket.version || props.timeBucket.id !== editedTimeBucket.id) {
+      setEditedTimeBucket(props.timeBucket);
+    }
+  }, [editedTimeBucket.id, editedTimeBucket.version, setEditedTimeBucket, props.timeBucket]);
+
+  // Every 5 seconds, update the timeBucket if it change (so we don't overwhelm the server)
+  useInterval(() => {
+    if (editedTimeBucket !== props.timeBucket) {
+      props.onUpdateTimeBucket(editedTimeBucket);
+    }
+  }, UPDATE_TIMEBUCKET_INTERVAL_DELAY);
+
+  // Use refs so the unmount only runs on unmount instead on props updates
+  const propsRef = React.useRef<SeatJigsawProps>();
+  const editedTimeBucketRef = React.useRef<TimeBucket>();
+
+  React.useEffect(
+    () => {
+      propsRef.current = props;
+    }, [props],
+  );
+
+  React.useEffect(
+    () => {
+      editedTimeBucketRef.current = editedTimeBucket;
+    }, [editedTimeBucket],
+  );
+
+  // Submit any changes on unmount
+  React.useEffect(() => () => {
+    if (propsRef.current && editedTimeBucketRef.current
+      && editedTimeBucketRef.current !== propsRef.current.timeBucket) {
+      propsRef.current.onUpdateTimeBucket(editedTimeBucketRef.current);
+    }
+  }, []);
+
   const rosterState = useSelector(rosterSelectors.getRosterState);
   const rotationLength = rosterState ? rosterState.rotationLength : 0;
   const { t } = useTranslation('SeatJigsaw');
+  const updateSeatInTimeBucket = (day: number) => ({
+    ...editedTimeBucket,
+    seatList: [
+      ...editedTimeBucket.seatList
+        .filter(other => other.dayInRotation !== day),
+      ...(props.selectedStub !== 'NO_SHIFT'
+        ? [
+          {
+            dayInRotation: day,
+            employee: props.selectedStub !== 'SHIFT_WITH_NO_EMPLOYEE'
+              ? props.selectedStub : null,
+          },
+        ] : []),
+    ],
+  });
+
   return (
     <>
       <Title
@@ -48,14 +106,14 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
           userSelect: 'none',
         }}
       >
-        {moment(props.timeBucket.startTime, 'HH:mm').format('LT')}
+        {moment(editedTimeBucket.startTime, 'HH:mm').format('LT')}
         -
-        {moment(props.timeBucket.endTime, 'HH:mm').format('LT')}
-        {props.timeBucket.additionalSkillSet.length > 0
+        {moment(editedTimeBucket.endTime, 'HH:mm').format('LT')}
+        {editedTimeBucket.additionalSkillSet.length > 0
           && (
             <Text>
           (
-              {props.timeBucket.additionalSkillSet.map(skill => skill.name).join(', ')}
+              {editedTimeBucket.additionalSkillSet.map(skill => skill.name).join(', ')}
           )
             </Text>
           )
@@ -75,7 +133,7 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
                   }}
                 >
                   {Array(7).fill(null)
-                    .map((_, i) => props.timeBucket.seatList
+                    .map((_, i) => editedTimeBucket.seatList
                       .find(seat => seat.dayInRotation === i + weekNumber * 7) || null)
                     .map((seat, weekDay) => (
                       <button
@@ -93,57 +151,18 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
                         }}
                         type="button"
                         onClick={() => {
-                          props.onUpdateTimeBucket({
-                            ...props.timeBucket,
-                            seatList: [
-                              ...props.timeBucket.seatList
-                                .filter(other => other.dayInRotation !== weekDay + weekNumber * 7),
-                              ...(props.selectedStub !== 'NO_SHIFT'
-                                ? [
-                                  {
-                                    dayInRotation: weekDay + weekNumber * 7,
-                                    employee: props.selectedStub !== 'SHIFT_WITH_NO_EMPLOYEE'
-                                      ? props.selectedStub : null,
-                                  },
-                                ] : []),
-                            ],
-                          });
+                          const updatedTimeBucket = updateSeatInTimeBucket(weekDay + weekNumber * 7);
+                          setEditedTimeBucket(updatedTimeBucket);
                         }}
                         onMouseDown={() => {
-                          props.onUpdateTimeBucket({
-                            ...props.timeBucket,
-                            seatList: [
-                              ...props.timeBucket.seatList
-                                .filter(other => other.dayInRotation !== weekDay + weekNumber * 7),
-                              ...(props.selectedStub !== 'NO_SHIFT'
-                                ? [
-                                  {
-                                    dayInRotation: weekDay + weekNumber * 7,
-                                    employee: props.selectedStub !== 'SHIFT_WITH_NO_EMPLOYEE'
-                                      ? props.selectedStub : null,
-                                  },
-                                ] : []),
-                            ],
-                          });
+                          const updatedTimeBucket = updateSeatInTimeBucket(weekDay + weekNumber * 7);
+                          setEditedTimeBucket(updatedTimeBucket);
                         }}
                         onMouseMove={(e) => {
                           // eslint-disable-next-line no-bitwise
                           if ((e.buttons & 1) === 1) { // 1 = Left mouse button
-                            props.onUpdateTimeBucket({
-                              ...props.timeBucket,
-                              seatList: [
-                                ...props.timeBucket.seatList
-                                  .filter(other => other.dayInRotation !== weekDay + weekNumber * 7),
-                                ...(props.selectedStub !== 'NO_SHIFT'
-                                  ? [
-                                    {
-                                      dayInRotation: weekDay + weekNumber * 7,
-                                      employee: props.selectedStub !== 'SHIFT_WITH_NO_EMPLOYEE'
-                                        ? props.selectedStub : null,
-                                    },
-                                  ] : []),
-                              ],
-                            });
+                            const updatedTimeBucket = updateSeatInTimeBucket(weekDay + weekNumber * 7);
+                            setEditedTimeBucket(updatedTimeBucket);
                           }
                         }}
                       >
@@ -194,7 +213,7 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
       </Split>
       <EditTimeBucketModal
         isOpen={isEditingTimeBucket}
-        timeBucket={props.timeBucket}
+        timeBucket={editedTimeBucket}
         onUpdateTimeBucket={props.onUpdateTimeBucket}
         onClose={() => setIsEditingTimeBucket(false)}
       />
