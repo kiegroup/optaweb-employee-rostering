@@ -109,7 +109,7 @@ export const RotationPage: React.FC<{}> = () => {
   }
   return (
     <>
-      <Title size="2xl">Rotation</Title>
+      <Title size="2xl">{t('rotation')}</Title>
       <TypeaheadSelectInput
         aria-label="Select Spot"
         emptyText={t('selectSpot')}
@@ -161,7 +161,7 @@ export const RotationPage: React.FC<{}> = () => {
           >
             <PlusIcon />
             {' '}
-Add New Time Bucket
+            {t('addNewTimeBucket')}
           </Button>
         </FlexItem>
       </Flex>

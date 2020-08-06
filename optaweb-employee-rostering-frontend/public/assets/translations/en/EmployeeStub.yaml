@@ -1,0 +1,10 @@
+---
+noShift: No Shift
+shiftWithNoEmployee: Shift with no Employee
+allStubMustHaveAnEmployee: All Stubs must have an Employee
+stubEmployeeNotUnique: Multiple stubs have employee {{employee}}
+editEmployeeStubList: Edit Employee Stub List
+selectAnEmployee: Select an Employee...
+addEmployee: Add Employee
+editEmployeeStubList: Edit Employee Stub List
+employeeStub: Employee Stub

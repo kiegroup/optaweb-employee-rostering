@@ -29,7 +29,7 @@ exports[`EditEmployeeStubListModal component should render correctly 1`] = `
   isSmall={true}
   onClose={[MockFunction]}
   showClose={true}
-  title="Edit Employee Stub List"
+  title="Trans(i18nKey=editEmployeeStubList)"
 >
   <Flex
     breakpointMods={
@@ -63,7 +63,7 @@ exports[`EditEmployeeStubListModal component should render correctly 1`] = `
             >
               <TypeaheadSelectInput
                 autoSize={false}
-                emptyText="Select an employee..."
+                emptyText="Trans(i18nKey=selectAnEmployee)"
                 onChange={[Function]}
                 optionToStringMap={[Function]}
                 options={
@@ -158,7 +158,7 @@ exports[`EditEmployeeStubListModal component should render correctly 1`] = `
         onClick={[Function]}
         variant="link"
       >
-        + Add Employee
+        + Trans(i18nKey=addEmployee)
       </Component>
     </FlexItem>
   </Flex>
@@ -260,7 +260,7 @@ exports[`EmployeeStub Component It should render correctly without an employee 1
       "writingMode": "vertical-rl",
     }
   }
-  title="Unassigned"
+  title="Trans(i18nKey=noShift)"
   type="button"
 >
   <EmployeeNickName
@@ -288,7 +288,8 @@ exports[`EmployeeStubList Component should render correctly 1`] = `
     </FlexItem>
     <FlexItem>
       <Text>
-        Employee Stub:
+        Trans(i18nKey=employeeStub)
+        :
       </Text>
     </FlexItem>
     <FlexItem>
@@ -304,7 +305,7 @@ exports[`EmployeeStubList Component should render correctly 1`] = `
         <FlexItem>
           <EmployeeStub
             color="gray"
-            employee={null}
+            employee="NO_SHIFT"
             isSelected={false}
             onClick={[Function]}
           />
@@ -312,7 +313,7 @@ exports[`EmployeeStubList Component should render correctly 1`] = `
         <FlexItem>
           <EmployeeStub
             color="#FFFFFF"
-            employee={null}
+            employee="SHIFT_WITH_NO_EMPLOYEE"
             isSelected={false}
             onClick={[Function]}
           />
@@ -384,7 +385,7 @@ exports[`EmployeeStubList Component should render correctly 1`] = `
         onClick={[Function]}
         variant="link"
       >
-        Edit employee stub
+        Trans(i18nKey=editEmployeeStubList)
          
         <EditIcon
           color="currentColor"

@@ -29,6 +29,7 @@ import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import { v4 as uuid } from 'uuid';
 import { useListValidators } from 'util/ValidationUtils';
 import { getColor } from 'ui/components/ColorPicker';
+import { useTranslation } from 'react-i18next';
 
 export interface EmployeeNickNameProps {
   employee: Employee | null;
@@ -49,35 +50,43 @@ export const EmployeeNickName: React.FC<EmployeeNickNameProps> = (props) => {
 
 export interface EmployeeStubProps {
   isSelected: boolean;
-  employee: Employee | null;
+  employee: Stub;
   color: string;
   onClick: () => void;
 }
-export const EmployeeStub: React.FC<EmployeeStubProps> = props => (
-  <button
-    className="pf-c-button"
-    style={{
-      display: 'flex',
-      width: '30px',
-      height: '50px',
-      marginTop: '10px',
-      overflow: 'hidden',
-      outline: `${props.isSelected ? 5 : 1}px solid ${props.isSelected
-        ? 'var(--pf-global--primary-color--100)' : 'black'}`,
-      cursor: 'pointer',
-      writingMode: 'vertical-rl',
-      textOrientation: 'upright',
-      alignItems: 'center',
-      backgroundColor: props.color,
-      color: getColor(props.color).isLight() ? 'black' : 'white',
-    }}
-    type="button"
-    onClick={props.onClick}
-    title={props.employee !== null ? props.employee.name : 'Unassigned'}
-  >
-    <EmployeeNickName employee={props.employee} />
-  </button>
-);
+export const EmployeeStub: React.FC<EmployeeStubProps> = (props) => {
+  const { t } = useTranslation('EmployeeStub');
+  return (
+    <button
+      className="pf-c-button"
+      style={{
+        display: 'flex',
+        width: '30px',
+        height: '50px',
+        marginTop: '10px',
+        overflow: 'hidden',
+        outline: `${props.isSelected ? 5 : 1}px solid ${props.isSelected
+          ? 'var(--pf-global--primary-color--100)' : 'black'}`,
+        cursor: 'pointer',
+        writingMode: 'vertical-rl',
+        textOrientation: 'upright',
+        alignItems: 'center',
+        backgroundColor: props.color,
+        color: getColor(props.color).isLight() ? 'black' : 'white',
+      }}
+      type="button"
+      onClick={props.onClick}
+      title={
+        // eslint-disable-next-line no-nested-ternary
+        (props.employee === 'NO_SHIFT') ? t('noShift')
+          : (props.employee === 'SHIFT_WITH_NO_EMPLOYEE') ? t('unassigned')
+            : props.employee.name
+      }
+    >
+      <EmployeeNickName employee={(typeof props.employee !== 'string') ? props.employee : null} />
+    </button>
+  );
+};
 
 export type Stub = Employee | 'SHIFT_WITH_NO_EMPLOYEE' | 'NO_SHIFT';
 export interface EditEmployeeStubListModalProps {
@@ -91,16 +100,17 @@ export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps>
     props.currentStubList.map(stub => ({ key: uuid(), stub })),
   );
   const employeeList = useSelector(employeeSelectors.getEmployeeList);
+  const { t } = useTranslation('EmployeeStub');
   const { isValid, showValidationErrors } = useListValidators(editedStubList, {
     noUnassignedStub: {
       predicate: stub => stub.stub !== 'SHIFT_WITH_NO_EMPLOYEE',
-      errorMsg: () => 'All stubs must have an employee',
+      errorMsg: () => t('allStubMustHaveAnEmployee'),
     },
     noDuplicateStub: {
       predicate: stub => typeof stub.stub === 'string'
         || editedStubList.filter(other => typeof other.stub !== 'string'
           && other.stub.id === (stub.stub as Employee).id && stub !== other).length === 0,
-      errorMsg: stub => `Multiple stubs have employee ${(stub.stub as Employee).name}`,
+      errorMsg: stub => t('stubEmployeeNotUnique', { employee: (stub.stub as Employee).name }),
     },
   });
 
@@ -110,7 +120,7 @@ export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps>
 
   return (
     <Modal
-      title="Edit Employee Stub List"
+      title={t('editEmployeeStubList')}
       isSmall
       onClose={props.onClose}
       isOpen={props.isVisible}
@@ -153,10 +163,10 @@ export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps>
                   }}
                   >
                     <TypeaheadSelectInput
-                      emptyText="Select an employee..."
+                      emptyText={t('selectAnEmployee')}
                       options={employeeList}
                       value={stub.stub}
-                      optionToStringMap={o => ((typeof o === 'string') ? 'Unassigned' : o.name)}
+                      optionToStringMap={o => ((typeof o === 'string') ? t('unassigned') : o.name)}
                       autoSize={false}
                       onChange={(employee) => {
                         setEditedStubList([
@@ -194,7 +204,7 @@ export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps>
               ]);
             }}
           >
-            + Add Employee
+            {`+ ${t('addEmployee')}`}
           </Button>
         </FlexItem>
       </Flex>
@@ -210,7 +220,7 @@ export interface EmployeeStubListProps {
 }
 
 export const EmployeeStubList: React.FC<EmployeeStubListProps> = (props) => {
-  // const { t } = useTranslation('EmployeeStub');
+  const { t } = useTranslation('EmployeeStub');
   const [isEditingEmployeeStubList, setIsEditingEmployeeStubList] = React.useState(false);
 
   return (
@@ -220,14 +230,19 @@ export const EmployeeStubList: React.FC<EmployeeStubListProps> = (props) => {
       }}
       >
         <FlexItem><UsersIcon /></FlexItem>
-        <FlexItem><Text>Employee Stub:</Text></FlexItem>
+        <FlexItem>
+          <Text>
+            {t('employeeStub')}
+:
+          </Text>
+        </FlexItem>
 
         <FlexItem>
           <Flex breakpointMods={[{ modifier: FlexModifiers['align-items-stretch'] }]}>
             <FlexItem>
               <EmployeeStub
                 isSelected={props.selectedStub === 'NO_SHIFT'}
-                employee={null}
+                employee="NO_SHIFT"
                 color="gray"
                 onClick={() => props.onStubSelect('NO_SHIFT')}
               />
@@ -235,7 +250,7 @@ export const EmployeeStubList: React.FC<EmployeeStubListProps> = (props) => {
             <FlexItem>
               <EmployeeStub
                 isSelected={props.selectedStub === 'SHIFT_WITH_NO_EMPLOYEE'}
-                employee={null}
+                employee="SHIFT_WITH_NO_EMPLOYEE"
                 color="#FFFFFF"
                 onClick={() => props.onStubSelect('SHIFT_WITH_NO_EMPLOYEE')}
               />
@@ -259,7 +274,7 @@ export const EmployeeStubList: React.FC<EmployeeStubListProps> = (props) => {
             variant="link"
             onClick={() => setIsEditingEmployeeStubList(true)}
           >
-          Edit employee stub
+            {t('editEmployeeStubList')}
             {' '}
             <EditIcon />
           </Button>

@@ -130,12 +130,12 @@ describe('EmployeeStub Component', () => {
   });
 
   it('It should render correctly without an employee', () => {
-    const employeeStub = shallow(<EmployeeStub {...baseProps} employee={null} />);
+    const employeeStub = shallow(<EmployeeStub {...baseProps} employee="NO_SHIFT" />);
     expect(employeeStub).toMatchSnapshot();
   });
 
   it('It should call on click on click', () => {
-    const employeeStub = shallow(<EmployeeStub {...baseProps} employee={null} />);
+    const employeeStub = shallow(<EmployeeStub {...baseProps} employee="NO_SHIFT" />);
     employeeStub.simulate('click');
     expect(baseProps.onClick).toBeCalled();
   });
