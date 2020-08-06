@@ -257,7 +257,7 @@ exports[`SeatJigsaw Component It should render correctly 1`] = `
           title={null}
         />
          
-        Edit Time Bucket
+        Trans(i18nKey=editTimeBucket)
       </Component>
       <Component
         onClick={[MockFunction]}
@@ -270,7 +270,7 @@ exports[`SeatJigsaw Component It should render correctly 1`] = `
           title={null}
         />
          
-        Delete Time Bucket
+        Trans(i18nKey=deleteTimeBucket)
       </Component>
     </SplitItem>
   </Split>

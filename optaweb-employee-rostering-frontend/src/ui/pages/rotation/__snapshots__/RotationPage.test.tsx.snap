@@ -5,7 +5,7 @@ exports[`Rotation Page It should render correctly 1`] = `
   <Title
     size="2xl"
   >
-    Rotation
+    Trans(i18nKey=rotation)
   </Title>
   <TypeaheadSelectInput
     aria-label="Select Spot"
@@ -163,7 +163,7 @@ exports[`Rotation Page It should render correctly 1`] = `
           title={null}
         />
          
-        Add New Time Bucket
+        Trans(i18nKey=addNewTimeBucket)
       </Component>
     </FlexItem>
   </Flex>

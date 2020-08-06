@@ -24,6 +24,7 @@ import { rosterSelectors } from 'store/roster';
 import { useSelector } from 'react-redux';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { TimeBucket } from 'domain/TimeBucket';
+import { useTranslation } from 'react-i18next';
 import { EditTimeBucketModal } from './EditTimeBucketModal';
 import { Stub, EmployeeNickName } from './EmployeeStub';
 
@@ -38,7 +39,7 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
   const [isEditingTimeBucket, setIsEditingTimeBucket] = React.useState(false);
   const rosterState = useSelector(rosterSelectors.getRosterState);
   const rotationLength = rosterState ? rosterState.rotationLength : 0;
-
+  const { t } = useTranslation('SeatJigsaw');
   return (
     <>
       <Title
@@ -179,7 +180,7 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
           >
             <EditIcon />
             {' '}
-Edit Time Bucket
+            {t('editTimeBucket')}
           </Button>
           <Button
             onClick={props.onDeleteTimeBucket}
@@ -187,7 +188,7 @@ Edit Time Bucket
           >
             <TrashIcon />
             {' '}
-Delete Time Bucket
+            {t('deleteTimeBucket')}
           </Button>
         </SplitItem>
       </Split>
