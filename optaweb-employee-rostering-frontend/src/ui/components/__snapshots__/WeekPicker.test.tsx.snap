@@ -1,57 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WeekPicker component custom input should render correctly 1`] = `
-<div
-  className="pf-c-form-control"
-  style={
-    Object {
-      "alignItems": "center",
-      "display": "grid",
-      "gridTemplateColumns": "1fr auto auto",
-      "height": "auto",
-    }
-  }
->
-  <Text
-    onClick={[MockFunction]}
-  >
-    06/30/2019 - 07/06/2019
-  </Text>
-  <Component
-    onClick={[Function]}
-    style={
-      Object {
-        "color": "black",
-      }
-    }
-    variant="link"
-  >
-    <HistoryIcon
-      color="currentColor"
-      noVerticalAlign={false}
-      size="sm"
-      title={null}
-    />
-  </Component>
-  <Component
-    onClick={[MockFunction]}
-    style={
-      Object {
-        "color": "black",
-      }
-    }
-    variant="link"
-  >
-    <CalendarIcon
-      color="currentColor"
-      noVerticalAlign={false}
-      size="sm"
-      title={null}
-    />
-  </Component>
-</div>
-`;
-
 exports[`WeekPicker component should render correctly 1`] = `
 <div
   className="week-picker-container"
@@ -82,7 +30,16 @@ exports[`WeekPicker component should render correctly 1`] = `
   </Component>
   <t
     allowSameDay={false}
-    customInput={<ForwardRef />}
+    customInput={
+      <ForwardRef
+        datePickerRef={
+          Object {
+            "current": null,
+          }
+        }
+        goToCurrentWeek={[Function]}
+      />
+    }
     dateFormat="MM/dd/yyyy"
     dateFormatCalendar="LLLL yyyy"
     disabled={false}
@@ -149,6 +106,58 @@ exports[`WeekPicker component should render correctly 1`] = `
         transform=""
       />
     </svg>
+  </Component>
+</div>
+`;
+
+exports[`WeekPicker custom input component custom input should render correctly 1`] = `
+<div
+  className="pf-c-form-control"
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "grid",
+      "gridTemplateColumns": "1fr auto auto",
+      "height": "auto",
+    }
+  }
+>
+  <Text
+    onClick={[Function]}
+  >
+    06/30/2019 - 07/06/2019
+  </Text>
+  <Component
+    onClick={[Function]}
+    style={
+      Object {
+        "color": "black",
+      }
+    }
+    variant="link"
+  >
+    <HistoryIcon
+      color="currentColor"
+      noVerticalAlign={false}
+      size="sm"
+      title={null}
+    />
+  </Component>
+  <Component
+    onClick={[Function]}
+    style={
+      Object {
+        "color": "black",
+      }
+    }
+    variant="link"
+  >
+    <CalendarIcon
+      color="currentColor"
+      noVerticalAlign={false}
+      size="sm"
+      title={null}
+    />
   </Component>
 </div>
 `;

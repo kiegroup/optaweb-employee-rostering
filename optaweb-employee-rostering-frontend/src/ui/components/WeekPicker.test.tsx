@@ -23,7 +23,7 @@ import 'moment/locale/en-ca';
 import MockDate from 'mockdate';
 import { Button, Text } from '@patternfly/react-core';
 import { HistoryIcon, CalendarIcon } from '@patternfly/react-icons';
-import WeekPicker from './WeekPicker';
+import WeekPicker, { DateRangeInputElement } from './WeekPicker';
 
 describe('WeekPicker component', () => {
   beforeAll(() => {
@@ -54,57 +54,6 @@ describe('WeekPicker component', () => {
       .toBeCalledWith(moment('2019-07-07').toDate(), moment('2019-07-07').endOf('week').toDate());
   });
 
-  it('should go to current week when the reset button is clicked', () => {
-    const solvingStartTime = moment('2019-07-23').toDate();
-    MockDate.set(solvingStartTime);
-    const onChange = jest.fn();
-    const onClick = jest.fn();
-    const date = moment('2019-07-03').toDate();
-    const weekPicker = shallow(<WeekPicker value={date} onChange={onChange} />);
-    const customInput = shallow((weekPicker.find(DatePicker).prop('customInput') as JSX.Element));
-    customInput.setProps({ value: date, onClick });
-
-    customInput.find(Button).filterWhere(p => p.contains(<HistoryIcon />)).simulate('click');
-    expect(onClick).not.toBeCalled();
-    expect(onChange).toBeCalled();
-    expect(onChange)
-      .toBeCalledWith(moment('2019-07-21').toDate(), moment('2019-07-21').endOf('week').toDate());
-  });
-
-  it('should open the week selector if the input or calendar icon is clicked', () => {
-    const solvingStartTime = moment('2019-07-23').toDate();
-    MockDate.set(solvingStartTime);
-    const onChange = jest.fn();
-    const onClick = jest.fn();
-    const date = moment('2019-07-03').toDate();
-    const weekPicker = shallow(<WeekPicker value={date} onChange={onChange} />);
-    const customInput = shallow((weekPicker.find(DatePicker).prop('customInput') as JSX.Element));
-    customInput.setProps({ value: date, onClick });
-
-    customInput.find(Button).filterWhere(p => p.contains(<CalendarIcon />)).simulate('click');
-    expect(onClick).toBeCalled();
-    expect(onChange).not.toBeCalled();
-
-    onClick.mockClear();
-
-    customInput.find(Text).simulate('click');
-    expect(onClick).toBeCalled();
-    expect(onChange).not.toBeCalled();
-  });
-
-  it('custom input should render correctly', () => {
-    const solvingStartTime = moment('2019-07-23').toDate();
-    MockDate.set(solvingStartTime);
-    const onChange = jest.fn();
-    const onClick = jest.fn();
-    const date = moment('2019-07-03').toDate();
-    const weekPicker = shallow(<WeekPicker value={date} onChange={onChange} />);
-    const customInput = shallow((weekPicker.find(DatePicker).prop('customInput') as JSX.Element));
-    customInput.setProps({ value: date, onClick });
-
-    expect(customInput).toMatchSnapshot();
-  });
-
   it('should go to the week containing a day when the day is clicked', () => {
     const onChange = jest.fn();
     const weekPicker = shallow(<WeekPicker value={moment('2019-07-03').toDate()} onChange={onChange} />);
@@ -112,5 +61,72 @@ describe('WeekPicker component', () => {
     expect(onChange).toBeCalled();
     expect(onChange)
       .toBeCalledWith(moment('2019-07-28').toDate(), moment('2019-07-28').endOf('week').toDate());
+  });
+});
+
+describe('WeekPicker custom input component', () => {
+  beforeAll(() => {
+    moment.locale('en');
+  });
+
+  it('custom input should render correctly', () => {
+    const solvingStartTime = moment('2019-07-23').toDate();
+    MockDate.set(solvingStartTime);
+    const goToCurrentWeek = jest.fn();
+    const date = moment('2019-07-03').toDate();
+    const datePickerRef = { current: { setOpen: jest.fn() } };
+    const customInput = shallow(
+      <DateRangeInputElement
+        value={date}
+        datePickerRef={datePickerRef as any as React.RefObject<DatePicker>}
+        goToCurrentWeek={goToCurrentWeek}
+      />,
+    );
+
+    expect(customInput).toMatchSnapshot();
+  });
+
+  it('should go to current week when the reset button is clicked', () => {
+    const solvingStartTime = moment('2019-07-23').toDate();
+    MockDate.set(solvingStartTime);
+    const goToCurrentWeek = jest.fn();
+    const date = moment('2019-07-03').toDate();
+    const datePickerRef = { current: { setOpen: jest.fn() } };
+    const customInput = shallow(
+      <DateRangeInputElement
+        value={date}
+        datePickerRef={datePickerRef as any as React.RefObject<DatePicker>}
+        goToCurrentWeek={goToCurrentWeek}
+      />,
+    );
+
+    customInput.find(Button).filterWhere(p => p.contains(<HistoryIcon />)).simulate('click');
+    expect(datePickerRef.current.setOpen).not.toBeCalled();
+    expect(goToCurrentWeek).toBeCalled();
+  });
+
+  it('should open the week selector if the input or calendar icon is clicked', () => {
+    const solvingStartTime = moment('2019-07-23').toDate();
+    MockDate.set(solvingStartTime);
+    const goToCurrentWeek = jest.fn();
+    const date = moment('2019-07-03').toDate();
+    const datePickerRef = { current: { setOpen: jest.fn() } };
+    const customInput = shallow(
+      <DateRangeInputElement
+        value={date}
+        datePickerRef={datePickerRef as any as React.RefObject<DatePicker>}
+        goToCurrentWeek={goToCurrentWeek}
+      />,
+    );
+
+    customInput.find(Button).filterWhere(p => p.contains(<CalendarIcon />)).simulate('click');
+    expect(datePickerRef.current.setOpen).toBeCalled();
+    expect(goToCurrentWeek).not.toBeCalled();
+
+    datePickerRef.current.setOpen.mockClear();
+
+    customInput.find(Text).simulate('click');
+    expect(datePickerRef.current.setOpen).toBeCalled();
+    expect(goToCurrentWeek).not.toBeCalled();
   });
 });

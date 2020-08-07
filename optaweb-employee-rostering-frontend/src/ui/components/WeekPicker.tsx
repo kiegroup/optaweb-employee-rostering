@@ -35,7 +35,72 @@ function getLastDayInWeek(dateInWeek: Date): Date {
   return moment(dateInWeek).endOf('week').toDate();
 }
 
-export default class WeekPicker extends React.Component<WeekPickerProps> {
+export interface DatePickerCustomInputProps {
+  value?: Date;
+  divRef?: React.LegacyRef<HTMLDivElement>;
+  datePickerRef: React.RefObject<DatePicker>;
+  goToCurrentWeek: () => void;
+}
+export const DateRangeInputElement: React.FC<DatePickerCustomInputProps> = (props) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const onClick = () => {
+    if (props.datePickerRef.current) {
+      props.datePickerRef.current.setOpen(!isOpen);
+      setIsOpen(!isOpen);
+    }
+  };
+  return (
+    <div
+      ref={props.divRef}
+      className="pf-c-form-control"
+      style={{
+        display: 'grid',
+        height: 'auto',
+        gridTemplateColumns: '1fr auto auto',
+        alignItems: 'center',
+      }}
+    >
+      <Text
+        onClick={onClick}
+      >
+        {
+          `${moment(getFirstDayInWeek(props.value as Date)).format('L')} - ${
+            moment(getLastDayInWeek(props.value as Date)).format('L')}`
+        }
+      </Text>
+      <Button
+        style={{
+          color: 'black',
+        }}
+        onClick={() => props.goToCurrentWeek()}
+        variant="link"
+      >
+        <HistoryIcon />
+      </Button>
+      <Button
+        style={{
+          color: 'black',
+        }}
+        onClick={onClick}
+        variant="link"
+      >
+        <CalendarIcon />
+      </Button>
+    </div>
+  );
+};
+
+export interface WeekPickerState {
+  datePickerRef: React.RefObject<DatePicker>;
+}
+export default class WeekPicker extends React.Component<WeekPickerProps, WeekPickerState> {
+  constructor(props: WeekPickerProps) {
+    super(props);
+    this.goToCurrentWeek = this.goToCurrentWeek.bind(this);
+    this.goToWeekContaining = this.goToWeekContaining.bind(this);
+    this.state = { datePickerRef: React.createRef() };
+  }
+
   goToCurrentWeek() {
     this.goToWeekContaining(new Date());
   }
@@ -44,7 +109,8 @@ export default class WeekPicker extends React.Component<WeekPickerProps> {
     if (this.props.minDate && getFirstDayInWeek(date) < getFirstDayInWeek(this.props.minDate)) {
       this.goToWeekContaining(this.props.minDate);
       return;
-    } if (this.props.maxDate && getLastDayInWeek(date) > getLastDayInWeek(this.props.maxDate)) {
+    }
+    if (this.props.maxDate && getLastDayInWeek(date) > getLastDayInWeek(this.props.maxDate)) {
       this.goToWeekContaining(this.props.maxDate);
       return;
     }
@@ -52,53 +118,11 @@ export default class WeekPicker extends React.Component<WeekPickerProps> {
   }
 
   render() {
-    type DatePickerCustomInputProps = { value?: Date; onClick?: () => void };
-
-    // (the stateless functional component is defined in a class component, where
-    //  this = the class this, so it okay to use "this" here)
-    /* eslint-disable react/no-this-in-sfc */
-    const DateRangeInputElement = React.forwardRef<HTMLDivElement, DatePickerCustomInputProps>(
+    const MyDateRangeInputElement = React.forwardRef<HTMLDivElement, DatePickerCustomInputProps>(
       (dateRangeInputProps, ref) => (
-        <div
-          ref={ref}
-          className="pf-c-form-control"
-          style={{
-            display: 'grid',
-            height: 'auto',
-            gridTemplateColumns: '1fr auto auto',
-            alignItems: 'center',
-          }}
-        >
-          <Text
-            onClick={dateRangeInputProps ? dateRangeInputProps.onClick : undefined}
-          >
-            {
-              `${moment(getFirstDayInWeek(this.props.value)).format('L')} - ${
-                moment(getLastDayInWeek(this.props.value)).format('L')}`
-            }
-          </Text>
-          <Button
-            style={{
-              color: 'black',
-            }}
-            onClick={() => this.goToCurrentWeek()}
-            variant="link"
-          >
-            <HistoryIcon />
-          </Button>
-          <Button
-            style={{
-              color: 'black',
-            }}
-            onClick={dateRangeInputProps ? dateRangeInputProps.onClick : undefined}
-            variant="link"
-          >
-            <CalendarIcon />
-          </Button>
-        </div>
+        <DateRangeInputElement {...dateRangeInputProps} divRef={ref} />
       ),
     );
-    /* eslint-enable react/no-this-in-sfc */
 
     return (
       <div className="week-picker-container">
@@ -128,6 +152,7 @@ export default class WeekPicker extends React.Component<WeekPickerProps> {
           </svg>
         </Button>
         <DatePicker
+          ref={this.state.datePickerRef}
           selected={getFirstDayInWeek(this.props.value)}
           startDate={getFirstDayInWeek(this.props.value)}
           endDate={getLastDayInWeek(this.props.value)}
@@ -140,7 +165,12 @@ export default class WeekPicker extends React.Component<WeekPickerProps> {
           }}
           minDate={this.props.minDate}
           maxDate={this.props.maxDate}
-          customInput={<DateRangeInputElement />}
+          customInput={(
+            <MyDateRangeInputElement
+              datePickerRef={this.state.datePickerRef}
+              goToCurrentWeek={this.goToCurrentWeek}
+            />
+          )}
           required
         />
         <Button
