@@ -25,7 +25,6 @@ import { useSelector } from 'react-redux';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { TimeBucket } from 'domain/TimeBucket';
 import { useTranslation } from 'react-i18next';
-import { useInterval } from 'util/FunctionalComponentUtils';
 import { EditTimeBucketModal } from './EditTimeBucketModal';
 import { Stub, EmployeeNickName } from './EmployeeStub';
 
@@ -43,41 +42,8 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
 
   // Update from props when timebucket id or version changes
   React.useEffect(() => {
-    if (props.timeBucket.version !== editedTimeBucket.version || props.timeBucket.id !== editedTimeBucket.id) {
-      setEditedTimeBucket(props.timeBucket);
-    }
-  }, [editedTimeBucket.id, editedTimeBucket.version, setEditedTimeBucket, props.timeBucket]);
-
-  // Every 5 seconds, update the timeBucket if it change (so we don't overwhelm the server)
-  useInterval(() => {
-    if (editedTimeBucket !== props.timeBucket) {
-      props.onUpdateTimeBucket(editedTimeBucket);
-    }
-  }, UPDATE_TIMEBUCKET_INTERVAL_DELAY);
-
-  // Use refs so the unmount only runs on unmount instead on props updates
-  const propsRef = React.useRef<SeatJigsawProps>();
-  const editedTimeBucketRef = React.useRef<TimeBucket>();
-
-  React.useEffect(
-    () => {
-      propsRef.current = props;
-    }, [props],
-  );
-
-  React.useEffect(
-    () => {
-      editedTimeBucketRef.current = editedTimeBucket;
-    }, [editedTimeBucket],
-  );
-
-  // Submit any changes on unmount
-  React.useEffect(() => () => {
-    if (propsRef.current && editedTimeBucketRef.current
-      && editedTimeBucketRef.current !== propsRef.current.timeBucket) {
-      propsRef.current.onUpdateTimeBucket(editedTimeBucketRef.current);
-    }
-  }, []);
+    setEditedTimeBucket(props.timeBucket);
+  }, [setEditedTimeBucket, props.timeBucket]);
 
   const rosterState = useSelector(rosterSelectors.getRosterState);
   const rotationLength = rosterState ? rosterState.rotationLength : 0;
@@ -121,7 +87,19 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
       </Title>
       <Split>
         <SplitItem>
-          <Flex breakpointMods={[{ modifier: FlexModifiers['space-items-lg'] }]}>
+          <Flex
+            breakpointMods={[{ modifier: FlexModifiers['space-items-lg'] }]}
+            onMouseLeave={() => {
+              if (props.timeBucket !== editedTimeBucket) {
+                props.onUpdateTimeBucket(editedTimeBucket);
+              }
+            }}
+            onMouseUp={() => {
+              if (props.timeBucket !== editedTimeBucket) {
+                props.onUpdateTimeBucket(editedTimeBucket);
+              }
+            }}
+          >
             {new Array(Math.ceil(rotationLength / 7)).fill(null).map((_, index) => index).map(weekNumber => (
               <FlexItem key={`${weekNumber}`}>
                 <div
@@ -151,8 +129,13 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
                         }}
                         type="button"
                         onClick={() => {
-                          const updatedTimeBucket = updateSeatInTimeBucket(weekDay + weekNumber * 7);
-                          setEditedTimeBucket(updatedTimeBucket);
+                          // Update the timebucket directly on click, but only if
+                          // the edited timebucket has not changed, to detect
+                          // changes from keyboard (for accessibility)
+                          if (editedTimeBucket === props.timeBucket) {
+                            const updatedTimeBucket = updateSeatInTimeBucket(weekDay + weekNumber * 7);
+                            props.onUpdateTimeBucket(updatedTimeBucket);
+                          }
                         }}
                         onMouseDown={() => {
                           const updatedTimeBucket = updateSeatInTimeBucket(weekDay + weekNumber * 7);
