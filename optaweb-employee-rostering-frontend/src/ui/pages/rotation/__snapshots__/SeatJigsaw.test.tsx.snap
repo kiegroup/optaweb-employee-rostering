@@ -29,6 +29,8 @@ exports[`SeatJigsaw Component It should render correctly 1`] = `
             },
           ]
         }
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
       >
         <FlexItem
           key="0"
