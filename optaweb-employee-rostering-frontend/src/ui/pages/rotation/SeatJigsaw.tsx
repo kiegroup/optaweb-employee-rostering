@@ -35,7 +35,6 @@ export interface SeatJigsawProps {
   onDeleteTimeBucket: () => void;
 }
 
-export const UPDATE_TIMEBUCKET_INTERVAL_DELAY = 5000;
 export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
   const [isEditingTimeBucket, setIsEditingTimeBucket] = React.useState(false);
   const [editedTimeBucket, setEditedTimeBucket] = React.useState(props.timeBucket);
