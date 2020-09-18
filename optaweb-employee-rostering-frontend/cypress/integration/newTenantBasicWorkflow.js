@@ -77,7 +77,7 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     cy.get('[data-cy=settings]').click();
     cy.get('[data-cy=add-tenant]').click();
     cy.get('[data-cy=name]').type('Test Tenant');
-    cy.get('[data-cy=schedule-start-date]').type(Cypress.moment().format("YYYY-MM-DD"));
+    cy.get('[data-cy=schedule-start-date]').type(Cypress.moment().format('YYYY-MM-DD'));
     cy.get('[data-cy=draft-length]').type('7');
     cy.get('[data-cy=publish-notice]').type('7');
     // TODO: publish length is disabled/not supported by backend, uncomment when supported
@@ -127,7 +127,7 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     // Sometimes a shift is not created, so wait to make the test stable
     cy.wait(1500);
     // Plan for the next week
-    cy.get('[aria-label="Next Week"]').click({force: true});
+    cy.get('[aria-label="Next Week"]').click({ force: true });
     dragCreateShift(3, '00:00', '06:00');
 
     // Schedule for 5 seconds
