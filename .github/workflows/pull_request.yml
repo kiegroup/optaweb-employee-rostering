@@ -24,7 +24,7 @@ jobs:
         id: build-chain
         uses: kiegroup/github-action-build-chain@v1.4
         with:
-          parent-dependencies: 'kie-docs'
+          parent-dependencies: 'kie-docs@7.x:master'
           child-dependencies: 'optaweb-vehicle-routing'
           build-command: 'mvn -e -nsu -Dfull -Pwildfly install -Prun-code-coverage  -Dcontainer.profile=wildfly -Dcontainer=wildfly -Dintegration-tests=true -Dmaven.test.failure.ignore=true'
           build-command-upstream: |
