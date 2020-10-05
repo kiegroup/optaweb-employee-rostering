@@ -1,0 +1,58 @@
+[[optaweb-employee-rostering-standalone]]
+= OptaWeb Employee Rostering Standalone
+
+== Build and Run with Maven
+
+Build the project with maven in the project’s root directory:
+
+----
+mvn clean install -DskipTests -DskipITs
+----
+
+It packs the standalone jar from the dependencies:
+
+- optaweb-employee-rostering-backend
+- optaweb-employee-rostering-frontend
+
+----
+java -jar ./optaweb-employee-rostering-standalone/target/optaweb-employee-rostering-standalone-*-exec.jar
+----
+
+Runs the app. Open http://localhost:8080 to view
+it in the browser.
+
+== Run integration tests
+When you build optaweb-employee-rostering, you can run integration tests.
+----
+cd optaweb-employee-rostering-standalone
+----
+----
+mvn clean install -Pintegration-tests -Dcontainer.runtime={container.runtime}
+----
+What it does:
+
+1. Repacks new standalone jar and launches it on http://localhost:8180.
+2. Runs cypress tests in {container.runtime} docker by default.
+
+== To run integration tests separately
+
+Launch standalone application
+
+----
+java -jar ./optaweb-employee-rostering-standalone//target/optaweb-employee-rostering-standalone-*-exec.jar
+----
+
+#### Run cypress tests within a container
+
+[source,shell]
+----
+podman run --network=host -v {project.parent.basedir}/{frontend.project.name}:/e2e:Z
+-w /e2e --entrypoint node cypress/included:{version.cypress.docker}
+./cypress/test_runners/nodeTestRunner.js cypress run --config baseUrl=http://localhost:{application.port}
+----
+
+#### Run cypress tests locally
+
+----
+node ./cypress/test_runners/nodeTestRunner.js cypress run --config baseUrl=http://localhost:{application.port}
+----
