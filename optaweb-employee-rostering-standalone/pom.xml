@@ -37,6 +37,17 @@
       <groupId>org.optaweb.employeerostering</groupId>
       <artifactId>optaweb-employee-rostering-backend</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.optaweb.employeerostering</groupId>
+      <artifactId>optaweb-employee-rostering-frontend</artifactId>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.optaweb.employeerostering</groupId>
+      <artifactId>optaweb-employee-rostering-frontend</artifactId>
+      <type>zip</type>
+    </dependency>
+
   </dependencies>
 
   <build>
