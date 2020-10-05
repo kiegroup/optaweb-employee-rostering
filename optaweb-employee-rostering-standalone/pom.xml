@@ -191,11 +191,9 @@
                     <argument>-w</argument>
                     <argument>/e2e</argument>
                     <argument>--entrypoint</argument>
-                    <argument>cypress</argument>
+                    <argument>node</argument>
                     <argument>cypress/included:${version.cypress.docker}</argument>
-                    <argument>run</argument> <!-- Executing cypress:run -->
-                    <argument>--project</argument>
-                    <argument>.</argument>
+                    <argument>./cypress/test_runners/nodeTestRunner.js</argument> <!--Run all integration specs in node-->
                     <argument>--config</argument>
                     <argument>baseUrl=http://localhost:${application.port}</argument>
                   </arguments>
