@@ -6,11 +6,12 @@
   <parent>
     <groupId>org.kie</groupId>
     <artifactId>kie-parent</artifactId>
-    <version>7.44.0-SNAPSHOT</version>
+    <version>7.45.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.optaweb.employeerostering</groupId>
   <artifactId>optaweb-employee-rostering</artifactId>
+  <version>8.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>OptaWeb Employee Rostering as a Service Parent</name>
@@ -106,7 +107,7 @@
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-bom</artifactId>
         <type>pom</type>
-        <version>${version.org.kie}</version>
+        <version>${project.version}</version>
         <scope>import</scope>
       </dependency>
       <dependency>

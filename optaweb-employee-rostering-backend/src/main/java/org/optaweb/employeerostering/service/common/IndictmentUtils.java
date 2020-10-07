@@ -39,10 +39,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
 import org.optaplanner.core.api.score.constraint.Indictment;
-import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.roster.Roster;
@@ -59,44 +59,36 @@ import org.optaweb.employeerostering.domain.violation.ShiftEmployeeConflict;
 import org.optaweb.employeerostering.domain.violation.UnassignedShiftPenalty;
 import org.optaweb.employeerostering.domain.violation.UnavailableEmployeeViolation;
 import org.optaweb.employeerostering.domain.violation.UndesiredTimeslotForEmployeePenalty;
-import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.springframework.stereotype.Component;
 
 @Component
 public class IndictmentUtils {
 
     public static final String CONSTRAINT_MATCH_PACKAGE = "org.optaweb.employeerostering.service.solver";
-    private WannabeSolverManager solverManager;
+    private ScoreManager<Roster, HardMediumSoftLongScore> scoreManager;
 
-    public IndictmentUtils(WannabeSolverManager solverManager) {
-        this.solverManager = solverManager;
+    public IndictmentUtils(ScoreManager<Roster, HardMediumSoftLongScore> scoreManager) {
+        this.scoreManager = scoreManager;
     }
 
-    public Map<Object, Indictment> getIndictmentMapForRoster(Roster roster) {
-        try (ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector()) {
-            scoreDirector.setWorkingSolution(roster);
-            scoreDirector.calculateScore();
-            return scoreDirector.getIndictmentMap();
-        }
+    public Map<Object, Indictment<HardMediumSoftLongScore>> getIndictmentMapForRoster(Roster roster) {
+        return scoreManager.explainScore(roster).getIndictmentMap();
     }
 
     public IndictmentSummary getIndictmentSummaryForRoster(Roster roster) {
-        try (ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector()) {
-            scoreDirector.setWorkingSolution(roster);
-            scoreDirector.calculateScore();
-            Map<String, ConstraintMatchTotal> constraintMatchTotalMap = scoreDirector.getConstraintMatchTotalMap();
-            IndictmentSummary out = new IndictmentSummary();
-            out.setConstraintToCountMap(constraintMatchTotalMap.values().stream()
-                    .collect(toMap(ConstraintMatchTotal::getConstraintName,
-                            ConstraintMatchTotal::getConstraintMatchCount)));
-            out.setConstraintToScoreImpactMap(constraintMatchTotalMap.values().stream()
-                    .collect(toMap(ConstraintMatchTotal::getConstraintName,
-                            cmt -> (HardMediumSoftLongScore) cmt.getScore())));
-            return out;
-        }
+        Map<String, ConstraintMatchTotal<HardMediumSoftLongScore>> constraintMatchTotalMap = scoreManager.explainScore(roster)
+                .getConstraintMatchTotalMap();
+        IndictmentSummary out = new IndictmentSummary();
+        out.setConstraintToCountMap(constraintMatchTotalMap.values().stream()
+                .collect(toMap(ConstraintMatchTotal::getConstraintName,
+                        ConstraintMatchTotal::getConstraintMatchCount)));
+        out.setConstraintToScoreImpactMap(constraintMatchTotalMap.values().stream()
+                .collect(toMap(ConstraintMatchTotal::getConstraintName,
+                        cmt -> (HardMediumSoftLongScore) cmt.getScore())));
+        return out;
     }
 
-    public ShiftView getShiftViewWithIndictment(ZoneId zoneId, Shift shift, Indictment indictment) {
+    public ShiftView getShiftViewWithIndictment(ZoneId zoneId, Shift shift, Indictment<HardMediumSoftLongScore> indictment) {
         return new ShiftView(zoneId, shift,
                 getRequiredSkillViolationList(indictment),
                 getUnavailableEmployeeViolationList(indictment),
@@ -111,7 +103,7 @@ public class IndictmentUtils {
                 (indictment != null) ? (HardMediumSoftLongScore) indictment.getScore() : HardMediumSoftLongScore.ZERO);
     }
 
-    public List<RequiredSkillViolation> getRequiredSkillViolationList(Indictment indictment) {
+    public List<RequiredSkillViolation> getRequiredSkillViolationList(Indictment<HardMediumSoftLongScore> indictment) {
         if (indictment == null) {
             return Collections.emptyList();
         }
@@ -123,7 +115,8 @@ public class IndictmentUtils {
                 .collect(toList());
     }
 
-    public List<UnavailableEmployeeViolation> getUnavailableEmployeeViolationList(Indictment indictment) {
+    public List<UnavailableEmployeeViolation>
+            getUnavailableEmployeeViolationList(Indictment<HardMediumSoftLongScore> indictment) {
         if (indictment == null) {
             return Collections.emptyList();
         }
@@ -136,7 +129,8 @@ public class IndictmentUtils {
                 .collect(toList());
     }
 
-    public List<DesiredTimeslotForEmployeeReward> getDesiredTimeslotForEmployeeRewardList(Indictment indictment) {
+    public List<DesiredTimeslotForEmployeeReward>
+            getDesiredTimeslotForEmployeeRewardList(Indictment<HardMediumSoftLongScore> indictment) {
         if (indictment == null) {
             return Collections.emptyList();
         }
@@ -149,7 +143,8 @@ public class IndictmentUtils {
                 .collect(toList());
     }
 
-    public List<UndesiredTimeslotForEmployeePenalty> getUndesiredTimeslotForEmployeePenaltyList(Indictment indictment) {
+    public List<UndesiredTimeslotForEmployeePenalty>
+            getUndesiredTimeslotForEmployeePenaltyList(Indictment<HardMediumSoftLongScore> indictment) {
         if (indictment == null) {
             return Collections.emptyList();
         }
@@ -163,7 +158,7 @@ public class IndictmentUtils {
                 .collect(toList());
     }
 
-    public List<ShiftEmployeeConflict> getShiftEmployeeConflictList(Indictment indictment) {
+    public List<ShiftEmployeeConflict> getShiftEmployeeConflictList(Indictment<HardMediumSoftLongScore> indictment) {
         if (indictment == null) {
             return Collections.emptyList();
         }
@@ -178,7 +173,7 @@ public class IndictmentUtils {
                 .collect(toList());
     }
 
-    public List<NoBreakViolation> getNoBreakViolationList(Indictment indictment) {
+    public List<NoBreakViolation> getNoBreakViolationList(Indictment<HardMediumSoftLongScore> indictment) {
         if (indictment == null) {
             return Collections.emptyList();
         }
@@ -192,7 +187,7 @@ public class IndictmentUtils {
                 .collect(toList());
     }
 
-    public List<RotationViolationPenalty> getRotationViolationPenaltyList(Indictment indictment) {
+    public List<RotationViolationPenalty> getRotationViolationPenaltyList(Indictment<HardMediumSoftLongScore> indictment) {
         if (indictment == null) {
             return Collections.emptyList();
         }
@@ -204,7 +199,7 @@ public class IndictmentUtils {
                 .collect(toList());
     }
 
-    public List<UnassignedShiftPenalty> getUnassignedShiftPenaltyList(Indictment indictment) {
+    public List<UnassignedShiftPenalty> getUnassignedShiftPenaltyList(Indictment<HardMediumSoftLongScore> indictment) {
         if (indictment == null) {
             return Collections.emptyList();
         }
@@ -216,7 +211,7 @@ public class IndictmentUtils {
                 .collect(toList());
     }
 
-    public List<ContractMinutesViolation> getContractMinutesViolationList(Indictment indictment) {
+    public List<ContractMinutesViolation> getContractMinutesViolationList(Indictment<HardMediumSoftLongScore> indictment) {
         if (indictment == null) {
             return Collections.emptyList();
         }
@@ -241,7 +236,8 @@ public class IndictmentUtils {
                 .collect(toList());
     }
 
-    public List<PublishedShiftReassignedPenalty> getPublishedShiftReassignedPenaltyList(Indictment indictment) {
+    public List<PublishedShiftReassignedPenalty>
+            getPublishedShiftReassignedPenaltyList(Indictment<HardMediumSoftLongScore> indictment) {
         if (indictment == null) {
             return Collections.emptyList();
         }

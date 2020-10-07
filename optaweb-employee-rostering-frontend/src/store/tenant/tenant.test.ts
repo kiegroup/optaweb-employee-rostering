@@ -318,7 +318,7 @@ describe('Tenant operations', () => {
         availabilityRosterView: null,
       },
       solverState: {
-        solverStatus: 'TERMINATED',
+        solverStatus: 'NOT_SOLVING',
       },
       alerts: {
         alertList: [],

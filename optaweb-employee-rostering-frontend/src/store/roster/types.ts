@@ -107,7 +107,7 @@ export interface CurrentAvailabilityRoster {
   readonly availabilityRosterView: AvailabilityRosterView | null;
 }
 
-export type SolverStatus = 'SCHEDULED' | 'SOLVING' | 'TERMINATED';
+export type SolverStatus = 'SOLVING_SCHEDULED' | 'SOLVING_ACTIVE' | 'NOT_SOLVING';
 export interface CurrentSolverState {
   readonly solverStatus: SolverStatus;
 }
