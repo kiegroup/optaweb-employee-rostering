@@ -29,10 +29,6 @@
   <name>OptaWeb Employee Rostering as a Service Spring Boot Backend</name>
   <description>Spring Boot Backend for OptaWeb Employee Rostering as a Service</description>
 
-  <properties>
-    <java.version>1.11</java.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>

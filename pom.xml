@@ -43,6 +43,7 @@
 
   <properties>
     <!-- Define JaCoCo agent argLine property to avoid Surefire failure when JaCoCo is not enabled. -->
+    <maven.compiler.release>11</maven.compiler.release>
     <jacoco.agent.argLine/>
     <sonar.projectKey>optaweb-employee-rostering</sonar.projectKey>
     <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
@@ -50,6 +51,7 @@
     <version.org.springframework.boot>2.2.6.RELEASE</version.org.springframework.boot>
     <version.io.springfox>2.9.2</version.io.springfox>
     <version.org.apache.poi>4.1.2</version.org.apache.poi>
+    <version.org.asciidoctor.plugin>2.0.0-RC.1</version.org.asciidoctor.plugin>
     <version.org.asciidoctor.asciidoctorj>2.2.0</version.org.asciidoctor.asciidoctorj>
     <version.org.asciidoctor.asciidoctorj-pdf>1.5.0</version.org.asciidoctor.asciidoctorj-pdf>
     <version.com.sun.xml.bind>2.3.0</version.com.sun.xml.bind>
@@ -57,6 +59,8 @@
     <version.javax.activation>1.1.1</version.javax.activation>
     <version.javax.validation>2.0.1.Final</version.javax.validation>
     <version.org.hamcrest>2.2</version.org.hamcrest>
+    <version.net.revelc.code.formatter>2.11.0</version.net.revelc.code.formatter>
+    <version.net.revelc.code.impsort>1.4.1</version.net.revelc.code.impsort>
     <version.frontend-maven-plugin>1.8.0</version.frontend-maven-plugin>
     <version.node>v12.16.2</version.node>
     <version.npm>6.14.4</version.npm>
@@ -205,7 +209,7 @@
         <plugin>
           <groupId>net.revelc.code.formatter</groupId>
           <artifactId>formatter-maven-plugin</artifactId>
-          <version>2.11.0</version>
+          <version>${version.net.revelc.code.formatter}</version>
           <configuration>
             <configFile>${format.directory}/eclipse-format.xml</configFile>
             <lineEnding>LF</lineEnding>
@@ -222,7 +226,7 @@
         <plugin>
           <groupId>net.revelc.code</groupId>
           <artifactId>impsort-maven-plugin</artifactId>
-          <version>1.4.1</version>
+          <version>${version.net.revelc.code.impsort}</version>
           <configuration>
             <groups>java.,javax.,org.,com.</groups>
             <staticGroups>*</staticGroups>
@@ -251,7 +255,7 @@
         <plugin>
           <groupId>org.asciidoctor</groupId>
           <artifactId>asciidoctor-maven-plugin</artifactId>
-          <version>2.0.0-RC.1</version>
+          <version>${version.org.asciidoctor.plugin}</version>
           <dependencies>
             <dependency>
               <groupId>org.asciidoctor</groupId>
