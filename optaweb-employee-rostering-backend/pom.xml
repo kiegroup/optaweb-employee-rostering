@@ -30,7 +30,7 @@
   <description>Spring Boot Backend for OptaWeb Employee Rostering as a Service</description>
 
   <properties>
-    <java.version>1.8</java.version>
+    <java.version>1.11</java.version>
   </properties>
 
   <dependencies>
@@ -95,6 +95,7 @@
       <groupId>org.optaplanner</groupId>
       <artifactId>optaplanner-core</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.optaplanner</groupId>
       <artifactId>optaplanner-persistence-jackson</artifactId>
@@ -160,6 +161,11 @@
     <dependency>
       <groupId>org.optaplanner</groupId>
       <artifactId>optaplanner-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
       <scope>test</scope>
     </dependency>
 

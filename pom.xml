@@ -4,10 +4,12 @@
 
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.kie</groupId>
-    <artifactId>kie-parent</artifactId>
-    <version>7.45.0-SNAPSHOT</version>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>36</version>
+    <relativePath/>
   </parent>
+
 
   <groupId>org.optaweb.employeerostering</groupId>
   <artifactId>optaweb-employee-rostering</artifactId>
@@ -45,6 +47,20 @@
     <sonar.projectKey>optaweb-employee-rostering</sonar.projectKey>
     <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
     <version.org.mockito>2.12.0</version.org.mockito>
+    <version.org.springframework.boot>2.2.6.RELEASE</version.org.springframework.boot>
+    <version.io.springfox>2.9.2</version.io.springfox>
+    <version.org.apache.poi>4.1.2</version.org.apache.poi>
+    <version.org.asciidoctor.asciidoctorj>2.2.0</version.org.asciidoctor.asciidoctorj>
+    <version.org.asciidoctor.asciidoctorj-pdf>1.5.0</version.org.asciidoctor.asciidoctorj-pdf>
+    <version.com.sun.xml.bind>2.3.0</version.com.sun.xml.bind>
+    <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
+    <version.javax.activation>1.1.1</version.javax.activation>
+    <version.javax.validation>2.0.1.Final</version.javax.validation>
+    <version.org.hamcrest>2.2</version.org.hamcrest>
+    <version.frontend-maven-plugin>1.8.0</version.frontend-maven-plugin>
+    <version.node>v12.16.2</version.node>
+    <version.npm>6.14.4</version.npm>
+    <version.yarn>v1.22.4</version.yarn>
     <format.directory>${project.basedir}/../ide-configuration</format.directory>
     <formatter.skip>false</formatter.skip>
     <formatter.goal>format</formatter.goal>
@@ -117,6 +133,64 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
+      <!-- Other dependencies -->
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>${version.javax.validation}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger2</artifactId>
+        <version>${version.io.springfox}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger-ui</artifactId>
+        <version>${version.io.springfox}</version>
+      </dependency>
+
+      <!-- Excel -->
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi</artifactId>
+        <version>${version.org.apache.poi}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>${version.org.apache.poi}</version>
+      </dependency>
+
+      <!-- Required for Java 11 -->
+      <dependency>
+        <groupId>org.jboss.spec.javax.xml.bind</groupId>
+        <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+        <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-core</artifactId>
+        <version>${version.com.sun.xml.bind}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-impl</artifactId>
+        <version>${version.com.sun.xml.bind}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.activation</groupId>
+        <artifactId>activation</artifactId>
+        <version>${version.javax.activation}</version>
+      </dependency>
+
+      <!-- Tests -->
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest</artifactId>
+        <version>${version.org.hamcrest}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -163,6 +237,33 @@
               </goals>
             </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>${version.frontend-maven-plugin}</version>
+          <configuration>
+            <nodeVersion>${version.node}</nodeVersion>
+            <npmVersion>${version.npm}</npmVersion>
+            <yarnVersion>${version.yarn}</yarnVersion>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.asciidoctor</groupId>
+          <artifactId>asciidoctor-maven-plugin</artifactId>
+          <version>2.0.0-RC.1</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.asciidoctor</groupId>
+              <artifactId>asciidoctorj</artifactId>
+              <version>${version.org.asciidoctor.asciidoctorj}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.asciidoctor</groupId>
+              <artifactId>asciidoctorj-pdf</artifactId>
+              <version>${version.org.asciidoctor.asciidoctorj-pdf}</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
