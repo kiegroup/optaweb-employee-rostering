@@ -55,6 +55,7 @@ import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.optaweb.employeerostering.service.common.IndictmentUtils;
 import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityRepository;
@@ -411,14 +412,16 @@ public class RosterService extends AbstractRestService {
         Map<String, ConstraintMatchTotal<HardMediumSoftLongScore>> constraintMatchTotalMap = scoreManager.explainScore(roster)
                 .getConstraintMatchTotalMap();
         String CONSTRAINT_ID = ConstraintMatchTotal.composeConstraintId(IndictmentUtils.CONSTRAINT_MATCH_PACKAGE,
-                "Unavailable time slot for an employee");
+                RosterConstraintConfiguration.CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE);
         constraintMatchTotalMap.get(CONSTRAINT_ID)
                 .getConstraintMatchSet()
-                .forEach(cm -> {
-                    Shift shift = (Shift) cm.getJustificationList().stream().filter(o -> o instanceof Shift).findAny().get();
-                    if (!shift.isPinnedByUser()) {
-                        shift.setEmployee(null);
-                    }
+                .forEach(constraintMatch -> {
+                    constraintMatch.getJustificationList().stream().filter(o -> o instanceof Shift).forEach(justification -> {
+                        Shift shift = (Shift) justification;
+                        if (!shift.isPinnedByUser()) {
+                            shift.setEmployee(null);
+                        }
+                    });
                 });
         solverManager.solveAndListen(tenantId, (id) -> roster, this::scheduleUpdateOfRoster);
     }

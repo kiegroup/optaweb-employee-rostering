@@ -145,10 +145,6 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.hamcrest</groupId>
-          <artifactId>hamcrest</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>jakarta.xml.bind</groupId>
           <artifactId>jakarta.xml.bind-api</artifactId>
         </exclusion>
@@ -157,11 +153,6 @@
     <dependency>
       <groupId>org.optaplanner</groupId>
       <artifactId>optaplanner-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
       <scope>test</scope>
     </dependency>
 
