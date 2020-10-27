@@ -62,7 +62,6 @@
     <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
     <version.org.mockito>2.12.0</version.org.mockito>
     <version.org.springframework.boot>2.2.6.RELEASE</version.org.springframework.boot>
-    <version.yarn>v1.22.4</version.yarn>
   </properties>
 
   <modules>
@@ -207,6 +206,16 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>analyze-only</id>
+              <phase>none</phase>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
           <version>${version.org.springframework.boot}</version>
@@ -218,22 +227,6 @@
           <configuration>
             <nodeVersion>${version.node}</nodeVersion>
             <npmVersion>${version.npm}</npmVersion>
-            <yarnVersion>${version.yarn}</yarnVersion>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <configuration>
-            <ignoredUnusedDeclaredDependencies>
-              <ignoredDependency>org.optaplanner:optaplanner-spring-boot-starter</ignoredDependency>
-              <ignoredDependency>com.sun.xml.bind:jaxb-core</ignoredDependency>
-              <ignoredDependency>org.springframework.boot:spring-boot-starter-web</ignoredDependency>
-              <ignoredDependency>com.sun.xml.bind:jaxb-impl</ignoredDependency>
-              <ignoredDependency>org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.3_spec</ignoredDependency>
-              <ignoredDependency>org.springframework.boot:spring-boot-starter-data-jpa</ignoredDependency>
-              <ignoredDependency>javax.activation:activation</ignoredDependency>
-            </ignoredUnusedDeclaredDependencies>
           </configuration>
         </plugin>
       </plugins>
