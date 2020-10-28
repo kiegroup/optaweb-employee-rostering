@@ -17,13 +17,15 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cypress = require('cypress');
 
-cypress.run({
-  spec: './cypress/integration/*.js',
-})
-  .then(() => {
-    process.exit(0);
-  })
-  .catch((err) => {
-    console.error(err.message);
-    process.exit(1);
-  });
+async function cypressRunWithCiArgs() {
+  const runOptions = await cypress.cli.parseRunArguments(process.argv.slice(2));
+  const results = await cypress.run(runOptions)
+    .then(() => {
+      process.exit(0);
+     })
+     .catch((err) => {
+      console.error(err.message);
+      process.exit(1);
+     });
+}
+cypressRunWithCiArgs();

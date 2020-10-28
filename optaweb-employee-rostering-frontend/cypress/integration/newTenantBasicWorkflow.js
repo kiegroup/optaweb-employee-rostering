@@ -66,10 +66,6 @@ describe('A new tenant can be created, who can have their own employees, spots, 
 
   beforeEach(() => {
     cy.wait(3000);// Wait for all data from last test/start to finish loading
-    cy.get('[data-cy=settings]').click();
-    cy.get('[data-cy=reset-application]').click();
-    cy.get('[data-cy=confirm]').click();
-    closeAlerts();
   });
 
   it('basic tenant workflow', () => {

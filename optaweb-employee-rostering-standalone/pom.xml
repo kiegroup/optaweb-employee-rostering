@@ -194,6 +194,8 @@
                     <argument>node</argument>
                     <argument>cypress/included:${version.cypress.docker}</argument>
                     <argument>./cypress/test_runners/nodeTestRunner.js</argument> <!--Run all integration specs in node-->
+                    <argument>cypress</argument>
+                    <argument>run</argument>
                     <argument>--config</argument>
                     <argument>baseUrl=http://localhost:${application.port}</argument>
                   </arguments>
