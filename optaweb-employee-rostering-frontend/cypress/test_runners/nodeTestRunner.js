@@ -19,13 +19,12 @@ const cypress = require('cypress');
 
 async function cypressRunWithCiArgs() {
   const runOptions = await cypress.cli.parseRunArguments(process.argv.slice(2));
-  const results = await cypress.run(runOptions)
+  await cypress.run(runOptions)
     .then(() => {
       process.exit(0);
-     })
-     .catch((err) => {
-      console.error(err.message);
+    })
+    .catch(() => {
       process.exit(1);
-     });
+    });
 }
 cypressRunWithCiArgs();
