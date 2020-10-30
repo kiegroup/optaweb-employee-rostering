@@ -1,0 +1,37 @@
+git:
+  depth: false
+language: java
+jobs:
+  include:
+    - jdk: openjdk8
+      env:
+        - SONAR_SKIP=true
+    - jdk: openjdk11
+cache:
+  directories:
+    - "$HOME/.m2/repository"
+    - "$HOME/.npm"
+    - "$HOME/.sonar/cache"
+    - "$HOME/.sonar/native-sonar-scanner"
+    - "$HOME/optaweb-employee-rostering/optaweb-employee-rostering-frontend/node"
+# Download dependencies in quiet mode to avoid exceeding maximum log length.
+install: >
+  mvn de.qaware.maven:go-offline-maven-plugin:1.2.7:resolve-dependencies
+  -DfailOnErrors -DdownloadSources=false
+  -Prun-code-coverage,sonarcloud-analysis
+  --quiet
+before_script:
+  # Fail the build if the Red Hat package registry is referenced from package-lock.json.
+  - '! grep "\"resolved\".*\.redhat\.com" optaweb-employee-rostering-frontend/package-lock.json'
+script:
+  - mvn clean install -Prun-code-coverage,integration-tests --show-version
+  - mvn sonar:sonar -Psonarcloud-analysis -Dsonar.skip=$SONAR_SKIP
+  # Check that Git working tree is clean after running npm install via a frontend-maven-plugin.
+  # The `git` command returns 1 and fails the build if there are any uncommitted changes.
+  - git diff HEAD --exit-code
+  # Sanity-check distribution assembly.
+  - >
+    cd optaweb-employee-rosteringdistribution/target
+    && unzip -q *.zip
+    && cd optaweb-employee-rostering-distribution-*/sources
+    && mvn validate
