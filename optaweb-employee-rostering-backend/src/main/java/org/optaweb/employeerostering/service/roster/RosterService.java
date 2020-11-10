@@ -372,6 +372,7 @@ public class RosterService extends AbstractRestService {
         }
     }
 
+    @Transactional
     public void scheduleUpdateOfRoster(Roster newRoster) {
         tenantIdToRosterUpdateFutureMap.compute(newRoster.getTenantId(),
                 (tenantId, task) -> {
@@ -399,10 +400,12 @@ public class RosterService extends AbstractRestService {
     // Solver
     // ************************************************************************
 
+    @Transactional
     public void solveRoster(Integer tenantId) {
         solverManager.solveAndListen(tenantId, this::buildRoster, this::scheduleUpdateOfRoster);
     }
 
+    @Transactional
     public void replanRoster(Integer tenantId) {
         Roster roster = buildRoster(tenantId);
         roster.setNondisruptivePlanning(true);
@@ -411,19 +414,18 @@ public class RosterService extends AbstractRestService {
         // Help Optaplanner by unassigning any shifts where the employee is unavailable
         Map<String, ConstraintMatchTotal<HardMediumSoftLongScore>> constraintMatchTotalMap = scoreManager.explainScore(roster)
                 .getConstraintMatchTotalMap();
-        String CONSTRAINT_ID = ConstraintMatchTotal.composeConstraintId(IndictmentUtils.CONSTRAINT_MATCH_PACKAGE,
+        final String CONSTRAINT_ID = ConstraintMatchTotal.composeConstraintId(IndictmentUtils.CONSTRAINT_MATCH_PACKAGE,
                 RosterConstraintConfiguration.CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE);
         constraintMatchTotalMap.get(CONSTRAINT_ID)
                 .getConstraintMatchSet()
-                .forEach(constraintMatch -> {
-                    constraintMatch.getJustificationList().stream().filter(o -> o instanceof Shift).forEach(justification -> {
-                        Shift shift = (Shift) justification;
-                        if (!shift.isPinnedByUser()) {
-                            shift.setEmployee(null);
-                        }
-                    });
-                });
-        solverManager.solveAndListen(tenantId, (id) -> roster, this::scheduleUpdateOfRoster);
+                .forEach(constraintMatch -> constraintMatch.getJustificationList().stream().filter(o -> o instanceof Shift)
+                        .forEach(justification -> {
+                            Shift shift = (Shift) justification;
+                            if (!shift.isPinnedByUser()) {
+                                shift.setEmployee(null);
+                            }
+                        }));
+        solverManager.solveAndListen(tenantId, id -> roster, this::scheduleUpdateOfRoster);
     }
 
     public SolverStatus getSolverStatus(Integer tenantId) {

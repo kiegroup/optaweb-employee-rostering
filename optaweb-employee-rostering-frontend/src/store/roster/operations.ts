@@ -112,13 +112,12 @@ AddAlertAction | TerminateSolvingRosterEarlyAction>) {
 const updateInterval = 1000;
 
 function refresh(dispatch: ThunkDispatch<AppState, RestServiceClient, any>) {
+  autoRefreshShiftRosterDuringSolvingIntervalTimeout = null;
   Promise.all([
     dispatch(operations.refreshShiftRoster()),
     dispatch(operations.refreshAvailabilityRoster()),
     dispatch(operations.getSolverStatus()),
-  ]).then(() => {
-    autoRefreshShiftRosterDuringSolvingIntervalTimeout = setTimeout(() => refresh(dispatch), updateInterval);
-  });
+  ]);
 }
 
 export const solveRoster:

@@ -100,7 +100,7 @@ public class IndictmentUtils {
                 getContractMinutesViolationList(indictment),
                 getNoBreakViolationList(indictment),
                 getPublishedShiftReassignedPenaltyList(indictment),
-                (indictment != null) ? (HardMediumSoftLongScore) indictment.getScore() : HardMediumSoftLongScore.ZERO);
+                (indictment != null) ? indictment.getScore() : HardMediumSoftLongScore.ZERO);
     }
 
     public List<RequiredSkillViolation> getRequiredSkillViolationList(Indictment<HardMediumSoftLongScore> indictment) {
@@ -111,7 +111,7 @@ public class IndictmentUtils {
                 .filter(constraintMatch -> constraintMatch.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         constraintMatch.getConstraintName().equals(CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT))
                 .map(constraintMatch -> new RequiredSkillViolation((Shift) constraintMatch.getJustificationList().get(0),
-                        (HardMediumSoftLongScore) constraintMatch.getScore()))
+                        constraintMatch.getScore()))
                 .collect(toList());
     }
 
@@ -125,7 +125,7 @@ public class IndictmentUtils {
                         constraintMatch.getConstraintName().equals(CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE))
                 .map(constraintMatch -> new UnavailableEmployeeViolation((Shift) constraintMatch.getJustificationList().get(0),
                         (EmployeeAvailability) constraintMatch.getJustificationList().get(1),
-                        (HardMediumSoftLongScore) constraintMatch.getScore()))
+                        constraintMatch.getScore()))
                 .collect(toList());
     }
 
@@ -140,7 +140,7 @@ public class IndictmentUtils {
                 .map(constraintMatch -> new DesiredTimeslotForEmployeeReward(
                         (Shift) constraintMatch.getJustificationList().get(0),
                         (EmployeeAvailability) constraintMatch.getJustificationList().get(1),
-                        (HardMediumSoftLongScore) constraintMatch.getScore()))
+                        constraintMatch.getScore()))
                 .collect(toList());
     }
 
@@ -156,7 +156,7 @@ public class IndictmentUtils {
                         (Shift) constraintMatch.getJustificationList().get(0),
                         (EmployeeAvailability) constraintMatch.getJustificationList()
                                 .get(1),
-                        (HardMediumSoftLongScore) constraintMatch.getScore()))
+                        constraintMatch.getScore()))
                 .collect(toList());
     }
 
@@ -170,8 +170,7 @@ public class IndictmentUtils {
                 .filter(constraintMatch -> constraintMatch.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         employeeShiftConstraintNameList.contains(constraintMatch.getConstraintName()))
                 .map(constraintMatch -> new ShiftEmployeeConflict((Shift) constraintMatch.getJustificationList().get(0),
-                        (Shift) constraintMatch.getJustificationList().get(1),
-                        (HardMediumSoftLongScore) constraintMatch.getScore()))
+                        (Shift) constraintMatch.getJustificationList().get(1), constraintMatch.getScore()))
                 .collect(toList());
     }
 
@@ -185,7 +184,7 @@ public class IndictmentUtils {
                 .map(constraintMatch -> new NoBreakViolation((Shift) constraintMatch.getJustificationList().get(0),
                         (Shift) constraintMatch.getJustificationList().get(1),
                         (Shift) constraintMatch.getJustificationList().get(2),
-                        (HardMediumSoftLongScore) constraintMatch.getScore()))
+                        constraintMatch.getScore()))
                 .collect(toList());
     }
 
@@ -197,7 +196,7 @@ public class IndictmentUtils {
                 .filter(constraintMatch -> constraintMatch.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         constraintMatch.getConstraintName().equals(CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE))
                 .map(constraintMatch -> new RotationViolationPenalty((Shift) constraintMatch.getJustificationList().get(0),
-                        (HardMediumSoftLongScore) constraintMatch.getScore()))
+                        constraintMatch.getScore()))
                 .collect(toList());
     }
 
@@ -209,7 +208,7 @@ public class IndictmentUtils {
                 .filter(constraintMatch -> constraintMatch.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         constraintMatch.getConstraintName().equals(CONSTRAINT_ASSIGN_EVERY_SHIFT))
                 .map(constraintMatch -> new UnassignedShiftPenalty((Shift) constraintMatch.getJustificationList().get(0),
-                        (HardMediumSoftLongScore) constraintMatch.getScore()))
+                        constraintMatch.getScore()))
                 .collect(toList());
     }
 
@@ -235,7 +234,7 @@ public class IndictmentUtils {
                                 .stream()
                                 .filter(o -> o instanceof Long)
                                 .findFirst().get(),
-                        (HardMediumSoftLongScore) constraintMatch.getScore()))
+                        constraintMatch.getScore()))
                 .collect(toList());
     }
 
@@ -249,7 +248,7 @@ public class IndictmentUtils {
                         constraintMatch.getConstraintName().equals(CONSTRAINT_EMPLOYEE_IS_NOT_ORIGINAL_EMPLOYEE))
                 .map(constraintMatch -> new PublishedShiftReassignedPenalty(
                         (Shift) constraintMatch.getJustificationList().get(0),
-                        (HardMediumSoftLongScore) constraintMatch.getScore()))
+                        constraintMatch.getScore()))
                 .collect(toList());
     }
 }
