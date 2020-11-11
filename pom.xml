@@ -4,10 +4,12 @@
 
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.kie</groupId>
-    <artifactId>kie-parent</artifactId>
-    <version>7.44.0-SNAPSHOT</version>
+    <groupId>org.optaplanner</groupId>
+    <artifactId>optaplanner-build-parent</artifactId>
+    <version>8.0.0-SNAPSHOT</version>
+    <relativePath/>
   </parent>
+
 
   <groupId>org.optaweb.employeerostering</groupId>
   <artifactId>optaweb-employee-rostering</artifactId>
@@ -41,14 +43,25 @@
   <properties>
     <!-- Define JaCoCo agent argLine property to avoid Surefire failure when JaCoCo is not enabled. -->
     <jacoco.agent.argLine/>
+    
+    <maven.compiler.release>11</maven.compiler.release>
+    
     <sonar.projectKey>optaweb-employee-rostering</sonar.projectKey>
     <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+    
+    <version.com.sun.xml.bind>2.3.0</version.com.sun.xml.bind>
+    <version.frontend-maven-plugin>1.8.0</version.frontend-maven-plugin>
+    <version.io.springfox>2.9.2</version.io.springfox>
+    <version.javax.activation>1.1.1</version.javax.activation>
+    <version.javax.validation>2.0.1.Final</version.javax.validation>
+    <version.net.revelc.code.formatter>2.11.0</version.net.revelc.code.formatter>
+    <version.net.revelc.code.impsort>1.4.1</version.net.revelc.code.impsort>
+    <version.node>v12.16.2</version.node>
+    <version.npm>6.14.4</version.npm>
+    <version.org.apache.poi>4.1.2</version.org.apache.poi>
+    <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
     <version.org.mockito>2.12.0</version.org.mockito>
-    <format.directory>${project.basedir}/../ide-configuration</format.directory>
-    <formatter.skip>false</formatter.skip>
-    <formatter.goal>format</formatter.goal>
-    <!-- TODO name impsort should indicate it's related to formatting -->
-    <impsort.goal>sort</impsort.goal>
+    <version.org.springframework.boot>2.2.6.RELEASE</version.org.springframework.boot>
   </properties>
 
   <modules>
@@ -103,18 +116,88 @@
 
       <!-- BOMs -->
       <dependency>
-        <groupId>org.optaplanner</groupId>
-        <artifactId>optaplanner-bom</artifactId>
-        <type>pom</type>
-        <version>${version.org.kie}</version>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <version>${version.org.springframework.boot}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+
+      <!-- Other dependencies -->
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>${version.javax.validation}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-core</artifactId>
+        <version>${version.io.springfox}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger2</artifactId>
+        <version>${version.io.springfox}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger-ui</artifactId>
+        <version>${version.io.springfox}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-spring-web</artifactId>
+        <version>${version.io.springfox}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger-common</artifactId>
+        <version>${version.io.springfox}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-spi</artifactId>
+        <version>${version.io.springfox}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-annotations</artifactId>
+        <version>1.5.20</version>
+      </dependency>
+
+      <!-- Excel -->
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi</artifactId>
+        <version>${version.org.apache.poi}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>${version.org.apache.poi}</version>
+      </dependency>
+
+      <!-- Required for Java 11 -->
+      <dependency>
+        <groupId>org.jboss.spec.javax.xml.bind</groupId>
+        <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+        <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-core</artifactId>
+        <version>${version.com.sun.xml.bind}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-impl</artifactId>
+        <version>${version.com.sun.xml.bind}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.activation</groupId>
+        <artifactId>activation</artifactId>
+        <version>${version.javax.activation}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -123,45 +206,28 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>analyze-only</id>
+              <phase>none</phase>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
           <version>${version.org.springframework.boot}</version>
         </plugin>
         <plugin>
-          <groupId>net.revelc.code.formatter</groupId>
-          <artifactId>formatter-maven-plugin</artifactId>
-          <version>2.11.0</version>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>${version.frontend-maven-plugin}</version>
           <configuration>
-            <configFile>${format.directory}/eclipse-format.xml</configFile>
-            <lineEnding>LF</lineEnding>
-            <skip>${formatter.skip}</skip>
+            <nodeVersion>${version.node}</nodeVersion>
+            <npmVersion>${version.npm}</npmVersion>
           </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>${formatter.goal}</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>net.revelc.code</groupId>
-          <artifactId>impsort-maven-plugin</artifactId>
-          <version>1.4.1</version>
-          <configuration>
-            <groups>java.,javax.,org.,com.</groups>
-            <staticGroups>*</staticGroups>
-            <!-- keep in sync with the formatter-maven-plugin -->
-            <skip>${formatter.skip}</skip>
-            <removeUnused>true</removeUnused>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>${impsort.goal}</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>

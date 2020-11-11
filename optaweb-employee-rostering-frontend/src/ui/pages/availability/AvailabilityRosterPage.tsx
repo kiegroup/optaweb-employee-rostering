@@ -69,7 +69,7 @@ let lastShownEmployeeList: Employee[] = [];
 // eslint-disable-next-line no-return-assign
 const mapStateToProps = (state: AppState): StateProps => ({
   tenantId: state.tenantData.currentTenantId,
-  isSolving: state.solverState.solverStatus === 'SOLVING',
+  isSolving: state.solverState.solverStatus !== 'NOT_SOLVING',
   isLoading: rosterSelectors.isAvailabilityRosterLoading(state),
   allEmployeeList: employeeSelectors.getEmployeeList(state),
   shownEmployeeList: lastShownEmployeeList = rosterSelectors.isAvailabilityRosterLoading(state)

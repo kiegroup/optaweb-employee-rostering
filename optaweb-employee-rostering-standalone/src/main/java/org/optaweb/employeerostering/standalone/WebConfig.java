@@ -26,11 +26,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         // Arcane Spring Boot Magic from https://stackoverflow.com/a/42998817
-        
+
         // Forwards requests without file extensions (/0/employees, /admin,
         // but not /assets/images/optaplanner.png) to /index.html
         registry.addViewController("/**/{spring:\\w+}")
-              .setViewName("forward:/");
+                .setViewName("forward:/");
     }
 
 }

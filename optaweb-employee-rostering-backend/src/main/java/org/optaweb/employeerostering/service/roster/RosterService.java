@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.service.roster;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,15 +25,22 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Validator;
 
+import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
 import org.optaplanner.core.api.score.constraint.Indictment;
-import org.optaplanner.core.impl.score.director.ScoreDirector;
+import org.optaplanner.core.api.solver.SolverManager;
+import org.optaplanner.core.api.solver.SolverStatus;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
@@ -47,6 +55,7 @@ import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.optaweb.employeerostering.service.common.IndictmentUtils;
 import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityRepository;
@@ -54,14 +63,13 @@ import org.optaweb.employeerostering.service.employee.EmployeeRepository;
 import org.optaweb.employeerostering.service.rotation.TimeBucketRepository;
 import org.optaweb.employeerostering.service.shift.ShiftRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
-import org.optaweb.employeerostering.service.solver.SolverStatus;
-import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.optaweb.employeerostering.service.tenant.RosterConstraintConfigurationRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 public class RosterService extends AbstractRestService {
@@ -75,8 +83,14 @@ public class RosterService extends AbstractRestService {
     private RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository;
     private TimeBucketRepository timeBucketRepository;
 
-    private WannabeSolverManager solverManager;
+    private SolverManager<Roster, Integer> solverManager;
+    private ScoreManager<Roster, HardMediumSoftLongScore> scoreManager;
     private IndictmentUtils indictmentUtils;
+
+    private TransactionTemplate transactionTemplate;
+    private ExecutorService rosterUpdateExecutorService = Executors.newCachedThreadPool();
+    private Map<Integer, Future<?>> tenantIdToRosterUpdateFutureMap = new ConcurrentHashMap<>();
+    private Map<Integer, Roster> tenantIdToNextRosterMap = new ConcurrentHashMap<>();
 
     public RosterService(Validator validator,
             RosterStateRepository rosterStateRepository, SkillRepository skillRepository,
@@ -85,7 +99,10 @@ public class RosterService extends AbstractRestService {
             ShiftRepository shiftRepository,
             RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
             TimeBucketRepository timeBucketRepository,
-            WannabeSolverManager solverManager, IndictmentUtils indictmentUtils) {
+            SolverManager<Roster, Integer> solverManager,
+            ScoreManager<Roster, HardMediumSoftLongScore> scoreManager,
+            IndictmentUtils indictmentUtils,
+            TransactionTemplate transactionTemplate) {
         super(validator);
         this.rosterStateRepository = rosterStateRepository;
         this.skillRepository = skillRepository;
@@ -96,7 +113,9 @@ public class RosterService extends AbstractRestService {
         this.rosterConstraintConfigurationRepository = rosterConstraintConfigurationRepository;
         this.timeBucketRepository = timeBucketRepository;
         this.solverManager = solverManager;
+        this.scoreManager = scoreManager;
         this.indictmentUtils = indictmentUtils;
+        this.transactionTemplate = transactionTemplate;
     }
 
     // ************************************************************************
@@ -176,14 +195,11 @@ public class RosterService extends AbstractRestService {
         Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
         // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched, so the
         //  score might be inaccurate
-        Roster roster = solverManager.getRoster(tenantId);
-        if (roster == null || solverManager.getSolverStatus(tenantId) != SolverStatus.SOLVING) {
-            roster = buildRoster(tenantId);
-        }
-        Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
+        Roster roster = buildRoster(tenantId);
+        Map<Object, Indictment<HardMediumSoftLongScore>> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
 
         for (Shift shift : shiftList) {
-            Indictment indictment = indictmentMap.get(shift);
+            Indictment<HardMediumSoftLongScore> indictment = indictmentMap.get(shift);
             spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>())
                     .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
         }
@@ -264,14 +280,11 @@ public class RosterService extends AbstractRestService {
                 startDate.atStartOfDay(timeZone).toOffsetDateTime(),
                 endDate.atStartOfDay(timeZone).toOffsetDateTime());
 
-        Roster roster = solverManager.getRoster(tenantId);
-        if (roster == null || solverManager.getSolverStatus(tenantId) != SolverStatus.SOLVING) {
-            roster = buildRoster(tenantId);
-        }
-        Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
+        Roster roster = buildRoster(tenantId);
+        Map<Object, Indictment<HardMediumSoftLongScore>> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
 
         for (Shift shift : shiftList) {
-            Indictment indictment = indictmentMap.get(shift);
+            Indictment<HardMediumSoftLongScore> indictment = indictmentMap.get(shift);
             if (shift.getEmployee() != null) {
                 employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(),
                         k -> new ArrayList<>())
@@ -333,9 +346,7 @@ public class RosterService extends AbstractRestService {
                 skillList, spotList, employeeList, employeeAvailabilityList,
                 getRosterState(tenantId), shiftList);
 
-        ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector();
-        scoreDirector.setWorkingSolution(roster);
-        roster.setScore((HardMediumSoftLongScore) scoreDirector.calculateScore());
+        scoreManager.updateScore(roster);
         return roster;
     }
 
@@ -361,16 +372,60 @@ public class RosterService extends AbstractRestService {
         }
     }
 
+    @Transactional
+    public void scheduleUpdateOfRoster(Roster newRoster) {
+        tenantIdToRosterUpdateFutureMap.compute(newRoster.getTenantId(),
+                (tenantId, task) -> {
+                    if (task != null && !task.isDone()) {
+                        tenantIdToNextRosterMap.put(tenantId, newRoster);
+                        return task;
+                    } else {
+                        // Remove any stale old best solution that were put in
+                        // JUST AFTER the tenantIdToNextRosterMap.containsKey(tenantId)
+                        // return false BUT BEFORE the task finished,
+                        // since it'll be a worse solution than this one
+                        tenantIdToNextRosterMap.remove(tenantId);
+                        return rosterUpdateExecutorService.submit(() -> {
+                            transactionTemplate.executeWithoutResult(ts -> updateShiftsOfRoster(newRoster));
+                            tenantIdToRosterUpdateFutureMap.remove(tenantId);
+                            if (tenantIdToNextRosterMap.containsKey(tenantId)) {
+                                scheduleUpdateOfRoster(tenantIdToNextRosterMap.remove(tenantId));
+                            }
+                        });
+                    }
+                });
+    }
+
     // ************************************************************************
     // Solver
     // ************************************************************************
 
+    @Transactional
     public void solveRoster(Integer tenantId) {
-        solverManager.solve(tenantId);
+        solverManager.solveAndListen(tenantId, this::buildRoster, this::scheduleUpdateOfRoster);
     }
 
+    @Transactional
     public void replanRoster(Integer tenantId) {
-        solverManager.replan(tenantId);
+        Roster roster = buildRoster(tenantId);
+        roster.setNondisruptivePlanning(true);
+        roster.setNondisruptiveReplanFrom(OffsetDateTime.now());
+
+        // Help Optaplanner by unassigning any shifts where the employee is unavailable
+        Map<String, ConstraintMatchTotal<HardMediumSoftLongScore>> constraintMatchTotalMap = scoreManager.explainScore(roster)
+                .getConstraintMatchTotalMap();
+        final String CONSTRAINT_ID = ConstraintMatchTotal.composeConstraintId(IndictmentUtils.CONSTRAINT_MATCH_PACKAGE,
+                RosterConstraintConfiguration.CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE);
+        constraintMatchTotalMap.get(CONSTRAINT_ID)
+                .getConstraintMatchSet()
+                .forEach(constraintMatch -> constraintMatch.getJustificationList().stream().filter(o -> o instanceof Shift)
+                        .forEach(justification -> {
+                            Shift shift = (Shift) justification;
+                            if (!shift.isPinnedByUser()) {
+                                shift.setEmployee(null);
+                            }
+                        }));
+        solverManager.solveAndListen(tenantId, id -> roster, this::scheduleUpdateOfRoster);
     }
 
     public SolverStatus getSolverStatus(Integer tenantId) {
@@ -378,7 +433,7 @@ public class RosterService extends AbstractRestService {
     }
 
     public void terminateRosterEarly(Integer tenantId) {
-        solverManager.terminate(tenantId);
+        solverManager.terminateEarly(tenantId);
     }
 
     // ************************************************************************

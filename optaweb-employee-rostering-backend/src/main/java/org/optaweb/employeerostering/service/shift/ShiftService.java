@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Validator;
 
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.Shift;
@@ -70,7 +71,7 @@ public class ShiftService extends AbstractRestService {
     }
 
     public List<ShiftView> getShiftList(Integer tenantId) {
-        Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(
+        Map<Object, Indictment<HardMediumSoftLongScore>> indictmentMap = indictmentUtils.getIndictmentMapForRoster(
                 rosterService.buildRoster(tenantId));
         return getAllShifts(tenantId).stream()
                 .map(s -> indictmentUtils.getShiftViewWithIndictment(
@@ -89,7 +90,7 @@ public class ShiftService extends AbstractRestService {
                 .orElseThrow(() -> new EntityNotFoundException("No Shift entity found with ID (" + id + ")."));
 
         validateBean(tenantId, shift);
-        Indictment indictment = indictmentUtils.getIndictmentMapForRoster(
+        Indictment<HardMediumSoftLongScore> indictment = indictmentUtils.getIndictmentMapForRoster(
                 rosterService.buildRoster(tenantId)).get(shift);
         return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(), shift,
                 indictment);
@@ -157,7 +158,7 @@ public class ShiftService extends AbstractRestService {
         Shift shift = convertFromView(tenantId, shiftView);
         Shift persistedShift = shiftRepository.save(shift);
 
-        Indictment indictment = indictmentUtils.getIndictmentMapForRoster(
+        Indictment<HardMediumSoftLongScore> indictment = indictmentUtils.getIndictmentMapForRoster(
                 rosterService.buildRoster(tenantId)).get(persistedShift);
         return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(),
                 persistedShift, indictment);
@@ -188,7 +189,7 @@ public class ShiftService extends AbstractRestService {
         // Flush to increase version number before we duplicate it to ShiftView
         Shift updatedShift = shiftRepository.saveAndFlush(oldShift);
 
-        Indictment indictment = indictmentUtils.getIndictmentMapForRoster(
+        Indictment<HardMediumSoftLongScore> indictment = indictmentUtils.getIndictmentMapForRoster(
                 rosterService.buildRoster(tenantId)).get(updatedShift);
         return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(),
                 updatedShift, indictment);

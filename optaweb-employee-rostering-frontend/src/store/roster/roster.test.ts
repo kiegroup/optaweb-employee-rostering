@@ -381,10 +381,10 @@ describe('Roster operations', () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
 
-    onGet(`/tenant/${tenantId}/roster/status`, 'SOLVING');
+    onGet(`/tenant/${tenantId}/roster/status`, 'SOLVING_ACTIVE');
     await store.dispatch(rosterOperations.getSolverStatus());
     expect(store.getActions()).toEqual([
-      actions.updateSolverStatus({ solverStatus: 'SOLVING' }),
+      actions.updateSolverStatus({ solverStatus: 'SOLVING_ACTIVE' }),
     ]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/roster/status`);
@@ -397,10 +397,10 @@ describe('Roster operations', () => {
     mockRefreshShiftRoster.mockClear();
     store.clearActions();
 
-    onGet(`/tenant/${tenantId}/roster/status`, 'TERMINATED');
+    onGet(`/tenant/${tenantId}/roster/status`, 'NOT_SOLVING');
     await store.dispatch(rosterOperations.getSolverStatus());
     expect(store.getActions()).toEqual([
-      actions.updateSolverStatus({ solverStatus: 'TERMINATED' }),
+      actions.updateSolverStatus({ solverStatus: 'NOT_SOLVING' }),
       actions.terminateSolvingRosterEarly(),
     ]);
 
@@ -1069,7 +1069,7 @@ describe('Roster reducers', () => {
     expect(
       solverReducer(state.solverState, actions.solveRoster()),
     ).toEqual({
-      solverStatus: 'SOLVING',
+      solverStatus: 'SOLVING_ACTIVE',
     });
   });
 
@@ -1077,7 +1077,7 @@ describe('Roster reducers', () => {
     expect(
       solverReducer(state.solverState, actions.terminateSolvingRosterEarly()),
     ).toEqual({
-      solverStatus: 'TERMINATED',
+      solverStatus: 'NOT_SOLVING',
     });
   });
 });
