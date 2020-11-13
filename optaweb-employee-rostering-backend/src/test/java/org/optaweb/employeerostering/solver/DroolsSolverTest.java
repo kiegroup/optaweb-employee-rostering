@@ -16,7 +16,6 @@
 
 package org.optaweb.employeerostering.solver;
 
-import org.junit.runner.RunWith;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.termination.TerminationConfig;
@@ -24,9 +23,7 @@ import org.optaweb.employeerostering.domain.roster.Roster;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureTestDatabase
 public class DroolsSolverTest extends AbstractSolverTest {

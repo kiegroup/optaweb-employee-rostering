@@ -16,12 +16,12 @@
 
 package org.optaweb.employeerostering.exception;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.RollbackException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.optaweb.employeerostering.ExceptionDataMapper;
 import org.optaweb.employeerostering.domain.exception.ConstraintViolatedException;
 

@@ -16,18 +16,18 @@
 
 package org.optaweb.employeerostering.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HierarchyTreeTest {
 
     private HierarchyTree<Integer, String> tested;
 
-    @Before
+    @BeforeEach
     public void setup() {
         // tested is the divisibility Hierarchy Tree;
         // a is above b iff a divides b
