@@ -17,9 +17,7 @@
 package org.optaweb.employeerostering.solver;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -54,8 +52,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.persistence.EntityManager;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
@@ -111,7 +110,8 @@ public abstract class AbstractSolverTest {
 
     // A solver "integration" test that verify that our constraints can create a feasible
     // solution on our demo data set
-    @Test(timeout = 600000)
+    @Test
+    @Timeout(600000)
     public void testFeasibleSolution() {
         Solver<Roster> solver = getSolverFactory().buildSolver();
 
@@ -127,7 +127,8 @@ public abstract class AbstractSolverTest {
     }
 
     // A solver "integration" test that verify it moves only draft shifts
-    @Test(timeout = 600000)
+    @Test
+    @Timeout(600000)
     public void testMoveOnlyDraftShifts() {
         Solver<Roster> solver = getSolverFactory().buildSolver();
 
@@ -244,14 +245,16 @@ public abstract class AbstractSolverTest {
         constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
     }
 
-    @Test(timeout = 600000)
+    @Test
+    @Timeout(600000)
     public void testContractConstraints() {
         for (ContractField field : ContractField.values()) {
             testContractConstraint(field);
         }
     }
 
-    @Test(timeout = 600000)
+    @Test
+    @Timeout(600000)
     public void testRequiredSkillForShiftConstraint() {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
 
@@ -382,14 +385,16 @@ public abstract class AbstractSolverTest {
         constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
     }
 
-    @Test(timeout = 600000)
+    @Test
+    @Timeout(600000)
     public void testEmployeeAvailabilityConstraints() {
         for (EmployeeAvailabilityState state : EmployeeAvailabilityState.values()) {
             testAvailabilityConstraint(state);
         }
     }
 
-    @Test(timeout = 600000)
+    @Test
+    @Timeout(600000)
     public void testNoMoreThan2ConsecutiveShifts() {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
 
@@ -447,7 +452,8 @@ public abstract class AbstractSolverTest {
         constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
     }
 
-    @Test(timeout = 600000)
+    @Test
+    @Timeout(600000)
     public void testBreaksBetweenConsecutiveShiftsAtLeast10Hours() {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
 
@@ -515,7 +521,8 @@ public abstract class AbstractSolverTest {
         constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
     }
 
-    @Test(timeout = 600000)
+    @Test
+    @Timeout(600000)
     public void testAssignEveryShift() {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
 
@@ -570,8 +577,9 @@ public abstract class AbstractSolverTest {
         constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
     }
 
-    @Ignore("Disabled as in this new world, predictability of schedules does not matter.")
-    @Test(timeout = 600000)
+    @Disabled("Disabled as in this new world, predictability of schedules does not matter.")
+    @Test
+    @Timeout(600000)
     public void testEmployeeIsNotRotationEmployeeConstraint() {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
 
@@ -662,6 +670,10 @@ public abstract class AbstractSolverTest {
         return ROSTER_CONSTRAINT_CONFIGURATION;
     }
 
+    // In regards to the FIXME below, this test is for both Drools and Constraint Streams,
+    // and Drools doesn't have a constraintVerifier equivalent yet, meaning we need to
+    // use scoreVerifier, which does not have a getNumberOfInstances, so we need the
+    // weight to implement that functionality
     // FIXME Constraint name and weight are already coupled in RosterConstraintConfiguration.
     //  This information should be read from OptaPlanner, not re-assembled here.
     private enum Constraints {

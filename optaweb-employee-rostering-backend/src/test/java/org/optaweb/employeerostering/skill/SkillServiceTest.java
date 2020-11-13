@@ -19,10 +19,9 @@ package org.optaweb.employeerostering.skill;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
@@ -34,7 +33,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -42,7 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
@@ -57,12 +54,12 @@ public class SkillServiceTest extends AbstractEntityRequireTenantRestServiceTest
     @Autowired
     private SkillService skillService;
 
-    @Before
+    @BeforeEach
     public void setup() {
         createTestTenant();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         deleteTestTenant();
     }

@@ -16,9 +16,8 @@
 
 package org.optaweb.employeerostering.employee;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,10 +34,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
@@ -58,7 +56,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -66,7 +63,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
@@ -97,12 +93,12 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         return contractService.createContract(tenantId, contractView);
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         createTestTenant();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         deleteTestTenant();
     }
@@ -791,19 +787,15 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                     .filter(e -> e.getName().equals(expected.getName())).findAny();
             if (maybeActual.isPresent()) {
                 Employee actual = maybeActual.get();
-                assertEquals("Wrong contract for " + expected.getName(),
-                        expected.getContract(), actual.getContract());
-                assertEquals("Wrong tenant id for " + expected.getName(),
-                        expected.getTenantId(), actual.getTenantId());
-                assertEquals("Wrong number of skills for " + expected.getName(),
-                        expected.getSkillProficiencySet().size(), actual.getSkillProficiencySet().size());
+                assertThat(actual.getContract()).withFailMessage("Wrong contract for " + expected.getName())
+                        .isEqualTo(expected.getContract());
+                assertThat(actual.getTenantId()).withFailMessage("Wrong tenant id for " + expected.getName())
+                        .isEqualTo(expected.getTenantId());
+                assertThat(actual.getSkillProficiencySet()).withFailMessage("Wrong number of skills for " + expected.getName())
+                        .hasSize(expected.getSkillProficiencySet().size());
 
-                expected.getSkillProficiencySet().forEach(skill -> assertTrue("Missing skill " + skill.getName() +
-                        " for employee " +
-                        expected.getName(),
-                        actual.getSkillProficiencySet().stream()
-                                .anyMatch(s -> s.getName()
-                                        .equals(skill.getName()))));
+                assertThat(actual.getSkillProficiencySet()).allMatch(skill -> expected.getSkillProficiencySet().stream()
+                        .anyMatch(expectedSkill -> skill.getName().equals(expectedSkill.getName())));
             } else {
                 fail("Expected an employee with name (" + expected.getName() + "), but no such employee was found.");
             }
