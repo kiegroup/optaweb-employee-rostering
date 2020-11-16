@@ -30,10 +30,11 @@ import { stringFilter } from 'util/CommonFilters';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
 import { ArrowIcon } from '@patternfly/react-icons';
+import { List } from 'immutable';
 
 interface StateProps extends DataTableProps<Spot> {
   tenantId: number;
-  skillList: Skill[];
+  skillList: List<Skill>;
 }
 
 const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
@@ -111,7 +112,7 @@ export class SpotsPage extends DataTable<Spot, Props> {
       <StatefulMultiTypeaheadSelectInput
         key={1}
         emptyText={this.props.t('selectRequiredSkills')}
-        options={this.props.skillList}
+        options={this.props.skillList.toArray()}
         optionToStringMap={skill => skill.name}
         value={data.requiredSkillSet ? data.requiredSkillSet : []}
         onChange={selected => setProperty('requiredSkillSet', selected)}

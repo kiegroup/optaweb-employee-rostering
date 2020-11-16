@@ -18,6 +18,7 @@ import { skillSelectors } from 'store/skill';
 import { Employee } from 'domain/Employee';
 import DomainObjectView from 'domain/DomainObjectView';
 import { AppState } from '../types';
+import { Map, List } from 'immutable';
 
 export const getEmployeeById = (state: AppState, id: number): Employee => {
   if (state.employeeList.isLoading || state.skillList.isLoading || state.contractList.isLoading) {
@@ -32,18 +33,17 @@ export const getEmployeeById = (state: AppState, id: number): Employee => {
 };
 
 let oldEmployeeMapById: Map<number, DomainObjectView<Employee>> | null = null;
-let employeeListForOldEmployeeMapById: Employee[] | null = null;
+let employeeListForOldEmployeeMapById: List<Employee> | null = null;
 
-export const getEmployeeList = (state: AppState): Employee[] => {
+export const getEmployeeList = (state: AppState): List<Employee> => {
   if (state.employeeList.isLoading || state.skillList.isLoading || state.contractList.isLoading) {
-    return [];
+    return List();
   }
   if (oldEmployeeMapById === state.employeeList.employeeMapById && employeeListForOldEmployeeMapById !== null) {
     return employeeListForOldEmployeeMapById;
   }
 
-  const out: Employee[] = [];
-  state.employeeList.employeeMapById.forEach((value, key) => out.push(getEmployeeById(state, key)));
+  const out = state.employeeList.employeeMapById.keySeq().map(id => getEmployeeById(state, id)).toList();
 
   oldEmployeeMapById = state.employeeList.employeeMapById;
   employeeListForOldEmployeeMapById = out;

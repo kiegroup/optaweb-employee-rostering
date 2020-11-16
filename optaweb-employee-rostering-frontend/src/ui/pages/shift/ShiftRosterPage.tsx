@@ -42,13 +42,14 @@ import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from './S
 import EditShiftModal from './EditShiftModal';
 import ExportScheduleModal from './ExportScheduleModal';
 import { ProvisionShiftsModal } from './ProvisionShiftsModal';
+import { List } from 'immutable';
 
 interface StateProps {
   tenantId: number;
   isSolving: boolean;
   isLoading: boolean;
-  allSpotList: Spot[];
-  shownSpotList: Spot[];
+  allSpotList: List<Spot>;
+  shownSpotList: List<Spot>;
   spotIdToShiftListMap: Map<number, Shift[]>;
   totalNumOfSpots: number;
   rosterState: RosterState | null;
@@ -68,14 +69,14 @@ const mapStateToProps = (state: AppState): StateProps => ({
   isLoading: rosterSelectors.isShiftRosterLoading(state),
   allSpotList: spotSelectors.getSpotList(state),
   // The use of "x = isLoading? x : getUpdatedData()" is a way to use old value if data is still loading
-  shownSpotList: lastShownSpotList = rosterSelectors.isShiftRosterLoading(state) ? lastShownSpotList
-    : rosterSelectors.getSpotListInShiftRoster(state),
+  shownSpotList: List(lastShownSpotList = rosterSelectors.isShiftRosterLoading(state) ? lastShownSpotList
+    : rosterSelectors.getSpotListInShiftRoster(state)),
   spotIdToShiftListMap: lastSpotIdToShiftListMap = rosterSelectors.getSpotListInShiftRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getShiftListForSpot(state, curr)),
     // reducing an empty array returns the starting value
     rosterSelectors.isShiftRosterLoading(state) ? lastSpotIdToShiftListMap : new Map<number, Shift[]>()),
-  totalNumOfSpots: spotSelectors.getSpotList(state).length,
+  totalNumOfSpots: spotSelectors.getSpotList(state).size,
   rosterState: state.rosterState.rosterState,
   score: state.shiftRoster.shiftRosterView ? state.shiftRoster.shiftRosterView.score : null,
   indictmentSummary: state.shiftRoster.shiftRosterView ? state.shiftRoster.shiftRosterView.indictmentSummary : null,
@@ -133,7 +134,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
 
   onUpdateShiftRoster(urlProps: ShiftRosterUrlProps) {
     if (this.props.rosterState) {
-      const spot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.allSpotList[0];
+      const spot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.allSpotList.get(0) as Spot;
       const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
       const endDate = moment(startDate).endOf('week').toDate();
 
@@ -237,10 +238,10 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       spot: null,
       week: null,
     });
-    const changedTenant = this.props.shownSpotList.length === 0
-      || this.props.tenantId !== this.props.shownSpotList[0].tenantId;
+    const changedTenant = this.props.shownSpotList.size === 0
+      || this.props.tenantId !== (this.props.shownSpotList.get(0) as Spot).tenantId;
 
-    if (this.props.shownSpotList.length === 0 || this.state.firstLoad
+    if (this.props.shownSpotList.size === 0 || this.state.firstLoad
         || changedTenant || this.props.rosterState === null) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
@@ -265,7 +266,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
 
     const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
     const endDate = moment(startDate).endOf('week').toDate();
-    const shownSpot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.shownSpotList[0];
+    const shownSpot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.shownSpotList.get(0) as Spot;
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
     const indictmentSummary: IndictmentSummary = this.props.indictmentSummary
         || { constraintToCountMap: {}, constraintToScoreImpactMap: {} };
@@ -320,7 +321,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             aria-label="Select Spot"
             emptyText={t('selectSpot')}
             optionToStringMap={spot => spot.name}
-            options={this.props.allSpotList}
+            options={this.props.allSpotList.toArray()}
             value={shownSpot}
             onChange={(s) => {
               this.onUpdateShiftRoster({
@@ -380,7 +381,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           defaultToDate={endDate}
         />
         <Schedule<Shift>
-          key={this.props.shownSpotList[0].id}
+          key={(this.props.shownSpotList.get(0) as Spot).id}
           startDate={startDate}
           endDate={endDate}
           events={this.props.spotIdToShiftListMap.get(shownSpot.id as number) || []}

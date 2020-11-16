@@ -23,10 +23,11 @@ import { AppState } from 'store/types';
 import { spotSelectors } from 'store/spot';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { List } from 'immutable';
 
 interface StateProps {
   tenantId: number;
-  spotList: Spot[];
+  spotList: List<Spot>;
 }
 
 interface OwnProps {
@@ -46,7 +47,7 @@ export const ExportScheduleModal: React.FC<StateProps & OwnProps> = (props) => {
   const { t } = useTranslation('ExportScheduleModal');
   const [fromDate, setFromDate] = React.useState<Date | null>(props.defaultFromDate);
   const [toDate, setToDate] = React.useState<Date | null>(props.defaultToDate);
-  const [exportedSpots, setExportedSpots] = React.useState<Spot[]>(props.spotList);
+  const [exportedSpots, setExportedSpots] = React.useState<List<Spot>>(props.spotList);
 
   // Work around since useEffect use shallowEquality, and the same date created at different times are not equal
   const defaultFromDateTime = props.defaultFromDate.getTime();
@@ -60,7 +61,7 @@ export const ExportScheduleModal: React.FC<StateProps & OwnProps> = (props) => {
     }
   }, [props.isOpen, defaultFromDateTime, defaultToDateTime, props.spotList]);
 
-  const spotSet = (exportedSpots.length > 0) ? exportedSpots.map(s => `${s.id}`).join(',') : null;
+  const spotSet = (exportedSpots.size > 0) ? exportedSpots.map(s => `${s.id}`).join(',') : null;
 
   let exportUrl = '_blank';
   if (spotSet && toDate && fromDate) {
@@ -121,10 +122,10 @@ export const ExportScheduleModal: React.FC<StateProps & OwnProps> = (props) => {
           <MultiTypeaheadSelectInput
             aria-label={t('forSpots')}
             emptyText={t('selectSpots')}
-            value={exportedSpots}
-            options={props.spotList}
+            value={exportedSpots.toArray()}
+            options={props.spotList.toArray()}
             optionToStringMap={spot => spot.name}
-            onChange={setExportedSpots}
+            onChange={newExportedSpots => setExportedSpots(List(newExportedSpots))}
           />
         </InputGroup>
       </Form>

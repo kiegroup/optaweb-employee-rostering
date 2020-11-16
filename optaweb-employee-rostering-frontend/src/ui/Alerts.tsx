@@ -25,9 +25,10 @@ import moment from 'moment';
 import { useInterval } from 'util/FunctionalComponentUtils';
 import { BasicObject, ServerSideExceptionInfo } from 'types';
 import { ServerSideExceptionDialog } from './components/ServerSideExceptionDialog';
+import { List } from 'immutable';
 
 interface StateProps {
-  alerts: AlertInfo[];
+  alerts: List<AlertInfo>;
 }
 
 interface DispatchProps {
@@ -59,7 +60,7 @@ const Alerts: React.FC<Props> = (props) => {
   const [hoveredOverAlerts, hoveredOverAlertsSetter] = React.useState([] as number[]);
   const shouldUpdateNextSecond = props.alerts.filter(alert => hoveredOverAlerts.find(
     id => id === alert.id,
-  ) === undefined).length > 0;
+  ) === undefined).size > 0;
 
   const additionClassNames = (alert: AlertInfo) => {
     const secondsFromEvent = moment.duration(moment().diff(moment(alert.createdAt))).asSeconds();

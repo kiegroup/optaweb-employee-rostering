@@ -16,6 +16,7 @@
 
 import { Action } from 'redux';
 import { BasicObject } from 'types';
+import { List } from 'immutable';
 
 export enum ActionType {
   ADD_ALERT = 'ADD_ALERT',
@@ -47,6 +48,6 @@ export interface AlertInfo {
 }
 
 export interface AlertList {
-  readonly alertList: AlertInfo[];
+  readonly alertList: List<AlertInfo>;
   readonly idGeneratorIndex: number;
 }

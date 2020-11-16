@@ -12,6 +12,7 @@
     "i18next": "^19.1.0",
     "i18next-browser-languagedetector": "^4.0.1",
     "i18next-xhr-backend": "^3.2.2",
+    "immutable": "^4.0.0-rc.12",
     "moment": "^2.24.0",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",

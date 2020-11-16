@@ -17,6 +17,7 @@
 import { Action } from 'redux';
 import DomainObjectView from 'domain/DomainObjectView';
 import { TimeBucket } from 'domain/TimeBucket';
+import { Map } from 'immutable';
 
 export enum ActionType {
   ADD_TIME_BUCKET = 'ADD__TIME_BUCKET',

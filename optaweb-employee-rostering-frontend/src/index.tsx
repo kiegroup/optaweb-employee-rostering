@@ -27,6 +27,7 @@ import App from './ui/App';
 
 // import i18n (needs to be bundled)
 import i18n from './i18n';
+import { List } from 'immutable';
 
 const path = window.location.pathname;
 let windowTenantId = 0;
@@ -39,7 +40,7 @@ const store = configureStore({
 }, {
   tenantData: {
     currentTenantId: windowTenantId,
-    tenantList: [],
+    tenantList: List(),
     timezoneList: [],
   },
 });

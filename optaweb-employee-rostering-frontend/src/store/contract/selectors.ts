@@ -15,6 +15,7 @@
  */
 import { Contract } from 'domain/Contract';
 import { AppState } from '../types';
+import { Map, List } from 'immutable';
 
 export const getContractById = (state: AppState, id: number): Contract => {
   if (state.contractList.isLoading) {
@@ -24,20 +25,19 @@ export const getContractById = (state: AppState, id: number): Contract => {
 };
 
 let oldContractMapById: Map<number, Contract> | null = null;
-let contractListForOldContractMapById: Contract[] | null = null;
+let contractListForOldContractMapById: List<Contract> | null = null;
 
-export const getContractList = (state: AppState): Contract[] => {
+export const getContractList = (state: AppState): List<Contract> => {
   if (state.contractList.isLoading) {
-    return [];
+    return List();
   }
   if (oldContractMapById === state.contractList.contractMapById && contractListForOldContractMapById !== null) {
     return contractListForOldContractMapById;
   }
-
-  const out: Contract[] = [];
-  state.contractList.contractMapById.forEach((value, key) => out.push(getContractById(state, key)));
+  const out = state.contractList.contractMapById.keySeq().map(id => getContractById(state, id)).toList();
 
   oldContractMapById = state.contractList.contractMapById;
   contractListForOldContractMapById = out;
+  
   return out;
 };

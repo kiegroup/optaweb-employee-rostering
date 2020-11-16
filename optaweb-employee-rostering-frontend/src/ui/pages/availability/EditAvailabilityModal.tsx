@@ -27,12 +27,13 @@ import { employeeSelectors } from 'store/employee';
 import 'react-datepicker/dist/react-datepicker.css';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import { withTranslation, WithTranslation } from 'react-i18next';
+import { List } from 'immutable';
 
 interface Props {
   tenantId: number;
   availability?: EmployeeAvailability;
   isOpen: boolean;
-  employeeList: Employee[];
+  employeeList: List<Employee>;
   onSave: (availability: EmployeeAvailability) => void;
   onDelete: (availability: EmployeeAvailability) => void;
   onClose: () => void;
@@ -156,7 +157,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
               aria-label="Employee"
               emptyText={t('selectEmployee')}
               value={this.state.editedValue.employee}
-              options={this.props.employeeList}
+              options={this.props.employeeList.toArray()}
               optionToStringMap={employee => employee.name}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, employee },

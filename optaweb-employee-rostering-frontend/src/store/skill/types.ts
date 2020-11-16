@@ -17,6 +17,7 @@
 import { Action } from 'redux';
 import { Skill } from 'domain/Skill';
 import DomainObjectView from 'domain/DomainObjectView';
+import { Map } from 'immutable';
 
 export enum ActionType {
   ADD_SKILL = 'ADD_SKILL',

@@ -176,7 +176,7 @@ ThunkCommandFactory<void, ShiftRosterViewAction> = () => (dispatch, state) => {
     const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
     const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
     const spotList = spotSelectors.getSpotList(state());
-    const shownSpots = (spotList.length > 0) ? [spotList[0]] : [];
+    const shownSpots = (spotList.size > 0) ? [spotList.get(0) as Spot] : [];
 
     if (shownSpots.length > 0) {
       dispatch(getShiftRosterFor({
@@ -199,7 +199,7 @@ ThunkCommandFactory<void, AvailabilityRosterViewAction> = () => (dispatch, state
     const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
     const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
     const employeeList = employeeSelectors.getEmployeeList(state());
-    const shownEmployees = (employeeList.length > 0) ? [employeeList[0]] : [];
+    const shownEmployees = (employeeList.size > 0) ? [employeeList.get(0) as Employee] : [];
 
     if (shownEmployees.length > 0) {
       dispatch(getAvailabilityRosterFor({

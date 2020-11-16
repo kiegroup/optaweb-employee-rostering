@@ -31,10 +31,11 @@ import { connect } from 'react-redux';
 import { tenantOperations } from 'store/tenant';
 import { AppState } from 'store/types';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { List } from 'immutable';
 
 interface StateProps {
   currentTenantId: number;
-  tenantList: Tenant[];
+  tenantList: List<Tenant>;
 }
 
 const mapStateToProps = ({ tenantData }: AppState): StateProps => ({
@@ -116,7 +117,7 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
     );
     const { tenantList, currentTenantId } = this.props;
     const { isTenantSelectOpen } = this.state;
-    if (tenantList.length === 0) {
+    if (tenantList.size === 0) {
       return (
         <Toolbar>
           <ToolbarGroup />
@@ -146,7 +147,7 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
                 <DropdownItem data-tenantid={tenant.id} key={tenant.id}>
                   {tenant.name}
                 </DropdownItem>
-              ))}
+              )).toArray()}
             />
           </ToolbarItem>
         </ToolbarGroup>

@@ -17,6 +17,7 @@
 import { Action } from 'redux';
 import { Employee } from 'domain/Employee';
 import DomainObjectView from 'domain/DomainObjectView';
+import { Map } from 'immutable';
 
 export enum ActionType {
   ADD_EMPLOYEE = 'ADD_EMPLOYEE',

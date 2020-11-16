@@ -15,6 +15,8 @@
  */
 import { Skill } from 'domain/Skill';
 import { AppState } from '../types';
+import { List, Map } from 'immutable';
+import DomainObjectView from 'domain/DomainObjectView';
 
 export const getSkillById = (state: AppState, id: number): Skill => {
   if (state.skillList.isLoading) {
@@ -24,19 +26,18 @@ export const getSkillById = (state: AppState, id: number): Skill => {
 };
 
 
-let oldSkillMapById: Map<number, Skill> | null = null;
-let skillListForOldSkillMapById: Skill[] | null = null;
+let oldSkillMapById: Map<number, DomainObjectView<Skill>>| null = null;
+let skillListForOldSkillMapById: List<Skill> | null = null;
 
-export const getSkillList = (state: AppState): Skill[] => {
+export const getSkillList = (state: AppState): List<Skill> => {
   if (state.skillList.isLoading) {
-    return [];
+    return List();
   }
   if (oldSkillMapById === state.skillList.skillMapById && skillListForOldSkillMapById !== null) {
     return skillListForOldSkillMapById;
   }
 
-  const out: Skill[] = [];
-  state.skillList.skillMapById.forEach((value, key) => out.push(getSkillById(state, key)));
+  const out = state.skillList.skillMapById.keySeq().map((key) => getSkillById(state, key)).toList();
 
   oldSkillMapById = state.skillList.skillMapById;
   skillListForOldSkillMapById = out;

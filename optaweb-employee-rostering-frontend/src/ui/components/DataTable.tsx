@@ -28,17 +28,18 @@ import {
 import { Button, ButtonVariant, Pagination, Level, LevelItem } from '@patternfly/react-core';
 import { SaveIcon, CloseIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { Predicate, ReadonlyPartial, Sorter } from 'types';
-import { toggleElement, Stream } from 'util/ImmutableCollectionOperations';
+import { toggleElement, conditionally } from 'util/ImmutableCollectionOperations';
 import { WithTranslation } from 'react-i18next';
 import { getPropsFromUrl, setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
 import { RouteComponentProps } from 'react-router';
 import FilterComponent from './FilterComponent';
 import { EditableComponent } from './EditableComponent';
+import { List } from 'immutable';
 
 export interface DataTableProps<T> extends WithTranslation, RouteComponentProps {
   title: string;
   columnTitles: string[];
-  tableData: T[];
+  tableData: List<T>;
 }
 
 interface DataTableState<T> {
@@ -277,7 +278,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
       page: '1',
       itemsPerPage: '10',
       filter: null,
-      sortBy: null,
+      sortBy: this.getSorters().filter(x => x !== null).length > 0? `${this.getSorters().findIndex(x => x !== null)}` : null,
       asc: 'true',
     });
     const [page, perPage] = [parseInt(urlProps.page as string, 10), parseInt(urlProps.itemsPerPage as string, 10)];
@@ -285,37 +286,42 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     const sortDirection: 'asc'|'desc' = urlProps.asc === 'true' ? 'asc' : 'desc';
     const sortBy = urlProps.sortBy ? { index: parseInt(urlProps.sortBy, 10), direction: sortDirection } : {};
 
-    const additionalRows: IRow[] = (this.state.newRowData !== null)
-      ? [
+    const additionalRows: List<IRow> = (this.state.newRowData !== null)
+      ? List([
         {
           cells: this.editDataRow(this.state.newRowData, setProperty)
             .map(c => ({ title: c }))
             .concat([{ title: this.getAddButtons(this.state.newRowData) }]),
         },
-      ] : [];
+      ]) : List();
     const sorters = this.getSorters();
-
-    const filteredRows = new Stream(this.props.tableData)
+    
+    const filteredRows = conditionally(this.props.tableData.valueSeq(),
       // eslint-disable-next-line consistent-return
-      .conditionally((s) => {
+      (s) => {
         if (urlProps.sortBy !== null) {
-          return s.sort(sorters[parseInt(urlProps.sortBy, 10)] as Sorter<T>,
-            urlProps.asc === 'true');
+          return s.sort(sorters[parseInt(urlProps.sortBy, 10)] as Sorter<T>);
         }
-      })
+      }).then(
       // eslint-disable-next-line consistent-return
-      .conditionally((s) => {
+      (s) => {
+        if (urlProps.asc !== 'true') {
+            return s.reverse();
+        }
+      }).then(
+      // eslint-disable-next-line consistent-return
+      (s) => {
         if (urlProps.filter !== null) {
           return s.filter(this.getFilter()(urlProps.filter));
         }
-      });
+      }).result;
 
-    const rowsThatMatchFilter = filteredRows.collect(c => c.length);
-
+    const rowsThatMatchFilterCount = filteredRows.count();
+    
     const rows = additionalRows.concat(filteredRows
-      .page(page, perPage)
-      .map(this.convertDataToTableRow)
-      .collect(c => c));
+      .skip((page - 1) * perPage)
+      .take(perPage)
+      .map(this.convertDataToTableRow));
 
     const columns: ICell[] = this.props.columnTitles.map((title, index) => ({
       title,
@@ -346,7 +352,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
           <LevelItem style={{ display: 'flex' }}>
             <Button isDisabled={this.state.newRowData !== null} onClick={this.createNewRow}>{t('add')}</Button>
             <Pagination
-              itemCount={rowsThatMatchFilter}
+              itemCount={rowsThatMatchFilterCount}
               perPage={perPage}
               page={page}
               onSetPage={this.onSetPage}
@@ -355,7 +361,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
             />
           </LevelItem>
         </Level>
-        <Table caption={this.props.title} sortBy={sortBy} onSort={this.onSort} cells={columns} rows={rows}>
+        <Table caption={this.props.title} sortBy={sortBy} onSort={this.onSort} cells={columns} rows={rows.toArray()}>
           <TableHeader />
           <TableBody />
         </Table>
