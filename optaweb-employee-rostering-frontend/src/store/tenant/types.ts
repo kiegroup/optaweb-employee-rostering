@@ -16,6 +16,7 @@
 
 import { Action } from 'redux';
 import { Tenant } from 'domain/Tenant';
+import { List } from 'immutable';
 
 export enum ActionType {
   CHANGE_TENANT = 'CHANGE_TENANT',
@@ -63,6 +64,6 @@ RemoveTenantAction | RefreshSupportedTimezoneListAction;
 
 export interface TenantData {
   readonly currentTenantId: number;
-  readonly tenantList: Tenant[];
+  readonly tenantList: List<Tenant>;
   readonly timezoneList: string[];
 }

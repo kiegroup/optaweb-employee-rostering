@@ -49,11 +49,12 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { withTranslation, WithTranslation, Trans } from 'react-i18next';
 import moment from 'moment';
 import { ColorPicker, StatefulColorPicker, defaultColorList } from 'ui/components/ColorPicker';
+import { List } from 'immutable';
 
 interface StateProps extends DataTableProps<Employee> {
   tenantId: number;
-  skillList: Skill[];
-  contractList: Contract[];
+  skillList: List<Skill>;
+  contractList: List<Contract>;
 }
 
 const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
@@ -161,13 +162,13 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         emptyText={this.props.t('selectAContract')}
         optionToStringMap={c => c.name}
         value={data.contract}
-        options={this.props.contractList}
+        options={this.props.contractList.toArray()}
         onChange={contract => setProperty('contract', contract)}
       />,
       <StatefulMultiTypeaheadSelectInput
         key={2}
         emptyText={this.props.t('selectSkillProficiencies')}
-        options={this.props.skillList}
+        options={this.props.skillList.toArray()}
         optionToStringMap={skill => skill.name}
         value={data.skillProficiencySet ? data.skillProficiencySet : []}
         onChange={selected => setProperty('skillProficiencySet', selected)}
@@ -248,7 +249,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         />
       </div>
     );
-    if (this.props.contractList.length === 0) {
+    if (this.props.contractList.size === 0) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           {importElement}

@@ -34,14 +34,15 @@ import { Skill } from 'domain/Skill';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import moment from 'moment';
 import { useValidators } from 'util/ValidationUtils';
+import { List } from 'immutable';
 
 interface Props {
   tenantId: number;
   shift?: Shift;
   isOpen: boolean;
-  skillList: Skill[];
-  employeeList: Employee[];
-  spotList: Spot[];
+  skillList: List<Skill>;
+  employeeList: List<Employee>;
+  spotList: List<Spot>;
   onSave: (shift: Shift) => void;
   onDelete: (shift: Shift) => void;
   onClose: () => void;
@@ -212,7 +213,7 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
               aria-label="Spot"
               emptyText={t('selectSpot')}
               value={this.state.editedValue.spot}
-              options={this.props.spotList}
+              options={this.props.spotList.toArray()}
               optionToStringMap={spot => spot.name}
               onChange={spot => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, spot },
@@ -225,7 +226,7 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
               aria-label="Additional Skills"
               emptyText={t('selectAdditionalSkills')}
               value={this.state.editedValue.requiredSkillSet ? this.state.editedValue.requiredSkillSet : []}
-              options={this.props.skillList}
+              options={this.props.skillList.toArray()}
               optionToStringMap={skill => skill.name}
               onChange={requiredSkillSet => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, requiredSkillSet },
@@ -239,7 +240,7 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
               emptyText={t('unassigned')}
               value={(this.state.editedValue.employee !== null)
                 ? this.state.editedValue.employee : undefined}
-              options={this.props.employeeList}
+              options={this.props.employeeList.toArray()}
               optionToStringMap={employee => (employee ? employee.name : t('unassigned'))}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, employee: (employee !== undefined) ? employee : null },
@@ -264,7 +265,7 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
               emptyText={t('none')}
               value={(this.state.editedValue.rotationEmployee !== null)
                 ? this.state.editedValue.rotationEmployee : undefined}
-              options={this.props.employeeList}
+              options={this.props.employeeList.toArray()}
               optionToStringMap={employee => (employee ? employee.name : t('none'))}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, rotationEmployee: (employee !== undefined) ? employee : null },

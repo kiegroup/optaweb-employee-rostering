@@ -19,13 +19,13 @@ import { AppState } from 'store/types';
 import { Text, Level, LevelItem, Pagination, Button } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { DataTableUrlProps } from 'ui/components/DataTable';
-import { Stream } from 'util/ImmutableCollectionOperations';
 import { stringFilter } from 'util/CommonFilters';
 import { Tenant } from 'domain/Tenant';
+import { List } from 'immutable';
 import { tenantOperations } from 'store/tenant';
 import * as adminOperations from 'store/admin/operations';
 import FilterComponent from 'ui/components/FilterComponent';
-import { Table, IRow, TableHeader, TableBody } from '@patternfly/react-table';
+import { Table, TableHeader, TableBody } from '@patternfly/react-table';
 import { TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ConfirmDialog } from 'ui/components/ConfirmDialog';
@@ -35,7 +35,7 @@ import NewTenantFormModal from './NewTenantFormModal';
 
 interface StateProps {
   tenantId: number;
-  tenantList: Tenant[];
+  tenantList: List<Tenant>;
 }
 
 const mapStateToProps = (state: AppState): StateProps => ({
@@ -76,14 +76,14 @@ export const AdminPage: React.FC<Props> = (props) => {
   const page = parseInt(urlProps.page as string, 10);
   const itemsPerPage = parseInt(urlProps.itemsPerPage as string, 10);
   const filter = stringFilter((tenant: Tenant) => tenant.name)(filterText);
-  const filteredRows = new Stream(tenantList)
+  const filteredRows = tenantList
     .filter(filter);
 
-  const numOfFilteredRows = filteredRows.collect(c => c.length);
+  const numOfFilteredRows = filteredRows.size;
 
   const rowsInPage = filteredRows
-    .page(page, itemsPerPage)
-    .collect(c => c);
+    .skip(page * itemsPerPage)
+    .take(itemsPerPage);
 
   return (
     <>
@@ -149,7 +149,7 @@ export const AdminPage: React.FC<Props> = (props) => {
         caption={t('tenants')}
         cells={[t('name'), '']}
         rows={
-          rowsInPage.map<IRow>(tenant => (
+          rowsInPage.map(tenant => (
             {
               cells: [
                 (<td key={0}><Text>{tenant.name}</Text></td>),
@@ -176,7 +176,7 @@ export const AdminPage: React.FC<Props> = (props) => {
                   </td>
                 ),
               ],
-            }))
+            })).toArray()
         }
       >
         <TableHeader />

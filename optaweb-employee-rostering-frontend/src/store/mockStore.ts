@@ -22,6 +22,7 @@ import RestServiceClient from './rest/RestServiceClient';
 import { TenantAction } from './tenant/types';
 import { SkillAction } from './skill/types';
 import { AppState } from './types';
+import { Map, List } from 'immutable';
 
 jest.mock('./rest/RestServiceClient');
 
@@ -38,28 +39,28 @@ export const mockStore = (state: Partial<AppState>) => {
   const out = { store: mockStoreCreator({
     tenantData: {
       currentTenantId: 0,
-      tenantList: [],
+      tenantList: List(),
       timezoneList: ['America/Toronto'],
     },
     employeeList: {
       isLoading: true,
-      employeeMapById: new Map(),
+      employeeMapById: Map(),
     },
     contractList: {
       isLoading: true,
-      contractMapById: new Map(),
+      contractMapById: Map(),
     },
     spotList: {
       isLoading: true,
-      spotMapById: new Map(),
+      spotMapById: Map(),
     },
     skillList: {
       isLoading: true,
-      skillMapById: new Map(),
+      skillMapById: Map(),
     },
     timeBucketList: {
       isLoading: true,
-      timeBucketMapById: new Map(),
+      timeBucketMapById: Map(),
     },
     rosterState: {
       isLoading: true,
@@ -77,7 +78,7 @@ export const mockStore = (state: Partial<AppState>) => {
       solverStatus: 'NOT_SOLVING',
     },
     alerts: {
-      alertList: [],
+      alertList: List(),
       idGeneratorIndex: 0,
     },
     isConnected: true,

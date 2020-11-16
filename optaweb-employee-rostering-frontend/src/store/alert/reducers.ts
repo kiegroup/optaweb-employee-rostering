@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { withElement, withoutElementWithId } from 'util/ImmutableCollectionOperations';
 import { ActionType, AlertList, AlertAction } from './types';
+import { List } from 'immutable';
 
 export const initialState: AlertList = {
-  alertList: [],
+  alertList: List(),
   idGeneratorIndex: 0,
 };
 
@@ -27,10 +27,10 @@ const alertReducer = (state = initialState, action: AlertAction): AlertList => {
     case ActionType.ADD_ALERT: {
       const alertWithId = { ...action.alertInfo, id: state.idGeneratorIndex };
       const nextIndex = state.idGeneratorIndex + 1;
-      return { ...state, idGeneratorIndex: nextIndex, alertList: withElement(state.alertList, alertWithId) };
+      return { ...state, idGeneratorIndex: nextIndex, alertList: state.alertList.push(alertWithId) };
     }
     case ActionType.REMOVE_ALERT: {
-      return { ...state, alertList: withoutElementWithId(state.alertList, action.id) };
+      return { ...state, alertList: state.alertList.filterNot(alert => alert.id === action.id) };
     }
     default:
       return state;

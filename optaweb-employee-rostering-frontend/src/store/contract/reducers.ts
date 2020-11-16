@@ -15,16 +15,16 @@
  */
 
 import {
-  createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement,
+  createIdMapFromList
 } from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
 import { Contract } from 'domain/Contract';
 import { ActionType, ContractList, ContractAction } from './types';
+import { Map } from 'immutable';
 
 export const initialState: ContractList = {
   isLoading: true,
-  contractMapById: new Map<number, DomainObjectView<Contract>>(),
+  contractMapById: Map<number, DomainObjectView<Contract>>(),
 };
 
 const contractReducer = (state = initialState, action: ContractAction): ContractList => {
@@ -32,14 +32,11 @@ const contractReducer = (state = initialState, action: ContractAction): Contract
     case ActionType.SET_CONTRACT_LIST_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_CONTRACT: {
-      return { ...state, contractMapById: mapWithElement(state.contractMapById, action.contract) };
+    case ActionType.ADD_CONTRACT, ActionType.UPDATE_CONTRACT: {
+      return { ...state, contractMapById: state.contractMapById.set(action.contract.id as number, action.contract) };
     }
     case ActionType.REMOVE_CONTRACT: {
-      return { ...state, contractMapById: mapWithoutElement(state.contractMapById, action.contract) };
-    }
-    case ActionType.UPDATE_CONTRACT: {
-      return { ...state, contractMapById: mapWithUpdatedElement(state.contractMapById, action.contract) };
+      return { ...state, contractMapById: state.contractMapById.remove(action.contract.id as number) };
     }
     case ActionType.REFRESH_CONTRACT_LIST: {
       return { ...state, contractMapById: createIdMapFromList(action.contractList) };
