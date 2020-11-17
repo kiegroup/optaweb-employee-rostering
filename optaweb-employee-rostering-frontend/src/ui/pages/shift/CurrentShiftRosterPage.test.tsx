@@ -27,6 +27,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import Actions from 'ui/components/Actions';
 import Schedule from 'ui/components/calendar/Schedule';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { List } from 'immutable';
 import { getShiftColor } from './ShiftEvent';
 import { ShiftRosterPage, Props, ShiftRosterUrlProps } from './CurrentShiftRosterPage';
 import ExportScheduleModal from './ExportScheduleModal';
@@ -47,8 +48,8 @@ describe('Current Shift Roster Page', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
       isLoading
-      allSpotList={[]}
-      shownSpotList={[]}
+      allSpotList={List()}
+      shownSpotList={List()}
       spotIdToShiftListMap={new Map()}
     />);
     expect(toJson(shiftRosterPage)).toMatchSnapshot();
@@ -108,8 +109,8 @@ describe('Current Shift Roster Page', () => {
   it('should go to the Spots page if the user click on the link', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
-      allSpotList={[]}
-      shownSpotList={[]}
+      allSpotList={List()}
+      shownSpotList={List()}
       spotIdToShiftListMap={new Map()}
     />);
     mount((shiftRosterPage.find(Trans).prop('components') as any)[2]).simulate('click');
@@ -128,7 +129,7 @@ describe('Current Shift Roster Page', () => {
     expect(baseProps.getShiftRosterFor).toBeCalledWith({
       fromDate: newDateStart,
       toDate: newDateEnd,
-      spotList: baseProps.shownSpotList,
+      spotList: baseProps.shownSpotList.toArray(),
     });
   });
 
@@ -470,8 +471,8 @@ const baseProps: Props = {
   tReady: true,
   isSolving: false,
   isLoading: false,
-  allSpotList: [spot, newSpot],
-  shownSpotList: [spot],
+  allSpotList: List([spot, newSpot]),
+  shownSpotList: List([spot]),
   spotIdToShiftListMap: new Map<number, Shift[]>([
     [2, [shift]],
   ]),

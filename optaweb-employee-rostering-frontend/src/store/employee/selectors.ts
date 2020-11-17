@@ -17,8 +17,8 @@ import { contractSelectors } from 'store/contract';
 import { skillSelectors } from 'store/skill';
 import { Employee } from 'domain/Employee';
 import DomainObjectView from 'domain/DomainObjectView';
-import { AppState } from '../types';
 import { Map, List } from 'immutable';
+import { AppState } from '../types';
 
 export const getEmployeeById = (state: AppState, id: number): Employee => {
   if (state.employeeList.isLoading || state.skillList.isLoading || state.contractList.isLoading) {

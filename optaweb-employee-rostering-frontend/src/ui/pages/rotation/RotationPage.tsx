@@ -52,7 +52,8 @@ export const RotationPage: React.FC<{}> = () => {
   const [selectedStub, setSelectedStub] = useState<Stub>('NO_SHIFT');
   const [isEditingTimeBuckets, setIsEditingTimeBuckets] = useState(false);
 
-  const [shownSpotName, setShownSpotName] = useUrlState('spot', (spotList.size > 0) ? (spotList.get(0) as Spot).name : undefined);
+  const [shownSpotName, setShownSpotName] = useUrlState('spot', (spotList.size > 0)
+    ? (spotList.get(0) as Spot).name : undefined);
   const shownSpot = spotList.find(s => s.name === shownSpotName);
   const shownTimeBuckets = shownSpot ? timeBucketList.filter(tb => tb.spot.id === shownSpot.id) : [];
   const oldShownTimeBuckets = useRef(shownTimeBuckets.map(tb => tb.id).join(','));

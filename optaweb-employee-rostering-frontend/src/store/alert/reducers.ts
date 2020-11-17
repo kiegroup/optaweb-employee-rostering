@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { ActionType, AlertList, AlertAction } from './types';
 import { List } from 'immutable';
+import { ActionType, AlertList, AlertAction } from './types';
 
 export const initialState: AlertList = {
   alertList: List(),

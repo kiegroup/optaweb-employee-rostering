@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { withElement, withoutElementWithId } from 'util/ImmutableCollectionOperations';
 import { ServerSideExceptionInfo, BasicObject } from 'types';
+import { List } from 'immutable';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
@@ -23,15 +23,15 @@ import { AlertInfo, AlertComponent } from './types';
 
 const state: Partial<AppState> = {
   alerts: {
-    alertList: [{
+    alertList: List([{
       id: 0,
       createdAt: new Date(),
       i18nKey: 'alert1',
-      variant: 'info',
+      variant: 'info' as 'info',
       params: {},
       components: [],
       componentProps: [],
-    }],
+    }]),
     idGeneratorIndex: 1,
   },
 };
@@ -162,12 +162,14 @@ describe('Alert reducers', () => {
   it('add an alert', () => {
     expect(
       reducer(state.alerts, actions.addAlert(addedAlert)),
-    ).toEqual({ idGeneratorIndex: 2, alertList: withElement(storeState.alerts.alertList, { ...addedAlert, id: 1 }) });
+    ).toEqual({ idGeneratorIndex: 2, alertList: storeState.alerts.alertList.push({ ...addedAlert, id: 1 }) });
   });
 
   it('remove an alert', () => {
     expect(
       reducer(state.alerts, actions.removeAlert(removedAlertId)),
-    ).toEqual({ ...state.alerts, alertList: withoutElementWithId(storeState.alerts.alertList, removedAlertId) });
+    ).toEqual({ ...state.alerts,
+      alertList: storeState.alerts.alertList
+        .filterNot(a => a.id === removedAlertId) });
   });
 });

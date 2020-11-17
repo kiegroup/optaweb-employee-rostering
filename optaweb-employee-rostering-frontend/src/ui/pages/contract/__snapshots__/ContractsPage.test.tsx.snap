@@ -447,7 +447,12 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
         },
       ]
     }
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 0,
+      }
+    }
   >
     <TableHeader />
     <TableBody />
@@ -553,7 +558,12 @@ exports[`Contracts page should render correctly with no contracts 1`] = `
     }
     onSort={[Function]}
     rows={Array []}
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 0,
+      }
+    }
   >
     <TableHeader />
     <TableBody />

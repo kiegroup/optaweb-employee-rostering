@@ -24,6 +24,7 @@ import moment from 'moment';
 import { Modal, TextInput, FlexItem, Text } from '@patternfly/react-core';
 import { Skill } from 'domain/Skill';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
+import { List } from 'immutable';
 import {
   EditTimeBucketModal, TimeBucketEditor,
   EditTimeBucketModalProps, TimeBucketEditorProps,
@@ -197,7 +198,7 @@ const timeBucket: TimeBucket = {
   seatList: [{ dayInRotation: 0, employee }],
 };
 
-const skillList: Skill[] = [
+const skillList: List<Skill> = List([
   {
     tenantId: 0,
     id: 1000,
@@ -210,7 +211,7 @@ const skillList: Skill[] = [
     version: 0,
     name: 'Skill 2',
   },
-];
+]);
 
 const editTimeBucketModalProps: EditTimeBucketModalProps = {
   isOpen: true,

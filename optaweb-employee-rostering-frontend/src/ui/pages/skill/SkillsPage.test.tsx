@@ -20,6 +20,7 @@ import { Skill } from 'domain/Skill';
 import { Sorter, ReadonlyPartial } from 'types';
 import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { List } from 'immutable';
 import { SkillsPage, Props } from './SkillsPage';
 
 describe('Skills page', () => {
@@ -90,15 +91,15 @@ describe('Skills page', () => {
     const skillsPage = new SkillsPage(twoSkills);
     const filter = skillsPage.getFilter();
 
-    expect(twoSkills.tableData.filter(filter('1'))).toEqual([twoSkills.tableData[0]]);
-    expect(twoSkills.tableData.filter(filter('2'))).toEqual([twoSkills.tableData[1]]);
+    expect(twoSkills.tableData.filter(filter('1'))).toEqual(List([twoSkills.tableData.get(0) as Skill]));
+    expect(twoSkills.tableData.filter(filter('2'))).toEqual(List([twoSkills.tableData.get(1) as Skill]));
   });
 
   it('should return a sorter that sort by name', () => {
     const skillsPage = new SkillsPage(twoSkills);
     const sorter = skillsPage.getSorters()[0] as Sorter<Skill>;
-    const list = [twoSkills.tableData[1], twoSkills.tableData[0]];
-    expect(list.sort(sorter)).toEqual(twoSkills.tableData);
+    const list = [twoSkills.tableData.get(1) as Skill, twoSkills.tableData.get(0) as Skill];
+    expect(list.sort(sorter)).toEqual(twoSkills.tableData.toArray());
   });
 
   it('should treat incomplete data as incomplete', () => {
@@ -134,7 +135,7 @@ const noSkills: Props = {
   tenantId: 0,
   title: 'Skills',
   columnTitles: ['Name'],
-  tableData: [],
+  tableData: List(),
   addSkill: jest.fn(),
   updateSkill: jest.fn(),
   removeSkill: jest.fn(),
@@ -147,7 +148,7 @@ const twoSkills: Props = {
   tenantId: 0,
   title: 'Skills',
   columnTitles: ['Name'],
-  tableData: [{
+  tableData: List([{
     id: 0,
     version: 0,
     tenantId: 0,
@@ -158,7 +159,7 @@ const twoSkills: Props = {
     version: 0,
     tenantId: 0,
     name: 'Skill 2',
-  }],
+  }]),
   addSkill: jest.fn(),
   updateSkill: jest.fn(),
   removeSkill: jest.fn(),

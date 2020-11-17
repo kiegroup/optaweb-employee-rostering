@@ -82,7 +82,7 @@ export const AdminPage: React.FC<Props> = (props) => {
   const numOfFilteredRows = filteredRows.size;
 
   const rowsInPage = filteredRows
-    .skip(page * itemsPerPage)
+    .skip((page - 1) * itemsPerPage)
     .take(itemsPerPage);
 
   return (

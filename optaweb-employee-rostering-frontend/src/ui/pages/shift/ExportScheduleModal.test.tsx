@@ -22,6 +22,7 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { Modal } from '@patternfly/react-core';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
+import { List } from 'immutable';
 import { ExportScheduleModal } from './ExportScheduleModal';
 
 describe('Export Schedule Modal', () => {
@@ -46,13 +47,13 @@ describe('Export Schedule Modal', () => {
     />);
     const urlButton = shallow(exportScheduleModal.find(Modal).prop('actions')[1]);
     expect(urlButton.prop('href'))
-      .toEqual(getExportUrlFor(baseProps.defaultFromDate, baseProps.defaultToDate, baseProps.spotList));
+      .toEqual(getExportUrlFor(baseProps.defaultFromDate, baseProps.defaultToDate, baseProps.spotList.toArray()));
   });
 
   it('should export to _blank if spot list is empty', () => {
     const exportScheduleModal = shallow(<ExportScheduleModal
       {...baseProps}
-      spotList={[]}
+      spotList={List()}
     />);
     const urlButton = shallow(exportScheduleModal.find(Modal).prop('actions')[1]);
     expect(urlButton.prop('href')).toEqual('_blank');
@@ -115,5 +116,5 @@ const baseProps = {
   defaultFromDate: moment('2018-07-01').toDate(),
   defaultToDate: moment('2018-07-07').toDate(),
   tenantId: 1,
-  spotList: [spot],
+  spotList: List([spot]),
 };

@@ -299,7 +299,12 @@ exports[`DataTable component should only render data on page 1`] = `
         },
       ]
     }
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 1,
+      }
+    }
   >
     <TableHeader />
     <TableBody />
@@ -381,7 +386,12 @@ exports[`DataTable component should only render data on page 2`] = `
     }
     onSort={[Function]}
     rows={Array []}
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 1,
+      }
+    }
   >
     <TableHeader />
     <TableBody />
@@ -688,7 +698,12 @@ exports[`DataTable component should only render rows that match filter 1`] = `
         },
       ]
     }
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 1,
+      }
+    }
   >
     <TableHeader />
     <TableBody />
@@ -995,7 +1010,12 @@ exports[`DataTable component should only render rows that match filter 2`] = `
         },
       ]
     }
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 1,
+      }
+    }
   >
     <TableHeader />
     <TableBody />
@@ -1302,7 +1322,12 @@ exports[`DataTable component should only render rows that match filter 3`] = `
         },
       ]
     }
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 1,
+      }
+    }
   >
     <TableHeader />
     <TableBody />
@@ -1609,7 +1634,12 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
         },
       ]
     }
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 1,
+      }
+    }
   >
     <TableHeader />
     <TableBody />
@@ -1691,7 +1721,12 @@ exports[`DataTable component should render correctly with no rows 1`] = `
     }
     onSort={[Function]}
     rows={Array []}
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 1,
+      }
+    }
   >
     <TableHeader />
     <TableBody />
@@ -2038,7 +2073,12 @@ exports[`DataTable component should render editor for new row 1`] = `
         },
       ]
     }
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 1,
+      }
+    }
   >
     <TableHeader />
     <TableBody />
@@ -2969,7 +3009,12 @@ exports[`DataTable component should render viewer initially 1`] = `
         },
       ]
     }
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 1,
+      }
+    }
   >
     <TableHeader />
     <TableBody />

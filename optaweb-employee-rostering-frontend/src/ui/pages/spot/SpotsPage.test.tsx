@@ -22,6 +22,8 @@ import { Spot } from 'domain/Spot';
 import { act } from 'react-dom/test-utils';
 import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { List } from 'immutable';
+import { Skill } from 'domain/Skill';
 import { SpotsPage, Props } from './SpotsPage';
 
 describe('Spots page', () => {
@@ -37,14 +39,14 @@ describe('Spots page', () => {
 
   it('should render the viewer correctly', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const spot = twoSpots.tableData[1];
+    const spot = twoSpots.tableData.get(1) as Spot;
     const viewer = shallow(spotsPage.renderViewer(spot));
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
   it('should render the editor correctly', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const spot = twoSpots.tableData[1];
+    const spot = twoSpots.tableData.get(1) as Spot;
     const editor = shallow(spotsPage.renderEditor(spot));
     expect(toJson(editor)).toMatchSnapshot();
   });
@@ -61,10 +63,10 @@ describe('Spots page', () => {
     setProperty.mockClear();
     const requiredSkillSetCol = mount(editor[1]);
     act(() => {
-      requiredSkillSetCol.find(MultiTypeaheadSelectInput).props().onChange([twoSpots.skillList[0]]);
+      requiredSkillSetCol.find(MultiTypeaheadSelectInput).props().onChange([twoSpots.skillList.get(0) as Skill]);
     });
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('requiredSkillSet', [twoSpots.skillList[0]]);
+    expect(setProperty).toBeCalledWith('requiredSkillSet', [twoSpots.skillList.get(0) as Skill]);
   });
 
   it('should call addSpot on addData', () => {
@@ -95,17 +97,20 @@ describe('Spots page', () => {
     const spotsPage = new SpotsPage(twoSpots);
     const filter = spotsPage.getFilter();
 
-    expect(twoSpots.tableData.filter(filter('1'))).toEqual([twoSpots.tableData[0], twoSpots.tableData[1]]);
-    expect(twoSpots.tableData.filter(filter('Spot 1'))).toEqual([twoSpots.tableData[0]]);
-    expect(twoSpots.tableData.filter(filter('2'))).toEqual([twoSpots.tableData[1]]);
-    expect(twoSpots.tableData.filter(filter('Skill'))).toEqual([twoSpots.tableData[1]]);
+    expect(twoSpots.tableData.filter(filter('1'))).toEqual(List([
+      twoSpots.tableData.get(0) as Spot,
+      twoSpots.tableData.get(1) as Spot,
+    ]));
+    expect(twoSpots.tableData.filter(filter('Spot 1'))).toEqual(List([twoSpots.tableData.get(0) as Spot]));
+    expect(twoSpots.tableData.filter(filter('2'))).toEqual(List([twoSpots.tableData.get(1) as Spot]));
+    expect(twoSpots.tableData.filter(filter('Skill'))).toEqual(List([twoSpots.tableData.get(1) as Spot]));
   });
 
   it('should return a sorter that sort by name', () => {
     const spotsPage = new SpotsPage(twoSpots);
     const sorter = spotsPage.getSorters()[0] as Sorter<Spot>;
-    const list = [twoSpots.tableData[1], twoSpots.tableData[0]];
-    expect(list.sort(sorter)).toEqual(twoSpots.tableData);
+    const list = [twoSpots.tableData.get(1) as Spot, twoSpots.tableData.get(0) as Spot];
+    expect(list.sort(sorter)).toEqual(twoSpots.tableData.toArray());
     expect(spotsPage.getSorters()[1]).toBeNull();
   });
 
@@ -146,8 +151,8 @@ const noSpots: Props = {
   tenantId: 0,
   title: 'Spots',
   columnTitles: ['Name'],
-  tableData: [],
-  skillList: [],
+  tableData: List(),
+  skillList: List(),
   addSpot: jest.fn(),
   updateSpot: jest.fn(),
   removeSpot: jest.fn(),
@@ -160,7 +165,7 @@ const twoSpots: Props = {
   tenantId: 0,
   title: 'Spots',
   columnTitles: ['Name'],
-  tableData: [{
+  tableData: List([{
     id: 0,
     version: 0,
     tenantId: 0,
@@ -173,8 +178,8 @@ const twoSpots: Props = {
     tenantId: 0,
     name: 'Spot 2',
     requiredSkillSet: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
-  }],
-  skillList: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
+  }]),
+  skillList: List([{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }]),
   addSpot: jest.fn(),
   updateSpot: jest.fn(),
   removeSpot: jest.fn(),

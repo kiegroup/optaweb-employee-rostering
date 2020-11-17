@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import {
-  createIdMapFromList
-} from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList } from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
 import { Skill } from 'domain/Skill';
-import { ActionType, SkillList, SkillAction } from './types';
 import { Map } from 'immutable';
+import { ActionType, SkillList, SkillAction } from './types';
 
 export const initialState: SkillList = {
   isLoading: true,
@@ -32,7 +30,7 @@ const skillReducer = (state = initialState, action: SkillAction): SkillList => {
     case ActionType.SET_SKILL_LIST_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_SKILL, ActionType.UPDATE_SKILL: {
+    case ActionType.ADD_SKILL: case ActionType.UPDATE_SKILL: {
       return { ...state, skillMapById: state.skillMapById.set(action.skill.id as number, action.skill) };
     }
     case ActionType.REMOVE_SKILL: {

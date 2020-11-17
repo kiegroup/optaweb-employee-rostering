@@ -21,6 +21,7 @@ import { Shift } from 'domain/Shift';
 import moment from 'moment';
 import { serializeLocalDateTime } from 'store/rest/DataSerialization';
 import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
+import { createIdMapFromList } from 'util/ImmutableCollectionOperations';
 import { shiftAdapter, KindaShiftView, kindaShiftViewAdapter } from './KindaShiftView';
 import { shiftOperations } from './index';
 import { AppState } from '../types';
@@ -330,19 +331,19 @@ describe('shift adapters', () => {
 const state: Partial<AppState> = {
   skillList: {
     isLoading: false,
-    skillMapById: new Map([
-      [1234, {
+    skillMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 1234,
         version: 0,
         name: 'Skill 2',
-      }],
-      [2312, {
+      },
+      {
         tenantId: 0,
         id: 2312,
         version: 1,
         name: 'Skill 3',
-      }],
+      },
     ]),
   },
 };

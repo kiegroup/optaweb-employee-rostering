@@ -271,7 +271,12 @@ exports[`Skills page should render correctly with a few skills 1`] = `
         },
       ]
     }
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 0,
+      }
+    }
   >
     <TableHeader />
     <TableBody />
@@ -345,7 +350,12 @@ exports[`Skills page should render correctly with no skills 1`] = `
     }
     onSort={[Function]}
     rows={Array []}
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 0,
+      }
+    }
   >
     <TableHeader />
     <TableBody />

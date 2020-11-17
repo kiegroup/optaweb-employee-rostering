@@ -16,8 +16,7 @@
 
 import { alert } from 'store/alert';
 import {
-  createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement,
+  createIdMapFromList,
   mapDomainObjectToView,
 } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete, onPut } from 'store/rest/RestTestUtils';
@@ -28,6 +27,7 @@ import {
   TimeBucketView,
 } from 'store/rotation/TimeBucketView';
 import moment from 'moment';
+import { Map } from 'immutable';
 import reducer, { timeBucketSelectors, timeBucketOperations } from './index';
 import * as actions from './actions';
 import { AppState } from '../types';
@@ -36,12 +36,12 @@ import { mockStore } from '../mockStore';
 const state: Partial<AppState> = {
   skillList: {
     isLoading: false,
-    skillMapById: new Map(),
+    skillMapById: Map(),
   },
   employeeList: {
     isLoading: false,
-    employeeMapById: new Map([
-      [3, {
+    employeeMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 3,
         version: 0,
@@ -50,13 +50,13 @@ const state: Partial<AppState> = {
         skillProficiencySet: [],
         shortId: 'e',
         color: '#FFFFFF',
-      }],
+      },
     ]),
   },
   contractList: {
     isLoading: false,
-    contractMapById: new Map([
-      [10, {
+    contractMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 10,
         version: 0,
@@ -65,25 +65,25 @@ const state: Partial<AppState> = {
         maximumMinutesPerWeek: null,
         maximumMinutesPerMonth: null,
         maximumMinutesPerYear: null,
-      }],
+      },
     ]),
   },
   spotList: {
     isLoading: false,
-    spotMapById: new Map([
-      [1, {
+    spotMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 1,
         version: 0,
         name: 'Spot',
         requiredSkillSet: [],
-      }],
+      },
     ]),
   },
   timeBucketList: {
     isLoading: false,
-    timeBucketMapById: new Map([
-      [2, {
+    timeBucketMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 2,
         version: 0,
@@ -93,8 +93,8 @@ const state: Partial<AppState> = {
         seatList: [{ dayInRotation: 0, employee: 3 }],
         startTime: moment('09:00', 'HH:mm').toDate(),
         endTime: moment('17:00', 'HH:mm').toDate(),
-      }],
-      [4, {
+      },
+      {
         tenantId: 0,
         id: 4,
         version: 0,
@@ -104,7 +104,7 @@ const state: Partial<AppState> = {
         seatList: [{ dayInRotation: 0, employee: 3 }],
         startTime: moment('17:00', 'HH:mm').toDate(),
         endTime: moment('09:00', 'HH:mm').toDate(),
-      }],
+      },
     ]),
   },
 };
@@ -330,21 +330,22 @@ describe('Rotation reducers', () => {
       reducer(storeState.timeBucketList, actions.addTimeBucket(mapDomainObjectToView(addedTimeBucket))),
     ).toEqual({ ...storeState.timeBucketList,
       timeBucketMapById:
-        mapWithElement(storeState.timeBucketList.timeBucketMapById, mapDomainObjectToView(addedTimeBucket)) });
+        storeState.timeBucketList.timeBucketMapById
+          .set(addedTimeBucket.id as number, mapDomainObjectToView(addedTimeBucket)) });
   });
   it('remove shift template', () => {
     expect(
       reducer(storeState.timeBucketList, actions.removeTimeBucket(mapDomainObjectToView(deletedTimeBucket))),
     ).toEqual({ ...storeState.timeBucketList,
       timeBucketMapById:
-        mapWithoutElement(storeState.timeBucketList.timeBucketMapById, mapDomainObjectToView(deletedTimeBucket)) });
+        storeState.timeBucketList.timeBucketMapById.delete(deletedTimeBucket.id as number) });
   });
   it('update shift template', () => {
     expect(
       reducer(storeState.timeBucketList, actions.updateTimeBucket(mapDomainObjectToView(updatedTimeBucket))),
     ).toEqual({ ...storeState.timeBucketList,
       timeBucketMapById:
-        mapWithUpdatedElement(storeState.timeBucketList.timeBucketMapById,
+        storeState.timeBucketList.timeBucketMapById.set(updatedTimeBucket.id as number,
           mapDomainObjectToView(updatedTimeBucket)) });
   });
   it('refresh shift template list', () => {
