@@ -45,7 +45,7 @@ export function configureStore(
 ): Store<AppState> {
   const restServiceClient = new RestServiceClient(restBaseURL, axios);
 
-  const middlewares = [thunk.withExtraArgument(restServiceClient), /* createLogger() */];
+  const middlewares = [thunk.withExtraArgument(restServiceClient), createLogger()];
   const middlewareEnhancer = applyMiddleware(...middlewares);
 
   const enhancers = [middlewareEnhancer];

@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import {
-  createIdMapFromList
-} from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList } from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
 import { Contract } from 'domain/Contract';
-import { ActionType, ContractList, ContractAction } from './types';
 import { Map } from 'immutable';
+import { ActionType, ContractList, ContractAction } from './types';
 
 export const initialState: ContractList = {
   isLoading: true,
@@ -32,7 +30,7 @@ const contractReducer = (state = initialState, action: ContractAction): Contract
     case ActionType.SET_CONTRACT_LIST_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_CONTRACT, ActionType.UPDATE_CONTRACT: {
+    case ActionType.ADD_CONTRACT: case ActionType.UPDATE_CONTRACT: {
       return { ...state, contractMapById: state.contractMapById.set(action.contract.id as number, action.contract) };
     }
     case ActionType.REMOVE_CONTRACT: {

@@ -17,6 +17,7 @@ import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { List } from 'immutable';
 import { ToolbarComponent, Props } from './Toolbar';
 
 describe('Toolbar Component', () => {
@@ -61,7 +62,7 @@ describe('Toolbar Component', () => {
 });
 
 const noTenants: Props = {
-  tenantList: [],
+  tenantList: List(),
   currentTenantId: 0,
   refreshTenantList: jest.fn(),
   changeTenant: jest.fn(),
@@ -69,7 +70,7 @@ const noTenants: Props = {
 };
 
 const twoTenants: Props = {
-  tenantList: [
+  tenantList: List([
     {
       id: 1,
       version: 0,
@@ -80,7 +81,7 @@ const twoTenants: Props = {
       version: 0,
       name: 'Tenant 2',
     },
-  ],
+  ]),
   currentTenantId: 2,
   refreshTenantList: jest.fn(),
   changeTenant: jest.fn(),

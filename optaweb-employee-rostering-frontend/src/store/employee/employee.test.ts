@@ -15,14 +15,12 @@
  */
 
 import { alert } from 'store/alert';
-import {
-  createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement,
-} from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapDomainObjectToView } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete, onUploadFile } from 'store/rest/RestTestUtils';
 import { Employee } from 'domain/Employee';
 import * as skillActions from 'store/skill/actions';
 import * as contractActions from 'store/contract/actions';
+import { List } from 'immutable';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
@@ -31,8 +29,8 @@ import reducer, { employeeSelectors, employeeOperations } from './index';
 const state: Partial<AppState> = {
   employeeList: {
     isLoading: false,
-    employeeMapById: new Map([
-      [1, {
+    employeeMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 1,
         version: 0,
@@ -41,8 +39,8 @@ const state: Partial<AppState> = {
         contract: 1,
         shortId: 'e1',
         color: '#FFFFFF',
-      }],
-      [2, {
+      },
+      {
         tenantId: 0,
         id: 2,
         version: 0,
@@ -51,13 +49,13 @@ const state: Partial<AppState> = {
         contract: 1,
         shortId: 'e2',
         color: '#FFFFFF',
-      }],
+      },
     ]),
   },
   contractList: {
     isLoading: false,
-    contractMapById: new Map([
-      [1, {
+    contractMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 1,
         version: 0,
@@ -66,18 +64,18 @@ const state: Partial<AppState> = {
         maximumMinutesPerWeek: null,
         maximumMinutesPerMonth: 10,
         maximumMinutesPerYear: null,
-      }],
+      },
     ]),
   },
   skillList: {
     isLoading: false,
-    skillMapById: new Map([
-      [3, {
+    skillMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 3,
         version: 0,
         name: 'Skill 3',
-      }],
+      },
     ]),
   },
 };
@@ -276,19 +274,21 @@ describe('Employee reducers', () => {
     expect(
       reducer(state.employeeList, actions.addEmployee(addedEmployee)),
     ).toEqual({ ...state.employeeList,
-      employeeMapById: mapWithElement(storeState.employeeList.employeeMapById, addedEmployee) });
+      employeeMapById: storeState.employeeList.employeeMapById
+        .set(addedEmployee.id as number, mapDomainObjectToView(addedEmployee)) });
   });
   it('remove employee', () => {
     expect(
       reducer(state.employeeList, actions.removeEmployee(deletedEmployee)),
     ).toEqual({ ...state.employeeList,
-      employeeMapById: mapWithoutElement(storeState.employeeList.employeeMapById, deletedEmployee) });
+      employeeMapById: storeState.employeeList.employeeMapById.delete(deletedEmployee.id as number) });
   });
   it('update employee', () => {
     expect(
       reducer(state.employeeList, actions.updateEmployee(updatedEmployee)),
     ).toEqual({ ...state.employeeList,
-      employeeMapById: mapWithUpdatedElement(storeState.employeeList.employeeMapById, updatedEmployee) });
+      employeeMapById: storeState.employeeList.employeeMapById
+        .set(updatedEmployee.id as number, mapDomainObjectToView(updatedEmployee)) });
   });
   it('refresh employee list', () => {
     expect(
@@ -351,22 +351,22 @@ describe('Employee selectors', () => {
       ...storeState,
       skillList: { ...storeState.skillList, isLoading: true },
     });
-    expect(employeeList).toEqual([]);
+    expect(employeeList).toEqual(List());
     employeeList = employeeSelectors.getEmployeeList({
       ...storeState,
       contractList: { ...storeState.contractList, isLoading: true },
     });
-    expect(employeeList).toEqual([]);
+    expect(employeeList).toEqual(List());
     employeeList = employeeSelectors.getEmployeeList({
       ...storeState,
       employeeList: { ...storeState.employeeList, isLoading: true },
     });
-    expect(employeeList).toEqual([]);
+    expect(employeeList).toEqual(List());
   });
 
   it('should return a list of all employee', () => {
     const employeeList = employeeSelectors.getEmployeeList(storeState);
-    expect(employeeList).toEqual(expect.arrayContaining([
+    expect(employeeList.toArray()).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
         id: 1,
@@ -413,6 +413,6 @@ describe('Employee selectors', () => {
         color: '#FFFFFF',
       },
     ]));
-    expect(employeeList.length).toEqual(2);
+    expect(employeeList.size).toEqual(2);
   });
 });

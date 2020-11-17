@@ -21,6 +21,7 @@ import { mockTranslate } from 'setupTests';
 import { AlertComponent } from 'store/alert/types';
 import moment from 'moment';
 import { ServerSideExceptionInfo, BasicObject } from 'types';
+import { List } from 'immutable';
 import { Alerts, Props, mapToComponent } from './Alerts';
 
 describe('Alerts', () => {
@@ -74,18 +75,18 @@ describe('Alerts', () => {
 });
 
 const noAlerts: Props = {
-  alerts: [],
+  alerts: List(),
   removeAlert: jest.fn(),
 };
 
 const date = new Date(); // setupTests set the date to a mock date for us
 const someAlerts: Props = {
-  alerts: [
+  alerts: List([
     {
       id: 0,
       createdAt: date,
       i18nKey: 'infoMessage',
-      variant: 'info',
+      variant: 'info' as 'info',
       params: {},
       components: [],
       componentProps: [],
@@ -94,7 +95,7 @@ const someAlerts: Props = {
       id: 1,
       createdAt: moment(date).add(4, 'seconds').toDate(),
       i18nKey: 'successMessage',
-      variant: 'success',
+      variant: 'success' as 'success',
       params: {},
       components: [],
       componentProps: [],
@@ -103,22 +104,22 @@ const someAlerts: Props = {
       id: 2,
       createdAt: moment(date).add(11, 'seconds').toDate(),
       i18nKey: 'dangerMessage',
-      variant: 'danger',
+      variant: 'danger' as 'danger',
       params: {},
       components: [],
       componentProps: [],
     },
-  ],
+  ]),
   removeAlert: jest.fn(),
 };
 
 const someAlertsWithComponents: Props = {
-  alerts: [
+  alerts: List([
     {
       id: 0,
       createdAt: date,
       i18nKey: 'exception',
-      variant: 'danger',
+      variant: 'danger' as 'danger',
       params: {},
       components: [AlertComponent.SERVER_SIDE_EXCEPTION_DIALOG],
       componentProps: [{
@@ -137,6 +138,6 @@ const someAlertsWithComponents: Props = {
         },
       }],
     },
-  ],
+  ]),
   removeAlert: jest.fn(),
 };

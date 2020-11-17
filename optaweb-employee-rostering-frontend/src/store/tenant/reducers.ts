@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { ActionType, TenantData, TenantAction, ConnectAction, ConnectionActionType } from './types';
 import { List } from 'immutable';
+import { ActionType, TenantData, TenantAction, ConnectAction, ConnectionActionType } from './types';
 
 const initialState: TenantData = {
   currentTenantId: 0,

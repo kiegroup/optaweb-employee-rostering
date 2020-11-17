@@ -611,7 +611,12 @@ exports[`Employees page should render correctly with a few employees 1`] = `
         },
       ]
     }
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 0,
+      }
+    }
   >
     <TableHeader />
     <TableBody />

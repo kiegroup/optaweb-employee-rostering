@@ -32,9 +32,9 @@ import { toggleElement, conditionally } from 'util/ImmutableCollectionOperations
 import { WithTranslation } from 'react-i18next';
 import { getPropsFromUrl, setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
 import { RouteComponentProps } from 'react-router';
+import { List } from 'immutable';
 import FilterComponent from './FilterComponent';
 import { EditableComponent } from './EditableComponent';
-import { List } from 'immutable';
 
 export interface DataTableProps<T> extends WithTranslation, RouteComponentProps {
   title: string;
@@ -278,7 +278,8 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
       page: '1',
       itemsPerPage: '10',
       filter: null,
-      sortBy: this.getSorters().filter(x => x !== null).length > 0? `${this.getSorters().findIndex(x => x !== null)}` : null,
+      sortBy: this.getSorters().filter(x => x !== null).length > 0
+        ? `${this.getSorters().findIndex(x => x !== null)}` : null,
       asc: 'true',
     });
     const [page, perPage] = [parseInt(urlProps.page as string, 10), parseInt(urlProps.itemsPerPage as string, 10)];
@@ -295,7 +296,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
         },
       ]) : List();
     const sorters = this.getSorters();
-    
+
     const filteredRows = conditionally(this.props.tableData.valueSeq(),
       // eslint-disable-next-line consistent-return
       (s) => {
@@ -306,18 +307,20 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
       // eslint-disable-next-line consistent-return
       (s) => {
         if (urlProps.asc !== 'true') {
-            return s.reverse();
+          return s.reverse();
         }
-      }).then(
+      },
+    ).then(
       // eslint-disable-next-line consistent-return
       (s) => {
         if (urlProps.filter !== null) {
           return s.filter(this.getFilter()(urlProps.filter));
         }
-      }).result;
+      },
+    ).result;
 
     const rowsThatMatchFilterCount = filteredRows.count();
-    
+
     const rows = additionalRows.concat(filteredRows
       .skip((page - 1) * perPage)
       .take(perPage)

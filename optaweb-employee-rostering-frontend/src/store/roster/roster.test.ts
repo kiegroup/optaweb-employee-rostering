@@ -24,11 +24,12 @@ import { Spot } from 'domain/Spot';
 import { ShiftRosterView } from 'domain/ShiftRosterView';
 import { AvailabilityRosterView } from 'domain/AvailabilityRosterView';
 import { Employee } from 'domain/Employee';
-import DomainObjectView from 'domain/DomainObjectView';
 import { RosterState } from 'domain/RosterState';
 import { serializeLocalDate } from 'store/rest/DataSerialization';
 import { flushPromises } from 'setupTests';
 import { doNothing } from 'types';
+import { Map, List } from 'immutable';
+import { createIdMapFromList } from 'util/ImmutableCollectionOperations';
 import { availabilityRosterReducer } from './reducers';
 import { rosterStateReducer, shiftRosterViewReducer, rosterSelectors, rosterOperations, solverReducer } from './index';
 import * as actions from './actions';
@@ -196,13 +197,13 @@ const mockAvailabilityRoster: AvailabilityRosterView = {
 const state: Partial<AppState> = {
   tenantData: {
     currentTenantId: 0,
-    tenantList: [],
+    tenantList: List(),
     timezoneList: ['America/Toronto'],
   },
   employeeList: {
     isLoading: false,
-    employeeMapById: new Map([[
-      20, {
+    employeeMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 20,
         version: 0,
@@ -212,12 +213,12 @@ const state: Partial<AppState> = {
         shortId: 'e',
         color: '#FFFFFF',
       },
-    ]]),
+    ]),
   },
   contractList: {
     isLoading: false,
-    contractMapById: new Map([[
-      30, {
+    contractMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 30,
         version: 0,
@@ -227,19 +228,19 @@ const state: Partial<AppState> = {
         maximumMinutesPerMonth: null,
         maximumMinutesPerYear: null,
       },
-    ]]),
+    ]),
   },
   spotList: {
     isLoading: false,
-    spotMapById: new Map([[
-      10, {
+    spotMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 10,
         version: 0,
         name: 'Spot',
         requiredSkillSet: [],
       },
-    ]]),
+    ]),
   },
   rosterState: {
     isLoading: false,
@@ -255,7 +256,7 @@ const state: Partial<AppState> = {
   },
   skillList: {
     isLoading: false,
-    skillMapById: new Map(),
+    skillMapById: Map(),
   },
 };
 
@@ -288,7 +289,7 @@ describe('Roster operations', () => {
   });
 
   it('should not dispatch actions or call client if tenantId is negative', async () => {
-    const { store, client } = mockStore({ tenantData: { currentTenantId: -1, tenantList: [], timezoneList: [] } });
+    const { store, client } = mockStore({ tenantData: { currentTenantId: -1, tenantList: List(), timezoneList: [] } });
     const pagination = {
       pageNumber: 0,
       itemsPerPage: 10,
@@ -668,7 +669,7 @@ describe('Roster operations', () => {
   it('should dispatch actions and call client on getInitialShiftRoster', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const spotList: Spot[] = [spotSelectors.getSpotList(store.getState())[0]];
+    const spotList: Spot[] = [spotSelectors.getSpotList(store.getState()).get(0) as Spot];
     const fromDate = moment((store.getState().rosterState.rosterState as RosterState).firstDraftDate)
       .startOf('week').toDate();
     const toDate = moment((store.getState().rosterState.rosterState as RosterState).firstDraftDate)
@@ -695,7 +696,7 @@ describe('Roster operations', () => {
     const { store, client } = mockStore({
       ...state,
       spotList: {
-        spotMapById: new Map<number, DomainObjectView<Spot>>(),
+        spotMapById: Map(),
         isLoading: false,
       },
     });
@@ -821,7 +822,7 @@ describe('Roster operations', () => {
   it('should dispatch actions and call client on getInitialAvailabilityRoster', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const employeeList: Employee[] = [employeeSelectors.getEmployeeList(store.getState())[0]];
+    const employeeList: Employee[] = [employeeSelectors.getEmployeeList(store.getState()).get(0) as Employee];
     const fromDate = moment((store.getState().rosterState.rosterState as RosterState).firstDraftDate)
       .startOf('week').toDate();
     const toDate = moment((store.getState().rosterState.rosterState as RosterState).firstDraftDate)
@@ -857,7 +858,7 @@ describe('Roster operations', () => {
     const { store, client } = mockStore({
       ...state,
       employeeList: {
-        employeeMapById: new Map<number, DomainObjectView<Employee>>(),
+        employeeMapById: Map(),
         isLoading: false,
       },
     });

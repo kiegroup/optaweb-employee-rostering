@@ -21,6 +21,7 @@ import { Tenant } from 'domain/Tenant';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 import { DataTableUrlProps } from 'ui/components/DataTable';
 import { Button } from '@patternfly/react-core';
+import { List } from 'immutable';
 import { AdminPage, Props } from './AdminPage';
 
 describe('Admin Page', () => {
@@ -90,7 +91,7 @@ describe('Admin Page', () => {
       )[1].cells[1]).find(Button).simulate('click');
     });
     expect(twoTenants.removeTenant).toBeCalled();
-    expect(twoTenants.removeTenant).toBeCalledWith(twoTenants.tenantList[1]);
+    expect(twoTenants.removeTenant).toBeCalledWith(twoTenants.tenantList.get(1));
   });
 
   it('should not call remove tenant when the delete tenant button is clicked for the current tenant', () => {
@@ -123,7 +124,7 @@ function generateProps(numberOfTenants: number, urlProps: Partial<DataTableUrlPr
   }
   return {
     tenantId: 0,
-    tenantList: tenants,
+    tenantList: List(tenants),
     removeTenant: jest.fn(),
     resetApplication: jest.fn(),
     ...getRouterProps('/admin', { ...urlProps as any }),

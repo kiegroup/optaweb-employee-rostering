@@ -15,12 +15,10 @@
  */
 
 import { alert } from 'store/alert';
-import {
-  createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement,
-} from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapDomainObjectToView } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
 import { Spot } from 'domain/Spot';
+import { List } from 'immutable';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
@@ -29,32 +27,32 @@ import reducer, { spotSelectors, spotOperations } from './index';
 const state: Partial<AppState> = {
   spotList: {
     isLoading: false,
-    spotMapById: new Map([
-      [1234, {
+    spotMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 1234,
         version: 1,
         name: 'Spot 2',
         requiredSkillSet: [1],
-      }],
-      [2312, {
+      },
+      {
         tenantId: 0,
         id: 2312,
         version: 0,
         name: 'Spot 3',
         requiredSkillSet: [],
-      }],
+      },
     ]),
   },
   skillList: {
     isLoading: false,
-    skillMapById: new Map([
-      [1, {
+    skillMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 1,
         version: 0,
         name: 'Skill 1',
-      }],
+      },
     ]),
   },
 };
@@ -205,19 +203,19 @@ describe('Spot reducers', () => {
     expect(
       reducer(storeState.spotList, actions.addSpot(addedSpot)),
     ).toEqual({ ...storeState.spotList,
-      spotMapById: mapWithElement(storeState.spotList.spotMapById, addedSpot) });
+      spotMapById: storeState.spotList.spotMapById.set(addedSpot.id as number, mapDomainObjectToView(addedSpot)) });
   });
   it('remove spot', () => {
     expect(
       reducer(storeState.spotList, actions.removeSpot(deletedSpot)),
     ).toEqual({ ...storeState.spotList,
-      spotMapById: mapWithoutElement(storeState.spotList.spotMapById, deletedSpot) });
+      spotMapById: storeState.spotList.spotMapById.delete(deletedSpot.id as number) });
   });
   it('update spot', () => {
     expect(
       reducer(storeState.spotList, actions.updateSpot(updatedSpot)),
     ).toEqual({ ...storeState.spotList,
-      spotMapById: mapWithUpdatedElement(storeState.spotList.spotMapById, updatedSpot) });
+      spotMapById: storeState.spotList.spotMapById.set(updatedSpot.id as number, mapDomainObjectToView(updatedSpot)) });
   });
   it('refresh spot list', () => {
     expect(
@@ -265,17 +263,17 @@ describe('Spot selectors', () => {
       ...storeState,
       skillList: { ...storeState.skillList, isLoading: true },
     });
-    expect(spotList).toEqual([]);
+    expect(spotList).toEqual(List());
     spotList = spotSelectors.getSpotList({
       ...storeState,
       spotList: { ...storeState.spotList, isLoading: true },
     });
-    expect(spotList).toEqual([]);
+    expect(spotList).toEqual(List());
   });
 
   it('should return a list of all spots', () => {
     const spotList = spotSelectors.getSpotList(storeState);
-    expect(spotList).toEqual(expect.arrayContaining([
+    expect(spotList.toArray()).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
         id: 1234,
@@ -298,6 +296,6 @@ describe('Spot selectors', () => {
         requiredSkillSet: [],
       },
     ]));
-    expect(spotList.length).toEqual(2);
+    expect(spotList.size).toEqual(2);
   });
 });

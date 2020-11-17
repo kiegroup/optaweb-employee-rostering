@@ -24,8 +24,8 @@ import * as alertOperations from 'store/alert/operations';
 import moment from 'moment';
 import { useInterval } from 'util/FunctionalComponentUtils';
 import { BasicObject, ServerSideExceptionInfo } from 'types';
-import { ServerSideExceptionDialog } from './components/ServerSideExceptionDialog';
 import { List } from 'immutable';
+import { ServerSideExceptionDialog } from './components/ServerSideExceptionDialog';
 
 interface StateProps {
   alerts: List<AlertInfo>;

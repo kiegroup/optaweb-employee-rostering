@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 import { Contract } from 'domain/Contract';
-import { AppState } from '../types';
 import { Map, List } from 'immutable';
+import { AppState } from '../types';
 
 export const getContractById = (state: AppState, id: number): Contract => {
   if (state.contractList.isLoading) {
@@ -38,6 +38,6 @@ export const getContractList = (state: AppState): List<Contract> => {
 
   oldContractMapById = state.contractList.contractMapById;
   contractListForOldContractMapById = out;
-  
+
   return out;
 };

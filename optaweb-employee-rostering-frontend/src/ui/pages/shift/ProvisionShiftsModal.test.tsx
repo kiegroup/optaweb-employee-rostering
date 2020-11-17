@@ -27,6 +27,7 @@ import { rosterSelectors } from 'store/roster';
 import { RosterState } from 'domain/RosterState';
 import { Modal, TextInput, Checkbox, AccordionToggle, AccordionContent } from '@patternfly/react-core';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
+import { List } from 'immutable';
 import {
   ProvisionShiftsModal, ProvisionShiftsModalProps, SpotTimeBucketSelect,
   SpotTimeBucketSelectProps,
@@ -68,7 +69,7 @@ describe('Provision Shifts Modal', () => {
     mockSelectorReturnValue.clear();
     mockUseEffect.mockImplementationOnce(f => f());
     mockSelector(timeBucketSelectors.getTimeBucketList, [timeBucket]);
-    mockSelector(spotSelectors.getSpotList, [spot]);
+    mockSelector(spotSelectors.getSpotList, List([spot]));
     mockSelector(rosterSelectors.getRosterState, rosterState);
   });
 

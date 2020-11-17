@@ -56,19 +56,19 @@ export function mapDomainObjectToView<T extends DomainObject>(obj: T|DomainObjec
 
 export function createIdMapFromList<T extends DomainObject>(collection: T[]): Map<number, DomainObjectView<T>> {
   let map = Map<number, DomainObjectView<T>>();
-  collection.forEach(ele => (map = map.set(ele.id as number, mapDomainObjectToView(ele))));
+  collection.forEach((ele) => { (map = map.set(ele.id as number, mapDomainObjectToView(ele))); });
   return map;
 }
 
-export interface FluentValue<V,M> {
-    result: V,
-    then: (map: M) => FluentValue<V,M>
-};
-export function conditionally<K,V>(seq: Seq<K,V>, mapper: (seq: Seq<K,V>) => Seq<K,V> | undefined):
-FluentValue<Seq<K,V>,(seq: Seq<K,V>) => Seq<K,V> | undefined> {
+export interface FluentValue<V, M> {
+  result: V;
+  then: (map: M) => FluentValue<V, M>;
+}
+export function conditionally<K, V>(seq: Seq<K, V>, mapper: (seq: Seq<K, V>) => Seq<K, V> | undefined):
+FluentValue<Seq<K, V>, (seq: Seq<K, V>) => Seq<K, V> | undefined> {
   const out = mapper(seq) || seq;
   return {
     result: out,
-    then: (newMapper) => conditionally(out, newMapper),
-  }
+    then: newMapper => conditionally(out, newMapper),
+  };
 }

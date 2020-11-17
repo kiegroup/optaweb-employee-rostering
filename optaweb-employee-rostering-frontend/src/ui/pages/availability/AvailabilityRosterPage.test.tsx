@@ -27,6 +27,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import Actions from 'ui/components/Actions';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 import Schedule from 'ui/components/calendar/Schedule';
+import { List } from 'immutable';
 import {
   AvailabilityRosterPage, Props, ShiftOrAvailability, isShift, isAvailability,
   isAllDayAvailability, isDay, AvailabilityRosterUrlProps,
@@ -48,8 +49,8 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
       isLoading
-      allEmployeeList={[]}
-      shownEmployeeList={[]}
+      allEmployeeList={List()}
+      shownEmployeeList={List()}
       employeeIdToAvailabilityListMap={new Map()}
       employeeIdToShiftListMap={new Map()}
     />);
@@ -59,8 +60,8 @@ describe('Availability Roster Page', () => {
   it('should render correctly when there are no employees', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
-      allEmployeeList={[]}
-      shownEmployeeList={[]}
+      allEmployeeList={List()}
+      shownEmployeeList={List()}
       employeeIdToAvailabilityListMap={new Map()}
       employeeIdToShiftListMap={new Map()}
     />);
@@ -97,7 +98,7 @@ describe('Availability Roster Page', () => {
     expect(baseProps.getAvailabilityRosterFor).toBeCalledWith({
       fromDate: newDateStart,
       toDate: newDateEnd,
-      employeeList: baseProps.shownEmployeeList,
+      employeeList: baseProps.shownEmployeeList.toArray(),
     });
   });
 
@@ -118,8 +119,8 @@ describe('Availability Roster Page', () => {
   it('should go to the Employees page if the user click on the link', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
-      allEmployeeList={[]}
-      shownEmployeeList={[]}
+      allEmployeeList={List()}
+      shownEmployeeList={List()}
       employeeIdToAvailabilityListMap={new Map()}
       employeeIdToShiftListMap={new Map()}
     />);
@@ -639,8 +640,8 @@ const baseProps: Props = {
   isLoading: false,
   totalNumOfSpots: 1,
   rosterState,
-  allEmployeeList: [employee, newEmployee],
-  shownEmployeeList: [employee],
+  allEmployeeList: List([employee, newEmployee]),
+  shownEmployeeList: List([employee]),
   employeeIdToShiftListMap: new Map([
     [4, [shift]],
   ]),

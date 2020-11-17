@@ -18,11 +18,11 @@ import * as Redux from 'react-redux';
 import createMockStore, { MockStoreCreator } from 'redux-mock-store';
 import thunk, { ThunkDispatch } from 'redux-thunk';
 import { resetRestClientMock } from 'store/rest/RestTestUtils';
+import { Map, List } from 'immutable';
 import RestServiceClient from './rest/RestServiceClient';
 import { TenantAction } from './tenant/types';
 import { SkillAction } from './skill/types';
 import { AppState } from './types';
-import { Map, List } from 'immutable';
 
 jest.mock('./rest/RestServiceClient');
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 import { Skill } from 'domain/Skill';
-import { AppState } from '../types';
 import { List, Map } from 'immutable';
 import DomainObjectView from 'domain/DomainObjectView';
+import { AppState } from '../types';
 
 export const getSkillById = (state: AppState, id: number): Skill => {
   if (state.skillList.isLoading) {
@@ -37,7 +37,7 @@ export const getSkillList = (state: AppState): List<Skill> => {
     return skillListForOldSkillMapById;
   }
 
-  const out = state.skillList.skillMapById.keySeq().map((key) => getSkillById(state, key)).toList();
+  const out = state.skillList.skillMapById.keySeq().map(key => getSkillById(state, key)).toList();
 
   oldSkillMapById = state.skillList.skillMapById;
   skillListForOldSkillMapById = out;

@@ -18,6 +18,7 @@ import * as tenantOperations from 'store/tenant/operations';
 import { onPost } from 'store/rest/RestTestUtils';
 import { alert } from 'store/alert';
 import { doNothing } from 'types';
+import { List } from 'immutable';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as adminOperations from './operations';
@@ -51,7 +52,7 @@ describe('Contract operations', () => {
 const state: Partial<AppState> = {
   tenantData: {
     currentTenantId: 0,
-    tenantList: [],
+    tenantList: List(),
     timezoneList: ['America/Toronto'],
   },
 };

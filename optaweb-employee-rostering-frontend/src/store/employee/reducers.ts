@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import {
-  createIdMapFromList, mapDomainObjectToView
-} from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapDomainObjectToView } from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
 import { Employee } from 'domain/Employee';
-import { ActionType, EmployeeList, EmployeeAction } from './types';
 import { Map } from 'immutable';
+import { ActionType, EmployeeList, EmployeeAction } from './types';
 
 export const initialState: EmployeeList = {
   isLoading: true,
@@ -32,10 +30,10 @@ const employeeReducer = (state = initialState, action: EmployeeAction): Employee
     case ActionType.SET_EMPLOYEE_LIST_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_EMPLOYEE, ActionType.UPDATE_EMPLOYEE: {
-      return { ...state, employeeMapById: state.employeeMapById.set(action.employee.id as number,
-                                                                    mapDomainObjectToView(action.employee))
-             };
+    case ActionType.ADD_EMPLOYEE: case ActionType.UPDATE_EMPLOYEE: {
+      return { ...state,
+        employeeMapById: state.employeeMapById.set(action.employee.id as number,
+          mapDomainObjectToView(action.employee)) };
     }
     case ActionType.REMOVE_EMPLOYEE: {
       return { ...state, employeeMapById: state.employeeMapById.remove(action.employee.id as number) };

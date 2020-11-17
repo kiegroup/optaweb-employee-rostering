@@ -38,10 +38,10 @@ import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
 import { ScoreDisplay } from 'ui/components/ScoreDisplay';
 import { getPropsFromUrl, setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
 import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
+import { List } from 'immutable';
 import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from './ShiftEvent';
 import EditShiftModal from './EditShiftModal';
 import ExportScheduleModal from './ExportScheduleModal';
-import { List } from 'immutable';
 
 interface StateProps {
   tenantId: number;
@@ -263,7 +263,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
 
     const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
     const endDate = moment(startDate).endOf('week').toDate();
-    const shownSpot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.shownSpotList.get(0) as Spot;
+    const shownSpot = this.props.allSpotList.find(s => s.name === urlProps.spot)
+                      || this.props.shownSpotList.get(0) as Spot;
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
     const indictmentSummary: IndictmentSummary = this.props.indictmentSummary
        || { constraintToCountMap: {}, constraintToScoreImpactMap: {} };

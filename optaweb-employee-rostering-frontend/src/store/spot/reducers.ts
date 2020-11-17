@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import {
-  createIdMapFromList, mapDomainObjectToView
-} from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapDomainObjectToView } from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
 import { Spot } from 'domain/Spot';
-import { ActionType, SpotList, SpotAction } from './types';
 import { Map } from 'immutable';
+import { ActionType, SpotList, SpotAction } from './types';
 
 export const initialState: SpotList = {
   isLoading: true,
@@ -32,10 +30,10 @@ const spotReducer = (state = initialState, action: SpotAction): SpotList => {
     case ActionType.SET_SPOT_LIST_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_SPOT, ActionType.UPDATE_SPOT: {
-      return { ...state, spotMapById: state.spotMapById.set(action.spot.id as number,
-                                                            mapDomainObjectToView(action.spot))
-             };
+    case ActionType.ADD_SPOT: case ActionType.UPDATE_SPOT: {
+      return { ...state,
+        spotMapById: state.spotMapById.set(action.spot.id as number,
+          mapDomainObjectToView(action.spot)) };
     }
     case ActionType.REMOVE_SPOT: {
       return { ...state, spotMapById: state.spotMapById.remove(action.spot.id as number) };

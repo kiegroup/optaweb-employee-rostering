@@ -15,12 +15,10 @@
  */
 
 import { alert } from 'store/alert';
-import {
-  createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement,
-} from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
 import { Skill } from 'domain/Skill';
+import { List } from 'immutable';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
@@ -29,19 +27,19 @@ import reducer, { skillSelectors, skillOperations } from './index';
 const state: Partial<AppState> = {
   skillList: {
     isLoading: false,
-    skillMapById: new Map([
-      [1234, {
+    skillMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 1234,
         version: 0,
         name: 'Skill 2',
-      }],
-      [2312, {
+      },
+      {
         tenantId: 0,
         id: 2312,
         version: 1,
         name: 'Skill 3',
-      }],
+      },
     ]),
   },
 };
@@ -152,14 +150,16 @@ describe('Skill reducers', () => {
   it('add skill', () => {
     expect(
       reducer(storeState.skillList, actions.addSkill(addedSkill)),
-    ).toEqual({ ...storeState.skillList, skillMapById: mapWithElement(storeState.skillList.skillMapById, addedSkill) });
+    ).toEqual({ ...storeState.skillList,
+      skillMapById: storeState.skillList.skillMapById
+        .set(addedSkill.id as number, addedSkill) });
   });
   it('remove skill', () => {
     expect(
       reducer(storeState.skillList, actions.removeSkill(deletedSkill)),
     ).toEqual({
       ...storeState.skillList,
-      skillMapById: mapWithoutElement(storeState.skillList.skillMapById, deletedSkill),
+      skillMapById: storeState.skillList.skillMapById.delete(deletedSkill.id as number),
     });
   });
   it('update skill', () => {
@@ -167,7 +167,7 @@ describe('Skill reducers', () => {
       reducer(storeState.skillList, actions.updateSkill(updatedSkill)),
     ).toEqual({
       ...storeState.skillList,
-      skillMapById: mapWithUpdatedElement(storeState.skillList.skillMapById, updatedSkill),
+      skillMapById: storeState.skillList.skillMapById.set(updatedSkill.id as number, updatedSkill),
     });
   });
   it('refresh skill list', () => {
@@ -202,12 +202,12 @@ describe('Skill selectors', () => {
       ...storeState,
       skillList: { ...storeState.skillList, isLoading: true },
     });
-    expect(skillList).toEqual([]);
+    expect(skillList).toEqual(List());
   });
 
   it('should return a list of all skills', () => {
     const skillList = skillSelectors.getSkillList(storeState);
-    expect(skillList).toEqual(expect.arrayContaining([
+    expect(skillList.toArray()).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
         id: 1234,
@@ -221,6 +221,6 @@ describe('Skill selectors', () => {
         name: 'Skill 3',
       },
     ]));
-    expect(skillList.length).toEqual(2);
+    expect(skillList.size).toEqual(2);
   });
 });

@@ -403,7 +403,12 @@ exports[`Spots page should render correctly with a few spots 1`] = `
         },
       ]
     }
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 0,
+      }
+    }
   >
     <TableHeader />
     <TableBody />
@@ -477,7 +482,12 @@ exports[`Spots page should render correctly with no spots 1`] = `
     }
     onSort={[Function]}
     rows={Array []}
-    sortBy={Object {}}
+    sortBy={
+      Object {
+        "direction": "asc",
+        "index": 0,
+      }
+    }
   >
     <TableHeader />
     <TableBody />
