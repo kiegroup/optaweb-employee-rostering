@@ -16,8 +16,7 @@
 
 package org.optaweb.employeerostering.solver;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -52,7 +51,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.persistence.EntityManager;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
@@ -119,11 +117,11 @@ public abstract class AbstractSolverTest {
         Roster roster = rosterGenerator.generateRoster(10, 7);
 
         roster = solver.solve(roster);
-        assertNotNull(roster.getScore());
+        assertThat(roster.getScore()).isNotNull();
         // Due to overconstrained planning, the score is always feasible
-        assertTrue(roster.getScore().isFeasible());
-        assertFalse(roster.getShiftList().isEmpty());
-        assertTrue(roster.getShiftList().stream().anyMatch(s -> s.getEmployee() != null));
+        assertThat(roster.getScore().isFeasible()).isTrue();
+        assertThat(roster.getShiftList()).isNotEmpty();
+        assertThat(roster.getShiftList()).anyMatch(s -> s.getEmployee() != null);
     }
 
     // A solver "integration" test that verify it moves only draft shifts
@@ -176,12 +174,12 @@ public abstract class AbstractSolverTest {
         roster.setShiftList(shiftList);
 
         roster = solver.solve(roster);
-        assertTrue(roster.getShiftList().stream()
-                .filter(s -> !rosterState.isDraft(s))
-                .allMatch(s -> s.getEmployee().equals(employeeA)));
-        assertTrue(roster.getShiftList().stream()
-                .filter(rosterState::isDraft)
-                .allMatch(s -> s.getEmployee().equals(employeeB)));
+        assertThat(roster.getShiftList())
+                .filteredOn(s -> !rosterState.isDraft(s))
+                .allMatch(s -> s.getEmployee().equals(employeeA));
+        assertThat(roster.getShiftList())
+                .filteredOn(rosterState::isDraft)
+                .allMatch(s -> s.getEmployee().equals(employeeB));
     }
 
     private void testContractConstraint(ContractField contractField) {
@@ -577,7 +575,6 @@ public abstract class AbstractSolverTest {
         constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
     }
 
-    @Disabled("Disabled as in this new world, predictability of schedules does not matter.")
     @Test
     @Timeout(600000)
     public void testEmployeeIsNotRotationEmployeeConstraint() {
@@ -617,7 +614,7 @@ public abstract class AbstractSolverTest {
         roster.setShiftList(Collections.singletonList(shift));
 
         final Constraints constraint = Constraints.EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE;
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, (int) shift.getLengthInMinutes());
 
         shift.setEmployee(rotationEmployee);
         constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
