@@ -16,6 +16,8 @@
 
 package org.optaweb.employeerostering;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -25,7 +27,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,6 +50,8 @@ public class BenchmarkTest {
                 .filter(f -> !oldBenchmarkFilesInDirectory.contains(f))
                 .findAny()
                 .orElseThrow(() -> new FileNotFoundException("No benchmark report found"));
-        Assertions.assertTrue(benchmarkReport.exists());
+        assertThat(benchmarkReport.exists())
+                .withFailMessage("No Benchmark Report at " + benchmarkReport.getAbsolutePath())
+                .isTrue();
     }
 }

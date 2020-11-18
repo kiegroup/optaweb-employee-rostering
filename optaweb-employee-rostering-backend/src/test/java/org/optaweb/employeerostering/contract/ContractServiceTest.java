@@ -16,7 +16,7 @@
 
 package org.optaweb.employeerostering.contract;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -309,11 +309,11 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
     @Test
     public void getOrCreateDefaultContractNotExistsTest() {
         Contract contract = contractService.getOrCreateDefaultContract(TENANT_ID);
-        assertEquals(contract.getName(), "Default Contract");
-        assertNull(contract.getMaximumMinutesPerDay());
-        assertNull(contract.getMaximumMinutesPerWeek());
-        assertNull(contract.getMaximumMinutesPerMonth());
-        assertNull(contract.getMaximumMinutesPerYear());
+        assertThat(contract.getName()).isEqualTo("Default Contract");
+        assertThat(contract.getMaximumMinutesPerDay()).isNull();
+        assertThat(contract.getMaximumMinutesPerWeek()).isNull();
+        assertThat(contract.getMaximumMinutesPerMonth()).isNull();
+        assertThat(contract.getMaximumMinutesPerYear()).isNull();
     }
 
     @Test
@@ -326,6 +326,6 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         Contract contract = contractService.createContract(TENANT_ID, contractView);
         Contract defaultContract = contractService.getOrCreateDefaultContract(TENANT_ID);
 
-        assertEquals(contract, defaultContract);
+        assertThat(defaultContract).isEqualTo(contract);
     }
 }
