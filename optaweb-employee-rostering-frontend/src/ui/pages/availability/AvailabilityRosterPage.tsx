@@ -41,6 +41,7 @@ import { ScoreDisplay } from 'ui/components/ScoreDisplay';
 import { UrlProps, setPropsInUrl, getPropsFromUrl } from 'util/BookmarkableUtils';
 import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
 import { List } from 'immutable';
+import { error } from 'types';
 import AvailabilityEvent, { AvailabilityPopoverHeader, AvailabilityPopoverBody } from './AvailabilityEvent';
 import EditAvailabilityModal from './EditAvailabilityModal';
 import ShiftEvent, { ShiftPopupHeader, ShiftPopupBody } from '../shift/ShiftEvent';
@@ -292,7 +293,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     });
     const changedTenant = this.props.shownEmployeeList.size === 0
       || (urlProps.employee !== null
-      && this.props.tenantId !== (this.props.shownEmployeeList.get(0) as Employee).tenantId);
+      && this.props.tenantId !== (this.props.shownEmployeeList.get(0) ?? error()).tenantId);
 
     if (this.props.shownEmployeeList.size === 0 || changedTenant || this.props.rosterState === null) {
       return (

@@ -17,13 +17,12 @@ import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
-import { Sorter } from 'types';
+import { Sorter, error } from 'types';
 import { Spot } from 'domain/Spot';
 import { act } from 'react-dom/test-utils';
 import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 import { List } from 'immutable';
-import { Skill } from 'domain/Skill';
 import { SpotsPage, Props } from './SpotsPage';
 
 describe('Spots page', () => {
@@ -39,14 +38,14 @@ describe('Spots page', () => {
 
   it('should render the viewer correctly', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const spot = twoSpots.tableData.get(1) as Spot;
+    const spot = twoSpots.tableData.get(1) ?? error();
     const viewer = shallow(spotsPage.renderViewer(spot));
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
   it('should render the editor correctly', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const spot = twoSpots.tableData.get(1) as Spot;
+    const spot = twoSpots.tableData.get(1) ?? error();
     const editor = shallow(spotsPage.renderEditor(spot));
     expect(toJson(editor)).toMatchSnapshot();
   });
@@ -63,10 +62,10 @@ describe('Spots page', () => {
     setProperty.mockClear();
     const requiredSkillSetCol = mount(editor[1]);
     act(() => {
-      requiredSkillSetCol.find(MultiTypeaheadSelectInput).props().onChange([twoSpots.skillList.get(0) as Skill]);
+      requiredSkillSetCol.find(MultiTypeaheadSelectInput).props().onChange([twoSpots.skillList.get(0) ?? error()]);
     });
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('requiredSkillSet', [twoSpots.skillList.get(0) as Skill]);
+    expect(setProperty).toBeCalledWith('requiredSkillSet', [twoSpots.skillList.get(0) ?? error()]);
   });
 
   it('should call addSpot on addData', () => {
@@ -98,18 +97,18 @@ describe('Spots page', () => {
     const filter = spotsPage.getFilter();
 
     expect(twoSpots.tableData.filter(filter('1'))).toEqual(List([
-      twoSpots.tableData.get(0) as Spot,
-      twoSpots.tableData.get(1) as Spot,
+      twoSpots.tableData.get(0) ?? error(),
+      twoSpots.tableData.get(1) ?? error(),
     ]));
-    expect(twoSpots.tableData.filter(filter('Spot 1'))).toEqual(List([twoSpots.tableData.get(0) as Spot]));
-    expect(twoSpots.tableData.filter(filter('2'))).toEqual(List([twoSpots.tableData.get(1) as Spot]));
-    expect(twoSpots.tableData.filter(filter('Skill'))).toEqual(List([twoSpots.tableData.get(1) as Spot]));
+    expect(twoSpots.tableData.filter(filter('Spot 1'))).toEqual(List([twoSpots.tableData.get(0) ?? error()]));
+    expect(twoSpots.tableData.filter(filter('2'))).toEqual(List([twoSpots.tableData.get(1) ?? error()]));
+    expect(twoSpots.tableData.filter(filter('Skill'))).toEqual(List([twoSpots.tableData.get(1) ?? error()]));
   });
 
   it('should return a sorter that sort by name', () => {
     const spotsPage = new SpotsPage(twoSpots);
     const sorter = spotsPage.getSorters()[0] as Sorter<Spot>;
-    const list = [twoSpots.tableData.get(1) as Spot, twoSpots.tableData.get(0) as Spot];
+    const list = [twoSpots.tableData.get(1) ?? error(), twoSpots.tableData.get(0) ?? error()];
     expect(list.sort(sorter)).toEqual(twoSpots.tableData.toArray());
     expect(spotsPage.getSorters()[1]).toBeNull();
   });

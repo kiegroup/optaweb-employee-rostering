@@ -39,6 +39,7 @@ import { ScoreDisplay } from 'ui/components/ScoreDisplay';
 import { getPropsFromUrl, setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
 import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
 import { List } from 'immutable';
+import { error } from 'types';
 import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from './ShiftEvent';
 import EditShiftModal from './EditShiftModal';
 import ExportScheduleModal from './ExportScheduleModal';
@@ -131,7 +132,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
 
   onUpdateShiftRoster(urlProps: ShiftRosterUrlProps) {
     if (this.props.rosterState) {
-      const spot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.allSpotList.get(0) as Spot;
+      const spot = this.props.allSpotList.find(s => s.name === urlProps.spot)
+          || (this.props.allSpotList.get(0) /* can be undefined */);
       const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
       const endDate = moment(startDate).endOf('week').toDate();
 
@@ -236,7 +238,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       week: null,
     });
     const changedTenant = this.props.shownSpotList.size === 0
-      || this.props.tenantId !== (this.props.shownSpotList.get(0) as Spot).tenantId;
+      || this.props.tenantId !== (this.props.shownSpotList.get(0) ?? error()).tenantId;
 
     if (this.props.shownSpotList.size === 0 || this.state.firstLoad
         || changedTenant || this.props.rosterState === null) {
@@ -264,7 +266,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
     const endDate = moment(startDate).endOf('week').toDate();
     const shownSpot = this.props.allSpotList.find(s => s.name === urlProps.spot)
-                      || this.props.shownSpotList.get(0) as Spot;
+                      || (this.props.shownSpotList.get(0) ?? error());
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
     const indictmentSummary: IndictmentSummary = this.props.indictmentSummary
        || { constraintToCountMap: {}, constraintToScoreImpactMap: {} };
@@ -365,7 +367,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           defaultToDate={endDate}
         />
         <Schedule<Shift>
-          key={(this.props.shownSpotList.get(0) as Spot).id}
+          key={(this.props.shownSpotList.get(0) ?? error()).id}
           startDate={startDate}
           endDate={endDate}
           events={this.props.spotIdToShiftListMap.get(shownSpot.id as number) || []}

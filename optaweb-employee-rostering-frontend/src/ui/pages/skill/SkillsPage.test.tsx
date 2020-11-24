@@ -17,7 +17,7 @@ import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { Skill } from 'domain/Skill';
-import { Sorter, ReadonlyPartial } from 'types';
+import { Sorter, ReadonlyPartial, error } from 'types';
 import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 import { List } from 'immutable';
@@ -91,14 +91,14 @@ describe('Skills page', () => {
     const skillsPage = new SkillsPage(twoSkills);
     const filter = skillsPage.getFilter();
 
-    expect(twoSkills.tableData.filter(filter('1'))).toEqual(List([twoSkills.tableData.get(0) as Skill]));
-    expect(twoSkills.tableData.filter(filter('2'))).toEqual(List([twoSkills.tableData.get(1) as Skill]));
+    expect(twoSkills.tableData.filter(filter('1'))).toEqual(List([twoSkills.tableData.get(0) ?? error()]));
+    expect(twoSkills.tableData.filter(filter('2'))).toEqual(List([twoSkills.tableData.get(1) ?? error()]));
   });
 
   it('should return a sorter that sort by name', () => {
     const skillsPage = new SkillsPage(twoSkills);
     const sorter = skillsPage.getSorters()[0] as Sorter<Skill>;
-    const list = [twoSkills.tableData.get(1) as Skill, twoSkills.tableData.get(0) as Skill];
+    const list = [twoSkills.tableData.get(1) ?? error(), twoSkills.tableData.get(0) ?? error()];
     expect(list.sort(sorter)).toEqual(twoSkills.tableData.toArray());
   });
 

@@ -30,7 +30,8 @@ const employeeReducer = (state = initialState, action: EmployeeAction): Employee
     case ActionType.SET_EMPLOYEE_LIST_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_EMPLOYEE: case ActionType.UPDATE_EMPLOYEE: {
+    case ActionType.ADD_EMPLOYEE:
+    case ActionType.UPDATE_EMPLOYEE: {
       return { ...state,
         employeeMapById: state.employeeMapById.set(action.employee.id as number,
           mapDomainObjectToView(action.employee)) };
