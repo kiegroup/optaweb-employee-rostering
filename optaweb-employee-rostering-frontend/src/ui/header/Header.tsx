@@ -25,7 +25,7 @@ const Header: React.FC<{ onNavToggle: () => void} > = ({ onNavToggle }) => {
   return (
     <PageHeader
       logo={(
-        <Brand src="/assets/images/optaPlannerLogo200px.png" alt="OptaPlanner Logo" />
+        <Brand src="/assets/images/optaPlannerLogoDarkBackground200px.png" alt="OptaPlanner Logo" />
       )}
       logoProps={{
         href: 'https://www.optaplanner.org',
