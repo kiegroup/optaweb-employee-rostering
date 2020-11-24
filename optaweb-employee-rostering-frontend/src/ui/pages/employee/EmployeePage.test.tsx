@@ -18,15 +18,13 @@ import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
-import { Sorter } from 'types';
+import { Sorter, error } from 'types';
 import { Employee } from 'domain/Employee';
 import { act } from 'react-dom/test-utils';
 import { useTranslation, Trans } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 import { FileUpload } from '@patternfly/react-core';
 import { List } from 'immutable';
-import { Contract } from 'domain/Contract';
-import { Skill } from 'domain/Skill';
 import { EmployeesPage, Props } from './EmployeesPage';
 
 describe('Employees page', () => {
@@ -46,14 +44,14 @@ describe('Employees page', () => {
 
   it('should render the viewer correctly', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
-    const spot = twoEmployees.tableData.get(1) as Employee;
+    const spot = twoEmployees.tableData.get(1) ?? error();
     const viewer = shallow(employeesPage.renderViewer(spot));
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
   it('should render the editor correctly', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
-    const spot = twoEmployees.tableData.get(1) as Employee;
+    const spot = twoEmployees.tableData.get(1) ?? error();
     const editor = shallow(employeesPage.renderEditor(spot));
     expect(toJson(editor)).toMatchSnapshot();
   });
@@ -71,18 +69,19 @@ describe('Employees page', () => {
     setProperty.mockClear();
     const contractCol = mount(editor[1] as React.ReactElement);
     act(() => {
-      contractCol.find(TypeaheadSelectInput).props().onChange(twoEmployees.contractList.get(0) as Contract);
+      contractCol.find(TypeaheadSelectInput).props().onChange(twoEmployees.contractList.get(0) ?? error());
     });
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('contract', twoEmployees.contractList.get(0) as Contract);
+    expect(setProperty).toBeCalledWith('contract', twoEmployees.contractList.get(0) ?? error());
 
     setProperty.mockClear();
     const skillProficiencySetCol = mount(editor[2] as React.ReactElement);
     act(() => {
-      skillProficiencySetCol.find(MultiTypeaheadSelectInput).props().onChange([twoEmployees.skillList.get(0) as Skill]);
+      skillProficiencySetCol.find(MultiTypeaheadSelectInput).props()
+        .onChange([twoEmployees.skillList.get(0) ?? error()]);
     });
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('skillProficiencySet', [twoEmployees.skillList.get(0) as Skill]);
+    expect(setProperty).toBeCalledWith('skillProficiencySet', [twoEmployees.skillList.get(0) ?? error()]);
 
     setProperty.mockClear();
     const shortIdCol = shallow(editor[3] as React.ReactElement);
@@ -107,7 +106,7 @@ describe('Employees page', () => {
     const employee: Employee = {
       name: 'Employee',
       skillProficiencySet: [],
-      contract: twoEmployees.contractList.get(0) as Contract,
+      contract: twoEmployees.contractList.get(0) ?? error(),
       tenantId: 0,
       id: 1,
       version: 0,
@@ -124,7 +123,7 @@ describe('Employees page', () => {
     const employee: Employee = {
       name: 'Employee',
       skillProficiencySet: [],
-      contract: twoEmployees.contractList.get(0) as Contract,
+      contract: twoEmployees.contractList.get(0) ?? error(),
       tenantId: 0,
       id: 1,
       version: 0,
@@ -141,7 +140,7 @@ describe('Employees page', () => {
     const employee: Employee = {
       name: 'Employee',
       skillProficiencySet: [],
-      contract: twoEmployees.contractList.get(0) as Contract,
+      contract: twoEmployees.contractList.get(0) ?? error(),
       tenantId: 0,
       id: 1,
       version: 0,
@@ -158,27 +157,27 @@ describe('Employees page', () => {
     const filter = employeesPage.getFilter();
 
     expect(twoEmployees.tableData.filter(filter('1'))).toEqual(List([
-      twoEmployees.tableData.get(0) as Employee,
-      twoEmployees.tableData.get(1) as Employee,
+      twoEmployees.tableData.get(0) ?? error(),
+      twoEmployees.tableData.get(1) ?? error(),
     ]));
     expect(twoEmployees.tableData.filter(filter('Skill 1'))).toEqual(List([
-      twoEmployees.tableData.get(1) as Employee,
+      twoEmployees.tableData.get(1) ?? error(),
     ]));
-    expect(twoEmployees.tableData.filter(filter('2'))).toEqual(List([twoEmployees.tableData.get(1) as Employee]));
+    expect(twoEmployees.tableData.filter(filter('2'))).toEqual(List([twoEmployees.tableData.get(1) ?? error()]));
     expect(twoEmployees.tableData.filter(filter('Contract 2'))).toEqual(List([
-      twoEmployees.tableData.get(1) as Employee,
+      twoEmployees.tableData.get(1) ?? error(),
     ]));
     expect(twoEmployees.tableData.filter(filter('Employee 2'))).toEqual(List([
-      twoEmployees.tableData.get(1) as Employee,
+      twoEmployees.tableData.get(1) ?? error(),
     ]));
   });
 
   it('should return a sorter that sort by name and contract', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
     const nameSorter = employeesPage.getSorters()[0] as Sorter<Employee>;
-    let list = [twoEmployees.tableData.get(1) as Employee, twoEmployees.tableData.get(0) as Employee];
+    let list = [twoEmployees.tableData.get(1) ?? error(), twoEmployees.tableData.get(0) ?? error()];
     expect(list.sort(nameSorter)).toEqual(twoEmployees.tableData.toArray());
-    list = [twoEmployees.tableData.get(1) as Employee, twoEmployees.tableData.get(0) as Employee];
+    list = [twoEmployees.tableData.get(1) ?? error(), twoEmployees.tableData.get(0) ?? error()];
     const contractSorter = employeesPage.getSorters()[1] as Sorter<Employee>;
     expect(list.sort(contractSorter)).toEqual(twoEmployees.tableData.toArray());
     expect(employeesPage.getSorters()[2]).toBeNull();
@@ -198,7 +197,7 @@ describe('Employees page', () => {
     const noName = {
       tenantId: 0,
       skillProficiencySet: [],
-      contract: twoEmployees.contractList.get(0) as Contract,
+      contract: twoEmployees.contractList.get(0) ?? error(),
     };
     const result1 = employeesPage.isDataComplete(noName);
     expect(result1).toEqual(false);
@@ -206,7 +205,7 @@ describe('Employees page', () => {
     const noSkills = {
       tenantId: 0,
       name: 'Name',
-      contract: twoEmployees.contractList.get(0) as Contract,
+      contract: twoEmployees.contractList.get(0) ?? error(),
     };
     const result2 = employeesPage.isDataComplete(noSkills);
     expect(result2).toEqual(false);
@@ -223,7 +222,7 @@ describe('Employees page', () => {
       tenantId: 0,
       name: 'Name',
       skillProficiencySet: [],
-      contract: twoEmployees.contractList.get(0) as Contract,
+      contract: twoEmployees.contractList.get(0) ?? error(),
       shortId: 'N',
       color: '#FFFFFF',
     };
@@ -237,7 +236,7 @@ describe('Employees page', () => {
       tenantId: 0,
       name: '',
       skillProficiencySet: [],
-      contract: twoEmployees.contractList.get(0) as Contract,
+      contract: twoEmployees.contractList.get(0) ?? error(),
       shortId: 'N',
       color: '#FFFFFF',
     };
@@ -247,7 +246,7 @@ describe('Employees page', () => {
 
   it('should treat non-empty name as valid', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
-    const components = twoEmployees.tableData.get(0) as Employee;
+    const components = twoEmployees.tableData.get(0) ?? error();
     const result = employeesPage.isValid(components);
     expect(result).toEqual(true);
   });

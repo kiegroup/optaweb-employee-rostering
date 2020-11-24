@@ -30,7 +30,8 @@ const spotReducer = (state = initialState, action: SpotAction): SpotList => {
     case ActionType.SET_SPOT_LIST_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_SPOT: case ActionType.UPDATE_SPOT: {
+    case ActionType.ADD_SPOT:
+    case ActionType.UPDATE_SPOT: {
       return { ...state,
         spotMapById: state.spotMapById.set(action.spot.id as number,
           mapDomainObjectToView(action.spot)) };

@@ -23,6 +23,14 @@ export interface PaginationData {
 
 export const doNothing = () => { /* Intentionally Empty */ };
 
+/**
+ * Used to throw an error on a condition that should never
+ * happen.
+ */
+export function error(msg?: string): never {
+  throw new Error(msg ?? '');
+}
+
 export interface ObjectNumberMap<T> {
   [index: number]: T;
 }

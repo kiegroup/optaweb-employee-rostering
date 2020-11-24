@@ -30,7 +30,8 @@ const timeBucketReducer = (state = initialState, action: TimeBucketAction): Time
     case ActionType.SET_TIME_BUCKET_LIST_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_TIME_BUCKET: case ActionType.UPDATE_TIME_BUCKET: {
+    case ActionType.ADD_TIME_BUCKET:
+    case ActionType.UPDATE_TIME_BUCKET: {
       return { ...state,
         timeBucketMapById: state.timeBucketMapById.set(action.timeBucket.id as number,
           mapDomainObjectToView(action.timeBucket)) };

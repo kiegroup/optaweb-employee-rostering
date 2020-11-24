@@ -33,6 +33,7 @@ import { rosterSelectors } from 'store/roster';
 import { tenantSelectors } from 'store/tenant';
 import moment from 'moment';
 import { Employee } from 'domain/Employee';
+import { error } from 'types';
 import { SeatJigsaw } from './SeatJigsaw';
 import { EditTimeBucketModal } from './EditTimeBucketModal';
 import { EmployeeStubList, Stub } from './EmployeeStub';
@@ -53,7 +54,7 @@ export const RotationPage: React.FC<{}> = () => {
   const [isEditingTimeBuckets, setIsEditingTimeBuckets] = useState(false);
 
   const [shownSpotName, setShownSpotName] = useUrlState('spot', (spotList.size > 0)
-    ? (spotList.get(0) as Spot).name : undefined);
+    ? (spotList.get(0) ?? error('Spot list is not empty but does not have an element')).name : undefined);
   const shownSpot = spotList.find(s => s.name === shownSpotName);
   const shownTimeBuckets = shownSpot ? timeBucketList.filter(tb => tb.spot.id === shownSpot.id) : [];
   const oldShownTimeBuckets = useRef(shownTimeBuckets.map(tb => tb.id).join(','));
@@ -72,7 +73,7 @@ export const RotationPage: React.FC<{}> = () => {
 
   React.useEffect(() => {
     if (shownSpot === undefined && spotList.size > 0) {
-      setShownSpotName((spotList.get(0) as Spot).name);
+      setShownSpotName((spotList.get(0) ?? error()).name);
     }
   }, [spotList, shownSpot, setShownSpotName]);
 

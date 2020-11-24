@@ -23,7 +23,7 @@ import { timeBucketOperations } from 'store/rotation';
 import { RosterState } from 'domain/RosterState';
 import { flushPromises } from 'setupTests';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { doNothing } from 'types';
+import { doNothing, error } from 'types';
 import { Map, List } from 'immutable';
 import { createIdMapFromList } from 'util/ImmutableCollectionOperations';
 import { mockStore } from '../mockStore';
@@ -484,7 +484,7 @@ describe('Tenant reducers', () => {
   });
   it('removeTenant', () => {
     expect(
-      reducer(storeState.tenantData, actions.removeTenant(storeState.tenantData.tenantList.get(0) as Tenant)),
+      reducer(storeState.tenantData, actions.removeTenant(storeState.tenantData.tenantList.get(0) ?? error())),
     ).toEqual({
       ...storeState.tenantData,
       tenantList: storeState.tenantData.tenantList.delete(0),

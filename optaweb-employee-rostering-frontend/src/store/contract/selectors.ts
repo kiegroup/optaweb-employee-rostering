@@ -15,6 +15,7 @@
  */
 import { Contract } from 'domain/Contract';
 import { Map, List } from 'immutable';
+import DomainObjectView from 'domain/DomainObjectView';
 import { AppState } from '../types';
 
 export const getContractById = (state: AppState, id: number): Contract => {
@@ -24,7 +25,7 @@ export const getContractById = (state: AppState, id: number): Contract => {
   return state.contractList.contractMapById.get(id) as Contract;
 };
 
-let oldContractMapById: Map<number, Contract> | null = null;
+let oldContractMapById: Map<number, DomainObjectView<Contract>> | null = null;
 let contractListForOldContractMapById: List<Contract> | null = null;
 
 export const getContractList = (state: AppState): List<Contract> => {

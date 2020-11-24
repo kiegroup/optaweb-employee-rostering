@@ -30,7 +30,8 @@ const skillReducer = (state = initialState, action: SkillAction): SkillList => {
     case ActionType.SET_SKILL_LIST_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_SKILL: case ActionType.UPDATE_SKILL: {
+    case ActionType.ADD_SKILL:
+    case ActionType.UPDATE_SKILL: {
       return { ...state, skillMapById: state.skillMapById.set(action.skill.id as number, action.skill) };
     }
     case ActionType.REMOVE_SKILL: {

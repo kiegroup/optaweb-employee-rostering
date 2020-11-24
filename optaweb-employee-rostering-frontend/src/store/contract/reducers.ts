@@ -30,7 +30,8 @@ const contractReducer = (state = initialState, action: ContractAction): Contract
     case ActionType.SET_CONTRACT_LIST_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_CONTRACT: case ActionType.UPDATE_CONTRACT: {
+    case ActionType.ADD_CONTRACT:
+    case ActionType.UPDATE_CONTRACT: {
       return { ...state, contractMapById: state.contractMapById.set(action.contract.id as number, action.contract) };
     }
     case ActionType.REMOVE_CONTRACT: {
