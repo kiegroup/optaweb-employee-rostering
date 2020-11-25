@@ -43,8 +43,6 @@
     <!-- Define JaCoCo agent argLine property to avoid Surefire failure when JaCoCo is not enabled. -->
     <jacoco.agent.argLine/>
 
-    <maven.compiler.release>11</maven.compiler.release>
-
     <sonar.projectKey>optaweb-employee-rostering</sonar.projectKey>
     <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
 
