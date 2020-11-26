@@ -35,7 +35,8 @@ export const getContractList = (state: AppState): List<Contract> => {
   if (oldContractMapById === state.contractList.contractMapById && contractListForOldContractMapById !== null) {
     return contractListForOldContractMapById;
   }
-  const out = state.contractList.contractMapById.keySeq().map(id => getContractById(state, id)).toList();
+  const out = state.contractList.contractMapById.keySeq().map(id => getContractById(state, id))
+    .sortBy(contract => contract.name).toList();
 
   oldContractMapById = state.contractList.contractMapById;
   contractListForOldContractMapById = out;

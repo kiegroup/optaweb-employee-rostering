@@ -43,7 +43,8 @@ export const getEmployeeList = (state: AppState): List<Employee> => {
     return employeeListForOldEmployeeMapById;
   }
 
-  const out = state.employeeList.employeeMapById.keySeq().map(id => getEmployeeById(state, id)).toList();
+  const out = state.employeeList.employeeMapById.keySeq().map(id => getEmployeeById(state, id))
+    .sortBy(employee => employee.name).toList();
 
   oldEmployeeMapById = state.employeeList.employeeMapById;
   employeeListForOldEmployeeMapById = out;

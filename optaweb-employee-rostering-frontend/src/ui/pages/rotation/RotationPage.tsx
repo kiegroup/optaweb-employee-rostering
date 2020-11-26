@@ -33,7 +33,6 @@ import { rosterSelectors } from 'store/roster';
 import { tenantSelectors } from 'store/tenant';
 import moment from 'moment';
 import { Employee } from 'domain/Employee';
-import { error } from 'types';
 import { SeatJigsaw } from './SeatJigsaw';
 import { EditTimeBucketModal } from './EditTimeBucketModal';
 import { EmployeeStubList, Stub } from './EmployeeStub';
@@ -45,7 +44,7 @@ export const RotationPage: React.FC<{}> = () => {
   const tenantId = useSelector(tenantSelectors.getTenantId);
   const rosterState = useSelector(rosterSelectors.getRosterState);
   const isLoading = useSelector(timeBucketSelectors.isLoading);
-  const spotList = useSelector(spotSelectors.getSpotList);
+  const spotList = useSelector(spotSelectors.getSpotList).toArray();
   const timeBucketList = useSelector(timeBucketSelectors.getTimeBucketList);
 
   const dispatch = useDispatch();
@@ -53,8 +52,8 @@ export const RotationPage: React.FC<{}> = () => {
   const [selectedStub, setSelectedStub] = useState<Stub>('NO_SHIFT');
   const [isEditingTimeBuckets, setIsEditingTimeBuckets] = useState(false);
 
-  const [shownSpotName, setShownSpotName] = useUrlState('spot', (spotList.size > 0)
-    ? (spotList.get(0) ?? error('Spot list is not empty but does not have an element')).name : undefined);
+  const [shownSpotName, setShownSpotName] = useUrlState('spot', (spotList.length > 0)
+    ? spotList[0].name : undefined);
   const shownSpot = spotList.find(s => s.name === shownSpotName);
   const shownTimeBuckets = shownSpot ? timeBucketList.filter(tb => tb.spot.id === shownSpot.id) : [];
   const oldShownTimeBuckets = useRef(shownTimeBuckets.map(tb => tb.id).join(','));
@@ -72,8 +71,8 @@ export const RotationPage: React.FC<{}> = () => {
   const [stubList, setStubList] = useState<Stub[]>(getEmployeesInTimeBuckets());
 
   React.useEffect(() => {
-    if (shownSpot === undefined && spotList.size > 0) {
-      setShownSpotName((spotList.get(0) ?? error()).name);
+    if (shownSpot === undefined && spotList.length > 0) {
+      setShownSpotName((spotList[0]).name);
     }
   }, [spotList, shownSpot, setShownSpotName]);
 
@@ -88,7 +87,7 @@ export const RotationPage: React.FC<{}> = () => {
   },
   [oldShownTimeBuckets, shownSpotName, spotList, timeBucketList, getEmployeesInTimeBuckets]);
 
-  if (rosterState === null || isLoading || spotList.size <= 0 || shownSpotName === null) {
+  if (rosterState === null || isLoading || spotList.length <= 0 || shownSpotName === null) {
     return (
       <EmptyState variant={EmptyStateVariant.full}>
         <EmptyStateIcon icon={CubesIcon} />
@@ -116,7 +115,7 @@ export const RotationPage: React.FC<{}> = () => {
         aria-label="Select Spot"
         emptyText={t('selectSpot')}
         optionToStringMap={spot => spot.name}
-        options={spotList.toArray()}
+        options={spotList}
         value={shownSpot}
         onChange={(s) => {
           setShownSpotName(s ? s.name : null);

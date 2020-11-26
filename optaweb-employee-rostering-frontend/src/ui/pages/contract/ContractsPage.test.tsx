@@ -17,11 +17,10 @@ import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import OptionalInput from 'ui/components/OptionalInput';
-import { Sorter, error } from 'types';
+import { Sorter } from 'types';
 import { Contract } from 'domain/Contract';
 import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { List } from 'immutable';
 import { ContractsPage, Props } from './ContractsPage';
 
 describe('Contracts page', () => {
@@ -37,14 +36,14 @@ describe('Contracts page', () => {
 
   it('should render the viewer correctly', () => {
     const contractsPage = new ContractsPage(twoContracts);
-    const contract = twoContracts.tableData.get(1) ?? error();
+    const contract = twoContracts.tableData[1];
     const viewer = shallow(contractsPage.renderViewer(contract));
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
   it('should render the editor correctly', () => {
     const contractsPage = new ContractsPage(twoContracts);
-    const contract = twoContracts.tableData.get(1) ?? error();
+    const contract = twoContracts.tableData[1];
     const editor = shallow(contractsPage.renderEditor(contract));
     expect(toJson(editor)).toMatchSnapshot();
   });
@@ -105,7 +104,7 @@ describe('Contracts page', () => {
 
   it('should call addContract on addData', () => {
     const contractsPage = new ContractsPage(twoContracts);
-    const contract = twoContracts.tableData.get(1) ?? error();
+    const contract = twoContracts.tableData[1];
     contractsPage.addData(contract);
     expect(twoContracts.addContract).toBeCalled();
     expect(twoContracts.addContract).toBeCalledWith(contract);
@@ -113,7 +112,7 @@ describe('Contracts page', () => {
 
   it('should call updateContract on updateData', () => {
     const contractsPage = new ContractsPage(twoContracts);
-    const contract = twoContracts.tableData.get(1) ?? error();
+    const contract = twoContracts.tableData[1];
     contractsPage.updateData(contract);
     expect(twoContracts.updateContract).toBeCalled();
     expect(twoContracts.updateContract).toBeCalledWith(contract);
@@ -121,7 +120,7 @@ describe('Contracts page', () => {
 
   it('should call removeContract on removeData', () => {
     const contractsPage = new ContractsPage(twoContracts);
-    const contract = twoContracts.tableData.get(1) ?? error();
+    const contract = twoContracts.tableData[1];
     contractsPage.removeData(contract);
     expect(twoContracts.removeContract).toBeCalled();
     expect(twoContracts.removeContract).toBeCalledWith(contract);
@@ -131,55 +130,55 @@ describe('Contracts page', () => {
     const contractPage = new ContractsPage(twoContracts);
     const filter = contractPage.getFilter();
 
-    expect(twoContracts.tableData.filter(filter('1'))).toEqual(List([twoContracts.tableData.get(0) ?? error()]));
-    expect(twoContracts.tableData.filter(filter('2'))).toEqual(List([twoContracts.tableData.get(1) ?? error()]));
+    expect(twoContracts.tableData.filter(filter('1'))).toEqual([twoContracts.tableData[0]]);
+    expect(twoContracts.tableData.filter(filter('2'))).toEqual([twoContracts.tableData[1]]);
   });
 
   it('should return a sorter that sort by name', () => {
     const contractPage = new ContractsPage(twoContracts);
     const sorter = contractPage.getSorters()[0] as Sorter<Contract>;
-    const list = [twoContracts.tableData.get(1) ?? error(), twoContracts.tableData.get(0) ?? error()];
-    expect(list.sort(sorter)).toEqual(twoContracts.tableData.toArray());
+    const list = [twoContracts.tableData[1], twoContracts.tableData[0]];
+    expect(list.sort(sorter)).toEqual(twoContracts.tableData);
   });
 
   it('should treat incomplete data as incomplete', () => {
     const contractsPage = new ContractsPage(twoContracts);
 
-    const noName = { ...twoContracts.tableData.get(1) ?? error(), name: undefined };
+    const noName = { ...twoContracts.tableData[1], name: undefined };
     const result1 = contractsPage.isDataComplete(noName);
     expect(result1).toEqual(false);
 
-    const noMaxHoursPerDay = { ...twoContracts.tableData.get(1) ?? error(), maximumMinutesPerDay: undefined };
+    const noMaxHoursPerDay = { ...twoContracts.tableData[1], maximumMinutesPerDay: undefined };
     const result2 = contractsPage.isDataComplete(noMaxHoursPerDay);
     expect(result2).toEqual(false);
 
-    const noMaxHoursPerWeek = { ...twoContracts.tableData.get(1) ?? error(), maximumMinutesPerWeek: undefined };
+    const noMaxHoursPerWeek = { ...twoContracts.tableData[1], maximumMinutesPerWeek: undefined };
     const result3 = contractsPage.isDataComplete(noMaxHoursPerWeek);
     expect(result3).toEqual(false);
 
-    const noMaxHoursPerMonth = { ...twoContracts.tableData.get(1) ?? error(), maximumMinutesPerMonth: undefined };
+    const noMaxHoursPerMonth = { ...twoContracts.tableData[1], maximumMinutesPerMonth: undefined };
     const result4 = contractsPage.isDataComplete(noMaxHoursPerMonth);
     expect(result4).toEqual(false);
 
-    const noMaxHoursPerYear = { ...twoContracts.tableData.get(1) ?? error(), maximumMinutesPerYear: undefined };
+    const noMaxHoursPerYear = { ...twoContracts.tableData[1], maximumMinutesPerYear: undefined };
     const result5 = contractsPage.isDataComplete(noMaxHoursPerYear);
     expect(result5).toEqual(false);
 
-    const completed = { ...twoContracts.tableData.get(1) ?? error() };
+    const completed = { ...twoContracts.tableData[1] };
     const result6 = contractsPage.isDataComplete(completed);
     expect(result6).toEqual(true);
   });
 
   it('should treat empty name as invalid', () => {
     const contractsPage = new ContractsPage(twoContracts);
-    const contract = { ...twoContracts.tableData.get(1) ?? error(), name: '' };
+    const contract = { ...twoContracts.tableData[1], name: '' };
     const result = contractsPage.isValid(contract);
     expect(result).toEqual(false);
   });
 
   it('should treat non-empty name as valid', () => {
     const contractsPage = new ContractsPage(twoContracts);
-    const contract = { ...twoContracts.tableData.get(1) ?? error(), name: 'Contract' };
+    const contract = { ...twoContracts.tableData[1], name: 'Contract' };
     const result = contractsPage.isValid(contract);
     expect(result).toEqual(true);
   });
@@ -191,7 +190,7 @@ const noContracts: Props = {
   tenantId: 0,
   title: 'Contracts',
   columnTitles: ['Name', 'Max Hours Per Day', 'Max Hours Per Week', 'Max Hours Per Month', 'Max Hours Per Year'],
-  tableData: List(),
+  tableData: [],
   addContract: jest.fn(),
   updateContract: jest.fn(),
   removeContract: jest.fn(),
@@ -204,7 +203,7 @@ const twoContracts: Props = {
   tenantId: 0,
   title: 'Contracts',
   columnTitles: ['Name', 'Max Hours Per Day', 'Max Hours Per Week', 'Max Hours Per Month', 'Max Hours Per Year'],
-  tableData: List([{
+  tableData: [{
     id: 0,
     version: 0,
     tenantId: 0,
@@ -223,7 +222,7 @@ const twoContracts: Props = {
     maximumMinutesPerWeek: 20,
     maximumMinutesPerMonth: 10,
     maximumMinutesPerYear: 120,
-  }]),
+  }],
   addContract: jest.fn(),
   updateContract: jest.fn(),
   removeContract: jest.fn(),

@@ -19,7 +19,6 @@ import * as React from 'react';
 import { stringSorter } from 'util/CommonSorters';
 import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { List } from 'immutable';
 import { DataTable, DataTableProps, DataTableUrlProps } from './DataTable';
 
 interface MockData {name: string; number: number}
@@ -62,11 +61,11 @@ describe('DataTable component', () => {
     const dataTable = new MockDataTable(twoRows);
     dataTable.render();
     expect(dataTable.displayDataRow).toBeCalledTimes(2);
-    expect(dataTable.displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData.get(0));
-    expect(dataTable.displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData.get(1));
+    expect(dataTable.displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
+    expect(dataTable.displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
     expect(dataTable.editDataRow).toBeCalledTimes(2);
-    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData.get(0), expect.any(Function));
-    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData.get(1), expect.any(Function));
+    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0], expect.any(Function));
+    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1], expect.any(Function));
   });
 
   it('should render viewer initially', () => {
@@ -104,15 +103,15 @@ describe('DataTable component', () => {
 
     expect((dataTable.instance() as MockDataTable).getInitialStateForNewRow).toBeCalled();
     expect((dataTable.instance() as MockDataTable).displayDataRow).toBeCalledTimes(2);
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData.get(0));
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData.get(1));
+    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
+    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
     expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(3);
     expect((dataTable.instance() as MockDataTable).editDataRow)
       .toHaveBeenNthCalledWith(1, {}, expect.any(Function));
     expect((dataTable.instance() as MockDataTable).editDataRow)
-      .toHaveBeenNthCalledWith(2, twoRows.tableData.get(0), expect.any(Function));
+      .toHaveBeenNthCalledWith(2, twoRows.tableData[0], expect.any(Function));
     expect((dataTable.instance() as MockDataTable).editDataRow)
-      .toHaveBeenNthCalledWith(3, twoRows.tableData.get(1), expect.any(Function));
+      .toHaveBeenNthCalledWith(3, twoRows.tableData[1], expect.any(Function));
     expect(toJson(shallow(<div>{dataTable.instance().render()}</div>))).toMatchSnapshot();
   });
 
@@ -319,7 +318,7 @@ const noRows: DataTableProps<MockData> = {
   tReady: true,
   title: 'Data Table',
   columnTitles: ['Column 1', 'Column 2'],
-  tableData: List(),
+  tableData: [],
   ...getRouterProps<DataTableUrlProps>('/table', {}),
 };
 
@@ -328,6 +327,6 @@ const twoRows: DataTableProps<MockData> = {
   tReady: true,
   title: 'Data Table',
   columnTitles: ['Column 1', 'Column 2'],
-  tableData: List([{ name: 'Some Data', number: 1 }, { name: 'More Data', number: 2 }]),
+  tableData: [{ name: 'Some Data', number: 1 }, { name: 'More Data', number: 2 }],
   ...getRouterProps<DataTableUrlProps>('/table', {}),
 };

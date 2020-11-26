@@ -30,19 +30,18 @@ import { stringFilter } from 'util/CommonFilters';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
 import { ArrowIcon } from '@patternfly/react-icons';
-import { List } from 'immutable';
 
 interface StateProps extends DataTableProps<Spot> {
   tenantId: number;
-  skillList: List<Skill>;
+  skillList: Skill[];
 }
 
 const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
   ...ownProps,
   title: ownProps.t('spots'),
   columnTitles: [ownProps.t('name'), ownProps.t('requiredSkillSet')],
-  tableData: spotSelectors.getSpotList(state),
-  skillList: skillSelectors.getSkillList(state),
+  tableData: spotSelectors.getSpotList(state).toArray(),
+  skillList: skillSelectors.getSkillList(state).toArray(),
   tenantId: state.tenantData.currentTenantId,
 });
 
@@ -112,7 +111,7 @@ export class SpotsPage extends DataTable<Spot, Props> {
       <StatefulMultiTypeaheadSelectInput
         key={1}
         emptyText={this.props.t('selectRequiredSkills')}
-        options={this.props.skillList.toArray()}
+        options={this.props.skillList}
         optionToStringMap={skill => skill.name}
         value={data.requiredSkillSet ? data.requiredSkillSet : []}
         onChange={selected => setProperty('requiredSkillSet', selected)}
