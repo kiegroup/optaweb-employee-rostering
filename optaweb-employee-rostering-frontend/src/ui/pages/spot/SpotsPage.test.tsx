@@ -17,12 +17,11 @@ import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
-import { Sorter, error } from 'types';
+import { Sorter } from 'types';
 import { Spot } from 'domain/Spot';
 import { act } from 'react-dom/test-utils';
 import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { List } from 'immutable';
 import { SpotsPage, Props } from './SpotsPage';
 
 describe('Spots page', () => {
@@ -38,14 +37,14 @@ describe('Spots page', () => {
 
   it('should render the viewer correctly', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const spot = twoSpots.tableData.get(1) ?? error();
+    const spot = twoSpots.tableData[1];
     const viewer = shallow(spotsPage.renderViewer(spot));
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
   it('should render the editor correctly', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const spot = twoSpots.tableData.get(1) ?? error();
+    const spot = twoSpots.tableData[1];
     const editor = shallow(spotsPage.renderEditor(spot));
     expect(toJson(editor)).toMatchSnapshot();
   });
@@ -62,10 +61,10 @@ describe('Spots page', () => {
     setProperty.mockClear();
     const requiredSkillSetCol = mount(editor[1]);
     act(() => {
-      requiredSkillSetCol.find(MultiTypeaheadSelectInput).props().onChange([twoSpots.skillList.get(0) ?? error()]);
+      requiredSkillSetCol.find(MultiTypeaheadSelectInput).props().onChange([twoSpots.skillList[0]]);
     });
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('requiredSkillSet', [twoSpots.skillList.get(0) ?? error()]);
+    expect(setProperty).toBeCalledWith('requiredSkillSet', [twoSpots.skillList[0]]);
   });
 
   it('should call addSpot on addData', () => {
@@ -96,20 +95,20 @@ describe('Spots page', () => {
     const spotsPage = new SpotsPage(twoSpots);
     const filter = spotsPage.getFilter();
 
-    expect(twoSpots.tableData.filter(filter('1'))).toEqual(List([
-      twoSpots.tableData.get(0) ?? error(),
-      twoSpots.tableData.get(1) ?? error(),
-    ]));
-    expect(twoSpots.tableData.filter(filter('Spot 1'))).toEqual(List([twoSpots.tableData.get(0) ?? error()]));
-    expect(twoSpots.tableData.filter(filter('2'))).toEqual(List([twoSpots.tableData.get(1) ?? error()]));
-    expect(twoSpots.tableData.filter(filter('Skill'))).toEqual(List([twoSpots.tableData.get(1) ?? error()]));
+    expect(twoSpots.tableData.filter(filter('1'))).toEqual([
+      twoSpots.tableData[0],
+      twoSpots.tableData[1],
+    ]);
+    expect(twoSpots.tableData.filter(filter('Spot 1'))).toEqual([twoSpots.tableData[0]]);
+    expect(twoSpots.tableData.filter(filter('2'))).toEqual([twoSpots.tableData[1]]);
+    expect(twoSpots.tableData.filter(filter('Skill'))).toEqual([twoSpots.tableData[1]]);
   });
 
   it('should return a sorter that sort by name', () => {
     const spotsPage = new SpotsPage(twoSpots);
     const sorter = spotsPage.getSorters()[0] as Sorter<Spot>;
-    const list = [twoSpots.tableData.get(1) ?? error(), twoSpots.tableData.get(0) ?? error()];
-    expect(list.sort(sorter)).toEqual(twoSpots.tableData.toArray());
+    const list = [twoSpots.tableData[1], twoSpots.tableData[0]];
+    expect(list.sort(sorter)).toEqual(twoSpots.tableData);
     expect(spotsPage.getSorters()[1]).toBeNull();
   });
 
@@ -150,8 +149,8 @@ const noSpots: Props = {
   tenantId: 0,
   title: 'Spots',
   columnTitles: ['Name'],
-  tableData: List(),
-  skillList: List(),
+  tableData: [],
+  skillList: [],
   addSpot: jest.fn(),
   updateSpot: jest.fn(),
   removeSpot: jest.fn(),
@@ -164,7 +163,7 @@ const twoSpots: Props = {
   tenantId: 0,
   title: 'Spots',
   columnTitles: ['Name'],
-  tableData: List([{
+  tableData: [{
     id: 0,
     version: 0,
     tenantId: 0,
@@ -177,8 +176,8 @@ const twoSpots: Props = {
     tenantId: 0,
     name: 'Spot 2',
     requiredSkillSet: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
-  }]),
-  skillList: List([{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }]),
+  }],
+  skillList: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
   addSpot: jest.fn(),
   updateSpot: jest.fn(),
   removeSpot: jest.fn(),

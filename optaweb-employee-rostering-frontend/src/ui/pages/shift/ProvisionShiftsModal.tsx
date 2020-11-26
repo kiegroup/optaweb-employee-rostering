@@ -28,7 +28,6 @@ import { spotSelectors } from 'store/spot';
 import { Spot } from 'domain/Spot';
 import { TimeBucket } from 'domain/TimeBucket';
 import moment from 'moment';
-import { List } from 'immutable';
 
 export interface SpotTimeBucketSelectProps {
   spot: Spot;
@@ -132,11 +131,11 @@ export const ProvisionShiftsModal: React.FC<ProvisionShiftsModalProps> = (props)
   const [fromDate, setFromDate] = React.useState<Date | null>(props.defaultFromDate);
   const [toDate, setToDate] = React.useState<Date | null>(props.defaultToDate);
   const [rotationOffset, setRotationOffset] = React.useState(0);
-  const [provisionedSpots, setProvisionedSpots] = React.useState<List<Spot>>(List());
+  const [provisionedSpots, setProvisionedSpots] = React.useState<Spot[]>([]);
   const [provisionedTimeBuckets, setProvisionedTimeBuckets] = React.useState<TimeBucket[]>([]);
 
   const timeBucketList = useSelector(timeBucketSelectors.getTimeBucketList);
-  const spotList = useSelector(spotSelectors.getSpotList);
+  const spotList = useSelector(spotSelectors.getSpotList).toArray();
   const rosterState = useSelector(rosterSelectors.getRosterState);
   const dispatch = useDispatch();
 
@@ -218,11 +217,11 @@ export const ProvisionShiftsModal: React.FC<ProvisionShiftsModalProps> = (props)
           <MultiTypeaheadSelectInput
             aria-label={t('forSpots')}
             emptyText={t('selectSpots')}
-            value={provisionedSpots.toArray()}
-            options={spotList.toArray()}
+            value={provisionedSpots}
+            options={spotList}
             optionToStringMap={spot => spot.name}
             onChange={(newSpotList) => {
-              setProvisionedSpots(List(newSpotList));
+              setProvisionedSpots(newSpotList);
               let newTimeBucketList = provisionedTimeBuckets;
               newSpotList.filter(spot => !provisionedSpots.includes(spot)).forEach((spot) => {
                 // New spot added

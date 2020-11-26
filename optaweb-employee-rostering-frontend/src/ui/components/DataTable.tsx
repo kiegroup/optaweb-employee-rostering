@@ -32,14 +32,14 @@ import { toggleElement, conditionally } from 'util/ImmutableCollectionOperations
 import { WithTranslation } from 'react-i18next';
 import { getPropsFromUrl, setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
 import { RouteComponentProps } from 'react-router';
-import { List } from 'immutable';
+import { List, Seq } from 'immutable';
 import FilterComponent from './FilterComponent';
 import { EditableComponent } from './EditableComponent';
 
 export interface DataTableProps<T> extends WithTranslation, RouteComponentProps {
   title: string;
   columnTitles: string[];
-  tableData: List<T>;
+  tableData: T[];
 }
 
 interface DataTableState<T> {
@@ -297,7 +297,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
       ]) : List();
     const sorters = this.getSorters();
 
-    const filteredRows = conditionally(this.props.tableData.valueSeq(),
+    const filteredRows = conditionally(Seq(this.props.tableData),
       // eslint-disable-next-line consistent-return
       (s) => {
         if (urlProps.sortBy !== null) {

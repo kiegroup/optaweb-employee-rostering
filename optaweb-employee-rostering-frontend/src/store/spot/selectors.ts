@@ -41,7 +41,8 @@ export const getSpotList = (state: AppState): List<Spot> => {
     return spotListForOldSpotMapById;
   }
 
-  const out = state.spotList.spotMapById.keySeq().map(key => getSpotById(state, key)).toList();
+  const out = state.spotList.spotMapById.keySeq().map(key => getSpotById(state, key))
+    .sortBy(spot => spot.name).toList();
 
   oldSpotMapById = state.spotList.spotMapById;
   spotListForOldSpotMapById = out;

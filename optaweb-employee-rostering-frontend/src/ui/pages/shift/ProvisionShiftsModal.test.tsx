@@ -28,6 +28,7 @@ import { RosterState } from 'domain/RosterState';
 import { Modal, TextInput, Checkbox, AccordionToggle, AccordionContent } from '@patternfly/react-core';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import { List } from 'immutable';
+
 import {
   ProvisionShiftsModal, ProvisionShiftsModalProps, SpotTimeBucketSelect,
   SpotTimeBucketSelectProps,

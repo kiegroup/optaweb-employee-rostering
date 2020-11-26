@@ -37,7 +37,8 @@ export const getSkillList = (state: AppState): List<Skill> => {
     return skillListForOldSkillMapById;
   }
 
-  const out = state.skillList.skillMapById.keySeq().map(key => getSkillById(state, key)).toList();
+  const out = state.skillList.skillMapById.keySeq().map(key => getSkillById(state, key))
+    .sortBy(skill => skill.name).toList();
 
   oldSkillMapById = state.skillList.skillMapById;
   skillListForOldSkillMapById = out;

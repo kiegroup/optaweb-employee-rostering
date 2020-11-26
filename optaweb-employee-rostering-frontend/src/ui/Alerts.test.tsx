@@ -21,7 +21,6 @@ import { mockTranslate } from 'setupTests';
 import { AlertComponent } from 'store/alert/types';
 import moment from 'moment';
 import { ServerSideExceptionInfo, BasicObject } from 'types';
-import { List } from 'immutable';
 import { Alerts, Props, mapToComponent } from './Alerts';
 
 describe('Alerts', () => {
@@ -75,13 +74,13 @@ describe('Alerts', () => {
 });
 
 const noAlerts: Props = {
-  alerts: List(),
+  alerts: [],
   removeAlert: jest.fn(),
 };
 
 const date = new Date(); // setupTests set the date to a mock date for us
 const someAlerts: Props = {
-  alerts: List([
+  alerts: [
     {
       id: 0,
       createdAt: date,
@@ -109,12 +108,12 @@ const someAlerts: Props = {
       components: [],
       componentProps: [],
     },
-  ]),
+  ],
   removeAlert: jest.fn(),
 };
 
 const someAlertsWithComponents: Props = {
-  alerts: List([
+  alerts: [
     {
       id: 0,
       createdAt: date,
@@ -138,6 +137,6 @@ const someAlertsWithComponents: Props = {
         },
       }],
     },
-  ]),
+  ],
   removeAlert: jest.fn(),
 };

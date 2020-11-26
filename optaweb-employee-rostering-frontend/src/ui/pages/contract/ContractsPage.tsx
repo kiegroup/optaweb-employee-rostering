@@ -37,7 +37,7 @@ const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
   title: ownProps.t('contracts'),
   columnTitles: [ownProps.t('name'), ownProps.t('maxMinutesPerDay'), ownProps.t('maxMinutesPerWeek'),
     ownProps.t('maxMinutesPerMonth'), ownProps.t('maxMinutesPerYear')],
-  tableData: contractSelectors.getContractList(state),
+  tableData: contractSelectors.getContractList(state).toArray(),
   tenantId: state.tenantData.currentTenantId,
 });
 

@@ -21,7 +21,6 @@ import { Employee } from 'domain/Employee';
 import { Shift } from 'domain/Shift';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
-import { List } from 'immutable';
 import { EditShiftModal } from './EditShiftModal';
 
 describe('Edit Shift Modal', () => {
@@ -407,7 +406,7 @@ const baseProps = {
   shift: undefined,
   tReady: true,
   tenantId: 1,
-  spotList: List([spot]),
-  skillList: List(),
-  employeeList: List([employee]),
+  spotList: [spot],
+  skillList: [],
+  employeeList: [employee],
 };

@@ -49,12 +49,11 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { withTranslation, WithTranslation, Trans } from 'react-i18next';
 import moment from 'moment';
 import { ColorPicker, StatefulColorPicker, defaultColorList } from 'ui/components/ColorPicker';
-import { List } from 'immutable';
 
 interface StateProps extends DataTableProps<Employee> {
   tenantId: number;
-  skillList: List<Skill>;
-  contractList: List<Contract>;
+  skillList: Skill[];
+  contractList: Contract[];
 }
 
 const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
@@ -67,9 +66,9 @@ const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
     ownProps.t('shortId'),
     ownProps.t('color'),
   ],
-  tableData: employeeSelectors.getEmployeeList(state),
-  skillList: skillSelectors.getSkillList(state),
-  contractList: contractSelectors.getContractList(state),
+  tableData: employeeSelectors.getEmployeeList(state).toArray(),
+  skillList: skillSelectors.getSkillList(state).toArray(),
+  contractList: contractSelectors.getContractList(state).toArray(),
   tenantId: state.tenantData.currentTenantId,
 });
 
@@ -162,13 +161,13 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         emptyText={this.props.t('selectAContract')}
         optionToStringMap={c => c.name}
         value={data.contract}
-        options={this.props.contractList.toArray()}
+        options={this.props.contractList}
         onChange={contract => setProperty('contract', contract)}
       />,
       <StatefulMultiTypeaheadSelectInput
         key={2}
         emptyText={this.props.t('selectSkillProficiencies')}
-        options={this.props.skillList.toArray()}
+        options={this.props.skillList}
         optionToStringMap={skill => skill.name}
         value={data.skillProficiencySet ? data.skillProficiencySet : []}
         onChange={selected => setProperty('skillProficiencySet', selected)}
@@ -249,7 +248,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         />
       </div>
     );
-    if (this.props.contractList.size === 0) {
+    if (this.props.contractList.length === 0) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           {importElement}
