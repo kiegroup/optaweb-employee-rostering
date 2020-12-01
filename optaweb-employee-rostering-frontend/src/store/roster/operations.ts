@@ -16,7 +16,7 @@
 
 import { RosterState } from 'domain/RosterState';
 import { ShiftRosterView } from 'domain/ShiftRosterView';
-import { PaginationData, ObjectNumberMap, mapObjectNumberMap, mapObjectStringMap, error } from 'types';
+import { PaginationData, ObjectNumberMap, mapObjectNumberMap, mapObjectStringMap } from 'types';
 import moment from 'moment';
 import { Spot } from 'domain/Spot';
 import { alert } from 'store/alert';
@@ -176,7 +176,7 @@ ThunkCommandFactory<void, ShiftRosterViewAction> = () => (dispatch, state) => {
     const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
     const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
     const spotList = spotSelectors.getSpotList(state());
-    const shownSpots = (spotList.size > 0) ? [spotList.get(0) ?? error()] : [];
+    const shownSpots = (spotList.length > 0) ? [spotList[0]] : [];
 
     if (shownSpots.length > 0) {
       dispatch(getShiftRosterFor({
@@ -199,7 +199,7 @@ ThunkCommandFactory<void, AvailabilityRosterViewAction> = () => (dispatch, state
     const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
     const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
     const employeeList = employeeSelectors.getEmployeeList(state());
-    const shownEmployees = (employeeList.size > 0) ? [employeeList.get(0) ?? error()] : [];
+    const shownEmployees = (employeeList.length > 0) ? [employeeList[0]] : [];
 
     if (shownEmployees.length > 0) {
       dispatch(getAvailabilityRosterFor({

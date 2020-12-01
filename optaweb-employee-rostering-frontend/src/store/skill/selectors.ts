@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { Skill } from 'domain/Skill';
-import { List, Map } from 'immutable';
+import { Map } from 'immutable';
 import DomainObjectView from 'domain/DomainObjectView';
 import { AppState } from '../types';
 
@@ -27,11 +27,11 @@ export const getSkillById = (state: AppState, id: number): Skill => {
 
 
 let oldSkillMapById: Map<number, DomainObjectView<Skill>>| null = null;
-let skillListForOldSkillMapById: List<Skill> | null = null;
+let skillListForOldSkillMapById: Skill[] | null = null;
 
-export const getSkillList = (state: AppState): List<Skill> => {
+export const getSkillList = (state: AppState): Skill[] => {
   if (state.skillList.isLoading) {
-    return List();
+    return [];
   }
   if (oldSkillMapById === state.skillList.skillMapById && skillListForOldSkillMapById !== null) {
     return skillListForOldSkillMapById;
@@ -41,6 +41,6 @@ export const getSkillList = (state: AppState): List<Skill> => {
     .sortBy(skill => skill.name).toList();
 
   oldSkillMapById = state.skillList.skillMapById;
-  skillListForOldSkillMapById = out;
-  return out;
+  skillListForOldSkillMapById = out.toArray();
+  return skillListForOldSkillMapById;
 };

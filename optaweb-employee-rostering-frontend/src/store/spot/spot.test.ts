@@ -18,7 +18,6 @@ import { alert } from 'store/alert';
 import { createIdMapFromList, mapDomainObjectToView } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
 import { Spot } from 'domain/Spot';
-import { List } from 'immutable';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
@@ -263,17 +262,17 @@ describe('Spot selectors', () => {
       ...storeState,
       skillList: { ...storeState.skillList, isLoading: true },
     });
-    expect(spotList).toEqual(List());
+    expect(spotList).toEqual([]);
     spotList = spotSelectors.getSpotList({
       ...storeState,
       spotList: { ...storeState.spotList, isLoading: true },
     });
-    expect(spotList).toEqual(List());
+    expect(spotList).toEqual([]);
   });
 
   it('should return a list of all spots', () => {
     const spotList = spotSelectors.getSpotList(storeState);
-    expect(spotList.toArray()).toEqual(expect.arrayContaining([
+    expect(spotList).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
         id: 1234,
@@ -296,6 +295,6 @@ describe('Spot selectors', () => {
         requiredSkillSet: [],
       },
     ]));
-    expect(spotList.size).toEqual(2);
+    expect(spotList.length).toEqual(2);
   });
 });

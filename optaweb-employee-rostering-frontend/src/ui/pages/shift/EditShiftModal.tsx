@@ -56,9 +56,9 @@ const mapStateToProps = (state: AppState, ownProps: {
 }): Props => ({
   ...ownProps,
   tenantId: state.tenantData.currentTenantId,
-  skillList: skillSelectors.getSkillList(state).toArray(),
-  employeeList: employeeSelectors.getEmployeeList(state).toArray(),
-  spotList: spotSelectors.getSpotList(state).toArray(),
+  skillList: skillSelectors.getSkillList(state),
+  employeeList: employeeSelectors.getEmployeeList(state),
+  spotList: spotSelectors.getSpotList(state),
 });
 
 interface State {

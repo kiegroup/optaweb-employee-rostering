@@ -28,7 +28,6 @@ import moment from 'moment';
 import { Trans } from 'react-i18next';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import { Button } from '@patternfly/react-core';
-import { List } from 'immutable';
 import { SeatJigsaw } from './SeatJigsaw';
 import { EmployeeStubList, Stub } from './EmployeeStub';
 import { EditTimeBucketModal } from './EditTimeBucketModal';
@@ -102,7 +101,7 @@ describe('Rotation Page', () => {
     mockSelector(tenantSelectors.getTenantId, 0);
     mockSelector(rosterSelectors.getRosterState, rosterState);
     mockSelector(timeBucketSelectors.isLoading, false);
-    mockSelector(spotSelectors.getSpotList, List([spot, newSpot]));
+    mockSelector(spotSelectors.getSpotList, [spot, newSpot]);
     mockSelector(timeBucketSelectors.getTimeBucketList, [timeBucket]);
   });
 

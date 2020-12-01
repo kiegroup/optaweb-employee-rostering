@@ -39,7 +39,7 @@ interface OwnProps {
 const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps & OwnProps => ({
   ...ownProps,
   tenantId: state.tenantData.currentTenantId,
-  spotList: spotSelectors.getSpotList(state).toArray(),
+  spotList: spotSelectors.getSpotList(state),
 });
 
 export const ExportScheduleModal: React.FC<StateProps & OwnProps> = (props) => {

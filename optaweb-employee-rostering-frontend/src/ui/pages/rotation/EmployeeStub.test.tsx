@@ -20,7 +20,6 @@ import { employeeSelectors } from 'store/employee';
 import { shallow } from 'enzyme';
 import { Button, Modal } from '@patternfly/react-core';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
-import { List } from 'immutable';
 import {
   EmployeeNickNameProps, EmployeeNickName, EmployeeStubProps, EmployeeStub,
   EditEmployeeStubListModalProps, EditEmployeeStubListModal,
@@ -78,10 +77,10 @@ const newEmployee: Employee = {
 };
 
 
-const employeeList: List<Employee> = List([
+const employeeList: Employee[] = [
   employee,
   newEmployee,
-]);
+];
 
 describe('EmployeeNickName Component', () => {
   const baseProps: EmployeeNickNameProps = {

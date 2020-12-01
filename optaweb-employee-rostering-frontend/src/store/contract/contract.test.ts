@@ -18,7 +18,6 @@ import { alert } from 'store/alert';
 import { createIdMapFromList } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
 import { Contract } from 'domain/Contract';
-import { List } from 'immutable';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
@@ -270,12 +269,12 @@ describe('Contract selectors', () => {
       ...storeState,
       contractList: { ...storeState.contractList, isLoading: true },
     });
-    expect(contractList).toEqual(List());
+    expect(contractList).toEqual([]);
   });
 
   it('should return a list of all contracts', () => {
     const contractList = contractSelectors.getContractList(storeState);
-    expect(contractList.toArray()).toEqual(expect.arrayContaining([
+    expect(contractList).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
         id: 0,
@@ -307,6 +306,6 @@ describe('Contract selectors', () => {
         maximumMinutesPerYear: 100,
       },
     ]));
-    expect(contractList.size).toEqual(3);
+    expect(contractList.length).toEqual(3);
   });
 });

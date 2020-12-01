@@ -40,8 +40,6 @@ import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
 import { ScoreDisplay } from 'ui/components/ScoreDisplay';
 import { UrlProps, setPropsInUrl, getPropsFromUrl } from 'util/BookmarkableUtils';
 import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
-import { List } from 'immutable';
-import { error } from 'types';
 import AvailabilityEvent, { AvailabilityPopoverHeader, AvailabilityPopoverBody } from './AvailabilityEvent';
 import EditAvailabilityModal from './EditAvailabilityModal';
 import ShiftEvent, { ShiftPopupHeader, ShiftPopupBody } from '../shift/ShiftEvent';
@@ -51,8 +49,8 @@ interface StateProps {
   tenantId: number;
   isSolving: boolean;
   isLoading: boolean;
-  allEmployeeList: List<Employee>;
-  shownEmployeeList: List<Employee>;
+  allEmployeeList: Employee[];
+  shownEmployeeList: Employee[];
   employeeIdToShiftListMap: Map<number, Shift[]>;
   employeeIdToAvailabilityListMap: Map<number, EmployeeAvailability[]>;
   totalNumOfSpots: number;
@@ -74,8 +72,8 @@ const mapStateToProps = (state: AppState): StateProps => ({
   isSolving: state.solverState.solverStatus !== 'NOT_SOLVING',
   isLoading: rosterSelectors.isAvailabilityRosterLoading(state),
   allEmployeeList: employeeSelectors.getEmployeeList(state),
-  shownEmployeeList: List(lastShownEmployeeList = rosterSelectors.isAvailabilityRosterLoading(state)
-    ? lastShownEmployeeList : rosterSelectors.getEmployeeListInAvailabilityRoster(state)),
+  shownEmployeeList: lastShownEmployeeList = rosterSelectors.isAvailabilityRosterLoading(state)
+    ? lastShownEmployeeList : rosterSelectors.getEmployeeListInAvailabilityRoster(state),
   employeeIdToShiftListMap: lastEmployeeIdToShiftListMap = rosterSelectors
     .getEmployeeListInAvailabilityRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
@@ -87,7 +85,7 @@ const mapStateToProps = (state: AppState): StateProps => ({
       rosterSelectors.getAvailabilityListForEmployee(state, curr)),
     rosterSelectors.isAvailabilityRosterLoading(state) ? lastEmployeeIdToAvailabilityListMap
       : new Map<number, EmployeeAvailability[]>()),
-  totalNumOfSpots: spotSelectors.getSpotList(state).size,
+  totalNumOfSpots: spotSelectors.getSpotList(state).length,
   rosterState: state.rosterState.rosterState,
   score: state.availabilityRoster.availabilityRosterView ? state.availabilityRoster.availabilityRosterView.score : null,
   indictmentSummary: state.availabilityRoster.availabilityRosterView
@@ -177,7 +175,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
       const endDate = moment(startDate).endOf('week').toDate();
       const employee = this.props.allEmployeeList
-        .find(e => e.name === urlProps.employee) || this.props.allEmployeeList.get(0);
+        .find(e => e.name === urlProps.employee) || this.props.allEmployeeList[0];
       if (employee) {
         this.props.getAvailabilityRosterFor({
           fromDate: startDate,
@@ -291,11 +289,11 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       employee: null,
       week: null,
     });
-    const changedTenant = this.props.shownEmployeeList.size === 0
+    const changedTenant = this.props.shownEmployeeList.length === 0
       || (urlProps.employee !== null
-      && this.props.tenantId !== (this.props.shownEmployeeList.get(0) ?? error()).tenantId);
+      && this.props.tenantId !== (this.props.shownEmployeeList[0]).tenantId);
 
-    if (this.props.shownEmployeeList.size === 0 || changedTenant || this.props.rosterState === null) {
+    if (this.props.shownEmployeeList.length === 0 || changedTenant || this.props.rosterState === null) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
@@ -320,7 +318,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
     const endDate = moment(startDate).endOf('week').toDate();
     const shownEmployee = this.props.allEmployeeList.find(e => e.name === urlProps.employee)
-      || this.props.shownEmployeeList.get(0) as Employee;
+      || this.props.shownEmployeeList[0];
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
     const indictmentSummary: IndictmentSummary = this.props.indictmentSummary || { constraintToCountMap: {},
       constraintToScoreImpactMap: {} };
@@ -382,7 +380,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             aria-label="Select Employee"
             emptyText={t('selectEmployee')}
             optionToStringMap={employee => employee.name}
-            options={this.props.allEmployeeList.toArray()}
+            options={this.props.allEmployeeList}
             value={shownEmployee}
             onChange={(e) => {
               this.onUpdateAvailabilityRoster({

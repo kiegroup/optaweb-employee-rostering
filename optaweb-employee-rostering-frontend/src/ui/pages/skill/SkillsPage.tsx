@@ -35,7 +35,7 @@ const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
   ...ownProps,
   title: ownProps.t('skills'),
   columnTitles: [ownProps.t('name')],
-  tableData: skillSelectors.getSkillList(state).toArray(),
+  tableData: skillSelectors.getSkillList(state),
   tenantId: state.tenantData.currentTenantId,
 });
 

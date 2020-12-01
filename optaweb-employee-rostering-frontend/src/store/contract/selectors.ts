@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { Contract } from 'domain/Contract';
-import { Map, List } from 'immutable';
+import { Map } from 'immutable';
 import DomainObjectView from 'domain/DomainObjectView';
 import { AppState } from '../types';
 
@@ -26,11 +26,11 @@ export const getContractById = (state: AppState, id: number): Contract => {
 };
 
 let oldContractMapById: Map<number, DomainObjectView<Contract>> | null = null;
-let contractListForOldContractMapById: List<Contract> | null = null;
+let contractListForOldContractMapById: Contract[] | null = null;
 
-export const getContractList = (state: AppState): List<Contract> => {
+export const getContractList = (state: AppState): Contract[] => {
   if (state.contractList.isLoading) {
-    return List();
+    return [];
   }
   if (oldContractMapById === state.contractList.contractMapById && contractListForOldContractMapById !== null) {
     return contractListForOldContractMapById;
@@ -39,7 +39,7 @@ export const getContractList = (state: AppState): List<Contract> => {
     .sortBy(contract => contract.name).toList();
 
   oldContractMapById = state.contractList.contractMapById;
-  contractListForOldContractMapById = out;
+  contractListForOldContractMapById = out.toArray();
 
-  return out;
+  return contractListForOldContractMapById;
 };

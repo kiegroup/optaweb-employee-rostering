@@ -66,9 +66,9 @@ const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
     ownProps.t('shortId'),
     ownProps.t('color'),
   ],
-  tableData: employeeSelectors.getEmployeeList(state).toArray(),
-  skillList: skillSelectors.getSkillList(state).toArray(),
-  contractList: contractSelectors.getContractList(state).toArray(),
+  tableData: employeeSelectors.getEmployeeList(state),
+  skillList: skillSelectors.getSkillList(state),
+  contractList: contractSelectors.getContractList(state),
   tenantId: state.tenantData.currentTenantId,
 });
 
