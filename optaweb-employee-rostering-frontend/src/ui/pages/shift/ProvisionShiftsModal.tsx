@@ -135,7 +135,7 @@ export const ProvisionShiftsModal: React.FC<ProvisionShiftsModalProps> = (props)
   const [provisionedTimeBuckets, setProvisionedTimeBuckets] = React.useState<TimeBucket[]>([]);
 
   const timeBucketList = useSelector(timeBucketSelectors.getTimeBucketList);
-  const spotList = useSelector(spotSelectors.getSpotList).toArray();
+  const spotList = useSelector(spotSelectors.getSpotList);
   const rosterState = useSelector(rosterSelectors.getRosterState);
   const dispatch = useDispatch();
 

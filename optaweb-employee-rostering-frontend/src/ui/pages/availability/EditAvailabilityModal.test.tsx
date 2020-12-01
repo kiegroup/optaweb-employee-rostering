@@ -20,7 +20,6 @@ import { Employee } from 'domain/Employee';
 import moment from 'moment';
 import { EmployeeAvailability } from 'domain/EmployeeAvailability';
 import { useTranslation } from 'react-i18next';
-import { List } from 'immutable';
 import { EditAvailabilityModal } from './EditAvailabilityModal';
 
 describe('Edit Availability Modal', () => {
@@ -324,5 +323,5 @@ const baseProps = {
   tReady: true,
   tenantId: 1,
   isOpen: true,
-  employeeList: List([employee]),
+  employeeList: [employee],
 };

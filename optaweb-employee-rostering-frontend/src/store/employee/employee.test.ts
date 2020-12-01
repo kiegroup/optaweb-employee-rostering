@@ -20,7 +20,6 @@ import { onGet, onPost, onDelete, onUploadFile } from 'store/rest/RestTestUtils'
 import { Employee } from 'domain/Employee';
 import * as skillActions from 'store/skill/actions';
 import * as contractActions from 'store/contract/actions';
-import { List } from 'immutable';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
@@ -351,22 +350,22 @@ describe('Employee selectors', () => {
       ...storeState,
       skillList: { ...storeState.skillList, isLoading: true },
     });
-    expect(employeeList).toEqual(List());
+    expect(employeeList).toEqual([]);
     employeeList = employeeSelectors.getEmployeeList({
       ...storeState,
       contractList: { ...storeState.contractList, isLoading: true },
     });
-    expect(employeeList).toEqual(List());
+    expect(employeeList).toEqual([]);
     employeeList = employeeSelectors.getEmployeeList({
       ...storeState,
       employeeList: { ...storeState.employeeList, isLoading: true },
     });
-    expect(employeeList).toEqual(List());
+    expect(employeeList).toEqual([]);
   });
 
   it('should return a list of all employee', () => {
     const employeeList = employeeSelectors.getEmployeeList(storeState);
-    expect(employeeList.toArray()).toEqual(expect.arrayContaining([
+    expect(employeeList).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
         id: 1,
@@ -413,6 +412,6 @@ describe('Employee selectors', () => {
         color: '#FFFFFF',
       },
     ]));
-    expect(employeeList.size).toEqual(2);
+    expect(employeeList.length).toEqual(2);
   });
 });

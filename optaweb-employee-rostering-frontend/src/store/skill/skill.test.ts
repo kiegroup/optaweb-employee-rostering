@@ -18,7 +18,6 @@ import { alert } from 'store/alert';
 import { createIdMapFromList } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
 import { Skill } from 'domain/Skill';
-import { List } from 'immutable';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
@@ -202,12 +201,12 @@ describe('Skill selectors', () => {
       ...storeState,
       skillList: { ...storeState.skillList, isLoading: true },
     });
-    expect(skillList).toEqual(List());
+    expect(skillList).toEqual([]);
   });
 
   it('should return a list of all skills', () => {
     const skillList = skillSelectors.getSkillList(storeState);
-    expect(skillList.toArray()).toEqual(expect.arrayContaining([
+    expect(skillList).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
         id: 1234,
@@ -221,6 +220,6 @@ describe('Skill selectors', () => {
         name: 'Skill 3',
       },
     ]));
-    expect(skillList.size).toEqual(2);
+    expect(skillList.length).toEqual(2);
   });
 });

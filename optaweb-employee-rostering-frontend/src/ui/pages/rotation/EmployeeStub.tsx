@@ -164,7 +164,7 @@ export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps>
                   >
                     <TypeaheadSelectInput
                       emptyText={t('selectAnEmployee')}
-                      options={employeeList.toArray()}
+                      options={employeeList}
                       value={stub.stub}
                       optionToStringMap={o => ((typeof o === 'string') ? t('unassigned') : o.name)}
                       autoSize={false}

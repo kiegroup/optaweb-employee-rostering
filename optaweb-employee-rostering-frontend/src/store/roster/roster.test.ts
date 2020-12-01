@@ -27,7 +27,7 @@ import { Employee } from 'domain/Employee';
 import { RosterState } from 'domain/RosterState';
 import { serializeLocalDate } from 'store/rest/DataSerialization';
 import { flushPromises } from 'setupTests';
-import { doNothing, error } from 'types';
+import { doNothing } from 'types';
 import { Map, List } from 'immutable';
 import { createIdMapFromList } from 'util/ImmutableCollectionOperations';
 import { availabilityRosterReducer } from './reducers';
@@ -669,7 +669,7 @@ describe('Roster operations', () => {
   it('should dispatch actions and call client on getInitialShiftRoster', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const spotList: Spot[] = [spotSelectors.getSpotList(store.getState()).get(0) ?? error()];
+    const spotList: Spot[] = [spotSelectors.getSpotList(store.getState())[0]];
     const fromDate = moment((store.getState().rosterState.rosterState as RosterState).firstDraftDate)
       .startOf('week').toDate();
     const toDate = moment((store.getState().rosterState.rosterState as RosterState).firstDraftDate)
@@ -822,7 +822,7 @@ describe('Roster operations', () => {
   it('should dispatch actions and call client on getInitialAvailabilityRoster', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const employeeList: Employee[] = [employeeSelectors.getEmployeeList(store.getState()).get(0) ?? error()];
+    const employeeList: Employee[] = [employeeSelectors.getEmployeeList(store.getState())[0]];
     const fromDate = moment((store.getState().rosterState.rosterState as RosterState).firstDraftDate)
       .startOf('week').toDate();
     const toDate = moment((store.getState().rosterState.rosterState as RosterState).firstDraftDate)

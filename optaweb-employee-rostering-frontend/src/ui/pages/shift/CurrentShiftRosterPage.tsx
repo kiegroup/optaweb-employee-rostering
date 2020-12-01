@@ -65,7 +65,7 @@ const mapStateToProps = (state: AppState): StateProps => ({
   tenantId: state.tenantData.currentTenantId,
   isSolving: state.solverState.solverStatus !== 'NOT_SOLVING',
   isLoading: rosterSelectors.isShiftRosterLoading(state),
-  allSpotList: spotSelectors.getSpotList(state).toArray(),
+  allSpotList: spotSelectors.getSpotList(state),
   // The use of "x = isLoading? x : getUpdatedData()" is a way to use old value if data is still loading
   shownSpotList: lastShownSpotList = rosterSelectors.isShiftRosterLoading(state) ? lastShownSpotList
     : rosterSelectors.getSpotListInShiftRoster(state),
@@ -74,7 +74,7 @@ const mapStateToProps = (state: AppState): StateProps => ({
       rosterSelectors.getShiftListForSpot(state, curr)),
     // reducing an empty array returns the starting value
     rosterSelectors.isShiftRosterLoading(state) ? lastSpotIdToShiftListMap : new Map<number, Shift[]>()),
-  totalNumOfSpots: spotSelectors.getSpotList(state).size,
+  totalNumOfSpots: spotSelectors.getSpotList(state).length,
   rosterState: state.rosterState.rosterState,
   score: state.shiftRoster.shiftRosterView ? state.shiftRoster.shiftRosterView.score : null,
   indictmentSummary: state.shiftRoster.shiftRosterView ? state.shiftRoster.shiftRosterView.indictmentSummary : null,

@@ -85,7 +85,7 @@ export const TimeBucketEditor: React.FC<TimeBucketEditorProps> = (props) => {
             </GridItem>
             <GridItem span={8}>
               <MultiTypeaheadSelectInput
-                options={skillList.toArray()}
+                options={skillList}
                 optionToStringMap={skill => skill.name}
                 emptyText="Select additional skills..."
                 autoSize={false}

@@ -44,7 +44,7 @@ export const RotationPage: React.FC<{}> = () => {
   const tenantId = useSelector(tenantSelectors.getTenantId);
   const rosterState = useSelector(rosterSelectors.getRosterState);
   const isLoading = useSelector(timeBucketSelectors.isLoading);
-  const spotList = useSelector(spotSelectors.getSpotList).toArray();
+  const spotList = useSelector(spotSelectors.getSpotList);
   const timeBucketList = useSelector(timeBucketSelectors.getTimeBucketList);
 
   const dispatch = useDispatch();
