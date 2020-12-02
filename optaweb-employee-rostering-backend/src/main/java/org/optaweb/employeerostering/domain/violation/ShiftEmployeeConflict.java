@@ -52,6 +52,7 @@ public class ShiftEmployeeConflict implements ConstraintMatchView {
         this.rightShift = rightShift;
     }
 
+    @Override
     public HardMediumSoftLongScore getScore() {
         return score;
     }
