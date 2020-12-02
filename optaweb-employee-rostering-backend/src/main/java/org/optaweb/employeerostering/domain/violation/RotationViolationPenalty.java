@@ -41,6 +41,7 @@ public class RotationViolationPenalty implements ConstraintMatchView {
         this.shift = shift;
     }
 
+    @Override
     public HardMediumSoftLongScore getScore() {
         return score;
     }

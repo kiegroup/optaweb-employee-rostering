@@ -41,6 +41,7 @@ public class RequiredSkillViolation implements ConstraintMatchView {
         this.shift = shift;
     }
 
+    @Override
     public HardMediumSoftLongScore getScore() {
         return score;
     }

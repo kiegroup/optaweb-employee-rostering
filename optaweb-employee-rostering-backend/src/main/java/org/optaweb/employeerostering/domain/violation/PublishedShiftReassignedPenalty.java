@@ -41,6 +41,7 @@ public class PublishedShiftReassignedPenalty implements ConstraintMatchView {
         this.shift = shift;
     }
 
+    @Override
     public HardMediumSoftLongScore getScore() {
         return score;
     }
