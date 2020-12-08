@@ -31,10 +31,13 @@ import java.util.Set;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.shift.Shift;
@@ -49,7 +52,11 @@ public class TimeBucket extends AbstractPersistable {
     @ManyToOne
     private Spot spot;
 
-    @OneToMany
+    @NotNull
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "TimeBucketAdditionalSkillSet",
+            joinColumns = @JoinColumn(name = "timebucketId", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id"))
     private Set<Skill> additionalSkillSet;
 
     @ElementCollection
