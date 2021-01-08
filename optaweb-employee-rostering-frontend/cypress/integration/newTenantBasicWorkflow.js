@@ -66,10 +66,6 @@ describe('A new tenant can be created, who can have their own employees, spots, 
 
   beforeEach(() => {
     cy.wait(3000);// Wait for all data from last test/start to finish loading
-    cy.get('[data-cy=settings]').click();
-    cy.get('[data-cy=reset-application]').click();
-    cy.get('[data-cy=confirm]').click();
-    closeAlerts();
   });
 
   it('basic tenant workflow', () => {
@@ -126,7 +122,9 @@ describe('A new tenant can be created, who can have their own employees, spots, 
 
     // Sometimes a shift is not created, so wait to make the test stable
     cy.wait(1500);
-    dragCreateShift(2, '00:00', '06:00');
+    // Plan for the next week
+    cy.get('[aria-label="Next Week"]').click({ force: true });
+    dragCreateShift(3, '00:00', '06:00');
 
     // Schedule for 5 seconds
     cy.get('[aria-label="Actions"]').click();
