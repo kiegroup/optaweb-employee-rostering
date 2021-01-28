@@ -26,12 +26,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>jakarta.validation</groupId>
-          <artifactId>jakarta.validation-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.optaweb.employeerostering</groupId>
@@ -129,7 +123,7 @@
               <artifactId>process-exec-maven-plugin</artifactId>
               <version>0.9</version>
               <configuration>
-              <skip>${skipITs}</skip>
+                <skip>${skipITs}</skip>
               </configuration>
             </plugin>
           </plugins>
