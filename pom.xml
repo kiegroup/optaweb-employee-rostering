@@ -43,6 +43,12 @@
     <jacoco.agent.argLine/>
     <sonar.projectKey>optaweb-employee-rostering</sonar.projectKey>
     <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+    <!--
+      Do not upgrade JUnit 4 to a version that is more complex than just MAJOR.MINOR
+      unless the version of JUnit 5 is at least 5.7.0. The junit-vintage-engine < 5.7.0 cannot parse complex versions.
+      See https://github.com/junit-team/junit5/commit/f30c96a9cad89a62a28750c5fe4dd83ad4333e99.
+    -->
+    <version.junit>4.13</version.junit>
     <version.org.mockito>2.12.0</version.org.mockito>
     <format.directory>${project.basedir}/../ide-configuration</format.directory>
     <formatter.skip>false</formatter.skip>
