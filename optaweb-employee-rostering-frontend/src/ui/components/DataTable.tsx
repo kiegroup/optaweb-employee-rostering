@@ -14,363 +14,230 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { PropsWithChildren, useState } from 'react';
+import { Button, Pagination, Level, LevelItem } from '@patternfly/react-core';
 import {
-  Table,
-  TableHeader,
-  TableBody,
-  headerCol,
-  IRow,
-  ICell,
-  sortable,
-  SortByDirection,
-} from '@patternfly/react-table';
-import { Button, ButtonVariant, Pagination, Level, LevelItem } from '@patternfly/react-core';
-import { SaveIcon, CloseIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
-import { Predicate, ReadonlyPartial, Sorter } from 'types';
-import { toggleElement, conditionally } from 'util/ImmutableCollectionOperations';
-import { WithTranslation } from 'react-i18next';
-import { getPropsFromUrl, setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
+  SaveIcon, CloseIcon, EditIcon, TrashIcon, LongArrowAltDownIcon,
+  LongArrowAltUpIcon, ArrowsAltVIcon,
+} from '@patternfly/react-icons';
+import { Sorter } from 'types';
+import { useTranslation } from 'react-i18next';
+import { setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
 import { RouteComponentProps } from 'react-router';
-import { List, Seq } from 'immutable';
+import { PagenationData } from 'util/FunctionalComponentUtils';
+import { TableComposable } from '@patternfly/react-table';
 import FilterComponent from './FilterComponent';
-import { EditableComponent } from './EditableComponent';
 
-export interface DataTableProps<T> extends WithTranslation, RouteComponentProps {
-  title: string;
-  columnTitles: string[];
-  tableData: T[];
-}
-
-interface DataTableState<T> {
-  newRowData: Partial<T> | null;
-  editedRows: T[];
-}
-
-export type PropertySetter<T> = (propertyName: keyof T, value: T[keyof T] | undefined) => void;
 export type DataTableUrlProps = UrlProps<'page'|'itemsPerPage'|'filter'|'sortBy'|'asc'>;
 
-export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Component<P, DataTableState<T>> {
-  constructor(props: P) {
-    super(props);
-    this.createNewRow = this.createNewRow.bind(this);
-    this.cancelAddingRow = this.cancelAddingRow.bind(this);
-    this.convertDataToTableRow = this.convertDataToTableRow.bind(this);
-    this.state = {
-      editedRows: [],
-      newRowData: null,
-    };
-    this.onSetPage = this.onSetPage.bind(this);
-    this.onPerPageSelect = this.onPerPageSelect.bind(this);
-    this.onSort = this.onSort.bind(this);
-  }
-
-  abstract getInitialStateForNewRow(): Partial<T>;
-
-  abstract displayDataRow(data: T): React.ReactNode[];
-
-  abstract editDataRow(data: ReadonlyPartial<T>, setProperty: PropertySetter<T>): React.ReactNode[];
-
-  abstract isDataComplete(editedValue: ReadonlyPartial<T>): editedValue is T;
-
-  abstract isValid(editedValue: T): boolean;
-
-  abstract getFilter(): (filter: string) => Predicate<T>;
-
-  abstract getSorters(): (Sorter<T> | null)[]
-
-  abstract updateData(data: T): void;
-
-  abstract addData(data: T): void;
-
-  abstract removeData(data: T): void;
-
-  onSetPage(event: any, pageNumber: number): void {
-    this.setState({
-      editedRows: [],
-    });
-    setPropsInUrl<DataTableUrlProps>(this.props, { page: pageNumber.toString() });
-  }
-
-  onPerPageSelect(event: any, perPage: number, urlProps: DataTableUrlProps): void {
-    this.setState({
-      editedRows: [],
-    });
-    const oldPage = parseInt(urlProps.page as string, 10);
-    const oldPerPage = parseInt(urlProps.itemsPerPage as string, 10);
-    const newPage = Math.floor(((oldPage - 1) * oldPerPage) / perPage) + 1;
-    setPropsInUrl<DataTableUrlProps>(this.props, {
-      page: newPage.toString(),
-      itemsPerPage: perPage.toString(),
-    });
-  }
-
-  createNewRow() {
-    if (this.state.newRowData === null) {
-      this.setState({ newRowData: this.getInitialStateForNewRow() });
-    }
-  }
-
-  cancelAddingRow() {
-    this.setState({ newRowData: null });
-  }
-
-  getAddButtons(newData: Partial<T>): JSX.Element {
-    return (
+export const RowViewButtons = (props: { onEdit: () => void; onDelete: () => void }) => (
+  <td role="cell">
+    <span
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr auto auto',
+        gridColumnGap: '5px',
+      }}
+    >
+      <span />
       <span>
         <Button
-          aria-label="Save"
-          variant={ButtonVariant.link}
+          variant="link"
+          onClick={props.onEdit}
+        >
+          <EditIcon />
+        </Button>
+      </span>
+      <span>
+        <Button
+          variant="danger"
+          onClick={props.onDelete}
+        >
+          <TrashIcon />
+        </Button>
+      </span>
+    </span>
+  </td>
+);
+
+export const RowEditButtons = (props: { isValid: boolean; onClose: () => void; onSave: () => void }) => (
+  <td role="cell">
+    <span
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr auto auto',
+        gridColumnGap: '5px',
+      }}
+    >
+      <span />
+      <span>
+        <Button
+          variant="link"
+          isDisabled={!props.isValid}
           onClick={() => {
-            if (this.isDataComplete(newData) && this.isValid(newData)) {
-              this.addData(newData);
-              this.cancelAddingRow();
-            }
+            props.onSave();
+            props.onClose();
           }}
         >
           <SaveIcon />
         </Button>
+      </span>
+      <span>
         <Button
-          aria-label="Cancel"
-          variant={ButtonVariant.link}
-          onClick={this.cancelAddingRow}
+          variant="link"
+          onClick={props.onClose}
         >
           <CloseIcon />
         </Button>
       </span>
-    );
-  }
+    </span>
+  </td>
+);
 
-  getEditButtons(originalData: T, editedData: Partial<T>, isEditing: boolean,
-    toggleEditing: () => void): JSX.Element {
-    return (
-      <EditableComponent
-        isEditing={isEditing}
-        viewer={(
-          <span
-            key={0}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr auto auto',
-              gridColumnGap: '5px',
-            }}
-          >
-            <span />
-            <Button
-              aria-label="Edit"
-              variant={ButtonVariant.link}
-              onClick={toggleEditing}
-            >
-              <EditIcon />
-            </Button>
-            <Button
-              aria-label="Delete"
-              variant={ButtonVariant.link}
-              onClick={() => {
-                this.removeData(originalData);
-              }}
-            >
-              <TrashIcon />
-            </Button>
-          </span>
-        )}
-        editor={(
-          <span
-            key={0}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr auto auto',
-              gridColumnGap: '5px',
-            }}
-          >
-            <span />
-            <Button
-              aria-label="Save"
-              variant={ButtonVariant.link}
-              onClick={() => {
-                if (this.isDataComplete(editedData) && this.isValid(editedData)) {
-                  this.updateData(editedData);
-                  toggleEditing();
-                }
-              }}
-            >
-              <SaveIcon />
-            </Button>
-            <Button
-              aria-label="Cancel"
-              variant={ButtonVariant.link}
-              onClick={toggleEditing}
-            >
-              <CloseIcon />
-            </Button>
-          </span>
-        )}
-      />
-    );
-  }
+export const TableRow = (props: PropsWithChildren<{}>) => (<tr role="row">{props.children}</tr>);
+export const TableCell = (props: PropsWithChildren<{}>) => (<td role="cell">{props.children}</td>);
 
-  convertDataToTableRow(data: T): IRow {
-    const isEditing = this.state.editedRows.indexOf(data) !== -1;
-    const editedData: Partial<T> = { ...data };
+export const PagenationControls = (props: PagenationData<any> & RouteComponentProps & {
+  isCreatingNewRow: boolean;
+  onCreateNewRow: () => void;
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Level
+      hasGutter
+      style={{
+        padding: '5px 5px 5px 5px',
+        backgroundColor: 'var(--pf-global--BackgroundColor--200)',
+      }}
+    >
+      <LevelItem>
+        <FilterComponent
+          filterText={props.filterText}
+          onChange={(newFilterText) => {
+            setPropsInUrl(props, { page: '1', filter: newFilterText });
+          }}
+        />
+      </LevelItem>
+      <LevelItem style={{ display: 'flex' }}>
+        <Button
+          isDisabled={props.isCreatingNewRow}
+          onClick={props.onCreateNewRow}
+        >
+          {t('add')}
+        </Button>
+        <Pagination
+          itemCount={props.numOfFilteredRows}
+          perPage={props.itemsPerPage}
+          page={props.page}
+          onSetPage={(e, newPage) => setPropsInUrl(props, { page: `${newPage}` })}
+          widgetId="pagination-options-menu-top"
+          onPerPageSelect={(e, newPerPage) => setPropsInUrl(props, { itemsPerPage: `${newPerPage}` })}
+        />
+      </LevelItem>
+    </Level>
+  );
+};
 
-    const setProperty = (key: keyof T, value: T[keyof T] | undefined) => {
-      editedData[key] = value;
-    };
-
-    const viewers = this.displayDataRow(data);
-    const editors = this.editDataRow(editedData, setProperty);
-
-    const cellContents = viewers.map((viewer, index) => ({
-      title:
-  <EditableComponent
-    viewer={viewer}
-    editor={editors[index]}
-    isEditing={isEditing}
-  />,
-    })).concat([{
-      title: this.getEditButtons(data, editedData, isEditing,
-        () => {
-          this.setState(prevState => ({
-            editedRows: toggleElement(prevState.editedRows, data),
-          }));
-        }),
-    }]);
-    return {
-      cells: cellContents,
-    };
-  }
-
-  /* eslint-disable react/no-array-index-key */
-  // Use for SNAPSHOT testing
-  renderViewer(data: T): JSX.Element {
-    return <tr>{this.displayDataRow(data).map((c, index) => <td key={index}>{c}</td>)}</tr>;
-  }
-
-  // Use for SNAPSHOT testing
-  renderEditor(data: T): JSX.Element {
-    const editedData: T = { ...data };
-    const setProperty = (key: keyof T, value: any) => {
-      editedData[key] = value;
-    };
-
-    return <tr>{this.editDataRow(editedData, setProperty).map((c, index) => <td key={index}>{c}</td>)}</tr>;
-  }
-  /* eslint-enable react/no-array-index-key */
-
-
-  onSort(event: any, index: number, direction: any) {
-    this.setState({
-      editedRows: [],
+export function setSorterInUrl(props: RouteComponentProps, urlProps: { asc: string | null },
+  oldIndex: number, newIndex: number) {
+  if (oldIndex === newIndex) {
+    setPropsInUrl(props, {
+      asc: (urlProps.asc === 'true') ? 'false' : 'true',
     });
-
-    setPropsInUrl<DataTableUrlProps>(this.props, {
-      sortBy: index.toString(),
-      asc: (direction === SortByDirection.asc).toString(),
-    });
-  }
-
-  render() {
-    const { t } = this.props;
-    const setProperty = (key: keyof T, value: T[keyof T] | undefined) => {
-      this.setState(prevState => ({ newRowData: { ...prevState.newRowData, [key]: value } }));
-    };
-    const urlProps = getPropsFromUrl<DataTableUrlProps>(this.props, {
-      page: '1',
-      itemsPerPage: '10',
-      filter: null,
-      sortBy: this.getSorters().filter(x => x !== null).length > 0
-        ? `${this.getSorters().findIndex(x => x !== null)}` : null,
+  } else {
+    setPropsInUrl(props, {
+      sortBy: `${newIndex}`,
       asc: 'true',
     });
-    const [page, perPage] = [parseInt(urlProps.page as string, 10), parseInt(urlProps.itemsPerPage as string, 10)];
-    const filterText = urlProps.filter ? urlProps.filter : '';
-    const sortDirection: 'asc'|'desc' = urlProps.asc === 'true' ? 'asc' : 'desc';
-    const sortBy = urlProps.sortBy ? { index: parseInt(urlProps.sortBy, 10), direction: sortDirection } : {};
-
-    const additionalRows: List<IRow> = (this.state.newRowData !== null)
-      ? List([
-        {
-          cells: this.editDataRow(this.state.newRowData, setProperty)
-            .map(c => ({ title: c }))
-            .concat([{ title: this.getAddButtons(this.state.newRowData) }]),
-        },
-      ]) : List();
-    const sorters = this.getSorters();
-
-    const filteredRows = conditionally(Seq(this.props.tableData),
-      // eslint-disable-next-line consistent-return
-      (s) => {
-        if (urlProps.sortBy !== null) {
-          return s.sort(sorters[parseInt(urlProps.sortBy, 10)] as Sorter<T>);
-        }
-      }).then(
-      // eslint-disable-next-line consistent-return
-      (s) => {
-        if (urlProps.asc !== 'true') {
-          return s.reverse();
-        }
-      },
-    ).then(
-      // eslint-disable-next-line consistent-return
-      (s) => {
-        if (urlProps.filter !== null) {
-          return s.filter(this.getFilter()(urlProps.filter));
-        }
-      },
-    ).result;
-
-    const rowsThatMatchFilterCount = filteredRows.count();
-
-    const rows = additionalRows.concat(filteredRows
-      .skip((page - 1) * perPage)
-      .take(perPage)
-      .map(this.convertDataToTableRow));
-
-    const columns: ICell[] = this.props.columnTitles.map((title, index) => ({
-      title,
-      cellTransforms: [headerCol],
-      props: {},
-      transforms: (sorters[index] !== null) ? [sortable] : undefined,
-    })).concat([{
-      title: '', cellTransforms: [headerCol], props: {}, transforms: undefined,
-    }]) as any;
-    return (
-      <>
-        <Level
-          gutter="sm"
-          style={{
-            padding: '5px 5px 5px 5px',
-            backgroundColor: 'var(--pf-global--BackgroundColor--200)',
-          }}
-        >
-          <LevelItem>
-            <FilterComponent
-              filterText={filterText}
-              onChange={(newFilterText) => {
-                this.setState({ editedRows: [] });
-                setPropsInUrl(this.props, { page: '1', filter: newFilterText });
-              }}
-            />
-          </LevelItem>
-          <LevelItem style={{ display: 'flex' }}>
-            <Button isDisabled={this.state.newRowData !== null} onClick={this.createNewRow}>{t('add')}</Button>
-            <Pagination
-              itemCount={rowsThatMatchFilterCount}
-              perPage={perPage}
-              page={page}
-              onSetPage={this.onSetPage}
-              widgetId="pagination-options-menu-top"
-              onPerPageSelect={(e, newPerPage) => this.onPerPageSelect(e, newPerPage, urlProps)}
-            />
-          </LevelItem>
-        </Level>
-        <Table caption={this.props.title} sortBy={sortBy} onSort={this.onSort} cells={columns} rows={rows.toArray()}>
-          <TableHeader />
-          <TableBody />
-        </Table>
-      </>
-    );
   }
 }
+export interface TheTableProps<T> {
+  title: string;
+  columns: { name: string; sorter?: Sorter<T>}[];
+  sortByIndex: number;
+  rowWrapper: (item: T) => JSX.Element;
+  newRowWrapper?: (removeRow: () => void) => JSX.Element;
+  onSorterChange: (sortByColumnIndex: number) => void;
+  // Only use this if you want to override add button behavior to NOT inline edit a row
+  onAddButtonClick?: () => void;
+}
 
-export default DataTable;
+/* eslint-disable no-nested-ternary */
+// Patternfly Table in React is very inconvivent when the content is not text (ex: inline editing),
+// so we use the HTML example to build it
+export const TheTable = (props: PagenationData<any> & RouteComponentProps & TheTableProps<any>) => {
+  const [isCreatingNewRow, setIsCreatingNewRow] = useState(false);
+
+  return (
+    <>
+      <PagenationControls
+        {...props}
+        isCreatingNewRow={isCreatingNewRow}
+        onCreateNewRow={() => {
+          if (props.onAddButtonClick) {
+            props.onAddButtonClick();
+          } else {
+            setIsCreatingNewRow(true);
+          }
+        }}
+      />
+      <TableComposable>
+        <caption>{props.title}</caption>
+        <thead>
+          <tr role="row">
+            {props.columns.map((header, index) => (
+              <th
+                key={header.name}
+                role="columnheader"
+                scope="col"
+                className={(header.sorter !== undefined)
+                  ? ((props.sortByIndex === index)
+                    ? 'pf-c-table__sort pf-m-selected' : 'pf-c-table__sort'
+                  )
+                  : undefined
+                }
+                aria-sort={(header.sorter) ? (
+                  (index === props.sortByIndex)
+                    ? ((props.isReversed) ? 'descending' : 'ascending')
+                    : 'none'
+                )
+                  : undefined}
+              >
+                <Button
+                  variant="plain"
+                  onClick={() => {
+                    if (header.sorter !== undefined) {
+                      props.onSorterChange(index);
+                    }
+                  }}
+                >
+                  <div className="pf-c-table__button-content">
+                    <span className="pf-c-table__text">{header.name}</span>
+                    {(header.sorter)
+                      ? (
+                        <span className="pf-c-table__sort-indicator">
+                          {(index === props.sortByIndex)
+                            ? ((props.isReversed) ? <LongArrowAltUpIcon /> : <LongArrowAltDownIcon />)
+                            : (<ArrowsAltVIcon />)
+                          }
+                        </span>
+                      ) : undefined
+                    }
+                  </div>
+                </Button>
+              </th>
+            ))}
+            <th role="columnheader" scope="col" />
+          </tr>
+        </thead>
+        <tbody>
+          {(isCreatingNewRow && props.newRowWrapper) ? props.newRowWrapper(() => {
+            setIsCreatingNewRow(false);
+          }) : undefined}
+          {props.rowsInPage.map(item => props.rowWrapper(item)).toArray()}
+        </tbody>
+      </TableComposable>
+    </>
+  );
+};
+/* eslint-enable no-nested-ternary */

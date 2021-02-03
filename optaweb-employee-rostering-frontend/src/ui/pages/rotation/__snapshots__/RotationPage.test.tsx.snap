@@ -3,6 +3,7 @@
 exports[`Rotation Page It should render correctly 1`] = `
 <Fragment>
   <Title
+    headingLevel="h1"
     size="2xl"
   >
     Trans(i18nKey=rotation)
@@ -70,12 +71,10 @@ exports[`Rotation Page It should render correctly 1`] = `
     }
   />
   <Flex
-    breakpointMods={
-      Array [
-        Object {
-          "modifier": "column",
-        },
-      ]
+    direction={
+      Object {
+        "default": "column",
+      }
     }
   >
     <FlexItem
@@ -151,7 +150,7 @@ exports[`Rotation Page It should render correctly 1`] = `
           }
         }
       />
-      <Component
+      <Button
         aria-label="Add New Time Bucket"
         onClick={[Function]}
         variant="link"
@@ -160,11 +159,10 @@ exports[`Rotation Page It should render correctly 1`] = `
           color="currentColor"
           noVerticalAlign={false}
           size="sm"
-          title={null}
         />
          
         Trans(i18nKey=addNewTimeBucket)
-      </Component>
+      </Button>
     </FlexItem>
   </Flex>
 </Fragment>
@@ -185,7 +183,7 @@ exports[`Rotation Page It should render empty state if loading 1`] = `
           size="lg"
         />,
         <EmptyStateBody />,
-        <Unknown
+        <Button
           aria-label="Spots Page"
           onClick={[Function]}
           variant="primary"

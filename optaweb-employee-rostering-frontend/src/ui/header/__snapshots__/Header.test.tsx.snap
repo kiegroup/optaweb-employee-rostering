@@ -2,6 +2,7 @@
 
 exports[`Header component should render correctly on a desktop 1`] = `
 <PageHeader
+  headerTools={<UNDEFINED />}
   logo={
     <Brand
       alt="OptaPlanner Logo"
@@ -17,7 +18,6 @@ exports[`Header component should render correctly on a desktop 1`] = `
   }
   onNavToggle={[MockFunction]}
   showNavToggle={false}
-  toolbar={<UNDEFINED />}
   topNav={
     <UNDEFINED
       variant="horizontal"
@@ -28,6 +28,7 @@ exports[`Header component should render correctly on a desktop 1`] = `
 
 exports[`Header component should render correctly on a mobile 1`] = `
 <PageHeader
+  headerTools={<UNDEFINED />}
   logo={
     <Brand
       alt="OptaPlanner Logo"
@@ -43,7 +44,6 @@ exports[`Header component should render correctly on a mobile 1`] = `
   }
   onNavToggle={[MockFunction]}
   showNavToggle={true}
-  toolbar={<UNDEFINED />}
   topNav={false}
 />
 `;

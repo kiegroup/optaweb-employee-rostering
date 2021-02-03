@@ -19,7 +19,7 @@ import { spotSelectors } from 'store/spot';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Button, EmptyState, EmptyStateVariant,
-  EmptyStateIcon, Title, EmptyStateBody, Flex, FlexModifiers, FlexItem,
+  EmptyStateIcon, Title, EmptyStateBody, Flex, FlexItem,
 } from '@patternfly/react-core';
 
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
@@ -110,7 +110,7 @@ export const RotationPage: React.FC<{}> = () => {
   }
   return (
     <>
-      <Title size="2xl">{t('rotation')}</Title>
+      <Title headingLevel="h1" size="2xl">{t('rotation')}</Title>
       <TypeaheadSelectInput
         aria-label="Select Spot"
         emptyText={t('selectSpot')}
@@ -129,7 +129,7 @@ export const RotationPage: React.FC<{}> = () => {
         onUpdateStubList={setStubList}
       />
 
-      <Flex breakpointMods={[{ modifier: FlexModifiers.column }]}>
+      <Flex direction={{ default: 'column' }}>
         {shownTimeBuckets.map(timeBucket => (
           <FlexItem key={timeBucket.id}>
             <SeatJigsaw

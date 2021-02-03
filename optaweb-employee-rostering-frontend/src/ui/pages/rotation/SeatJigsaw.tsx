@@ -17,7 +17,7 @@
 import React from 'react';
 import {
   Title, Text, Flex, FlexItem,
-  FlexModifiers, SplitItem, Split, Button,
+  SplitItem, Split, Button,
 } from '@patternfly/react-core';
 import moment from 'moment';
 import { rosterSelectors } from 'store/roster';
@@ -66,6 +66,7 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
   return (
     <>
       <Title
+        headingLevel="h1"
         size="lg"
         style={{
           userSelect: 'none',
@@ -87,7 +88,7 @@ export const SeatJigsaw: React.FC<SeatJigsawProps> = (props) => {
       <Split>
         <SplitItem>
           <Flex
-            breakpointMods={[{ modifier: FlexModifiers['space-items-lg'] }]}
+            spaceItems={{ default: 'spaceItemsLg' }}
             onMouseLeave={() => {
               if (props.timeBucket !== editedTimeBucket) {
                 props.onUpdateTimeBucket(editedTimeBucket);

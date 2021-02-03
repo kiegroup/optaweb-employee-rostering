@@ -25,7 +25,7 @@ function createStackTrace(exceptionInfo: ServerSideExceptionInfo|null): JSX.Elem
 
   return (
     <>
-      <Title size="md">
+      <Title headingLevel="h1" size="md">
         {`${exceptionInfo.exceptionClass}: ${exceptionInfo.exceptionMessage}`}
       </Title>
       <Text

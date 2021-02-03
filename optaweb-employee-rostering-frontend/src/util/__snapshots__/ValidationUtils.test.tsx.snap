@@ -3,10 +3,6 @@
 exports[`Validation Utils show list validation errors should render correctly 1`] = `
 <InputGroupText>
   <Tooltip
-    appendTo={[Function]}
-    aria="describedby"
-    boundary="window"
-    className=""
     content={
       <List
         style={
@@ -20,36 +16,11 @@ exports[`Validation Utils show list validation errors should render correctly 1`
         </ListItem>
       </List>
     }
-    distance={15}
-    enableFlip={true}
-    entryDelay={500}
-    exitDelay={500}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    id=""
-    isAppLauncher={false}
-    isContentLeftAligned={false}
-    isVisible={false}
-    maxWidth="18.75rem"
-    position="top"
-    tippyProps={Object {}}
-    trigger="mouseenter focus"
-    zIndex={9999}
   >
     <WarningTriangleIcon
       color="currentColor"
       noVerticalAlign={false}
       size="sm"
-      title={null}
     />
   </Tooltip>
 </InputGroupText>
@@ -58,10 +29,6 @@ exports[`Validation Utils show list validation errors should render correctly 1`
 exports[`Validation Utils show list validation errors should render correctly 2`] = `
 <InputGroupText>
   <Tooltip
-    appendTo={[Function]}
-    aria="describedby"
-    boundary="window"
-    className=""
     content={
       <List
         style={
@@ -75,36 +42,11 @@ exports[`Validation Utils show list validation errors should render correctly 2`
         </ListItem>
       </List>
     }
-    distance={15}
-    enableFlip={true}
-    entryDelay={500}
-    exitDelay={500}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    id=""
-    isAppLauncher={false}
-    isContentLeftAligned={false}
-    isVisible={false}
-    maxWidth="18.75rem"
-    position="top"
-    tippyProps={Object {}}
-    trigger="mouseenter focus"
-    zIndex={9999}
   >
     <WarningTriangleIcon
       color="currentColor"
       noVerticalAlign={false}
       size="sm"
-      title={null}
     />
   </Tooltip>
 </InputGroupText>
@@ -113,10 +55,6 @@ exports[`Validation Utils show list validation errors should render correctly 2`
 exports[`Validation Utils show list validation errors should render correctly 3`] = `
 <InputGroupText>
   <Tooltip
-    appendTo={[Function]}
-    aria="describedby"
-    boundary="window"
-    className=""
     content={
       <List
         style={
@@ -133,36 +71,11 @@ exports[`Validation Utils show list validation errors should render correctly 3`
         </ListItem>
       </List>
     }
-    distance={15}
-    enableFlip={true}
-    entryDelay={500}
-    exitDelay={500}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    id=""
-    isAppLauncher={false}
-    isContentLeftAligned={false}
-    isVisible={false}
-    maxWidth="18.75rem"
-    position="top"
-    tippyProps={Object {}}
-    trigger="mouseenter focus"
-    zIndex={9999}
   >
     <WarningTriangleIcon
       color="currentColor"
       noVerticalAlign={false}
       size="sm"
-      title={null}
     />
   </Tooltip>
 </InputGroupText>
@@ -171,10 +84,6 @@ exports[`Validation Utils show list validation errors should render correctly 3`
 exports[`Validation Utils show validation errors should render correctly 1`] = `
 <InputGroupText>
   <Tooltip
-    appendTo={[Function]}
-    aria="describedby"
-    boundary="window"
-    className=""
     content={
       <List
         style={
@@ -188,36 +97,11 @@ exports[`Validation Utils show validation errors should render correctly 1`] = `
         </ListItem>
       </List>
     }
-    distance={15}
-    enableFlip={true}
-    entryDelay={500}
-    exitDelay={500}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    id=""
-    isAppLauncher={false}
-    isContentLeftAligned={false}
-    isVisible={false}
-    maxWidth="18.75rem"
-    position="top"
-    tippyProps={Object {}}
-    trigger="mouseenter focus"
-    zIndex={9999}
   >
     <WarningTriangleIcon
       color="currentColor"
       noVerticalAlign={false}
       size="sm"
-      title={null}
     />
   </Tooltip>
 </InputGroupText>
@@ -226,10 +110,6 @@ exports[`Validation Utils show validation errors should render correctly 1`] = `
 exports[`Validation Utils show validation errors should render correctly 2`] = `
 <InputGroupText>
   <Tooltip
-    appendTo={[Function]}
-    aria="describedby"
-    boundary="window"
-    className=""
     content={
       <List
         style={
@@ -243,36 +123,11 @@ exports[`Validation Utils show validation errors should render correctly 2`] = `
         </ListItem>
       </List>
     }
-    distance={15}
-    enableFlip={true}
-    entryDelay={500}
-    exitDelay={500}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    id=""
-    isAppLauncher={false}
-    isContentLeftAligned={false}
-    isVisible={false}
-    maxWidth="18.75rem"
-    position="top"
-    tippyProps={Object {}}
-    trigger="mouseenter focus"
-    zIndex={9999}
   >
     <WarningTriangleIcon
       color="currentColor"
       noVerticalAlign={false}
       size="sm"
-      title={null}
     />
   </Tooltip>
 </InputGroupText>
@@ -281,10 +136,6 @@ exports[`Validation Utils show validation errors should render correctly 2`] = `
 exports[`Validation Utils show validation errors should render correctly 3`] = `
 <InputGroupText>
   <Tooltip
-    appendTo={[Function]}
-    aria="describedby"
-    boundary="window"
-    className=""
     content={
       <List
         style={
@@ -301,36 +152,11 @@ exports[`Validation Utils show validation errors should render correctly 3`] = `
         </ListItem>
       </List>
     }
-    distance={15}
-    enableFlip={true}
-    entryDelay={500}
-    exitDelay={500}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    id=""
-    isAppLauncher={false}
-    isContentLeftAligned={false}
-    isVisible={false}
-    maxWidth="18.75rem"
-    position="top"
-    tippyProps={Object {}}
-    trigger="mouseenter focus"
-    zIndex={9999}
   >
     <WarningTriangleIcon
       color="currentColor"
       noVerticalAlign={false}
       size="sm"
-      title={null}
     />
   </Tooltip>
 </InputGroupText>

@@ -32,7 +32,7 @@ const Header: React.FC<{ onNavToggle: () => void} > = ({ onNavToggle }) => {
         target: '_blank',
         rel: 'noopener noreferrer',
       }}
-      toolbar={<Toolbar />}
+      headerTools={<Toolbar />}
       topNav={laptopOrBigger && <Navigation variant="horizontal" />}
       showNavToggle={!laptopOrBigger}
       onNavToggle={onNavToggle}

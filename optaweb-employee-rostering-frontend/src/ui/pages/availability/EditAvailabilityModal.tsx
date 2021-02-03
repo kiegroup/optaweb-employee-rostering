@@ -123,7 +123,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
             <Button aria-label="Save" key={2} onClick={this.onSave}>{t('save')}</Button>,
           ])
         }
-        isSmall
+        variant="small"
       >
         <Form id="modal-element" key={this.state.resetCount} onSubmit={e => e.preventDefault()}>
           <InputGroup>

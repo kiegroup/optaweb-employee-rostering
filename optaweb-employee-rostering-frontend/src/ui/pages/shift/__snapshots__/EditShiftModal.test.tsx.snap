@@ -4,33 +4,36 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
 <Modal
   actions={
     Array [
-      <Unknown
+      <Button
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Unknown>,
-      <Unknown
+      </Button>,
+      <Button
         aria-label="Save"
         isDisabled={true}
         onClick={[Function]}
       >
         Trans(i18nKey=save)
-      </Unknown>,
+      </Button>,
     ]
   }
-  appendTo={<body />}
-  ariaDescribedById=""
+  appendTo={[Function]}
+  aria-describedby=""
+  aria-label=""
+  aria-labelledby=""
   className=""
-  hideTitle={false}
-  isFooterLeftAligned={false}
-  isLarge={false}
+  hasNoBodyWrapper={false}
   isOpen={false}
-  isSmall={true}
   onClose={[MockFunction]}
+  ouiaSafe={true}
   showClose={true}
   title="Trans(i18nKey=createShift)"
+  titleIconVariant={null}
+  titleLabel=""
+  variant="small"
 >
   <Form
     id="modal-element"
@@ -87,10 +90,6 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
         key="0"
       >
         <Tooltip
-          appendTo={[Function]}
-          aria="describedby"
-          boundary="window"
-          className=""
           content={
             <List
               style={
@@ -104,36 +103,11 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
               </ListItem>
             </List>
           }
-          distance={15}
-          enableFlip={true}
-          entryDelay={500}
-          exitDelay={500}
-          flipBehavior={
-            Array [
-              "top",
-              "right",
-              "bottom",
-              "left",
-              "top",
-              "right",
-              "bottom",
-            ]
-          }
-          id=""
-          isAppLauncher={false}
-          isContentLeftAligned={false}
-          isVisible={false}
-          maxWidth="18.75rem"
-          position="top"
-          tippyProps={Object {}}
-          trigger="mouseenter focus"
-          zIndex={9999}
         >
           <WarningTriangleIcon
             color="currentColor"
             noVerticalAlign={false}
             size="sm"
-            title={null}
           />
         </Tooltip>
       </InputGroupText>
@@ -188,10 +162,6 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
         key="0"
       >
         <Tooltip
-          appendTo={[Function]}
-          aria="describedby"
-          boundary="window"
-          className=""
           content={
             <List
               style={
@@ -205,36 +175,11 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
               </ListItem>
             </List>
           }
-          distance={15}
-          enableFlip={true}
-          entryDelay={500}
-          exitDelay={500}
-          flipBehavior={
-            Array [
-              "top",
-              "right",
-              "bottom",
-              "left",
-              "top",
-              "right",
-              "bottom",
-            ]
-          }
-          id=""
-          isAppLauncher={false}
-          isContentLeftAligned={false}
-          isVisible={false}
-          maxWidth="18.75rem"
-          position="top"
-          tippyProps={Object {}}
-          trigger="mouseenter focus"
-          zIndex={9999}
         >
           <WarningTriangleIcon
             color="currentColor"
             noVerticalAlign={false}
             size="sm"
-            title={null}
           />
         </Tooltip>
       </InputGroupText>
@@ -384,10 +329,11 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
       <Label>
         Trans(i18nKey=isPinned)
       </Label>
-      <Component
+      <Switch
         aria-label="Is Pinned"
         id="isPinned"
         isChecked={false}
+        isDisabled={false}
         onChange={[Function]}
       />
     </InputGroup>
@@ -399,33 +345,36 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
 <Modal
   actions={
     Array [
-      <Unknown
+      <Button
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Unknown>,
-      <Unknown
+      </Button>,
+      <Button
         aria-label="Save"
         isDisabled={true}
         onClick={[Function]}
       >
         Trans(i18nKey=save)
-      </Unknown>,
+      </Button>,
     ]
   }
-  appendTo={<body />}
-  ariaDescribedById=""
+  appendTo={[Function]}
+  aria-describedby=""
+  aria-label=""
+  aria-labelledby=""
   className=""
-  hideTitle={false}
-  isFooterLeftAligned={false}
-  isLarge={false}
+  hasNoBodyWrapper={false}
   isOpen={true}
-  isSmall={true}
   onClose={[MockFunction]}
+  ouiaSafe={true}
   showClose={true}
   title="Trans(i18nKey=createShift)"
+  titleIconVariant={null}
+  titleLabel=""
+  variant="small"
 >
   <Form
     id="modal-element"
@@ -482,10 +431,6 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
         key="0"
       >
         <Tooltip
-          appendTo={[Function]}
-          aria="describedby"
-          boundary="window"
-          className=""
           content={
             <List
               style={
@@ -499,36 +444,11 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
               </ListItem>
             </List>
           }
-          distance={15}
-          enableFlip={true}
-          entryDelay={500}
-          exitDelay={500}
-          flipBehavior={
-            Array [
-              "top",
-              "right",
-              "bottom",
-              "left",
-              "top",
-              "right",
-              "bottom",
-            ]
-          }
-          id=""
-          isAppLauncher={false}
-          isContentLeftAligned={false}
-          isVisible={false}
-          maxWidth="18.75rem"
-          position="top"
-          tippyProps={Object {}}
-          trigger="mouseenter focus"
-          zIndex={9999}
         >
           <WarningTriangleIcon
             color="currentColor"
             noVerticalAlign={false}
             size="sm"
-            title={null}
           />
         </Tooltip>
       </InputGroupText>
@@ -583,10 +503,6 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
         key="0"
       >
         <Tooltip
-          appendTo={[Function]}
-          aria="describedby"
-          boundary="window"
-          className=""
           content={
             <List
               style={
@@ -600,36 +516,11 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
               </ListItem>
             </List>
           }
-          distance={15}
-          enableFlip={true}
-          entryDelay={500}
-          exitDelay={500}
-          flipBehavior={
-            Array [
-              "top",
-              "right",
-              "bottom",
-              "left",
-              "top",
-              "right",
-              "bottom",
-            ]
-          }
-          id=""
-          isAppLauncher={false}
-          isContentLeftAligned={false}
-          isVisible={false}
-          maxWidth="18.75rem"
-          position="top"
-          tippyProps={Object {}}
-          trigger="mouseenter focus"
-          zIndex={9999}
         >
           <WarningTriangleIcon
             color="currentColor"
             noVerticalAlign={false}
             size="sm"
-            title={null}
           />
         </Tooltip>
       </InputGroupText>
@@ -779,10 +670,11 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
       <Label>
         Trans(i18nKey=isPinned)
       </Label>
-      <Component
+      <Switch
         aria-label="Is Pinned"
         id="isPinned"
         isChecked={false}
+        isDisabled={false}
         onChange={[Function]}
       />
     </InputGroup>
@@ -794,40 +686,43 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
 <Modal
   actions={
     Array [
-      <Unknown
+      <Button
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Unknown>,
-      <Unknown
+      </Button>,
+      <Button
         aria-label="Delete"
         onClick={[Function]}
         variant="danger"
       >
         Trans(i18nKey=delete)
-      </Unknown>,
-      <Unknown
+      </Button>,
+      <Button
         aria-label="Save"
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=save)
-      </Unknown>,
+      </Button>,
     ]
   }
-  appendTo={<body />}
-  ariaDescribedById=""
+  appendTo={[Function]}
+  aria-describedby=""
+  aria-label=""
+  aria-labelledby=""
   className=""
-  hideTitle={false}
-  isFooterLeftAligned={false}
-  isLarge={false}
+  hasNoBodyWrapper={false}
   isOpen={true}
-  isSmall={true}
   onClose={[MockFunction]}
+  ouiaSafe={true}
   showClose={true}
   title="Trans(i18nKey=editShift)"
+  titleIconVariant={null}
+  titleLabel=""
+  variant="small"
 >
   <Form
     id="modal-element"
@@ -1147,10 +1042,11 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
       <Label>
         Trans(i18nKey=isPinned)
       </Label>
-      <Component
+      <Switch
         aria-label="Is Pinned"
         id="isPinned"
         isChecked={false}
+        isDisabled={false}
         onChange={[Function]}
       />
     </InputGroup>

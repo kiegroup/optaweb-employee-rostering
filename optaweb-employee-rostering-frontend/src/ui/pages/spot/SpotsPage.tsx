@@ -13,141 +13,186 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import * as React from 'react';
-import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
-import { StatefulMultiTypeaheadSelectInput } from 'ui/components/MultiTypeaheadSelectInput';
+import React, { useState } from 'react';
+import {
+  TableRow, TableCell, RowViewButtons, RowEditButtons,
+  DataTableUrlProps, setSorterInUrl, TheTable,
+} from 'ui/components/DataTable';
+import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import { spotSelectors, spotOperations } from 'store/spot';
 import { skillSelectors } from 'store/skill';
 import { Spot } from 'domain/Spot';
-import { AppState } from 'store/types';
-import { TextInput, Text, Chip, ChipGroup, Button, ButtonVariant } from '@patternfly/react-core';
-import { connect } from 'react-redux';
-import { Skill } from 'domain/Skill';
-import { Predicate, ReadonlyPartial, Sorter } from 'types';
+import { TextInput, Text, Chip, ChipGroup, Button, ButtonVariant, FlexItem, Flex } from '@patternfly/react-core';
+import { useDispatch, useSelector } from 'react-redux';
+import { Sorter } from 'types';
 import { stringSorter } from 'util/CommonSorters';
-import { stringFilter } from 'util/CommonFilters';
-import { withTranslation, WithTranslation } from 'react-i18next';
-import { withRouter } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import * as router from 'react-router';
 import { ArrowIcon } from '@patternfly/react-icons';
+import { tenantSelectors } from 'store/tenant';
+import { useValidators } from 'util/ValidationUtils';
+import { getPropsFromUrl } from 'util/BookmarkableUtils';
+import { usePagableData } from 'util/FunctionalComponentUtils';
 
-interface StateProps extends DataTableProps<Spot> {
-  tenantId: number;
-  skillList: Skill[];
-}
+export type Props = router.RouteComponentProps;
 
-const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
-  ...ownProps,
-  title: ownProps.t('spots'),
-  columnTitles: [ownProps.t('name'), ownProps.t('requiredSkillSet')],
-  tableData: spotSelectors.getSpotList(state),
-  skillList: skillSelectors.getSkillList(state),
-  tenantId: state.tenantData.currentTenantId,
-});
+export const SpotRow = (spot: Spot) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const dispatch = useDispatch();
+  const tenantId = useSelector(tenantSelectors.getTenantId);
+  const history = router.useHistory();
 
-export interface DispatchProps {
-  addSpot: typeof spotOperations.addSpot;
-  updateSpot: typeof spotOperations.updateSpot;
-  removeSpot: typeof spotOperations.removeSpot;
-}
+  if (isEditing) {
+    return (<EditableSpotRow spot={spot} isNew={false} onClose={() => setIsEditing(false)} />);
+  }
 
-const mapDispatchToProps: DispatchProps = {
-  addSpot: spotOperations.addSpot,
-  updateSpot: spotOperations.updateSpot,
-  removeSpot: spotOperations.removeSpot,
+  return (
+    <TableRow>
+      <TableCell>
+        <Flex>
+          <FlexItem>
+            <Text>{spot.name}</Text>
+          </FlexItem>
+          <FlexItem>
+            <Button
+              variant={ButtonVariant.link}
+              onClick={() => {
+                history.push(`/${tenantId}/adjust?spot=${encodeURIComponent(spot.name)}`);
+              }}
+            >
+              <ArrowIcon />
+            </Button>
+          </FlexItem>
+        </Flex>
+      </TableCell>
+      <TableCell>
+        <ChipGroup>
+          {spot.requiredSkillSet.map(skill => (
+            <Chip key={skill.name} isReadOnly>
+              {skill.name}
+            </Chip>
+          ))}
+        </ChipGroup>
+      </TableCell>
+      <RowViewButtons
+        onEdit={() => setIsEditing(true)}
+        onDelete={() => dispatch(spotOperations.removeSpot(spot))}
+      />
+    </TableRow>
+  );
 };
 
-export type Props = StateProps & DispatchProps & WithTranslation;
+export const EditableSpotRow = (props: { spot: Spot; isNew: boolean; onClose: () => void }) => {
+  const [name, setName] = useState(props.spot.name);
+  const [requiredSkillSet, setRequiredSkillSet] = useState(props.spot.requiredSkillSet);
+  const spotList = useSelector(spotSelectors.getSpotList);
+  const skillList = useSelector(skillSelectors.getSkillList);
+  const dispatch = useDispatch();
+  const { t } = useTranslation('SpotsPage');
 
+  const validators = {
+    nameMustNotBeEmpty: {
+      predicate: (spot: Spot) => spot.name.length > 0,
+      errorMsg: () => 'Spot cannot have an empty name',
+    },
+    nameAlreadyTaken: {
+      predicate: (spot: Spot) => spotList.filter(otherSpot => otherSpot.name === spot.name
+        && otherSpot.id !== spot.id).length === 0,
+      errorMsg: (spot: Spot) => `Name (${spot.name}) is already taken by another spot`,
+    },
+  };
 
-// TODO: Refactor DataTable to use props instead of methods
-/* eslint-disable class-methods-use-this */
-export class SpotsPage extends DataTable<Spot, Props> {
-  constructor(props: Props) {
-    super(props);
-    this.addData = this.addData.bind(this);
-    this.updateData = this.updateData.bind(this);
-    this.removeData = this.removeData.bind(this);
-  }
+  const validationErrors = useValidators({
+    ...props.spot,
+    name,
+    requiredSkillSet,
+  }, validators);
 
-  displayDataRow(data: Spot): JSX.Element[] {
-    return [
-      <span style={{ display: 'grid', gridTemplateColumns: 'max-content min-content' }}>
-        <Text key={0}>{data.name}</Text>
-        <Button
-          variant={ButtonVariant.link}
-          onClick={() => {
-            this.props.history.push(`/${this.props.tenantId}/adjust?spot=${encodeURIComponent(data.name)}`);
+  return (
+    <TableRow>
+      <TableCell>
+        <TextInput value={name} onChange={setName} />
+        {validationErrors.showValidationErrors('nameMustNotBeEmpty', 'nameAlreadyTaken')}
+      </TableCell>
+      <TableCell>
+        <MultiTypeaheadSelectInput
+          value={requiredSkillSet}
+          options={skillList}
+          optionToStringMap={skill => skill.name}
+          onChange={setRequiredSkillSet}
+          emptyText={t('selectRequiredSkills')}
+        />
+      </TableCell>
+      <RowEditButtons
+        isValid={validationErrors.isValid}
+        onSave={() => {
+          if (props.isNew) {
+            dispatch(spotOperations.addSpot({
+              ...props.spot,
+              name,
+              requiredSkillSet,
+            }));
+          } else {
+            dispatch(spotOperations.updateSpot({
+              ...props.spot,
+              name,
+              requiredSkillSet,
+            }));
+          }
+        }}
+        onClose={() => props.onClose()}
+      />
+    </TableRow>
+  );
+};
+
+export const SpotsPage: React.FC<Props> = (props) => {
+  const spotList = useSelector(spotSelectors.getSpotList);
+  const tenantId = useSelector(tenantSelectors.getTenantId);
+
+  const { t } = useTranslation('SpotsPage');
+
+  const columns = [
+    { name: t('name'), sorter: stringSorter<Spot>(spot => spot.name) },
+    { name: t('requiredSkillSet') },
+  ];
+
+  const urlProps = getPropsFromUrl<DataTableUrlProps>(props, {
+    page: '1',
+    itemsPerPage: '10',
+    filter: null,
+    sortBy: '0',
+    asc: 'true',
+  });
+
+  const sortBy = parseInt(urlProps.sortBy || '-1', 10);
+  const sorter = columns[sortBy].sorter as Sorter<Spot>;
+
+  const pagableData = usePagableData(urlProps, spotList, spot => [spot.name,
+    ...spot.requiredSkillSet.map(skill => skill.name)], sorter);
+
+  return (
+    <TheTable
+      {...props}
+      {...pagableData}
+      title={t('spots')}
+      columns={columns}
+      rowWrapper={spot => (<SpotRow key={spot.id} {...spot} />)}
+      sortByIndex={sortBy}
+      onSorterChange={index => setSorterInUrl(props, urlProps, sortBy, index)}
+      newRowWrapper={removeRow => (
+        <EditableSpotRow
+          isNew
+          onClose={removeRow}
+          spot={{
+            tenantId,
+            name: '',
+            requiredSkillSet: [],
           }}
-        >
-          <ArrowIcon />
-        </Button>
-      </span>,
-      <ChipGroup key={1}>
-        {data.requiredSkillSet.map(skill => (
-          <Chip key={skill.name} isReadOnly>
-            {skill.name}
-          </Chip>
-        ))}
-      </ChipGroup>,
-    ];
-  }
+        />
+      )}
+    />
+  );
+};
 
-  getInitialStateForNewRow(): Partial<Spot> {
-    return {
-      requiredSkillSet: [],
-    };
-  }
-
-  editDataRow(data: ReadonlyPartial<Spot>, setProperty: PropertySetter<Spot>): JSX.Element[] {
-    return [
-      <TextInput
-        key={0}
-        name="name"
-        defaultValue={data.name}
-        aria-label="Name"
-        onChange={value => setProperty('name', value)}
-      />,
-      <StatefulMultiTypeaheadSelectInput
-        key={1}
-        emptyText={this.props.t('selectRequiredSkills')}
-        options={this.props.skillList}
-        optionToStringMap={skill => skill.name}
-        value={data.requiredSkillSet ? data.requiredSkillSet : []}
-        onChange={selected => setProperty('requiredSkillSet', selected)}
-      />,
-    ];
-  }
-
-  isDataComplete(editedValue: ReadonlyPartial<Spot>): editedValue is Spot {
-    return editedValue.name !== undefined
-      && editedValue.requiredSkillSet !== undefined;
-  }
-
-  isValid(editedValue: Spot): boolean {
-    return editedValue.name.trim().length > 0;
-  }
-
-  getFilter(): (filter: string) => Predicate<Spot> {
-    return stringFilter(spot => spot.name,
-      spot => spot.requiredSkillSet.map(skill => skill.name));
-  }
-
-  getSorters(): (Sorter<Spot> | null)[] {
-    return [stringSorter(s => s.name), null, null];
-  }
-
-  updateData(data: Spot): void {
-    this.props.updateSpot({ ...data });
-  }
-
-  addData(data: Spot): void {
-    this.props.addSpot({ ...data, tenantId: this.props.tenantId });
-  }
-
-  removeData(data: Spot): void {
-    this.props.removeSpot(data);
-  }
-}
-
-export default withTranslation('SpotsPage')(connect(mapStateToProps, mapDispatchToProps)(withRouter(SpotsPage)));
+export default router.withRouter(SpotsPage);

@@ -108,7 +108,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
         ),
         ]
       }
-      isSmall
+      variant="small"
     >
       <Form onSubmit={e => e.preventDefault()}>
         <InputGroup>

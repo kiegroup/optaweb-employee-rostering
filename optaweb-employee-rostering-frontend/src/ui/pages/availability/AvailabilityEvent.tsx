@@ -74,7 +74,7 @@ const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: Availability
           </Button>
         </SplitItem>
       </Split>
-      <Level gutter="sm">
+      <Level hasGutter>
         <LevelItem>
           <Button
             aria-label="Desired"

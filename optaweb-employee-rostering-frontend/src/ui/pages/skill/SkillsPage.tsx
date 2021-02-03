@@ -14,104 +14,139 @@
  * limitations under the License.
  */
 
-import * as React from 'react';
-import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
+import React, { useState } from 'react';
 import { skillSelectors, skillOperations } from 'store/skill';
 import { Skill } from 'domain/Skill';
-import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';
-import { connect } from 'react-redux';
-import { Predicate, Sorter, ReadonlyPartial } from 'types';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { usePagableData } from 'util/FunctionalComponentUtils';
+import {
+  DataTableUrlProps, RowEditButtons, RowViewButtons,
+  setSorterInUrl, TableCell, TableRow, TheTable,
+} from 'ui/components/DataTable';
+import { tenantSelectors } from 'store/tenant';
 import { stringSorter } from 'util/CommonSorters';
-import { stringFilter } from 'util/CommonFilters';
-import { withTranslation, WithTranslation } from 'react-i18next';
-import { withRouter } from 'react-router';
+import { getPropsFromUrl } from 'util/BookmarkableUtils';
+import { useValidators } from 'util/ValidationUtils';
 
-interface StateProps extends DataTableProps<Skill> {
-  tenantId: number;
-}
+export type Props = RouteComponentProps;
 
-const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
-  ...ownProps,
-  title: ownProps.t('skills'),
-  columnTitles: [ownProps.t('name')],
-  tableData: skillSelectors.getSkillList(state),
-  tenantId: state.tenantData.currentTenantId,
-});
 
-export interface DispatchProps {
-  addSkill: typeof skillOperations.addSkill;
-  updateSkill: typeof skillOperations.updateSkill;
-  removeSkill: typeof skillOperations.removeSkill;
-}
+export const SkillRow = (skill: Skill) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const dispatch = useDispatch();
 
-const mapDispatchToProps: DispatchProps = {
-  addSkill: skillOperations.addSkill,
-  updateSkill: skillOperations.updateSkill,
-  removeSkill: skillOperations.removeSkill,
+  if (isEditing) {
+    return (<EditableSkillRow skill={skill} isNew={false} onClose={() => setIsEditing(false)} />);
+  }
+
+  return (
+    <TableRow>
+      <TableCell>
+        <Text>{skill.name}</Text>
+      </TableCell>
+      <RowViewButtons
+        onEdit={() => setIsEditing(true)}
+        onDelete={() => dispatch(skillOperations.removeSkill(skill))}
+      />
+    </TableRow>
+  );
 };
 
-export type Props = StateProps & DispatchProps & WithTranslation;
+export const EditableSkillRow = (props: { skill: Skill; isNew: boolean; onClose: () => void }) => {
+  const [name, setName] = useState(props.skill.name);
+  const skillList = useSelector(skillSelectors.getSkillList);
+  const dispatch = useDispatch();
+  const validators = {
+    nameMustNotBeEmpty: {
+      predicate: (skill: Skill) => skill.name.length > 0,
+      errorMsg: () => 'Skill cannot have an empty name',
+    },
+    nameAlreadyTaken: {
+      predicate: (skill: Skill) => skillList.filter(otherSkill => otherSkill.name === skill.name
+        && otherSkill.id !== skill.id).length === 0,
+      errorMsg: (skill: Skill) => `Name (${skill.name}) is already taken by another skill`,
+    },
+  };
 
+  const validationErrors = useValidators({
+    ...props.skill,
+    name,
+  }, validators);
 
-// TODO: Refactor DataTable to use props instead of methods
-/* eslint-disable class-methods-use-this */
-export class SkillsPage extends DataTable<Skill, Props> {
-  constructor(props: Props) {
-    super(props);
-    this.addData = this.addData.bind(this);
-    this.updateData = this.updateData.bind(this);
-    this.removeData = this.removeData.bind(this);
-  }
+  return (
+    <TableRow>
+      <TableCell>
+        <TextInput value={name} onChange={setName} />
+        {validationErrors.showValidationErrors('nameMustNotBeEmpty', 'nameAlreadyTaken')}
+      </TableCell>
+      <RowEditButtons
+        isValid={validationErrors.isValid}
+        onSave={() => {
+          if (props.isNew) {
+            dispatch(skillOperations.addSkill({
+              ...props.skill,
+              name,
+            }));
+          } else {
+            dispatch(skillOperations.updateSkill({
+              ...props.skill,
+              name,
+            }));
+          }
+        }}
+        onClose={() => props.onClose()}
+      />
+    </TableRow>
+  );
+};
 
-  displayDataRow(data: Skill): JSX.Element[] {
-    return [<Text key={0}>{data.name}</Text>];
-  }
+export const SkillsPage: React.FC<Props> = (props) => {
+  const skillList = useSelector(skillSelectors.getSkillList);
+  const tenantId = useSelector(tenantSelectors.getTenantId);
 
-  getInitialStateForNewRow(): Partial<Skill> {
-    return {};
-  }
+  const { t } = useTranslation('SkillsPage');
 
-  editDataRow(data: ReadonlyPartial<Skill>, setProperty: PropertySetter<Skill>): JSX.Element[] {
-    return [
-      <TextInput
-        key="0"
-        name="name"
-        aria-label="Name"
-        defaultValue={data.name}
-        onChange={value => setProperty('name', value)}
-      />,
-    ];
-  }
+  const columns = [
+    { name: t('name'), sorter: stringSorter<Skill>(skill => skill.name) },
+  ];
 
-  isDataComplete(data: ReadonlyPartial<Skill>): data is Skill {
-    return data.name !== undefined;
-  }
+  const urlProps = getPropsFromUrl<DataTableUrlProps>(props, {
+    page: '1',
+    itemsPerPage: '10',
+    filter: null,
+    sortBy: '0',
+    asc: 'true',
+  });
 
-  isValid(editedValue: Skill): boolean {
-    return editedValue.name.trim().length > 0;
-  }
+  const sortBy = parseInt(urlProps.sortBy || '-1', 10);
+  const { sorter } = columns[sortBy];
 
-  getFilter(): (filter: string) => Predicate<Skill> {
-    return stringFilter(skill => skill.name);
-  }
+  const pagableData = usePagableData(urlProps, skillList, skill => [skill.name], sorter);
 
-  getSorters(): (Sorter<Skill> | null)[] {
-    return [stringSorter(s => s.name)];
-  }
+  return (
+    <TheTable
+      {...props}
+      {...pagableData}
+      title={t('skills')}
+      columns={columns}
+      rowWrapper={skill => (<SkillRow key={skill.id} {...skill} />)}
+      sortByIndex={sortBy}
+      onSorterChange={index => setSorterInUrl(props, urlProps, sortBy, index)}
+      newRowWrapper={removeRow => (
+        <EditableSkillRow
+          isNew
+          onClose={removeRow}
+          skill={{
+            tenantId,
+            name: '',
+          }}
+        />
+      )}
+    />
+  );
+};
 
-  updateData(data: Skill): void {
-    this.props.updateSkill(data);
-  }
-
-  addData(data: Skill): void {
-    this.props.addSkill({ ...data, tenantId: this.props.tenantId });
-  }
-
-  removeData(data: Skill): void {
-    this.props.removeSkill(data);
-  }
-}
-
-// Skills Page have no unique translations
-export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(withRouter(SkillsPage)));
+export default withRouter(SkillsPage);

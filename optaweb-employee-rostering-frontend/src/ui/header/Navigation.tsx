@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Nav, NavItem, NavList, NavListProps } from '@patternfly/react-core';
+import { Nav, NavItem, NavList, NavProps } from '@patternfly/react-core';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
@@ -26,19 +26,18 @@ interface StateProps {
   tenantId: number;
 }
 
-const mapStateToProps = (state: AppState, ownProps: Pick<NavListProps, 'variant'>):
-StateProps & Pick<NavListProps, 'variant'> => ({
+const mapStateToProps = (state: AppState):
+StateProps => ({
   tenantId: state.tenantData.currentTenantId,
-  variant: ownProps.variant,
 });
 
-export type NavigationProps = RouteComponentProps & StateProps & Pick<NavListProps, 'variant'>;
+export type NavigationProps = RouteComponentProps & StateProps & Pick<NavProps, 'variant'>;
 
-export const Navigation = ({ variant, tenantId, location }: NavigationProps) => {
+export const Navigation = ({ tenantId, location, variant }: NavigationProps) => {
   const { t } = useTranslation('Navigation');
   return (
-    <Nav aria-label="Nav">
-      <NavList variant={variant}>
+    <Nav aria-label="Nav" variant={variant}>
+      <NavList>
         {['skills', 'spots', 'contracts', 'employees', 'availability', 'rotation', 'shift', 'adjust'].map((link) => {
           const itemId = link;
           const path = `/${tenantId}/${itemId}`;

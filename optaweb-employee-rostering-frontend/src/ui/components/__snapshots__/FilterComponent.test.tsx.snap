@@ -4,7 +4,7 @@ exports[`Filter component should render correctly with no text 1`] = `
 <div
   className="search-icons"
 >
-  <ForwardRef
+  <TextInput
     aria-label="Search"
     onChange={[MockFunction]}
     placeholder="Trans(i18nKey=search)"
@@ -17,13 +17,13 @@ exports[`Filter component should render correctly with text 1`] = `
 <div
   className="search-icons"
 >
-  <ForwardRef
+  <TextInput
     aria-label="Search"
     onChange={[MockFunction]}
     placeholder="Trans(i18nKey=search)"
     value="Test"
   />
-  <Component
+  <Button
     onClick={[Function]}
     variant="plain"
   >
@@ -45,6 +45,6 @@ exports[`Filter component should render correctly with text 1`] = `
         transform=""
       />
     </svg>
-  </Component>
+  </Button>
 </div>
 `;

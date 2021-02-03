@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Employees page should render correctly with a few employees 1`] = `
-<div>
+<Fragment>
   <div>
     <FileUpload
       dropzoneProps={
@@ -14,620 +14,157 @@ exports[`Employees page should render correctly with a few employees 1`] = `
       onChange={[Function]}
     />
   </div>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Employees"
-    cells={
+  <TheTable
+    columns={
       Array [
         Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Name",
-          "transforms": Array [
-            [Function],
-          ],
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
         },
         Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Contract",
-          "transforms": Array [
-            [Function],
-          ],
+          "name": "Trans(i18nKey=contract)",
+          "sorter": [Function],
         },
         Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Skill Set",
-          "transforms": undefined,
+          "name": "Trans(i18nKey=skillProficiencies)",
         },
         Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
+          "name": "Trans(i18nKey=shortId)",
+          "sorter": [Function],
+        },
+        Object {
+          "name": "Trans(i18nKey=color)",
         },
       ]
     }
-    onSort={[Function]}
-    rows={
-      Array [
+    filterText=""
+    filteredRows={
+      Immutable.List [
         Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <ForwardRef
-                    aria-label="Name"
-                    defaultValue="Employee 1"
-                    name="name"
-                    onChange={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridTemplateColumns": "max-content min-content",
-                      }
-                    }
-                  >
-                    <Text>
-                      Employee 1
-                    </Text>
-                    <Unknown
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <ArrowIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <StatefulTypeaheadSelectInput
-                    emptyText="Trans(i18nKey=selectAContract)"
-                    onChange={[Function]}
-                    optionToStringMap={[Function]}
-                    options={
-                      Array [
-                        Object {
-                          "id": 0,
-                          "maximumMinutesPerDay": null,
-                          "maximumMinutesPerMonth": null,
-                          "maximumMinutesPerWeek": null,
-                          "maximumMinutesPerYear": null,
-                          "name": "Contract 1",
-                          "tenantId": 0,
-                          "version": 0,
-                        },
-                        Object {
-                          "id": 1,
-                          "maximumMinutesPerDay": null,
-                          "maximumMinutesPerMonth": null,
-                          "maximumMinutesPerWeek": null,
-                          "maximumMinutesPerYear": null,
-                          "name": "Contract 2",
-                          "tenantId": 0,
-                          "version": 0,
-                        },
-                      ]
-                    }
-                    value={
-                      Object {
-                        "id": 0,
-                        "maximumMinutesPerDay": null,
-                        "maximumMinutesPerMonth": null,
-                        "maximumMinutesPerWeek": null,
-                        "maximumMinutesPerYear": null,
-                        "name": "Contract 1",
-                        "tenantId": 0,
-                        "version": 0,
-                      }
-                    }
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    Contract 1
-                  </Text>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <StatefulMultiTypeaheadSelectInput
-                    emptyText="Trans(i18nKey=selectSkillProficiencies)"
-                    onChange={[Function]}
-                    optionToStringMap={[Function]}
-                    options={
-                      Array [
-                        Object {
-                          "name": "Skill 1",
-                          "tenantId": 0,
-                        },
-                        Object {
-                          "name": "Skill 2",
-                          "tenantId": 0,
-                        },
-                      ]
-                    }
-                    value={Array []}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <ChipGroup
-                    className=""
-                    collapsedText="\${remaining} more"
-                    defaultIsOpen={false}
-                    expandedText="Show Less"
-                    numChips={3}
-                    withToolbar={false}
-                  />
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <ForwardRef
-                    aria-label="shortId"
-                    defaultValue="e1"
-                    name="shortId"
-                    onChange={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    e1
-                  </Text>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <StatefulColorPicker
-                    currentColor="#FFFFFF"
-                    onChangeColor={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <ColorPicker
-                    currentColor="#FFFFFF"
-                    isDisabled={true}
-                    onChangeColor={[Function]}
-                  />
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
+          "color": "#FF0000",
+          "contract": Object {
+            "id": 0,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract",
+            "tenantId": 0,
+          },
+          "id": 1,
+          "name": "Employee 1",
+          "shortId": "E1",
+          "skillProficiencySet": Array [],
+          "tenantId": 0,
         },
         Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <ForwardRef
-                    aria-label="Name"
-                    defaultValue="Employee 2"
-                    name="name"
-                    onChange={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridTemplateColumns": "max-content min-content",
-                      }
-                    }
-                  >
-                    <Text>
-                      Employee 2
-                    </Text>
-                    <Unknown
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <ArrowIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <StatefulTypeaheadSelectInput
-                    emptyText="Trans(i18nKey=selectAContract)"
-                    onChange={[Function]}
-                    optionToStringMap={[Function]}
-                    options={
-                      Array [
-                        Object {
-                          "id": 0,
-                          "maximumMinutesPerDay": null,
-                          "maximumMinutesPerMonth": null,
-                          "maximumMinutesPerWeek": null,
-                          "maximumMinutesPerYear": null,
-                          "name": "Contract 1",
-                          "tenantId": 0,
-                          "version": 0,
-                        },
-                        Object {
-                          "id": 1,
-                          "maximumMinutesPerDay": null,
-                          "maximumMinutesPerMonth": null,
-                          "maximumMinutesPerWeek": null,
-                          "maximumMinutesPerYear": null,
-                          "name": "Contract 2",
-                          "tenantId": 0,
-                          "version": 0,
-                        },
-                      ]
-                    }
-                    value={
-                      Object {
-                        "id": 1,
-                        "maximumMinutesPerDay": null,
-                        "maximumMinutesPerMonth": null,
-                        "maximumMinutesPerWeek": null,
-                        "maximumMinutesPerYear": null,
-                        "name": "Contract 2",
-                        "tenantId": 0,
-                        "version": 0,
-                      }
-                    }
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    Contract 2
-                  </Text>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <StatefulMultiTypeaheadSelectInput
-                    emptyText="Trans(i18nKey=selectSkillProficiencies)"
-                    onChange={[Function]}
-                    optionToStringMap={[Function]}
-                    options={
-                      Array [
-                        Object {
-                          "name": "Skill 1",
-                          "tenantId": 0,
-                        },
-                        Object {
-                          "name": "Skill 2",
-                          "tenantId": 0,
-                        },
-                      ]
-                    }
-                    value={
-                      Array [
-                        Object {
-                          "name": "Skill 1",
-                          "tenantId": 0,
-                        },
-                        Object {
-                          "name": "Skill 2",
-                          "tenantId": 0,
-                        },
-                      ]
-                    }
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <ChipGroup
-                    className=""
-                    collapsedText="\${remaining} more"
-                    defaultIsOpen={false}
-                    expandedText="Show Less"
-                    numChips={3}
-                    withToolbar={false}
-                  >
-                    <Unknown
-                      isReadOnly={true}
-                    >
-                      Skill 1
-                    </Unknown>
-                    <Unknown
-                      isReadOnly={true}
-                    >
-                      Skill 2
-                    </Unknown>
-                  </ChipGroup>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <ForwardRef
-                    aria-label="shortId"
-                    defaultValue="e1"
-                    name="shortId"
-                    onChange={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    e1
-                  </Text>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <StatefulColorPicker
-                    currentColor="#FFFFFF"
-                    onChangeColor={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <ColorPicker
-                    currentColor="#FFFFFF"
-                    isDisabled={true}
-                    onChangeColor={[Function]}
-                  />
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
+          "color": "#00FF00",
+          "contract": Object {
+            "id": 0,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract",
+            "tenantId": 0,
+          },
+          "id": 2,
+          "name": "Employee 2",
+          "shortId": "E2",
+          "skillProficiencySet": Array [],
+          "tenantId": 0,
         },
       ]
     }
-    sortBy={
+    history={
       Object {
-        "direction": "asc",
-        "index": 0,
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/0/employee",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
       }
     }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
-</div>
+    isReversed={true}
+    itemsPerPage={10}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/0/employee",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/0/employee",
+        "url": "localhost:8080/0/employee",
+      }
+    }
+    newRowWrapper={[Function]}
+    numOfFilteredRows={2}
+    onSorterChange={[Function]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "color": "#FF0000",
+          "contract": Object {
+            "id": 0,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract",
+            "tenantId": 0,
+          },
+          "id": 1,
+          "name": "Employee 1",
+          "shortId": "E1",
+          "skillProficiencySet": Array [],
+          "tenantId": 0,
+        },
+        Object {
+          "color": "#00FF00",
+          "contract": Object {
+            "id": 0,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract",
+            "tenantId": 0,
+          },
+          "id": 2,
+          "name": "Employee 2",
+          "shortId": "E2",
+          "skillProficiencySet": Array [],
+          "tenantId": 0,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Trans(i18nKey=employees)"
+  />
+</Fragment>
 `;
 
 exports[`Employees page should render correctly with no employees 1`] = `
-<EmptyState
-  variant="full"
->
+<Fragment>
   <div>
     <FileUpload
       dropzoneProps={
@@ -640,49 +177,93 @@ exports[`Employees page should render correctly with no employees 1`] = `
       onChange={[Function]}
     />
   </div>
-  <EmptyStateIcon
-    icon={[Function]}
-  />
-  <Trans
-    components={
+  <TheTable
+    columns={
       Array [
-        <Title
-          headingLevel="h5"
-          size="lg"
-        />,
-        <EmptyStateBody />,
-        <Unknown
-          aria-label="Contracts Page"
-          onClick={[Function]}
-          variant="primary"
-        />,
+        Object {
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
+        },
+        Object {
+          "name": "Trans(i18nKey=contract)",
+          "sorter": [Function],
+        },
+        Object {
+          "name": "Trans(i18nKey=skillProficiencies)",
+        },
+        Object {
+          "name": "Trans(i18nKey=shortId)",
+          "sorter": [Function],
+        },
+        Object {
+          "name": "Trans(i18nKey=color)",
+        },
       ]
     }
-    i18nKey="noContracts"
-    t={[MockFunction]}
+    filterText=""
+    filteredRows={Immutable.List []}
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/0/employee",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isReversed={true}
+    itemsPerPage={10}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/0/employee",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/0/employee",
+        "url": "localhost:8080/0/employee",
+      }
+    }
+    newRowWrapper={[Function]}
+    numOfFilteredRows={0}
+    onSorterChange={[Function]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={Immutable.List []}
+    sortByIndex={0}
+    title="Trans(i18nKey=employees)"
   />
-</EmptyState>
+</Fragment>
 `;
 
 exports[`Employees page should render the editor correctly 1`] = `
-<tr>
-  <td
-    key="0"
-  >
-    <ForwardRef
-      aria-label="Name"
-      defaultValue="Employee 2"
-      key="0"
-      name="name"
+<TableRow>
+  <TableCell>
+    <TextInput
       onChange={[Function]}
+      value="Employee 2"
     />
-  </td>
-  <td
-    key="1"
-  >
-    <StatefulTypeaheadSelectInput
+  </TableCell>
+  <TableCell>
+    <TypeaheadSelectInput
       emptyText="Trans(i18nKey=selectAContract)"
-      key="1"
+      noClearButton={true}
       onChange={[Function]}
       optionToStringMap={[Function]}
       options={
@@ -693,177 +274,111 @@ exports[`Employees page should render the editor correctly 1`] = `
             "maximumMinutesPerMonth": null,
             "maximumMinutesPerWeek": null,
             "maximumMinutesPerYear": null,
-            "name": "Contract 1",
+            "name": "Contract",
             "tenantId": 0,
-            "version": 0,
-          },
-          Object {
-            "id": 1,
-            "maximumMinutesPerDay": null,
-            "maximumMinutesPerMonth": null,
-            "maximumMinutesPerWeek": null,
-            "maximumMinutesPerYear": null,
-            "name": "Contract 2",
-            "tenantId": 0,
-            "version": 0,
           },
         ]
       }
       value={
         Object {
-          "id": 1,
+          "id": 0,
           "maximumMinutesPerDay": null,
           "maximumMinutesPerMonth": null,
           "maximumMinutesPerWeek": null,
           "maximumMinutesPerYear": null,
-          "name": "Contract 2",
+          "name": "Contract",
           "tenantId": 0,
-          "version": 0,
         }
       }
     />
-  </td>
-  <td
-    key="2"
-  >
-    <StatefulMultiTypeaheadSelectInput
+  </TableCell>
+  <TableCell>
+    <MultiTypeaheadSelectInput
       emptyText="Trans(i18nKey=selectSkillProficiencies)"
-      key="2"
       onChange={[Function]}
       optionToStringMap={[Function]}
-      options={
-        Array [
-          Object {
-            "name": "Skill 1",
-            "tenantId": 0,
-          },
-          Object {
-            "name": "Skill 2",
-            "tenantId": 0,
-          },
-        ]
-      }
-      value={
-        Array [
-          Object {
-            "name": "Skill 1",
-            "tenantId": 0,
-          },
-          Object {
-            "name": "Skill 2",
-            "tenantId": 0,
-          },
-        ]
-      }
+      options={Array []}
+      value={Array []}
     />
-  </td>
-  <td
-    key="3"
-  >
-    <ForwardRef
-      aria-label="shortId"
-      defaultValue="e1"
-      key="3"
-      name="shortId"
+  </TableCell>
+  <TableCell>
+    <TextInput
       onChange={[Function]}
+      value="E2"
     />
-  </td>
-  <td
-    key="4"
-  >
-    <StatefulColorPicker
-      currentColor="#FFFFFF"
-      key="4"
+  </TableCell>
+  <TableCell>
+    <ColorPicker
+      currentColor="#00FF00"
       onChangeColor={[Function]}
     />
-  </td>
-</tr>
+  </TableCell>
+  <RowEditButtons
+    isValid={true}
+    onClose={[Function]}
+    onSave={[Function]}
+  />
+</TableRow>
 `;
 
 exports[`Employees page should render the viewer correctly 1`] = `
-<tr>
-  <td
-    key="0"
-  >
-    <span
-      style={
-        Object {
-          "display": "grid",
-          "gridTemplateColumns": "max-content min-content",
-        }
-      }
-    >
-      <Text
-        key="0"
-      >
-        Employee 2
-      </Text>
-      <Component
-        onClick={[Function]}
-        variant="link"
-      >
-        <ArrowIcon
-          color="currentColor"
-          noVerticalAlign={false}
-          size="sm"
-          title={null}
-        />
-      </Component>
-    </span>
-  </td>
-  <td
-    key="1"
-  >
-    <Text
-      key="1"
-    >
-      Contract 2
+<TableRow>
+  <TableCell>
+    <Flex>
+      <FlexItem>
+        <Text>
+          Employee 2
+        </Text>
+      </FlexItem>
+      <FlexItem>
+        <Button
+          onClick={[Function]}
+          variant="link"
+        >
+          <ArrowIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+          />
+        </Button>
+      </FlexItem>
+    </Flex>
+  </TableCell>
+  <TableCell>
+    <Text>
+      Contract
     </Text>
-  </td>
-  <td
-    key="2"
-  >
+  </TableCell>
+  <TableCell>
     <ChipGroup
-      className=""
+      aria-label="Chip group category"
+      categoryName=""
+      closeBtnAriaLabel="Close chip group"
       collapsedText="\${remaining} more"
       defaultIsOpen={false}
       expandedText="Show Less"
-      key="2"
+      isClosable={false}
       numChips={3}
-      withToolbar={false}
-    >
-      <Component
-        isReadOnly={true}
-        key="Skill 1"
-      >
-        Skill 1
-      </Component>
-      <Component
-        isReadOnly={true}
-        key="Skill 2"
-      >
-        Skill 2
-      </Component>
-    </ChipGroup>
-  </td>
-  <td
-    key="3"
-  >
-    <Text
-      key="3"
-    >
-      e1
+      onClick={[Function]}
+      onOverflowChipClick={[Function]}
+      tooltipPosition="top"
+    />
+  </TableCell>
+  <TableCell>
+    <Text>
+      E2
     </Text>
-  </td>
-  <td
-    key="4"
-  >
+  </TableCell>
+  <TableCell>
     <ColorPicker
-      currentColor="#FFFFFF"
+      currentColor="#00FF00"
       isDisabled={true}
-      key="4"
       onChangeColor={[Function]}
     />
-  </td>
-</tr>
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
 `;
