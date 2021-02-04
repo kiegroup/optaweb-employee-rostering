@@ -11,32 +11,6 @@ jobs:
     runs-on: ubuntu-18.04
     name: Maven Build
     steps:
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - name: Cache maven dependencies
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-maven-dependencies
-        with:
-          # mvn cache files are stored in `~/.m2` on Linux/macOS
-          path: ~/.m2
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
       - name: Free disk space
         run: |
           df -h
@@ -50,7 +24,7 @@ jobs:
             libmagickcore-dev libmagickwand-dev libmagic-dev ant ant-optional kubectl \
             mercurial apt-transport-https mono-complete mysql-client libmysqlclient-dev \
             mysql-server mssql-tools unixodbc-dev yarn bazel chrpath libssl-dev libxft-dev \
-            libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev php7.1 php7.1-bcmath \
+            php7.1 php7.1-bcmath \
             php7.1-bz2 php7.1-cgi php7.1-cli php7.1-common php7.1-curl php7.1-dba php7.1-dev \
             php7.1-enchant php7.1-fpm php7.1-gd php7.1-gmp php7.1-imap php7.1-interbase php7.1-intl \
             php7.1-json php7.1-ldap php7.1-mbstring php7.1-mcrypt php7.1-mysql php7.1-odbc \
@@ -75,11 +49,11 @@ jobs:
             php7.4-tidy php7.4-xml php7.4-xmlrpc php7.4-xsl php7.4-zip php-amqp php-apcu \
             php-igbinary php-memcache php-memcached php-mongodb php-redis php-xdebug \
             php-zmq snmp pollinate libpq-dev postgresql-client powershell ruby-full \
-            sphinxsearch subversion mongodb-org -yq >/dev/null 2>&1
-          sudo apt-get autoremove -y >/dev/null 2>&1
-          sudo apt-get autoclean -y >/dev/null 2>&1
-          sudo rm -rf /usr/local/lib/android >/dev/null 2>&1
-          docker rmi $(docker image ls -aq) >/dev/null 2>&1
+            sphinxsearch subversion mongodb-org -yq
+          sudo apt-get autoremove -y
+          sudo apt-get autoclean -y
+          sudo rm -rf /usr/local/lib/android
+          docker rmi $(docker image ls -aq)
           df -h
       - name: Set up JDK
         uses: actions/setup-java@v1
@@ -90,6 +64,13 @@ jobs:
           wget -P $M2_HOME/lib/ext https://repo1.maven.org/maven2/io/takari/aether/takari-local-repository/0.11.3/takari-local-repository-0.11.3.jar
           wget -P $M2_HOME/lib/ext https://repo1.maven.org/maven2/io/takari/takari-filemanager/0.8.3/takari-filemanager-0.8.3.jar
           wget -P $M2_HOME/lib/ext https://repo1.maven.org/maven2/io/takari/maven/takari-smart-builder/0.6.1/takari-smart-builder-0.6.1.jar
+      # See https://docs.github.com/en/actions/guides/building-and-testing-java-with-maven#caching-dependencies
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
       - name: Build Chain ${{ matrix.java-version }}
         id: build-chain
         uses: kiegroup/github-action-build-chain@v2.2
