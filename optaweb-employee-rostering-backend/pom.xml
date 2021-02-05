@@ -29,6 +29,10 @@
   <name>OptaWeb Employee Rostering as a Service Spring Boot Backend</name>
   <description>Spring Boot Backend for OptaWeb Employee Rostering as a Service</description>
 
+  <properties>
+    <java.module.name>org.optaweb.employeerostering</java.module.name>
+  </properties>
+
   <dependencies>
 
     <dependency>
@@ -197,6 +201,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1-jboss-1</version>
           <configuration>
             <compilerArgs>
               <!-- Visit https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javac.html
