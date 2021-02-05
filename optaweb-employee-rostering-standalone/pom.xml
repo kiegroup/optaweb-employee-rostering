@@ -17,6 +17,7 @@
   <properties>
     <application.port>8180</application.port>
     <frontend.project.name>optaweb-employee-rostering-frontend</frontend.project.name>
+    <java.module.name>org.optaweb.employeerostering</java.module.name>
     <version.cypress.docker>4.12.1</version.cypress.docker>
     <!-- Override to run with Podman -->
     <container.runtime>docker</container.runtime>
