@@ -147,7 +147,7 @@
                   <goal>start</goal>
                 </goals>
                 <configuration>
-                  <name>Run application</name>
+                  <name>ERP backend</name>
                   <healthcheckUrl>http://localhost:${application.port}</healthcheckUrl>
                   <workingDir>${project.build.directory}</workingDir>
                   <processLogFile>${project.build.directory}/${project.artifactId}.log</processLogFile>
@@ -159,32 +159,21 @@
                   </arguments>
                 </configuration>
               </execution>
-              <!-- Kill all running processes -->
-              <execution>
-                <id>stop-running-processes</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>stop-all</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <!-- Run Cypress tests in a docker container.
-                   See https://www.cypress.io/blog/2019/05/02/run-cypress-with-a-single-docker-command -->
-          <plugin>
-            <artifactId>exec-maven-plugin</artifactId>
-            <groupId>org.codehaus.mojo</groupId>
-            <executions>
+              <!--
+                Run Cypress tests in a docker container.
+                See https://www.cypress.io/blog/2019/05/02/run-cypress-with-a-single-docker-command.
+              -->
               <execution>
                 <id>run-cypress-tests</id>
                 <phase>integration-test</phase>
                 <goals>
-                  <goal>exec</goal>
+                  <goal>start</goal>
                 </goals>
                 <configuration>
-                  <skip>${skipITs}</skip>
-                  <executable>${container.runtime}</executable>
+                  <name>Dockerized Cypress</name>
+                  <workingDir>${project.parent.basedir}/${frontend.project.name}</workingDir>
                   <arguments>
+                    <argument>${container.runtime}</argument>
                     <argument>run</argument>
                     <argument>--network=host</argument> <!-- Cypress accesses UI running on the host -->
                     <argument>-v</argument>
@@ -201,6 +190,14 @@
                     <argument>baseUrl=http://localhost:${application.port}</argument>
                   </arguments>
                 </configuration>
+              </execution>
+              <!-- Kill all running processes -->
+              <execution>
+                <id>stop-running-processes</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop-all</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
