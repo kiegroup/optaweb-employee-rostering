@@ -18,7 +18,7 @@ import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { stringSorter } from 'util/CommonSorters';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { usePagableData } from 'util/FunctionalComponentUtils';
+import { usePageableData } from 'util/FunctionalComponentUtils';
 import { TheTable, TheTableProps } from './DataTable';
 
 interface MockData {name: string; number: number}
@@ -46,7 +46,7 @@ const pageInfo = {
   asc: 'true',
 };
 
-const useTableRows = (tableData: MockData[]) => usePagableData<MockData>(pageInfo,
+const useTableRows = (tableData: MockData[]) => usePageableData<MockData>(pageInfo,
   tableData, data => [data.name, `${data.number}`],
   stringSorter(data => data.name));
 

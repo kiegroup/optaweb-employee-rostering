@@ -18,6 +18,11 @@ exports[`Header component should render correctly on a desktop 1`] = `
   }
   onNavToggle={[MockFunction]}
   showNavToggle={false}
+  style={
+    Object {
+      "backgroundColor": "#0000",
+    }
+  }
   topNav={
     <UNDEFINED
       variant="horizontal"
@@ -44,6 +49,11 @@ exports[`Header component should render correctly on a mobile 1`] = `
   }
   onNavToggle={[MockFunction]}
   showNavToggle={true}
+  style={
+    Object {
+      "backgroundColor": "#0000",
+    }
+  }
   topNav={false}
 />
 `;

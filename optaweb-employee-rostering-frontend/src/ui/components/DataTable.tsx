@@ -16,22 +16,19 @@
 
 import React, { PropsWithChildren, useState } from 'react';
 import { Button, Pagination, Level, LevelItem } from '@patternfly/react-core';
-import {
-  SaveIcon, CloseIcon, EditIcon, TrashIcon, LongArrowAltDownIcon,
-  LongArrowAltUpIcon, ArrowsAltVIcon,
-} from '@patternfly/react-icons';
+import { SaveIcon, CloseIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { Sorter } from 'types';
 import { useTranslation } from 'react-i18next';
 import { setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
 import { RouteComponentProps } from 'react-router';
-import { PagenationData } from 'util/FunctionalComponentUtils';
-import { TableComposable } from '@patternfly/react-table';
+import { PaginationData } from 'util/FunctionalComponentUtils';
+import { TableComposable, Caption, Thead, Tbody, Th, Tr, Td } from '@patternfly/react-table';
 import FilterComponent from './FilterComponent';
 
 export type DataTableUrlProps = UrlProps<'page'|'itemsPerPage'|'filter'|'sortBy'|'asc'>;
 
 export const RowViewButtons = (props: { onEdit: () => void; onDelete: () => void }) => (
-  <td role="cell">
+  <Td role="cell">
     <span
       style={{
         display: 'grid',
@@ -57,11 +54,11 @@ export const RowViewButtons = (props: { onEdit: () => void; onDelete: () => void
         </Button>
       </span>
     </span>
-  </td>
+  </Td>
 );
 
 export const RowEditButtons = (props: { isValid: boolean; onClose: () => void; onSave: () => void }) => (
-  <td role="cell">
+  <Td role="cell">
     <span
       style={{
         display: 'grid',
@@ -91,13 +88,22 @@ export const RowEditButtons = (props: { isValid: boolean; onClose: () => void; o
         </Button>
       </span>
     </span>
-  </td>
+  </Td>
 );
 
-export const TableRow = (props: PropsWithChildren<{}>) => (<tr role="row">{props.children}</tr>);
-export const TableCell = (props: PropsWithChildren<{}>) => (<td role="cell">{props.children}</td>);
+export const TableRow = (props: PropsWithChildren<{}>) => (
+  <Tr role="row">
+    {props.children}
+  </Tr>
+);
 
-export const PagenationControls = (props: PagenationData<any> & RouteComponentProps & {
+export const TableCell = (props: PropsWithChildren<{ columnName: string }>) => (
+  <Td role="cell" dataLabel={props.columnName}>
+    {props.children}
+  </Td>
+);
+
+export const PagenationControls = (props: PaginationData<any> & RouteComponentProps & {
   isCreatingNewRow: boolean;
   onCreateNewRow: () => void;
 }) => {
@@ -163,9 +169,9 @@ export interface TheTableProps<T> {
 }
 
 /* eslint-disable no-nested-ternary */
-// Patternfly Table in React is very inconvivent when the content is not text (ex: inline editing),
+// Patternfly Table in React is very inconvenient when the content is not text (ex: inline editing),
 // so we use the HTML example to build it
-export const TheTable = (props: PagenationData<any> & RouteComponentProps & TheTableProps<any>) => {
+export const TheTable = (props: PaginationData<any> & RouteComponentProps & TheTableProps<any>) => {
   const [isCreatingNewRow, setIsCreatingNewRow] = useState(false);
 
   return (
@@ -182,60 +188,40 @@ export const TheTable = (props: PagenationData<any> & RouteComponentProps & TheT
         }}
       />
       <TableComposable>
-        <caption>{props.title}</caption>
-        <thead>
-          <tr role="row">
-            {props.columns.map((header, index) => (
-              <th
-                key={header.name}
-                role="columnheader"
-                scope="col"
-                className={(header.sorter !== undefined)
-                  ? ((props.sortByIndex === index)
-                    ? 'pf-c-table__sort pf-m-selected' : 'pf-c-table__sort'
-                  )
-                  : undefined
-                }
-                aria-sort={(header.sorter) ? (
-                  (index === props.sortByIndex)
-                    ? ((props.isReversed) ? 'descending' : 'ascending')
-                    : 'none'
-                )
-                  : undefined}
-              >
-                <Button
-                  variant="plain"
-                  onClick={() => {
-                    if (header.sorter !== undefined) {
-                      props.onSorterChange(index);
-                    }
-                  }}
+        <Caption>{props.title}</Caption>
+        <Thead>
+          <Tr role="row">
+            {props.columns.map((header, index) => {
+              const sorterProps = (header.sorter) ? {
+                sort: {
+                  sortBy: {
+                    index: props.sortByIndex,
+                    direction: (props.isReversed ? 'desc' : 'asc') as 'desc' | 'asc',
+                  },
+                  onSort: () => props.onSorterChange(index),
+                  columnIndex: index,
+                },
+              } : {};
+              return (
+                <Th
+                  key={header.name}
+                  role="columnheader"
+                  scope="col"
+                  {...sorterProps}
                 >
-                  <div className="pf-c-table__button-content">
-                    <span className="pf-c-table__text">{header.name}</span>
-                    {(header.sorter)
-                      ? (
-                        <span className="pf-c-table__sort-indicator">
-                          {(index === props.sortByIndex)
-                            ? ((props.isReversed) ? <LongArrowAltUpIcon /> : <LongArrowAltDownIcon />)
-                            : (<ArrowsAltVIcon />)
-                          }
-                        </span>
-                      ) : undefined
-                    }
-                  </div>
-                </Button>
-              </th>
-            ))}
-            <th role="columnheader" scope="col" />
-          </tr>
-        </thead>
-        <tbody>
+                  {header.name}
+                </Th>
+              );
+            })}
+            <Th role="columnheader" scope="col" />
+          </Tr>
+        </Thead>
+        <Tbody>
           {(isCreatingNewRow && props.newRowWrapper) ? props.newRowWrapper(() => {
             setIsCreatingNewRow(false);
           }) : undefined}
           {props.rowsInPage.map(item => props.rowWrapper(item)).toArray()}
-        </tbody>
+        </Tbody>
       </TableComposable>
     </>
   );

@@ -28,7 +28,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { tenantSelectors } from 'store/tenant';
 import { useValidators } from 'util/ValidationUtils';
 import { getPropsFromUrl } from 'util/BookmarkableUtils';
-import { usePagableData } from 'util/FunctionalComponentUtils';
+import { usePageableData } from 'util/FunctionalComponentUtils';
 import { contractOperations, contractSelectors } from 'store/contract';
 import { Contract } from 'domain/Contract';
 
@@ -37,6 +37,7 @@ export type Props = RouteComponentProps;
 export const ContractRow = (contract: Contract) => {
   const [isEditing, setIsEditing] = useState(false);
   const dispatch = useDispatch();
+  const { t } = useTranslation('ContractsPage');
 
   if (isEditing) {
     return (<EditableContractRow contract={contract} isNew={false} onClose={() => setIsEditing(false)} />);
@@ -44,19 +45,19 @@ export const ContractRow = (contract: Contract) => {
 
   return (
     <TableRow>
-      <TableCell>
+      <TableCell columnName={t('name')}>
         <Text>{contract.name}</Text>
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('maxMinutesPerDay')}>
         <Text>{contract.maximumMinutesPerDay}</Text>
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('maxMinutesPerWeek')}>
         <Text>{contract.maximumMinutesPerWeek}</Text>
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('maxMinutesPerMonth')}>
         <Text>{contract.maximumMinutesPerMonth}</Text>
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('maxMinutesPerYear')}>
         <Text>{contract.maximumMinutesPerYear}</Text>
       </TableCell>
       <RowViewButtons
@@ -76,17 +77,17 @@ export const EditableContractRow = (props: { contract: Contract; isNew: boolean;
 
   const dispatch = useDispatch();
   const contractList = useSelector(contractSelectors.getContractList);
-  // const { t } = useTranslation("ContractsPage");
+  const { t } = useTranslation('ContractsPage');
 
   const validators = {
     nameMustNotBeEmpty: {
       predicate: (contract: Contract) => contract.name.length > 0,
-      errorMsg: () => 'Contract cannot have an empty name',
+      errorMsg: () => t('contractEmptyNameError'),
     },
     nameAlreadyTaken: {
       predicate: (contract: Contract) => contractList.filter(otherContract => otherContract.name === contract.name
         && otherContract.id !== contract.id).length === 0,
-      errorMsg: (contract: Contract) => `Name (${contract.name}) is already taken by another contract`,
+      errorMsg: (contract: Contract) => t('contractNameAlreadyTakenError', { name: contract.name }),
     },
   };
 
@@ -103,11 +104,11 @@ export const EditableContractRow = (props: { contract: Contract; isNew: boolean;
 
   return (
     <TableRow>
-      <TableCell>
+      <TableCell columnName={t('name')}>
         <TextInput value={name} onChange={setName} />
         {validationErrors.showValidationErrors('nameMustNotBeEmpty', 'nameAlreadyTaken')}
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('maxMinutesPerDay')}>
         <TextInput
           value={maximumMinutesPerDay || ''}
           onChange={(value) => {
@@ -117,7 +118,7 @@ export const EditableContractRow = (props: { contract: Contract; isNew: boolean;
           min={0}
         />
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('maxMinutesPerWeek')}>
         <TextInput
           value={maximumMinutesPerWeek || ''}
           onChange={(value) => {
@@ -127,7 +128,7 @@ export const EditableContractRow = (props: { contract: Contract; isNew: boolean;
           min={0}
         />
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('maxMinutesPerMonth')}>
         <TextInput
           value={maximumMinutesPerMonth || ''}
           onChange={(value) => {
@@ -137,7 +138,7 @@ export const EditableContractRow = (props: { contract: Contract; isNew: boolean;
           min={0}
         />
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('maxMinutesPerYear')}>
         <TextInput
           value={maximumMinutesPerYear || ''}
           onChange={(value) => {
@@ -187,7 +188,7 @@ export const ContractsPage: React.FC<Props> = (props) => {
   const sortBy = parseInt(urlProps.sortBy || '-1', 10);
   const sorter = columns[sortBy].sorter as Sorter<Contract>;
 
-  const pagableData = usePagableData(urlProps, contractList, contract => [contract.name,
+  const pagableData = usePageableData(urlProps, contractList, contract => [contract.name,
     `${contract.maximumMinutesPerDay || ''}`, `${contract.maximumMinutesPerWeek || ''}`,
     `${contract.maximumMinutesPerMonth || ''}`, `${contract.maximumMinutesPerYear || ''}`],
   sorter);

@@ -1,7 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Toolbar Component should render correctly when tenant select is open 1`] = `
-<Toolbar>
+<Toolbar
+  style={
+    Object {
+      "backgroundColor": "#0000",
+    }
+  }
+>
   <ForwardRef>
     <ToolbarItem>
       <Dropdown
@@ -81,7 +87,13 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
 `;
 
 exports[`Toolbar Component should render correctly with a few tenants 1`] = `
-<Toolbar>
+<Toolbar
+  style={
+    Object {
+      "backgroundColor": "#0000",
+    }
+  }
+>
   <ForwardRef>
     <ToolbarItem>
       <Dropdown
@@ -161,7 +173,13 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
 `;
 
 exports[`Toolbar Component should render correctly with no tenants 1`] = `
-<Toolbar>
+<Toolbar
+  style={
+    Object {
+      "backgroundColor": "#0000",
+    }
+  }
+>
   <ForwardRef />
   <ForwardRef>
     <ToolbarItem>

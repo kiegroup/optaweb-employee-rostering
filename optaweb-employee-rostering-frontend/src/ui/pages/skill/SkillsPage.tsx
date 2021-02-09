@@ -21,7 +21,7 @@ import { TextInput, Text } from '@patternfly/react-core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { usePagableData } from 'util/FunctionalComponentUtils';
+import { usePageableData } from 'util/FunctionalComponentUtils';
 import {
   DataTableUrlProps, RowEditButtons, RowViewButtons,
   setSorterInUrl, TableCell, TableRow, TheTable,
@@ -37,6 +37,7 @@ export type Props = RouteComponentProps;
 export const SkillRow = (skill: Skill) => {
   const [isEditing, setIsEditing] = useState(false);
   const dispatch = useDispatch();
+  const { t } = useTranslation('SkillsPage');
 
   if (isEditing) {
     return (<EditableSkillRow skill={skill} isNew={false} onClose={() => setIsEditing(false)} />);
@@ -44,7 +45,7 @@ export const SkillRow = (skill: Skill) => {
 
   return (
     <TableRow>
-      <TableCell>
+      <TableCell columnName={t('name')}>
         <Text>{skill.name}</Text>
       </TableCell>
       <RowViewButtons
@@ -59,15 +60,16 @@ export const EditableSkillRow = (props: { skill: Skill; isNew: boolean; onClose:
   const [name, setName] = useState(props.skill.name);
   const skillList = useSelector(skillSelectors.getSkillList);
   const dispatch = useDispatch();
+  const { t } = useTranslation('SkillsPage');
   const validators = {
     nameMustNotBeEmpty: {
       predicate: (skill: Skill) => skill.name.length > 0,
-      errorMsg: () => 'Skill cannot have an empty name',
+      errorMsg: () => t('skillEmptyNameError'),
     },
     nameAlreadyTaken: {
       predicate: (skill: Skill) => skillList.filter(otherSkill => otherSkill.name === skill.name
         && otherSkill.id !== skill.id).length === 0,
-      errorMsg: (skill: Skill) => `Name (${skill.name}) is already taken by another skill`,
+      errorMsg: (skill: Skill) => t('skillNameAlreadyTakenError', { name: skill.name }),
     },
   };
 
@@ -78,7 +80,7 @@ export const EditableSkillRow = (props: { skill: Skill; isNew: boolean; onClose:
 
   return (
     <TableRow>
-      <TableCell>
+      <TableCell columnName={t('name')}>
         <TextInput value={name} onChange={setName} />
         {validationErrors.showValidationErrors('nameMustNotBeEmpty', 'nameAlreadyTaken')}
       </TableCell>
@@ -124,7 +126,7 @@ export const SkillsPage: React.FC<Props> = (props) => {
   const sortBy = parseInt(urlProps.sortBy || '-1', 10);
   const { sorter } = columns[sortBy];
 
-  const pagableData = usePagableData(urlProps, skillList, skill => [skill.name], sorter);
+  const pagableData = usePageableData(urlProps, skillList, skill => [skill.name], sorter);
 
   return (
     <TheTable

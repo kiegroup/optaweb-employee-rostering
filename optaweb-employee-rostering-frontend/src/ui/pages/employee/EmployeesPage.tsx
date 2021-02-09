@@ -53,7 +53,7 @@ import * as router from 'react-router';
 import { tenantSelectors } from 'store/tenant';
 import { useValidators } from 'util/ValidationUtils';
 import { getPropsFromUrl } from 'util/BookmarkableUtils';
-import { usePagableData } from 'util/FunctionalComponentUtils';
+import { usePageableData } from 'util/FunctionalComponentUtils';
 
 export type Props = RouteComponentProps;
 
@@ -62,6 +62,7 @@ export const EmployeeRow = (employee: Employee) => {
   const dispatch = useDispatch();
   const tenantId = useSelector(tenantSelectors.getTenantId);
   const history = router.useHistory();
+  const { t } = useTranslation('EmployeesPage');
 
   if (isEditing) {
     return (<EditableEmployeeRow employee={employee} isNew={false} onClose={() => setIsEditing(false)} />);
@@ -69,7 +70,7 @@ export const EmployeeRow = (employee: Employee) => {
 
   return (
     <TableRow>
-      <TableCell>
+      <TableCell columnName={t('name')}>
         <Flex>
           <FlexItem>
             <Text>{employee.name}</Text>
@@ -86,10 +87,10 @@ export const EmployeeRow = (employee: Employee) => {
           </FlexItem>
         </Flex>
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('contract')}>
         <Text>{employee.contract.name}</Text>
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('skillProficiencies')}>
         <ChipGroup>
           {employee.skillProficiencySet.map(skill => (
             <Chip key={skill.name} isReadOnly>
@@ -98,10 +99,10 @@ export const EmployeeRow = (employee: Employee) => {
           ))}
         </ChipGroup>
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('shortId')}>
         <Text>{employee.shortId}</Text>
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('color')}>
         <ColorPicker
           currentColor={employee.color}
           onChangeColor={doNothing}
@@ -132,12 +133,12 @@ export const EditableEmployeeRow = (props: { employee: Employee; isNew: boolean;
   const validators = {
     nameMustNotBeEmpty: {
       predicate: (employee: Employee) => employee.name.length > 0,
-      errorMsg: () => 'Employee cannot have an empty name',
+      errorMsg: () => t('employeeEmptyNameError'),
     },
     nameAlreadyTaken: {
       predicate: (employee: Employee) => employeeList.filter(otherEmployee => otherEmployee.name === employee.name
         && otherEmployee.id !== employee.id).length === 0,
-      errorMsg: (employee: Employee) => `Name (${employee.name}) is already taken by another employee`,
+      errorMsg: (employee: Employee) => t('employeeNameAlreadyTakenError', { name: employee.name }),
     },
   };
 
@@ -153,11 +154,11 @@ export const EditableEmployeeRow = (props: { employee: Employee; isNew: boolean;
 
   return (
     <TableRow>
-      <TableCell>
+      <TableCell columnName={t('name')}>
         <TextInput value={name} onChange={setName} />
         {validationErrors.showValidationErrors('nameMustNotBeEmpty', 'nameAlreadyTaken')}
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('contract')}>
         <TypeaheadSelectInput
           value={contract}
           options={contractList}
@@ -171,7 +172,7 @@ export const EditableEmployeeRow = (props: { employee: Employee; isNew: boolean;
           emptyText={t('selectAContract')}
         />
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('skillProficiencies')}>
         <MultiTypeaheadSelectInput
           value={skillProficiencySet}
           options={skillList}
@@ -180,10 +181,10 @@ export const EditableEmployeeRow = (props: { employee: Employee; isNew: boolean;
           emptyText={t('selectSkillProficiencies')}
         />
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('shortId')}>
         <TextInput value={shortId} onChange={setShortId} />
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('color')}>
         <ColorPicker
           currentColor={color}
           onChangeColor={setColor}
@@ -232,7 +233,7 @@ export const EmployeesPage: React.FC<Props> = (props) => {
   const sortBy = parseInt(urlProps.sortBy || '-1', 10);
   const sorter = columns[sortBy].sorter as Sorter<Employee>;
 
-  const pagableData = usePagableData(urlProps, employeeList, employee => [employee.name,
+  const pagableData = usePageableData(urlProps, employeeList, employee => [employee.name,
     employee.contract.name,
     ...employee.skillProficiencySet.map(skill => skill.name),
     employee.shortId], sorter);

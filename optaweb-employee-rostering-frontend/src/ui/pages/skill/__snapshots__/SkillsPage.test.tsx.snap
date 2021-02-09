@@ -47,7 +47,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
       "replace": [MockFunction],
     }
   }
-  isReversed={true}
+  isReversed={false}
   itemsPerPage={10}
   location={
     Object {
@@ -123,7 +123,7 @@ exports[`Skills page should render correctly with no skills 1`] = `
       "replace": [MockFunction],
     }
   }
-  isReversed={true}
+  isReversed={false}
   itemsPerPage={10}
   location={
     Object {
@@ -154,7 +154,9 @@ exports[`Skills page should render correctly with no skills 1`] = `
 
 exports[`Skills page should render the editor correctly 1`] = `
 <TableRow>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
     <TextInput
       onChange={[Function]}
       value="Skill"
@@ -170,7 +172,9 @@ exports[`Skills page should render the editor correctly 1`] = `
 
 exports[`Skills page should render the viewer correctly 1`] = `
 <TableRow>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
     <Text>
       Skill
     </Text>

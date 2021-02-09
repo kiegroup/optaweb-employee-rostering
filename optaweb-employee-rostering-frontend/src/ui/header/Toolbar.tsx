@@ -119,7 +119,11 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
     const { isTenantSelectOpen } = this.state;
     if (tenantList.size === 0) {
       return (
-        <Toolbar>
+        <Toolbar
+          style={{
+            backgroundColor: '#0000', // transparent background for background image
+          }}
+        >
           <ToolbarGroup />
           {bellAndCog}
         </Toolbar>
@@ -128,7 +132,11 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
 
     const currentTenant = tenantList.find(t => t.id === currentTenantId) as Tenant;
     return (
-      <Toolbar>
+      <Toolbar
+        style={{
+          backgroundColor: '#0000', // transparent background for background image
+        }}
+      >
         <ToolbarGroup>
           <ToolbarItem>
             <Dropdown

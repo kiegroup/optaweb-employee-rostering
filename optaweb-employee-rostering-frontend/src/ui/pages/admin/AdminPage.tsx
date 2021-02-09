@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { ConfirmDialog } from 'ui/components/ConfirmDialog';
 import { getPropsFromUrl } from 'util/BookmarkableUtils';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { usePagableData } from 'util/FunctionalComponentUtils';
+import { usePageableData } from 'util/FunctionalComponentUtils';
 import { stringSorter } from 'util/CommonSorters';
 import { tenantOperations, tenantSelectors } from 'store/tenant';
 import { useDispatch, useSelector } from 'react-redux';
@@ -41,10 +41,10 @@ export const TenantRow = (tenant: Tenant) => {
   const { t } = useTranslation('AdminPage');
   return (
     <TableRow>
-      <TableCell>
+      <TableCell columnName={t('name')}>
         <Text>{tenant.name}</Text>
       </TableCell>
-      <TableCell>
+      <TableCell columnName="">
         <span
           style={{
             display: 'grid',
@@ -84,7 +84,7 @@ export const AdminPage: React.FC<Props> = (props) => {
   });
 
   const sortBy = parseInt(urlProps.sortBy || '-1', 10);
-  const pagableData = usePagableData(urlProps, tenantList.toArray(), tenant => [tenant.name],
+  const pagableData = usePageableData(urlProps, tenantList.toArray(), tenant => [tenant.name],
     stringSorter<Tenant>(tenant => tenant.name));
 
   const columns = [
@@ -123,7 +123,7 @@ export const AdminPage: React.FC<Props> = (props) => {
         sortByIndex={sortBy}
         onSorterChange={index => setSorterInUrl(props, urlProps, sortBy, index)}
         onAddButtonClick={() => setIsCreatingTenant(true)}
-        rowWrapper={TenantRow}
+        rowWrapper={tenant => <TenantRow {...tenant} />}
       />
     </>
   );

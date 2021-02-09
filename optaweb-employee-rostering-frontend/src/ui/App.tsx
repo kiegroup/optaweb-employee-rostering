@@ -38,7 +38,7 @@ const App: React.FC = () => {
   return (
     <Page
       header={<Header onNavToggle={() => setNavExpanded(!isNavExpanded)} />}
-      sidebar={<PageSidebar isNavOpen={isNavExpanded} nav={<Navigation />} />}
+      sidebar={<PageSidebar isNavOpen={isNavExpanded} nav={<Navigation variant="default" />} />}
     >
       <Background />
       <ConnectionStatus />

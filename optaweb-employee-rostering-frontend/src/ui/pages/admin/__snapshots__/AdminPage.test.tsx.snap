@@ -72,7 +72,7 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
         "replace": [MockFunction],
       }
     }
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={10}
     location={
       Object {
@@ -187,7 +187,7 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
         "replace": [MockFunction],
       }
     }
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={10}
     location={
       Object {
@@ -302,7 +302,7 @@ exports[`Admin Page should filter by name 1`] = `
         "replace": [MockFunction],
       }
     }
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={10}
     location={
       Object {
@@ -507,7 +507,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
         "replace": [MockFunction],
       }
     }
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={10}
     location={
       Object {
@@ -662,7 +662,7 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
         "replace": [MockFunction],
       }
     }
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={10}
     location={
       Object {
@@ -867,7 +867,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
         "replace": [MockFunction],
       }
     }
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={10}
     location={
       Object {
@@ -1009,7 +1009,7 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
         "replace": [MockFunction],
       }
     }
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={10}
     location={
       Object {
@@ -1111,7 +1111,7 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
         "replace": [MockFunction],
       }
     }
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={10}
     location={
       Object {
@@ -1316,7 +1316,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
         "replace": [MockFunction],
       }
     }
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={5}
     location={
       Object {

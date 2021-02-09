@@ -32,7 +32,7 @@ import { ArrowIcon } from '@patternfly/react-icons';
 import { tenantSelectors } from 'store/tenant';
 import { useValidators } from 'util/ValidationUtils';
 import { getPropsFromUrl } from 'util/BookmarkableUtils';
-import { usePagableData } from 'util/FunctionalComponentUtils';
+import { usePageableData } from 'util/FunctionalComponentUtils';
 
 export type Props = router.RouteComponentProps;
 
@@ -41,6 +41,7 @@ export const SpotRow = (spot: Spot) => {
   const dispatch = useDispatch();
   const tenantId = useSelector(tenantSelectors.getTenantId);
   const history = router.useHistory();
+  const { t } = useTranslation('SpotsPage');
 
   if (isEditing) {
     return (<EditableSpotRow spot={spot} isNew={false} onClose={() => setIsEditing(false)} />);
@@ -48,7 +49,7 @@ export const SpotRow = (spot: Spot) => {
 
   return (
     <TableRow>
-      <TableCell>
+      <TableCell columnName={t('name')}>
         <Flex>
           <FlexItem>
             <Text>{spot.name}</Text>
@@ -65,7 +66,7 @@ export const SpotRow = (spot: Spot) => {
           </FlexItem>
         </Flex>
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('requiredSkillSet')}>
         <ChipGroup>
           {spot.requiredSkillSet.map(skill => (
             <Chip key={skill.name} isReadOnly>
@@ -93,12 +94,12 @@ export const EditableSpotRow = (props: { spot: Spot; isNew: boolean; onClose: ()
   const validators = {
     nameMustNotBeEmpty: {
       predicate: (spot: Spot) => spot.name.length > 0,
-      errorMsg: () => 'Spot cannot have an empty name',
+      errorMsg: () => t('spotEmptyNameError'),
     },
     nameAlreadyTaken: {
       predicate: (spot: Spot) => spotList.filter(otherSpot => otherSpot.name === spot.name
         && otherSpot.id !== spot.id).length === 0,
-      errorMsg: (spot: Spot) => `Name (${spot.name}) is already taken by another spot`,
+      errorMsg: (spot: Spot) => t('spotNameAlreadyTakenError', { name: spot.name }),
     },
   };
 
@@ -110,11 +111,11 @@ export const EditableSpotRow = (props: { spot: Spot; isNew: boolean; onClose: ()
 
   return (
     <TableRow>
-      <TableCell>
+      <TableCell columnName={t('name')}>
         <TextInput value={name} onChange={setName} />
         {validationErrors.showValidationErrors('nameMustNotBeEmpty', 'nameAlreadyTaken')}
       </TableCell>
-      <TableCell>
+      <TableCell columnName={t('requiredSkillSet')}>
         <MultiTypeaheadSelectInput
           value={requiredSkillSet}
           options={skillList}
@@ -168,7 +169,7 @@ export const SpotsPage: React.FC<Props> = (props) => {
   const sortBy = parseInt(urlProps.sortBy || '-1', 10);
   const sorter = columns[sortBy].sorter as Sorter<Spot>;
 
-  const pagableData = usePagableData(urlProps, spotList, spot => [spot.name,
+  const pagableData = usePageableData(urlProps, spotList, spot => [spot.name,
     ...spot.requiredSkillSet.map(skill => skill.name)], sorter);
 
   return (

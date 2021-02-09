@@ -96,7 +96,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
         "replace": [MockFunction],
       }
     }
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={10}
     location={
       Object {
@@ -222,7 +222,7 @@ exports[`Employees page should render correctly with no employees 1`] = `
         "replace": [MockFunction],
       }
     }
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={10}
     location={
       Object {
@@ -254,13 +254,17 @@ exports[`Employees page should render correctly with no employees 1`] = `
 
 exports[`Employees page should render the editor correctly 1`] = `
 <TableRow>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
     <TextInput
       onChange={[Function]}
       value="Employee 2"
     />
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=contract)"
+  >
     <TypeaheadSelectInput
       emptyText="Trans(i18nKey=selectAContract)"
       noClearButton={true}
@@ -292,7 +296,9 @@ exports[`Employees page should render the editor correctly 1`] = `
       }
     />
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=skillProficiencies)"
+  >
     <MultiTypeaheadSelectInput
       emptyText="Trans(i18nKey=selectSkillProficiencies)"
       onChange={[Function]}
@@ -301,13 +307,17 @@ exports[`Employees page should render the editor correctly 1`] = `
       value={Array []}
     />
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=shortId)"
+  >
     <TextInput
       onChange={[Function]}
       value="E2"
     />
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=color)"
+  >
     <ColorPicker
       currentColor="#00FF00"
       onChangeColor={[Function]}
@@ -323,7 +333,9 @@ exports[`Employees page should render the editor correctly 1`] = `
 
 exports[`Employees page should render the viewer correctly 1`] = `
 <TableRow>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
     <Flex>
       <FlexItem>
         <Text>
@@ -344,12 +356,16 @@ exports[`Employees page should render the viewer correctly 1`] = `
       </FlexItem>
     </Flex>
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=contract)"
+  >
     <Text>
       Contract
     </Text>
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=skillProficiencies)"
+  >
     <ChipGroup
       aria-label="Chip group category"
       categoryName=""
@@ -364,12 +380,16 @@ exports[`Employees page should render the viewer correctly 1`] = `
       tooltipPosition="top"
     />
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=shortId)"
+  >
     <Text>
       E2
     </Text>
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=color)"
+  >
     <ColorPicker
       currentColor="#00FF00"
       isDisabled={true}

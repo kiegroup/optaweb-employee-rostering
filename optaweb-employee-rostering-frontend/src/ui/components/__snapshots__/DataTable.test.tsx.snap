@@ -47,7 +47,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
       }
     }
     isCreatingNewRow={false}
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={5}
     location={
       Object {
@@ -113,60 +113,34 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
     title="Data Table"
   />
   <TableComposable>
-    <caption>
+    <Caption>
       Data Table
-    </caption>
-    <thead>
-      <tr
+    </Caption>
+    <Thead>
+      <Tr
         role="row"
       >
-        <th
+        <Th
           key="Column 1"
           role="columnheader"
           scope="col"
         >
-          <Button
-            onClick={[Function]}
-            variant="plain"
-          >
-            <div
-              className="pf-c-table__button-content"
-            >
-              <span
-                className="pf-c-table__text"
-              >
-                Column 1
-              </span>
-            </div>
-          </Button>
-        </th>
-        <th
+          Column 1
+        </Th>
+        <Th
           key="Column 2"
           role="columnheader"
           scope="col"
         >
-          <Button
-            onClick={[Function]}
-            variant="plain"
-          >
-            <div
-              className="pf-c-table__button-content"
-            >
-              <span
-                className="pf-c-table__text"
-              >
-                Column 2
-              </span>
-            </div>
-          </Button>
-        </th>
-        <th
+          Column 2
+        </Th>
+        <Th
           role="columnheader"
           scope="col"
         />
-      </tr>
-    </thead>
-    <tbody />
+      </Tr>
+    </Thead>
+    <Tbody />
   </TableComposable>
 </Fragment>
 `;
@@ -207,7 +181,7 @@ exports[`DataTable component should render correctly with no rows 1`] = `
       }
     }
     isCreatingNewRow={false}
-    isReversed={true}
+    isReversed={false}
     itemsPerPage={5}
     location={
       Object {
@@ -235,60 +209,34 @@ exports[`DataTable component should render correctly with no rows 1`] = `
     title="Data Table"
   />
   <TableComposable>
-    <caption>
+    <Caption>
       Data Table
-    </caption>
-    <thead>
-      <tr
+    </Caption>
+    <Thead>
+      <Tr
         role="row"
       >
-        <th
+        <Th
           key="Column 1"
           role="columnheader"
           scope="col"
         >
-          <Button
-            onClick={[Function]}
-            variant="plain"
-          >
-            <div
-              className="pf-c-table__button-content"
-            >
-              <span
-                className="pf-c-table__text"
-              >
-                Column 1
-              </span>
-            </div>
-          </Button>
-        </th>
-        <th
+          Column 1
+        </Th>
+        <Th
           key="Column 2"
           role="columnheader"
           scope="col"
         >
-          <Button
-            onClick={[Function]}
-            variant="plain"
-          >
-            <div
-              className="pf-c-table__button-content"
-            >
-              <span
-                className="pf-c-table__text"
-              >
-                Column 2
-              </span>
-            </div>
-          </Button>
-        </th>
-        <th
+          Column 2
+        </Th>
+        <Th
           role="columnheader"
           scope="col"
         />
-      </tr>
-    </thead>
-    <tbody />
+      </Tr>
+    </Thead>
+    <Tbody />
   </TableComposable>
 </Fragment>
 `;

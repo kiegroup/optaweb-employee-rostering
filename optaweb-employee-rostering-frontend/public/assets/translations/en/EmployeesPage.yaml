@@ -11,3 +11,6 @@ noContracts:
   You can add a Contract in the "Contracts" page.
   </1>
   <2>Go to the Contracts page</2>
+
+employeeEmptyNameError: Employee cannot have an empty name
+employeeNameAlreadyTakenError: Name ({{name}}) is already taken by another employee

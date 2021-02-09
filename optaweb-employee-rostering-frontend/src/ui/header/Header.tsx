@@ -36,6 +36,9 @@ const Header: React.FC<{ onNavToggle: () => void} > = ({ onNavToggle }) => {
       topNav={laptopOrBigger && <Navigation variant="horizontal" />}
       showNavToggle={!laptopOrBigger}
       onNavToggle={onNavToggle}
+      style={{
+        backgroundColor: '#0000', // transparent background for background image
+      }}
     />
   );
 };

@@ -61,7 +61,7 @@ export function useInterval(callback: Function, delay: number|null) {
 }
 
 
-export interface PagenationData<T> {
+export interface PaginationData<T> {
   filterText: string;
   page: number;
   itemsPerPage: number;
@@ -71,15 +71,15 @@ export interface PagenationData<T> {
   isReversed: boolean;
 }
 
-export function usePagableData<T>(urlProps: DataTableUrlProps, data: T[],
-  valueToText: (value: T) => string[], sortBy: Sorter<T>) {
+export function usePageableData<T>(urlProps: DataTableUrlProps, data: T[],
+  valueToText: (value: T) => string[], sortBy: Sorter<T>): PaginationData<T> {
   const filterText = urlProps.filter || '';
   const page = parseInt(urlProps.page as string, 10);
   const itemsPerPage = parseInt(urlProps.itemsPerPage as string, 10);
-  const isReversed = urlProps.asc !== 'false';
+  const isReversed = urlProps.asc === 'false';
 
   const sortedRows = List.of(...data)
-    .sort(isReversed ? sortBy : (a, b) => sortBy(b, a));
+    .sort(isReversed ? (a, b) => sortBy(b, a) : sortBy);
 
   const filteredRows = sortedRows
     .filter(value => valueToText(value)

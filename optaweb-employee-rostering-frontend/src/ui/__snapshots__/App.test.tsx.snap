@@ -17,7 +17,11 @@ exports[`App clicking the nav button should show the sidebar 1`] = `
   sidebar={
     <PageSidebar
       isNavOpen={true}
-      nav={<UNDEFINED />}
+      nav={
+        <UNDEFINED
+          variant="default"
+        />
+      }
     />
   }
 >
@@ -103,7 +107,11 @@ exports[`App clicking the nav button twice should hide the sidebar 1`] = `
   sidebar={
     <PageSidebar
       isNavOpen={false}
-      nav={<UNDEFINED />}
+      nav={
+        <UNDEFINED
+          variant="default"
+        />
+      }
     />
   }
 >
@@ -189,7 +197,11 @@ exports[`App should render correctly on a desktop 1`] = `
   sidebar={
     <PageSidebar
       isNavOpen={false}
-      nav={<UNDEFINED />}
+      nav={
+        <UNDEFINED
+          variant="default"
+        />
+      }
     />
   }
 >
@@ -275,7 +287,11 @@ exports[`App should render correctly on a mobile 1`] = `
   sidebar={
     <PageSidebar
       isNavOpen={false}
-      nav={<UNDEFINED />}
+      nav={
+        <UNDEFINED
+          variant="default"
+        />
+      }
     />
   }
 >

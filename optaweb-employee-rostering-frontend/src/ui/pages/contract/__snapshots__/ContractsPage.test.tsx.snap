@@ -67,7 +67,7 @@ exports[`Contracts page should render correctly with a few skills 1`] = `
       "replace": [MockFunction],
     }
   }
-  isReversed={true}
+  isReversed={false}
   itemsPerPage={10}
   location={
     Object {
@@ -163,7 +163,7 @@ exports[`Contracts page should render correctly with no skills 1`] = `
       "replace": [MockFunction],
     }
   }
-  isReversed={true}
+  isReversed={false}
   itemsPerPage={10}
   location={
     Object {
@@ -194,13 +194,17 @@ exports[`Contracts page should render correctly with no skills 1`] = `
 
 exports[`Contracts page should render the editor correctly 1`] = `
 <TableRow>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
     <TextInput
       onChange={[Function]}
       value="Contract 1"
     />
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerDay)"
+  >
     <TextInput
       min={0}
       onChange={[Function]}
@@ -208,7 +212,9 @@ exports[`Contracts page should render the editor correctly 1`] = `
       value={1}
     />
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerWeek)"
+  >
     <TextInput
       min={0}
       onChange={[Function]}
@@ -216,7 +222,9 @@ exports[`Contracts page should render the editor correctly 1`] = `
       value={2}
     />
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerMonth)"
+  >
     <TextInput
       min={0}
       onChange={[Function]}
@@ -224,7 +232,9 @@ exports[`Contracts page should render the editor correctly 1`] = `
       value=""
     />
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerYear)"
+  >
     <TextInput
       min={0}
       onChange={[Function]}
@@ -242,25 +252,35 @@ exports[`Contracts page should render the editor correctly 1`] = `
 
 exports[`Contracts page should render the viewer correctly 1`] = `
 <TableRow>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
     <Text>
       Contract 1
     </Text>
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerDay)"
+  >
     <Text>
       1
     </Text>
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerWeek)"
+  >
     <Text>
       2
     </Text>
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerMonth)"
+  >
     <Text />
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerYear)"
+  >
     <Text />
   </TableCell>
   <RowViewButtons

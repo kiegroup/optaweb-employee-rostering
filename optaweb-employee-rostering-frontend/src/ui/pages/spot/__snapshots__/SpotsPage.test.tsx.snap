@@ -59,7 +59,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
       "replace": [MockFunction],
     }
   }
-  isReversed={true}
+  isReversed={false}
   itemsPerPage={10}
   location={
     Object {
@@ -147,7 +147,7 @@ exports[`Spots page should render correctly with no spots 1`] = `
       "replace": [MockFunction],
     }
   }
-  isReversed={true}
+  isReversed={false}
   itemsPerPage={10}
   location={
     Object {
@@ -178,13 +178,17 @@ exports[`Spots page should render correctly with no spots 1`] = `
 
 exports[`Spots page should render the editor correctly 1`] = `
 <TableRow>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
     <TextInput
       onChange={[Function]}
       value="Spot"
     />
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=requiredSkillSet)"
+  >
     <MultiTypeaheadSelectInput
       emptyText="Trans(i18nKey=selectRequiredSkills)"
       onChange={[Function]}
@@ -212,7 +216,9 @@ exports[`Spots page should render the editor correctly 1`] = `
 
 exports[`Spots page should render the viewer correctly 1`] = `
 <TableRow>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
     <Flex>
       <FlexItem>
         <Text>
@@ -233,7 +239,9 @@ exports[`Spots page should render the viewer correctly 1`] = `
       </FlexItem>
     </Flex>
   </TableCell>
-  <TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=requiredSkillSet)"
+  >
     <ChipGroup
       aria-label="Chip group category"
       categoryName=""
