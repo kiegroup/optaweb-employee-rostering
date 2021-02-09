@@ -27,9 +27,7 @@ export interface MultiTypeaheadSelectProps<T> {
   autoSize?: boolean;
 }
 
-export default class MultiTypeaheadSelectInput<T> extends React.Component<
-MultiTypeaheadSelectProps<T>
-> {
+export default class MultiTypeaheadSelectInput<T> extends React.Component<MultiTypeaheadSelectProps<T>> {
   constructor(props: MultiTypeaheadSelectProps<T>) {
     super(props);
     this.onSelect = this.onSelect.bind(this);

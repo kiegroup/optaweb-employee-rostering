@@ -26,8 +26,7 @@ interface StateProps {
   tenantId: number;
 }
 
-const mapStateToProps = (state: AppState):
-StateProps => ({
+const mapStateToProps = (state: AppState): StateProps => ({
   tenantId: state.tenantData.currentTenantId,
 });
 
