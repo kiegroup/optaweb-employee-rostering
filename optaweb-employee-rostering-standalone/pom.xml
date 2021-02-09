@@ -147,7 +147,7 @@
                   <goal>start</goal>
                 </goals>
                 <configuration>
-                  <name>ERP backend</name>
+                  <name>optaweb-employee-rostering-standalone</name>
                   <healthcheckUrl>http://localhost:${application.port}</healthcheckUrl>
                   <workingDir>${project.build.directory}</workingDir>
                   <processLogFile>${project.build.directory}/${project.artifactId}.log</processLogFile>
