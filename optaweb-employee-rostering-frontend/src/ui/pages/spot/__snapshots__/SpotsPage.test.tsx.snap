@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Spots page should render correctly with a few spots 1`] = `
-<TheTable
+<DataTable
   columns={
     Array [
       Object {
@@ -113,7 +113,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
 `;
 
 exports[`Spots page should render correctly with no spots 1`] = `
-<TheTable
+<DataTable
   columns={
     Array [
       Object {

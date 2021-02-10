@@ -14,7 +14,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
       onChange={[Function]}
     />
   </div>
-  <TheTable
+  <DataTable
     columns={
       Array [
         Object {
@@ -177,7 +177,7 @@ exports[`Employees page should render correctly with no employees 1`] = `
       onChange={[Function]}
     />
   </div>
-  <TheTable
+  <DataTable
     columns={
       Array [
         Object {

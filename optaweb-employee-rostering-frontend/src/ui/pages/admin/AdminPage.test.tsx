@@ -18,7 +18,7 @@ import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { Tenant } from 'domain/Tenant';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { DataTableUrlProps, TheTable } from 'ui/components/DataTable';
+import { DataTableUrlProps, DataTable } from 'ui/components/DataTable';
 import { Button } from '@patternfly/react-core';
 import { List } from 'immutable';
 import { useSelector } from 'react-redux';
@@ -84,7 +84,7 @@ describe('Admin Page', () => {
     const twoTenants = generateProps(2, {});
     mockRedux(twoTenants.store);
     const adminPage = shallow(<AdminPage {...twoTenants.props} />);
-    adminPage.find(TheTable).simulate('addButtonClick');
+    adminPage.find(DataTable).simulate('addButtonClick');
     expect(toJson(adminPage)).toMatchSnapshot();
   });
 
@@ -93,7 +93,7 @@ describe('Admin Page', () => {
     const twoTenants = generateProps(2, {});
     mockRedux(twoTenants.store);
     const adminPage = shallow(<AdminPage {...twoTenants.props} />);
-    adminPage.find(TheTable).simulate('addButtonClick');
+    adminPage.find(DataTable).simulate('addButtonClick');
     adminPage.find('[aria-label="Add Tenant Modal"]').simulate('close');
     expect(toJson(adminPage)).toMatchSnapshot();
   });

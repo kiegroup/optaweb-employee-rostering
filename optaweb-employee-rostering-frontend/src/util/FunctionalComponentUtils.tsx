@@ -71,11 +71,11 @@ export interface PaginationData<T> {
   isReversed: boolean;
 }
 
-export function usePageableData<T>(urlProps: DataTableUrlProps, data: T[],
+export function usePageableData<T>(urlProps: Omit<DataTableUrlProps, 'sortBy'>, data: T[],
   valueToText: (value: T) => string[], sortBy: Sorter<T>): PaginationData<T> {
   const filterText = urlProps.filter || '';
-  const page = parseInt(urlProps.page as string, 10);
-  const itemsPerPage = parseInt(urlProps.itemsPerPage as string, 10);
+  const page = parseInt(urlProps.page || '1', 10);
+  const itemsPerPage = parseInt(urlProps.itemsPerPage || '10', 10);
   const isReversed = urlProps.asc === 'false';
 
   const sortedRows = List.of(...data)

@@ -24,7 +24,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { usePageableData } from 'util/FunctionalComponentUtils';
 import {
   DataTableUrlProps, RowEditButtons, RowViewButtons,
-  setSorterInUrl, TableCell, TableRow, TheTable,
+  setSorterInUrl, TableCell, TableRow, DataTable,
 } from 'ui/components/DataTable';
 import { tenantSelectors } from 'store/tenant';
 import { stringSorter } from 'util/CommonSorters';
@@ -126,12 +126,12 @@ export const SkillsPage: React.FC<Props> = (props) => {
   const sortBy = parseInt(urlProps.sortBy || '-1', 10);
   const { sorter } = columns[sortBy];
 
-  const pagableData = usePageableData(urlProps, skillList, skill => [skill.name], sorter);
+  const pageableData = usePageableData(urlProps, skillList, skill => [skill.name], sorter);
 
   return (
-    <TheTable
+    <DataTable
       {...props}
-      {...pagableData}
+      {...pageableData}
       title={t('skills')}
       columns={columns}
       rowWrapper={skill => (<SkillRow key={skill.id} {...skill} />)}

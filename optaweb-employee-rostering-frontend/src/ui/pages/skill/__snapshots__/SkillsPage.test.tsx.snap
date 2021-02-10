@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Skills page should render correctly with a few skills 1`] = `
-<TheTable
+<DataTable
   columns={
     Array [
       Object {
@@ -92,7 +92,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
 `;
 
 exports[`Skills page should render correctly with no skills 1`] = `
-<TheTable
+<DataTable
   columns={
     Array [
       Object {

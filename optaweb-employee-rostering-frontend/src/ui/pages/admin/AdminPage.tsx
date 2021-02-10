@@ -16,7 +16,7 @@
 
 import * as React from 'react';
 import { Text, Button } from '@patternfly/react-core';
-import { DataTableUrlProps, setSorterInUrl, TableCell, TableRow, TheTable } from 'ui/components/DataTable';
+import { DataTableUrlProps, setSorterInUrl, TableCell, TableRow, DataTable } from 'ui/components/DataTable';
 import { Tenant } from 'domain/Tenant';
 import { TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -84,7 +84,7 @@ export const AdminPage: React.FC<Props> = (props) => {
   });
 
   const sortBy = parseInt(urlProps.sortBy || '-1', 10);
-  const pagableData = usePageableData(urlProps, tenantList.toArray(), tenant => [tenant.name],
+  const pageableData = usePageableData(urlProps, tenantList.toArray(), tenant => [tenant.name],
     stringSorter<Tenant>(tenant => tenant.name));
 
   const columns = [
@@ -115,9 +115,9 @@ export const AdminPage: React.FC<Props> = (props) => {
         isOpen={isCreatingTenant}
         onClose={() => setIsCreatingTenant(false)}
       />
-      <TheTable
+      <DataTable
         {...props}
-        {...pagableData}
+        {...pageableData}
         title={t('tenants')}
         columns={columns}
         sortByIndex={sortBy}

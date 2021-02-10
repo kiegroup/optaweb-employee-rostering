@@ -16,7 +16,7 @@
 import React, { useState } from 'react';
 import {
   TableRow, TableCell, RowViewButtons, RowEditButtons,
-  DataTableUrlProps, setSorterInUrl, TheTable,
+  DataTableUrlProps, setSorterInUrl, DataTable,
 } from 'ui/components/DataTable';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import { spotSelectors, spotOperations } from 'store/spot';
@@ -169,13 +169,13 @@ export const SpotsPage: React.FC<Props> = (props) => {
   const sortBy = parseInt(urlProps.sortBy || '-1', 10);
   const sorter = columns[sortBy].sorter as Sorter<Spot>;
 
-  const pagableData = usePageableData(urlProps, spotList, spot => [spot.name,
+  const pageableData = usePageableData(urlProps, spotList, spot => [spot.name,
     ...spot.requiredSkillSet.map(skill => skill.name)], sorter);
 
   return (
-    <TheTable
+    <DataTable
       {...props}
-      {...pagableData}
+      {...pageableData}
       title={t('spots')}
       columns={columns}
       rowWrapper={spot => (<SpotRow key={spot.id} {...spot} />)}

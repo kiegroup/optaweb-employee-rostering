@@ -24,7 +24,10 @@ import { mockStore } from 'store/mockStore';
 import { Contract } from 'domain/Contract';
 import DomainObjectView from 'domain/DomainObjectView';
 import { mockRedux } from 'setupTests';
-import { employeeSelectors } from 'store/employee';
+import { employeeOperations, employeeSelectors } from 'store/employee';
+import { RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
+import { alert } from 'store/alert';
+import { doNothing } from 'types';
 import { EditableEmployeeRow, EmployeeRow, EmployeesPage } from './EmployeesPage';
 
 const noEmployeesNoContractsStore = mockStore({
@@ -103,8 +106,21 @@ const twoEmployeesOneContractsStore = mockStore({
 
 
 describe('Employees page', () => {
+  const addEmployee = (employee: Employee) => ['add', employee];
+  const updateEmployee = (employee: Employee) => ['update', employee];
+  const removeEmployee = (employee: Employee) => ['remove', employee];
+  const uploadEmployeeList = (file: File) => ['upload', file];
+  const showErrorMessage = (key: string, params: any) => ['showErrorMessage', key, params];
+
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(employeeOperations, 'addEmployee').mockImplementation(employee => addEmployee(employee) as any);
+    jest.spyOn(employeeOperations, 'updateEmployee').mockImplementation(employee => updateEmployee(employee) as any);
+    jest.spyOn(employeeOperations, 'removeEmployee').mockImplementation(employee => removeEmployee(employee) as any);
+    jest.spyOn(employeeOperations, 'uploadEmployeeList').mockImplementation(file => uploadEmployeeList(file) as any);
+    jest.spyOn(alert, 'showErrorMessage').mockImplementation((key, params) => showErrorMessage(key, params) as any);
+    jest.spyOn(twoEmployeesOneContractsStore, 'dispatch').mockImplementation(doNothing);
+    jest.spyOn(noEmployeesNoContractsStore, 'dispatch').mockImplementation(doNothing);
   });
 
   it('should render correctly with no employees', () => {
@@ -135,19 +151,73 @@ describe('Employees page', () => {
     expect(toJson(editor)).toMatchSnapshot();
   });
 
+  it('no name should be invalid', () => {
+    const employee = {
+      ...employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2),
+      name: '',
+    };
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const editor = shallow(<EditableEmployeeRow employee={employee} isNew={false} onClose={jest.fn()} />);
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(false);
+  });
+
+  it('duplicate name should be invalid', () => {
+    const employee = {
+      ...employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2),
+      name: 'Employee 1',
+      id: 3,
+    };
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const editor = shallow(<EditableEmployeeRow employee={employee} isNew={false} onClose={jest.fn()} />);
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(false);
+  });
+
+  it('saving new employee should call add employee', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const editor = shallow(<EditableEmployeeRow employee={employee} isNew onClose={jest.fn()} />);
+    editor.find(RowEditButtons).prop('onSave')();
+    expect(employeeOperations.addEmployee).toBeCalledWith(employee);
+    expect(twoEmployeesOneContractsStore.dispatch).toBeCalledWith(addEmployee(employee));
+  });
+
+  it('saving updated employee should call update employee', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const editor = shallow(<EditableEmployeeRow employee={employee} isNew={false} onClose={jest.fn()} />);
+    editor.find(RowEditButtons).prop('onSave')();
+    expect(employeeOperations.updateEmployee).toBeCalledWith(employee);
+    expect(twoEmployeesOneContractsStore.dispatch).toBeCalledWith(updateEmployee(employee));
+  });
+
+  it('deleting should call delete employee', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const viewer = shallow(<EmployeeRow {...employee} />);
+    viewer.find(RowViewButtons).prop('onDelete')();
+    expect(employeeOperations.removeEmployee).toBeCalledWith(employee);
+    expect(twoEmployeesOneContractsStore.dispatch).toBeCalledWith(removeEmployee(employee));
+  });
+
   it('should upload the file on Excel input', () => {
     mockRedux(noEmployeesNoContractsStore);
     const employeesPage = shallow(<EmployeesPage {...getRouterProps('/0/employee', {})} />);
     const file = new File([], 'hello.xlsx');
     employeesPage.find(FileUpload).simulate('change', file);
-    // expect(noEmployees.uploadEmployeeList).toBeCalledWith(file);
+    expect(noEmployeesNoContractsStore.dispatch).toBeCalledWith(uploadEmployeeList(file));
   });
 
   it('should show an error on non-excel input', () => {
     mockRedux(noEmployeesNoContractsStore);
     const employeesPage = shallow(<EmployeesPage {...getRouterProps('/0/employee', {})} />);
     employeesPage.find(FileUpload).simulate('change', '');
-    // expect(noEmployees.uploadEmployeeList).not.toBeCalled();
-    // expect(noEmployees.showErrorMessage).toBeCalledWith('badFileType', { fileTypes: 'Excel (.xlsx)' });
+    expect(employeeOperations.uploadEmployeeList).not.toBeCalled();
+    expect(noEmployeesNoContractsStore.dispatch)
+      .toBeCalledWith(showErrorMessage('badFileType', { fileTypes: 'Excel (.xlsx)' }));
   });
 });

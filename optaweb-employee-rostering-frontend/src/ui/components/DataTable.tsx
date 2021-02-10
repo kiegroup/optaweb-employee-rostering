@@ -103,7 +103,7 @@ export const TableCell = (props: PropsWithChildren<{ columnName: string }>) => (
   </Td>
 );
 
-export const PagenationControls = (props: PaginationData<any> & RouteComponentProps & {
+export const PaginationControls = (props: PaginationData<any> & RouteComponentProps & {
   isCreatingNewRow: boolean;
   onCreateNewRow: () => void;
 }) => {
@@ -137,7 +137,11 @@ export const PagenationControls = (props: PaginationData<any> & RouteComponentPr
           page={props.page}
           onSetPage={(e, newPage) => setPropsInUrl(props, { page: `${newPage}` })}
           widgetId="pagination-options-menu-top"
-          onPerPageSelect={(e, newPerPage) => setPropsInUrl(props, { itemsPerPage: `${newPerPage}` })}
+          onPerPageSelect={(e, newPerPage) => {
+            const firstItemOnOldPage = props.itemsPerPage * (props.page - 1) + 1;
+            const newPage = Math.ceil(firstItemOnOldPage / newPerPage);
+            setPropsInUrl(props, { page: `${newPage}`, itemsPerPage: `${newPerPage}` });
+          }}
         />
       </LevelItem>
     </Level>
@@ -157,7 +161,7 @@ export function setSorterInUrl(props: RouteComponentProps, urlProps: { asc: stri
     });
   }
 }
-export interface TheTableProps<T> {
+export interface DataTableProps<T> {
   title: string;
   columns: { name: string; sorter?: Sorter<T>}[];
   sortByIndex: number;
@@ -168,15 +172,12 @@ export interface TheTableProps<T> {
   onAddButtonClick?: () => void;
 }
 
-/* eslint-disable no-nested-ternary */
-// Patternfly Table in React is very inconvenient when the content is not text (ex: inline editing),
-// so we use the HTML example to build it
-export const TheTable = (props: PaginationData<any> & RouteComponentProps & TheTableProps<any>) => {
+export const DataTable = (props: PaginationData<any> & RouteComponentProps & DataTableProps<any>) => {
   const [isCreatingNewRow, setIsCreatingNewRow] = useState(false);
 
   return (
     <>
-      <PagenationControls
+      <PaginationControls
         {...props}
         isCreatingNewRow={isCreatingNewRow}
         onCreateNewRow={() => {
@@ -226,4 +227,3 @@ export const TheTable = (props: PaginationData<any> & RouteComponentProps & TheT
     </>
   );
 };
-/* eslint-enable no-nested-ternary */

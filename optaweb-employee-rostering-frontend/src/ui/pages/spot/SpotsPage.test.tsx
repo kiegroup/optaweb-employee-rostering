@@ -22,8 +22,10 @@ import { mockStore } from 'store/mockStore';
 import { Skill } from 'domain/Skill';
 import { Map } from 'immutable';
 import DomainObjectView from 'domain/DomainObjectView';
-import { spotSelectors } from 'store/spot';
+import { spotOperations, spotSelectors } from 'store/spot';
 import { mockRedux } from 'setupTests';
+import { RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
+import { doNothing } from 'types';
 import { SpotsPage, SpotRow, EditableSpotRow } from './SpotsPage';
 
 const noSpotsStore = mockStore({
@@ -65,6 +67,17 @@ const twoSpotsStore = mockStore({
 }).store;
 
 describe('Spots page', () => {
+  const addSpot = (spot: Spot) => ['add', spot];
+  const updateSpot = (spot: Spot) => ['update', spot];
+  const removeSpot = (spot: Spot) => ['remove', spot];
+
+  beforeEach(() => {
+    jest.spyOn(spotOperations, 'addSpot').mockImplementation(spot => addSpot(spot) as any);
+    jest.spyOn(spotOperations, 'updateSpot').mockImplementation(spot => updateSpot(spot) as any);
+    jest.spyOn(spotOperations, 'removeSpot').mockImplementation(spot => removeSpot(spot) as any);
+    jest.spyOn(twoSpotsStore, 'dispatch').mockImplementation(doNothing);
+  });
+
   it('should render correctly with no spots', () => {
     mockRedux(noSpotsStore);
     const spotsPage = shallow(<SpotsPage {...getRouterProps('/0/spot', {})} />);
@@ -97,5 +110,71 @@ describe('Spots page', () => {
     mockRedux(twoSpotsStore);
     const editor = shallow(<EditableSpotRow spot={spot} isNew={false} onClose={jest.fn()} />);
     expect(toJson(editor)).toMatchSnapshot();
+  });
+
+  it('no name should be invalid', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 1,
+      name: '',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const editor = shallow(<EditableSpotRow spot={spot} isNew={false} onClose={jest.fn()} />);
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(false);
+  });
+
+  it('duplicate name should be invalid', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 3,
+      name: 'Spot 1',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const editor = shallow(<EditableSpotRow spot={spot} isNew={false} onClose={jest.fn()} />);
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(false);
+  });
+
+  it('saving new spot should call add spot', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 1,
+      name: 'Spot',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const editor = shallow(<EditableSpotRow spot={spot} isNew onClose={jest.fn()} />);
+    editor.find(RowEditButtons).prop('onSave')();
+    expect(spotOperations.addSpot).toBeCalledWith(spot);
+    expect(twoSpotsStore.dispatch).toBeCalledWith(addSpot(spot));
+  });
+
+  it('saving updated spot should call update spot', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 1,
+      name: 'Spot',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const editor = shallow(<EditableSpotRow spot={spot} isNew={false} onClose={jest.fn()} />);
+    editor.find(RowEditButtons).prop('onSave')();
+    expect(spotOperations.updateSpot).toBeCalledWith(spot);
+    expect(twoSpotsStore.dispatch).toBeCalledWith(updateSpot(spot));
+  });
+
+  it('deleting should call delete spot', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 1,
+      name: 'Spot',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const viewer = shallow(<SpotRow {...spot} />);
+    viewer.find(RowViewButtons).prop('onDelete')();
+    expect(spotOperations.removeSpot).toBeCalledWith(spot);
+    expect(twoSpotsStore.dispatch).toBeCalledWith(removeSpot(spot));
   });
 });

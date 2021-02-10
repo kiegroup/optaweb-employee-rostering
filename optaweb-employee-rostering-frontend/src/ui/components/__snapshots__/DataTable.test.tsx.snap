@@ -2,14 +2,15 @@
 
 exports[`DataTable component should render correctly with a few rows 1`] = `
 <Fragment>
-  <PagenationControls
+  <PaginationControls
     columns={
       Array [
         Object {
-          "name": "Column 1",
+          "name": "Name",
         },
         Object {
-          "name": "Column 2",
+          "name": "Number",
+          "sorter": [Function],
         },
       ]
     }
@@ -88,11 +89,33 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
         "results": Array [
           Object {
             "type": "return",
-            "value": undefined,
+            "value": <TableRow>
+              <TableCell
+                columnName="Name"
+              >
+                More Data
+              </TableCell>
+              <TableCell
+                columnName="Number"
+              >
+                2
+              </TableCell>
+            </TableRow>,
           },
           Object {
             "type": "return",
-            "value": undefined,
+            "value": <TableRow>
+              <TableCell
+                columnName="Name"
+              >
+                Some Data
+              </TableCell>
+              <TableCell
+                columnName="Number"
+              >
+                1
+              </TableCell>
+            </TableRow>,
           },
         ],
       }
@@ -121,18 +144,28 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
         role="row"
       >
         <Th
-          key="Column 1"
+          key="Name"
           role="columnheader"
           scope="col"
         >
-          Column 1
+          Name
         </Th>
         <Th
-          key="Column 2"
+          key="Number"
           role="columnheader"
           scope="col"
+          sort={
+            Object {
+              "columnIndex": 1,
+              "onSort": [Function],
+              "sortBy": Object {
+                "direction": "asc",
+                "index": 0,
+              },
+            }
+          }
         >
-          Column 2
+          Number
         </Th>
         <Th
           role="columnheader"
@@ -140,21 +173,51 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
         />
       </Tr>
     </Thead>
-    <Tbody />
+    <Tbody>
+      <TableRow
+        key="More Data"
+      >
+        <TableCell
+          columnName="Name"
+        >
+          More Data
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          2
+        </TableCell>
+      </TableRow>
+      <TableRow
+        key="Some Data"
+      >
+        <TableCell
+          columnName="Name"
+        >
+          Some Data
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          1
+        </TableCell>
+      </TableRow>
+    </Tbody>
   </TableComposable>
 </Fragment>
 `;
 
 exports[`DataTable component should render correctly with no rows 1`] = `
 <Fragment>
-  <PagenationControls
+  <PaginationControls
     columns={
       Array [
         Object {
-          "name": "Column 1",
+          "name": "Name",
         },
         Object {
-          "name": "Column 2",
+          "name": "Number",
+          "sorter": [Function],
         },
       ]
     }
@@ -217,18 +280,28 @@ exports[`DataTable component should render correctly with no rows 1`] = `
         role="row"
       >
         <Th
-          key="Column 1"
+          key="Name"
           role="columnheader"
           scope="col"
         >
-          Column 1
+          Name
         </Th>
         <Th
-          key="Column 2"
+          key="Number"
           role="columnheader"
           scope="col"
+          sort={
+            Object {
+              "columnIndex": 1,
+              "onSort": [Function],
+              "sortBy": Object {
+                "direction": "asc",
+                "index": 0,
+              },
+            }
+          }
         >
-          Column 2
+          Number
         </Th>
         <Th
           role="columnheader"
@@ -239,4 +312,182 @@ exports[`DataTable component should render correctly with no rows 1`] = `
     <Tbody />
   </TableComposable>
 </Fragment>
+`;
+
+exports[`PaginationControls should render correctly 1`] = `
+<Level
+  hasGutter={true}
+  style={
+    Object {
+      "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+      "padding": "5px 5px 5px 5px",
+    }
+  }
+>
+  <LevelItem>
+    <FilterComponent
+      filterText="My filter"
+      onChange={[Function]}
+    />
+  </LevelItem>
+  <LevelItem
+    style={
+      Object {
+        "display": "flex",
+      }
+    }
+  >
+    <Button
+      isDisabled={false}
+      onClick={[MockFunction]}
+    >
+      Trans(i18nKey=add)
+    </Button>
+    <Pagination
+      className=""
+      defaultToFullPage={false}
+      firstPage={1}
+      isCompact={false}
+      isDisabled={false}
+      isSticky={false}
+      itemCount={100}
+      itemsEnd={null}
+      itemsStart={null}
+      offset={0}
+      onFirstClick={[Function]}
+      onLastClick={[Function]}
+      onNextClick={[Function]}
+      onPageInput={[Function]}
+      onPerPageSelect={[Function]}
+      onPreviousClick={[Function]}
+      onSetPage={[Function]}
+      ouiaSafe={true}
+      page={1}
+      perPage={10}
+      perPageOptions={
+        Array [
+          Object {
+            "title": "10",
+            "value": 10,
+          },
+          Object {
+            "title": "20",
+            "value": 20,
+          },
+          Object {
+            "title": "50",
+            "value": 50,
+          },
+          Object {
+            "title": "100",
+            "value": 100,
+          },
+        ]
+      }
+      titles={
+        Object {
+          "currPage": "Current page",
+          "items": "",
+          "itemsPerPage": "Items per page",
+          "optionsToggle": "Items per page",
+          "page": "",
+          "paginationTitle": "Pagination",
+          "perPageSuffix": "per page",
+          "toFirstPage": "Go to first page",
+          "toLastPage": "Go to last page",
+          "toNextPage": "Go to next page",
+          "toPreviousPage": "Go to previous page",
+        }
+      }
+      toggleTemplate={[Function]}
+      variant="top"
+      widgetId="pagination-options-menu-top"
+    />
+  </LevelItem>
+</Level>
+`;
+
+exports[`RowEditButtons should render correctly 1`] = `
+<Td
+  role="cell"
+>
+  <span
+    style={
+      Object {
+        "display": "grid",
+        "gridColumnGap": "5px",
+        "gridTemplateColumns": "1fr auto auto",
+      }
+    }
+  >
+    <span />
+    <span>
+      <Button
+        isDisabled={false}
+        onClick={[Function]}
+        variant="link"
+      >
+        <SaveIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Button>
+    </span>
+    <span>
+      <Button
+        onClick={[MockFunction]}
+        variant="link"
+      >
+        <CloseIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Button>
+    </span>
+  </span>
+</Td>
+`;
+
+exports[`RowViewButtons should render correctly 1`] = `
+<Td
+  role="cell"
+>
+  <span
+    style={
+      Object {
+        "display": "grid",
+        "gridColumnGap": "5px",
+        "gridTemplateColumns": "1fr auto auto",
+      }
+    }
+  >
+    <span />
+    <span>
+      <Button
+        onClick={[MockFunction]}
+        variant="link"
+      >
+        <EditIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Button>
+    </span>
+    <span>
+      <Button
+        onClick={[MockFunction]}
+        variant="danger"
+      >
+        <TrashIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Button>
+    </span>
+  </span>
+</Td>
 `;

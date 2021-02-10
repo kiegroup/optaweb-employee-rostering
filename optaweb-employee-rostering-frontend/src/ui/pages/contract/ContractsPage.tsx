@@ -17,7 +17,7 @@
 import React, { useState } from 'react';
 import {
   TableRow, TableCell, RowViewButtons, RowEditButtons,
-  DataTableUrlProps, setSorterInUrl, TheTable,
+  DataTableUrlProps, setSorterInUrl, DataTable,
 } from 'ui/components/DataTable';
 import { TextInput, Text } from '@patternfly/react-core';
 import { useDispatch, useSelector } from 'react-redux';
@@ -188,15 +188,15 @@ export const ContractsPage: React.FC<Props> = (props) => {
   const sortBy = parseInt(urlProps.sortBy || '-1', 10);
   const sorter = columns[sortBy].sorter as Sorter<Contract>;
 
-  const pagableData = usePageableData(urlProps, contractList, contract => [contract.name,
+  const pageableData = usePageableData(urlProps, contractList, contract => [contract.name,
     `${contract.maximumMinutesPerDay || ''}`, `${contract.maximumMinutesPerWeek || ''}`,
     `${contract.maximumMinutesPerMonth || ''}`, `${contract.maximumMinutesPerYear || ''}`],
   sorter);
 
   return (
-    <TheTable
+    <DataTable
       {...props}
-      {...pagableData}
+      {...pageableData}
       title={t('contracts')}
       columns={columns}
       rowWrapper={contract => (<ContractRow key={contract.id} {...contract} />)}

@@ -43,7 +43,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { ColorPicker, defaultColorList } from 'ui/components/ColorPicker';
 import {
   TableRow, TableCell, RowViewButtons, RowEditButtons, DataTableUrlProps,
-  setSorterInUrl, TheTable,
+  setSorterInUrl, DataTable,
 } from 'ui/components/DataTable';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 
@@ -233,7 +233,7 @@ export const EmployeesPage: React.FC<Props> = (props) => {
   const sortBy = parseInt(urlProps.sortBy || '-1', 10);
   const sorter = columns[sortBy].sorter as Sorter<Employee>;
 
-  const pagableData = usePageableData(urlProps, employeeList, employee => [employee.name,
+  const pageableData = usePageableData(urlProps, employeeList, employee => [employee.name,
     employee.contract.name,
     ...employee.skillProficiencySet.map(skill => skill.name),
     employee.shortId], sorter);
@@ -264,9 +264,9 @@ export const EmployeesPage: React.FC<Props> = (props) => {
     return (
       <>
         {importElement}
-        <TheTable
+        <DataTable
           {...props}
-          {...pagableData}
+          {...pageableData}
           title={t('employees')}
           columns={columns}
           rowWrapper={employee => (<EmployeeRow key={employee.id} {...employee} />)}
