@@ -117,48 +117,38 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
     );
     const { tenantList, currentTenantId } = this.props;
     const { isTenantSelectOpen } = this.state;
-    if (tenantList.size === 0) {
-      return (
-        <Toolbar
-          style={{
-            backgroundColor: '#0000', // transparent background for background image
-          }}
-        >
-          <ToolbarGroup />
-          {bellAndCog}
-        </Toolbar>
-      );
-    }
-
-    const currentTenant = tenantList.find(t => t.id === currentTenantId) as Tenant;
+    const currentTenantName = tenantList.find(t => t.id === currentTenantId)?.name ?? 'TENANT ERROR';
+    const tenantDropdown = (tenantList.size > 0) ? (
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Dropdown
+            isPlain
+            position="right"
+            onSelect={event => event && this.setCurrentTenant(
+              parseInt((event.target as HTMLElement).dataset.tenantid as string, 10),
+            )}
+            isOpen={isTenantSelectOpen}
+            toggle={(
+              <DropdownToggle onToggle={() => this.setIsTenantSelectOpen(!isTenantSelectOpen)}>
+                {currentTenantName}
+              </DropdownToggle>
+            )}
+            dropdownItems={tenantList.map(tenant => (
+              <DropdownItem data-tenantid={tenant.id} key={tenant.id}>
+                {tenant.name}
+              </DropdownItem>
+            )).toArray()}
+          />
+        </ToolbarItem>
+      </ToolbarGroup>
+    ) : <ToolbarGroup />;
     return (
       <Toolbar
         style={{
           backgroundColor: '#0000', // transparent background for background image
         }}
       >
-        <ToolbarGroup>
-          <ToolbarItem>
-            <Dropdown
-              isPlain
-              position="right"
-              onSelect={event => event && this.setCurrentTenant(
-                parseInt((event.target as HTMLElement).dataset.tenantid as string, 10),
-              )}
-              isOpen={isTenantSelectOpen}
-              toggle={(
-                <DropdownToggle onToggle={() => this.setIsTenantSelectOpen(!isTenantSelectOpen)}>
-                  {currentTenant.name}
-                </DropdownToggle>
-              )}
-              dropdownItems={tenantList.map(tenant => (
-                <DropdownItem data-tenantid={tenant.id} key={tenant.id}>
-                  {tenant.name}
-                </DropdownItem>
-              )).toArray()}
-            />
-          </ToolbarItem>
-        </ToolbarGroup>
+        {tenantDropdown}
         {bellAndCog}
       </Toolbar>
     );
