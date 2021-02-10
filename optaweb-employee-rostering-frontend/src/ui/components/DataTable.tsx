@@ -22,7 +22,16 @@ import { useTranslation } from 'react-i18next';
 import { setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
 import { RouteComponentProps } from 'react-router';
 import { PaginationData } from 'util/FunctionalComponentUtils';
-import { TableComposable, Caption, Thead, Tbody, Th, Tr, Td } from '@patternfly/react-table';
+import {
+  TableComposable,
+  Caption,
+  Thead,
+  Tbody,
+  Th,
+  Tr,
+  Td,
+  ISortBy,
+} from '@patternfly/react-table';
 import FilterComponent from './FilterComponent';
 
 export type DataTableUrlProps = UrlProps<'page'|'itemsPerPage'|'filter'|'sortBy'|'asc'>;
@@ -194,21 +203,19 @@ export const DataTable = (props: PaginationData<any> & RouteComponentProps & Dat
           <Tr role="row">
             {props.columns.map((header, index) => {
               const sorterProps = (header.sorter) ? {
-                sort: {
-                  sortBy: {
-                    index: props.sortByIndex,
-                    direction: (props.isReversed ? 'desc' : 'asc') as 'desc' | 'asc',
-                  },
-                  onSort: () => props.onSorterChange(index),
-                  columnIndex: index,
-                },
-              } : {};
+                sortBy: {
+                  index: props.sortByIndex,
+                  direction: (props.isReversed ? 'desc' : 'asc'),
+                } as ISortBy,
+                onSort: () => props.onSorterChange(index),
+                columnIndex: index,
+              } : undefined;
               return (
                 <Th
                   key={header.name}
                   role="columnheader"
                   scope="col"
-                  {...sorterProps}
+                  sort={sorterProps}
                 >
                   {header.name}
                 </Th>
