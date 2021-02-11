@@ -1,5 +1,95 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Skills page DataTable newRowWrapper should be EditableSkillRow 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <TextInput
+      onChange={[Function]}
+      value=""
+    />
+    <InputGroupText
+      key="0"
+    >
+      <Tooltip
+        content={
+          <List
+            style={
+              Object {
+                "color": "white",
+              }
+            }
+          >
+            <ListItem>
+              Trans(i18nKey=skillEmptyNameError)
+            </ListItem>
+          </List>
+        }
+      >
+        <WarningTriangleIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Tooltip>
+    </InputGroupText>
+  </TableCell>
+  <RowEditButtons
+    isValid={false}
+    onClose={[Function]}
+    onSave={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Skills page DataTable rowWrapper should be SkillRow 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Text>
+      Skill
+    </Text>
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Skills page clicking on the edit button in the viewer should show the editor 1`] = `
+<EditableSkillRow
+  isNew={false}
+  onClose={[Function]}
+  skill={
+    Object {
+      "id": 0,
+      "name": "Updated Skill",
+      "tenantId": 0,
+      "version": 0,
+    }
+  }
+/>
+`;
+
+exports[`Skills page clicking on the edit button in the viewer should show the editor 2`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Text>
+      Updated Skill
+    </Text>
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
 exports[`Skills page should render correctly with a few skills 1`] = `
 <DataTable
   columns={

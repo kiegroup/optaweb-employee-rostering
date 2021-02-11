@@ -1,5 +1,181 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Spots page DataTable newRowWrapper should be EditableSpotRow 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <TextInput
+      onChange={[Function]}
+      value=""
+    />
+    <InputGroupText
+      key="0"
+    >
+      <Tooltip
+        content={
+          <List
+            style={
+              Object {
+                "color": "white",
+              }
+            }
+          >
+            <ListItem>
+              Trans(i18nKey=spotEmptyNameError)
+            </ListItem>
+          </List>
+        }
+      >
+        <WarningTriangleIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Tooltip>
+    </InputGroupText>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=requiredSkillSet)"
+  >
+    <MultiTypeaheadSelectInput
+      emptyText="Trans(i18nKey=selectRequiredSkills)"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
+          Object {
+            "id": 0,
+            "name": "Skill 1",
+            "tenantId": 0,
+            "version": 0,
+          },
+        ]
+      }
+      value={Array []}
+    />
+  </TableCell>
+  <RowEditButtons
+    isValid={false}
+    onClose={[Function]}
+    onSave={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Spots page DataTable rowWrapper should be SpotRow 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Flex>
+      <FlexItem>
+        <Text>
+          Spot
+        </Text>
+      </FlexItem>
+      <FlexItem>
+        <Button
+          onClick={[Function]}
+          variant="link"
+        >
+          <ArrowIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+          />
+        </Button>
+      </FlexItem>
+    </Flex>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=requiredSkillSet)"
+  >
+    <ChipGroup
+      aria-label="Chip group category"
+      categoryName=""
+      closeBtnAriaLabel="Close chip group"
+      collapsedText="\${remaining} more"
+      defaultIsOpen={false}
+      expandedText="Show Less"
+      isClosable={false}
+      numChips={3}
+      onClick={[Function]}
+      onOverflowChipClick={[Function]}
+      tooltipPosition="top"
+    />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Spots page clicking on the edit button in the viewer should show the editor 1`] = `
+<EditableSpotRow
+  isNew={false}
+  onClose={[Function]}
+  spot={
+    Object {
+      "id": 1,
+      "name": "Spot",
+      "requiredSkillSet": Array [],
+      "tenantId": 0,
+    }
+  }
+/>
+`;
+
+exports[`Spots page clicking on the edit button in the viewer should show the editor 2`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Flex>
+      <FlexItem>
+        <Text>
+          Spot
+        </Text>
+      </FlexItem>
+      <FlexItem>
+        <Button
+          onClick={[Function]}
+          variant="link"
+        >
+          <ArrowIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+          />
+        </Button>
+      </FlexItem>
+    </Flex>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=requiredSkillSet)"
+  >
+    <ChipGroup
+      aria-label="Chip group category"
+      categoryName=""
+      closeBtnAriaLabel="Close chip group"
+      collapsedText="\${remaining} more"
+      defaultIsOpen={false}
+      expandedText="Show Less"
+      isClosable={false}
+      numChips={3}
+      onClick={[Function]}
+      onOverflowChipClick={[Function]}
+      tooltipPosition="top"
+    />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
 exports[`Spots page should render correctly with a few spots 1`] = `
 <DataTable
   columns={

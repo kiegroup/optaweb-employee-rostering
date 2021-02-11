@@ -21,9 +21,10 @@ import { getRouterProps } from 'util/BookmarkableTestUtils';
 import { mockStore } from 'store/mockStore';
 import { Map } from 'immutable';
 import { mockRedux } from 'setupTests';
-import { RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
+import { DataTable, RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
 import { skillOperations } from 'store/skill';
 import { doNothing } from 'types';
+import { TextInput } from '@patternfly/react-core';
 import { SkillsPage, SkillRow, EditableSkillRow } from './SkillsPage';
 
 const noSkillsStore = mockStore({
@@ -112,9 +113,13 @@ describe('Skills page', () => {
     const skill = { name: 'New Skill', tenantId: 0 };
     mockRedux(twoSkillsStore);
     const editor = shallow(<EditableSkillRow skill={skill} isNew onClose={jest.fn()} />);
+    const name = 'New Skill Name';
+    editor.find(TextInput).simulate('change', name);
     editor.find(RowEditButtons).prop('onSave')();
-    expect(skillOperations.addSkill).toBeCalledWith(skill);
-    expect(twoSkillsStore.dispatch).toBeCalledWith(addSkill(skill));
+    const newSkill = { ...skill, name };
+    editor.find(RowEditButtons).prop('onSave')();
+    expect(skillOperations.addSkill).toBeCalledWith(newSkill);
+    expect(twoSkillsStore.dispatch).toBeCalledWith(addSkill(newSkill));
   });
 
   it('saving updated skill should call update skill', () => {
@@ -126,6 +131,20 @@ describe('Skills page', () => {
     expect(twoSkillsStore.dispatch).toBeCalledWith(updateSkill(skill));
   });
 
+  it('clicking on the edit button in the viewer should show the editor', () => {
+    const skill = { name: 'Updated Skill', tenantId: 0, id: 0, version: 0 };
+    mockRedux(twoSkillsStore);
+    const viewer = shallow(<SkillRow {...skill} />);
+
+    // Clicking the edit button should show the editor
+    viewer.find(RowViewButtons).prop('onEdit')();
+    expect(viewer).toMatchSnapshot();
+
+    // Clicking the close button should show the viwer
+    viewer.find(EditableSkillRow).prop('onClose')();
+    expect(viewer).toMatchSnapshot();
+  });
+
   it('deleting should call delete skill', () => {
     const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
     mockRedux(twoSkillsStore);
@@ -133,5 +152,23 @@ describe('Skills page', () => {
     viewer.find(RowViewButtons).prop('onDelete')();
     expect(skillOperations.removeSkill).toBeCalledWith(skill);
     expect(twoSkillsStore.dispatch).toBeCalledWith(removeSkill(skill));
+  });
+
+  it('DataTable rowWrapper should be SkillRow', () => {
+    const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
+    mockRedux(twoSkillsStore);
+    const skillsPage = shallow(<SkillsPage {...getRouterProps('/0/skill', {})} />);
+    const rowWrapper = shallow(skillsPage.find(DataTable).prop('rowWrapper')(skill));
+    expect(rowWrapper).toMatchSnapshot();
+  });
+
+  it('DataTable newRowWrapper should be EditableSkillRow', () => {
+    mockRedux(twoSkillsStore);
+    const skillsPage = shallow(<SkillsPage {...getRouterProps('/0/skill', {})} />);
+    const removeRow = jest.fn();
+    const newRowWrapper = shallow((skillsPage.find(DataTable).prop('newRowWrapper') as any)(removeRow));
+    expect(newRowWrapper).toMatchSnapshot();
+    newRowWrapper.find(RowEditButtons).prop('onClose')();
+    expect(removeRow).toBeCalled();
   });
 });

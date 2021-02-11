@@ -88,7 +88,7 @@ export const AdminPage: React.FC<Props> = (props) => {
     stringSorter<Tenant>(tenant => tenant.name));
 
   const columns = [
-    { name: 'Name', sorter: stringSorter<Tenant>(tenant => tenant.name) },
+    { name: t('name'), sorter: stringSorter<Tenant>(tenant => tenant.name) },
   ];
 
   return (

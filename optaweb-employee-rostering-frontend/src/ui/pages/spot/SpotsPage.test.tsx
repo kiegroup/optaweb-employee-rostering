@@ -24,8 +24,11 @@ import { Map } from 'immutable';
 import DomainObjectView from 'domain/DomainObjectView';
 import { spotOperations, spotSelectors } from 'store/spot';
 import { mockRedux } from 'setupTests';
-import { RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
+import { DataTable, RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
 import { doNothing } from 'types';
+import { TextInput } from '@patternfly/react-core';
+import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
+import { skillSelectors } from 'store/skill';
 import { SpotsPage, SpotRow, EditableSpotRow } from './SpotsPage';
 
 const noSpotsStore = mockStore({
@@ -139,15 +142,21 @@ describe('Spots page', () => {
   it('saving new spot should call add spot', () => {
     const spot: Spot = {
       tenantId: 0,
-      id: 1,
-      name: 'Spot',
+      name: '',
       requiredSkillSet: [],
     };
     mockRedux(twoSpotsStore);
     const editor = shallow(<EditableSpotRow spot={spot} isNew onClose={jest.fn()} />);
+
+    const name = 'New Spot Name';
+    const requiredSkillSet = skillSelectors.getSkillList(twoSpotsStore.getState());
+    editor.find(TextInput).simulate('change', name);
+    editor.find(MultiTypeaheadSelectInput).simulate('change', requiredSkillSet);
     editor.find(RowEditButtons).prop('onSave')();
-    expect(spotOperations.addSpot).toBeCalledWith(spot);
-    expect(twoSpotsStore.dispatch).toBeCalledWith(addSpot(spot));
+    const newSpot = { ...spot, name, requiredSkillSet };
+
+    expect(spotOperations.addSpot).toBeCalledWith(newSpot);
+    expect(twoSpotsStore.dispatch).toBeCalledWith(addSpot(newSpot));
   });
 
   it('saving updated spot should call update spot', () => {
@@ -164,6 +173,25 @@ describe('Spots page', () => {
     expect(twoSpotsStore.dispatch).toBeCalledWith(updateSpot(spot));
   });
 
+  it('clicking on the edit button in the viewer should show the editor', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 1,
+      name: 'Spot',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const viewer = shallow(<SpotRow {...spot} />);
+
+    // Clicking the edit button should show the editor
+    viewer.find(RowViewButtons).prop('onEdit')();
+    expect(viewer).toMatchSnapshot();
+
+    // Clicking the close button should show the viwer
+    viewer.find(EditableSpotRow).prop('onClose')();
+    expect(viewer).toMatchSnapshot();
+  });
+
   it('deleting should call delete spot', () => {
     const spot: Spot = {
       tenantId: 0,
@@ -176,5 +204,28 @@ describe('Spots page', () => {
     viewer.find(RowViewButtons).prop('onDelete')();
     expect(spotOperations.removeSpot).toBeCalledWith(spot);
     expect(twoSpotsStore.dispatch).toBeCalledWith(removeSpot(spot));
+  });
+
+  it('DataTable rowWrapper should be SpotRow', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 1,
+      name: 'Spot',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const spotsPage = shallow(<SpotsPage {...getRouterProps('/0/spot', {})} />);
+    const rowWrapper = shallow(spotsPage.find(DataTable).prop('rowWrapper')(spot));
+    expect(rowWrapper).toMatchSnapshot();
+  });
+
+  it('DataTable newRowWrapper should be EditableSpotRow', () => {
+    mockRedux(twoSpotsStore);
+    const spotsPage = shallow(<SpotsPage {...getRouterProps('/0/skill', {})} />);
+    const removeRow = jest.fn();
+    const newRowWrapper = shallow((spotsPage.find(DataTable).prop('newRowWrapper') as any)(removeRow));
+    expect(newRowWrapper).toMatchSnapshot();
+    newRowWrapper.find(RowEditButtons).prop('onClose')();
+    expect(removeRow).toBeCalled();
   });
 });

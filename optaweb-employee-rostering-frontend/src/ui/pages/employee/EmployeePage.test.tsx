@@ -18,16 +18,21 @@ import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { Employee } from 'domain/Employee';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { FileUpload } from '@patternfly/react-core';
+import { FileUpload, TextInput } from '@patternfly/react-core';
 import { Map } from 'immutable';
 import { mockStore } from 'store/mockStore';
 import { Contract } from 'domain/Contract';
 import DomainObjectView from 'domain/DomainObjectView';
-import { mockRedux } from 'setupTests';
+import { mockRedux, mockTranslate } from 'setupTests';
 import { employeeOperations, employeeSelectors } from 'store/employee';
-import { RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
+import { DataTable, RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
 import { alert } from 'store/alert';
 import { doNothing } from 'types';
+import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
+import { Skill } from 'domain/Skill';
+import { skillSelectors } from 'store/skill';
+import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
+import * as ColorPicker from 'ui/components/ColorPicker';
 import { EditableEmployeeRow, EmployeeRow, EmployeesPage } from './EmployeesPage';
 
 const noEmployeesNoContractsStore = mockStore({
@@ -45,7 +50,7 @@ const noEmployeesNoContractsStore = mockStore({
   },
 }).store;
 
-const contract: Contract = {
+const contract1: Contract = {
   id: 0,
   tenantId: 0,
   name: 'Contract',
@@ -53,6 +58,22 @@ const contract: Contract = {
   maximumMinutesPerWeek: null,
   maximumMinutesPerMonth: null,
   maximumMinutesPerYear: null,
+};
+
+const contract2: Contract = {
+  id: 1,
+  tenantId: 0,
+  name: 'Contract 2',
+  maximumMinutesPerDay: 5,
+  maximumMinutesPerWeek: null,
+  maximumMinutesPerMonth: null,
+  maximumMinutesPerYear: null,
+};
+
+const skill1: Skill = {
+  id: 0,
+  tenantId: 0,
+  name: 'Skill 1',
 };
 
 const noEmployeesOneContractsStore = mockStore({
@@ -63,7 +84,8 @@ const noEmployeesOneContractsStore = mockStore({
   contractList: {
     isLoading: false,
     contractMapById: Map<number, Contract>()
-      .set(0, contract),
+      .set(0, contract1)
+      .set(1, contract2),
   },
   employeeList: {
     isLoading: false,
@@ -74,12 +96,13 @@ const noEmployeesOneContractsStore = mockStore({
 const twoEmployeesOneContractsStore = mockStore({
   skillList: {
     isLoading: false,
-    skillMapById: Map(),
+    skillMapById: Map<number, Skill>()
+      .set(0, skill1),
   },
   contractList: {
     isLoading: false,
     contractMapById: Map<number, Contract>()
-      .set(0, contract),
+      .set(0, contract1),
   },
   employeeList: {
     isLoading: false,
@@ -88,7 +111,7 @@ const twoEmployeesOneContractsStore = mockStore({
         tenantId: 0,
         id: 1,
         name: 'Employee 1',
-        contract: contract.id as number,
+        contract: contract1.id as number,
         shortId: 'E1',
         color: '#FF0000',
         skillProficiencySet: [],
@@ -96,7 +119,7 @@ const twoEmployeesOneContractsStore = mockStore({
         tenantId: 0,
         id: 2,
         name: 'Employee 2',
-        contract: contract.id as number,
+        contract: contract1.id as number,
         shortId: 'E2',
         color: '#00FF00',
         skillProficiencySet: [],
@@ -179,9 +202,35 @@ describe('Employees page', () => {
     mockRedux(twoEmployeesOneContractsStore);
     getRouterProps('/0/employees', {});
     const editor = shallow(<EditableEmployeeRow employee={employee} isNew onClose={jest.fn()} />);
+
+    const name = 'New Employee Name';
+    const contract = contract2;
+    const skillProficiencySet = skillSelectors.getSkillList(twoEmployeesOneContractsStore.getState());
+    const shortId = 'NEN';
+    const color = '#FF00FF';
+
+    editor.find(`[columnName="${mockTranslate('name')}"]`).find(TextInput).simulate('change', name);
+    editor.find(`[columnName="${mockTranslate('contract')}"]`)
+      .find(TypeaheadSelectInput).simulate('change', contract);
+    editor.find(`[columnName="${mockTranslate('skillProficiencies')}"]`)
+      .find(MultiTypeaheadSelectInput).simulate('change', skillProficiencySet);
+    editor.find(`[columnName="${mockTranslate('shortId')}"]`)
+      .find(TextInput).simulate('change', shortId);
+    editor.find(`[columnName="${mockTranslate('color')}"]`)
+      .find(ColorPicker.ColorPicker).simulate('changeColor', color);
+
+    const newEmployee = {
+      ...employee,
+      name,
+      contract,
+      skillProficiencySet,
+      shortId,
+      color,
+    };
+
     editor.find(RowEditButtons).prop('onSave')();
-    expect(employeeOperations.addEmployee).toBeCalledWith(employee);
-    expect(twoEmployeesOneContractsStore.dispatch).toBeCalledWith(addEmployee(employee));
+    expect(employeeOperations.addEmployee).toBeCalledWith(newEmployee);
+    expect(twoEmployeesOneContractsStore.dispatch).toBeCalledWith(addEmployee(newEmployee));
   });
 
   it('saving updated employee should call update employee', () => {
@@ -192,6 +241,20 @@ describe('Employees page', () => {
     editor.find(RowEditButtons).prop('onSave')();
     expect(employeeOperations.updateEmployee).toBeCalledWith(employee);
     expect(twoEmployeesOneContractsStore.dispatch).toBeCalledWith(updateEmployee(employee));
+  });
+
+  it('clicking on the edit button in the viewer should show the editor', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    const viewer = shallow(<EmployeeRow {...employee} />);
+
+    // Clicking the edit button should show the editor
+    viewer.find(RowViewButtons).prop('onEdit')();
+    expect(viewer).toMatchSnapshot();
+
+    // Clicking the close button should show the viwer
+    viewer.find(EditableEmployeeRow).prop('onClose')();
+    expect(viewer).toMatchSnapshot();
   });
 
   it('deleting should call delete employee', () => {
@@ -219,5 +282,25 @@ describe('Employees page', () => {
     expect(employeeOperations.uploadEmployeeList).not.toBeCalled();
     expect(noEmployeesNoContractsStore.dispatch)
       .toBeCalledWith(showErrorMessage('badFileType', { fileTypes: 'Excel (.xlsx)' }));
+  });
+
+  it('DataTable rowWrapper should be EmployeeRow', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    const employeePage = shallow(<EmployeesPage {...getRouterProps('/0/employee', {})} />);
+    const rowWrapper = shallow(employeePage.find(DataTable).prop('rowWrapper')(employee));
+    expect(rowWrapper).toMatchSnapshot();
+  });
+
+  it('DataTable newRowWrapper should be EditableEmployeeRow', () => {
+    mockRedux(twoEmployeesOneContractsStore);
+    const employeePage = shallow(<EmployeesPage {...getRouterProps('/0/employee', {})} />);
+    const removeRow = jest.fn();
+
+    jest.spyOn(ColorPicker, 'getRandomColor').mockImplementation(() => '#040404'); // chosen by fair dice roll
+    const newRowWrapper = shallow((employeePage.find(DataTable).prop('newRowWrapper') as any)(removeRow));
+    expect(newRowWrapper).toMatchSnapshot();
+    newRowWrapper.find(RowEditButtons).prop('onClose')();
+    expect(removeRow).toBeCalled();
   });
 });

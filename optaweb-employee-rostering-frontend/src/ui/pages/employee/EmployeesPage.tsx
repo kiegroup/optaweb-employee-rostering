@@ -40,7 +40,9 @@ import { stringSorter } from 'util/CommonSorters';
 import { CubesIcon, ArrowIcon } from '@patternfly/react-icons';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
-import { ColorPicker, defaultColorList } from 'ui/components/ColorPicker';
+
+// Need module import so we can mock getRandomColor in tests
+import * as ColorPicker from 'ui/components/ColorPicker';
 import {
   TableRow, TableCell, RowViewButtons, RowEditButtons, DataTableUrlProps,
   setSorterInUrl, DataTable,
@@ -103,7 +105,7 @@ export const EmployeeRow = (employee: Employee) => {
         <Text>{employee.shortId}</Text>
       </TableCell>
       <TableCell columnName={t('color')}>
-        <ColorPicker
+        <ColorPicker.ColorPicker
           currentColor={employee.color}
           onChangeColor={doNothing}
           isDisabled
@@ -185,7 +187,7 @@ export const EditableEmployeeRow = (props: { employee: Employee; isNew: boolean;
         <TextInput value={shortId} onChange={setShortId} />
       </TableCell>
       <TableCell columnName={t('color')}>
-        <ColorPicker
+        <ColorPicker.ColorPicker
           currentColor={color}
           onChangeColor={setColor}
         />
@@ -282,7 +284,7 @@ export const EmployeesPage: React.FC<Props> = (props) => {
                 contract: contractList[0],
                 skillProficiencySet: [],
                 shortId: '',
-                color: defaultColorList[Math.floor(Math.random() * defaultColorList.length)],
+                color: ColorPicker.getRandomColor(),
               }}
             />
           )}

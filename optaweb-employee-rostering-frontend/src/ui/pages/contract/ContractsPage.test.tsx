@@ -20,10 +20,11 @@ import { Contract } from 'domain/Contract';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 import { mockStore } from 'store/mockStore';
 import { Map } from 'immutable';
-import { mockRedux } from 'setupTests';
-import { RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
+import { mockRedux, mockTranslate } from 'setupTests';
+import { DataTable, RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
 import { contractOperations } from 'store/contract';
 import { doNothing } from 'types';
+import { TextInput } from '@patternfly/react-core';
 import { ContractRow, ContractsPage, EditableContractRow } from './ContractsPage';
 
 const noContractsStore = mockStore({
@@ -126,9 +127,35 @@ describe('Contracts page', () => {
     const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
     mockRedux(twoContractsStore);
     const editor = shallow(<EditableContractRow contract={contract} isNew onClose={jest.fn()} />);
+
+    const name = 'New Contract Name';
+    const maximumMinutesPerDay = 1;
+    const maximumMinutesPerWeek = 2;
+    const maximumMinutesPerMonth = 3;
+    const maximumMinutesPerYear = 4;
+
+    editor.find(`[columnName="${mockTranslate('name')}"]`).find(TextInput).simulate('change', name);
+    editor.find(`[columnName="${mockTranslate('maxMinutesPerDay')}"]`)
+      .find(TextInput).simulate('change', `${maximumMinutesPerDay}`);
+    editor.find(`[columnName="${mockTranslate('maxMinutesPerWeek')}"]`)
+      .find(TextInput).simulate('change', `${maximumMinutesPerWeek}`);
+    editor.find(`[columnName="${mockTranslate('maxMinutesPerMonth')}"]`)
+      .find(TextInput).simulate('change', `${maximumMinutesPerMonth}`);
+    editor.find(`[columnName="${mockTranslate('maxMinutesPerYear')}"]`)
+      .find(TextInput).simulate('change', `${maximumMinutesPerYear}`);
+
+    const newContract = {
+      ...contract,
+      name,
+      maximumMinutesPerDay,
+      maximumMinutesPerWeek,
+      maximumMinutesPerMonth,
+      maximumMinutesPerYear,
+    };
+
     editor.find(RowEditButtons).prop('onSave')();
-    expect(contractOperations.addContract).toBeCalledWith(contract);
-    expect(twoContractsStore.dispatch).toBeCalledWith(addContract(contract));
+    expect(contractOperations.addContract).toBeCalledWith(newContract);
+    expect(twoContractsStore.dispatch).toBeCalledWith(addContract(newContract));
   });
 
   it('saving updated contract should call update contract', () => {
@@ -140,6 +167,20 @@ describe('Contracts page', () => {
     expect(twoContractsStore.dispatch).toBeCalledWith(updateContract(contract));
   });
 
+  it('clicking on the edit button in the viewer should show the editor', () => {
+    const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
+    mockRedux(twoContractsStore);
+    const viewer = shallow(<ContractRow {...contract} />);
+
+    // Clicking the edit button should show the editor
+    viewer.find(RowViewButtons).prop('onEdit')();
+    expect(viewer).toMatchSnapshot();
+
+    // Clicking the close button should show the viwer
+    viewer.find(EditableContractRow).prop('onClose')();
+    expect(viewer).toMatchSnapshot();
+  });
+
   it('deleting should call delete contract', () => {
     const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
     mockRedux(twoContractsStore);
@@ -147,5 +188,23 @@ describe('Contracts page', () => {
     viewer.find(RowViewButtons).prop('onDelete')();
     expect(contractOperations.removeContract).toBeCalledWith(contract);
     expect(twoContractsStore.dispatch).toBeCalledWith(removeContract(contract));
+  });
+
+  it('DataTable rowWrapper should be ContractRow', () => {
+    const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
+    mockRedux(twoContractsStore);
+    const contractsPage = shallow(<ContractsPage {...getRouterProps('/0/contract', {})} />);
+    const rowWrapper = shallow(contractsPage.find(DataTable).prop('rowWrapper')(contract));
+    expect(rowWrapper).toMatchSnapshot();
+  });
+
+  it('DataTable newRowWrapper should be EditableContractRow', () => {
+    mockRedux(twoContractsStore);
+    const contractsPage = shallow(<ContractsPage {...getRouterProps('/0/contract', {})} />);
+    const removeRow = jest.fn();
+    const newRowWrapper = shallow((contractsPage.find(DataTable).prop('newRowWrapper') as any)(removeRow));
+    expect(newRowWrapper).toMatchSnapshot();
+    newRowWrapper.find(RowEditButtons).prop('onClose')();
+    expect(removeRow).toBeCalled();
   });
 });

@@ -1,5 +1,187 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Contracts page DataTable newRowWrapper should be EditableContractRow 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <TextInput
+      onChange={[Function]}
+      value=""
+    />
+    <InputGroupText
+      key="0"
+    >
+      <Tooltip
+        content={
+          <List
+            style={
+              Object {
+                "color": "white",
+              }
+            }
+          >
+            <ListItem>
+              Trans(i18nKey=contractEmptyNameError)
+            </ListItem>
+          </List>
+        }
+      >
+        <WarningTriangleIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Tooltip>
+    </InputGroupText>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerDay)"
+  >
+    <TextInput
+      min={0}
+      onChange={[Function]}
+      type="number"
+      value=""
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerWeek)"
+  >
+    <TextInput
+      min={0}
+      onChange={[Function]}
+      type="number"
+      value=""
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerMonth)"
+  >
+    <TextInput
+      min={0}
+      onChange={[Function]}
+      type="number"
+      value=""
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerYear)"
+  >
+    <TextInput
+      min={0}
+      onChange={[Function]}
+      type="number"
+      value=""
+    />
+  </TableCell>
+  <RowEditButtons
+    isValid={false}
+    onClose={[Function]}
+    onSave={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Contracts page DataTable rowWrapper should be ContractRow 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Text>
+      Contract 1
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerDay)"
+  >
+    <Text>
+      1
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerWeek)"
+  >
+    <Text>
+      2
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerMonth)"
+  >
+    <Text />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerYear)"
+  >
+    <Text />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Contracts page clicking on the edit button in the viewer should show the editor 1`] = `
+<EditableContractRow
+  contract={
+    Object {
+      "id": 0,
+      "maximumMinutesPerDay": 1,
+      "maximumMinutesPerMonth": null,
+      "maximumMinutesPerWeek": 2,
+      "maximumMinutesPerYear": null,
+      "name": "Contract 1",
+      "tenantId": 0,
+      "version": 0,
+    }
+  }
+  isNew={false}
+  onClose={[Function]}
+/>
+`;
+
+exports[`Contracts page clicking on the edit button in the viewer should show the editor 2`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Text>
+      Contract 1
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerDay)"
+  >
+    <Text>
+      1
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerWeek)"
+  >
+    <Text>
+      2
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerMonth)"
+  >
+    <Text />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerYear)"
+  >
+    <Text />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
 exports[`Contracts page should render correctly with a few skills 1`] = `
 <DataTable
   columns={

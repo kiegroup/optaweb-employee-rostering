@@ -32,7 +32,7 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
     columns={
       Array [
         Object {
-          "name": "Name",
+          "name": "Trans(i18nKey=name)",
           "sorter": [Function],
         },
       ]
@@ -147,7 +147,7 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
     columns={
       Array [
         Object {
-          "name": "Name",
+          "name": "Trans(i18nKey=name)",
           "sorter": [Function],
         },
       ]
@@ -262,7 +262,7 @@ exports[`Admin Page should filter by name 1`] = `
     columns={
       Array [
         Object {
-          "name": "Name",
+          "name": "Trans(i18nKey=name)",
           "sorter": [Function],
         },
       ]
@@ -377,7 +377,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
     columns={
       Array [
         Object {
-          "name": "Name",
+          "name": "Trans(i18nKey=name)",
           "sorter": [Function],
         },
       ]
@@ -622,7 +622,7 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
     columns={
       Array [
         Object {
-          "name": "Name",
+          "name": "Trans(i18nKey=name)",
           "sorter": [Function],
         },
       ]
@@ -737,7 +737,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
     columns={
       Array [
         Object {
-          "name": "Name",
+          "name": "Trans(i18nKey=name)",
           "sorter": [Function],
         },
       ]
@@ -982,7 +982,7 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
     columns={
       Array [
         Object {
-          "name": "Name",
+          "name": "Trans(i18nKey=name)",
           "sorter": [Function],
         },
       ]
@@ -1071,7 +1071,7 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
     columns={
       Array [
         Object {
-          "name": "Name",
+          "name": "Trans(i18nKey=name)",
           "sorter": [Function],
         },
       ]
@@ -1186,7 +1186,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
     columns={
       Array [
         Object {
-          "name": "Name",
+          "name": "Trans(i18nKey=name)",
           "sorter": [Function],
         },
       ]
