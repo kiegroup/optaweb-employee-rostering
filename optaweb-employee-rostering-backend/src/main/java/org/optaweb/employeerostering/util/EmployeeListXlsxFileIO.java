@@ -25,6 +25,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -37,17 +40,15 @@ import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.optaweb.employeerostering.service.contract.ContractService;
 import org.optaweb.employeerostering.service.skill.SkillService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
+@ApplicationScoped
 public class EmployeeListXlsxFileIO {
 
     private final SkillService skillService;
 
     private final ContractService contractService;
 
-    @Autowired
+    @Inject
     public EmployeeListXlsxFileIO(SkillService skillService, ContractService contractService) {
         this.skillService = skillService;
         this.contractService = contractService;

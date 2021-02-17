@@ -30,7 +30,7 @@ public class HierarchyTreeTest {
         // tested is the divisibility Hierarchy Tree;
         // a is above b iff a divides b
         tested = new HierarchyTree<>((a, b) -> {
-            if (a == b) {
+            if (a.equals(b)) {
                 return HierarchyTree.HierarchyRelationship.IS_THE_SAME_AS;
             } else if (a % b == 0) {
                 return HierarchyTree.HierarchyRelationship.IS_BELOW;

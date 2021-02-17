@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -56,22 +58,13 @@ import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.util.ShiftRosterXlsxFileIO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureTestDatabase
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+@QuarkusTest
 public class RosterRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
     private final String rosterPathURI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
     private final String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
     private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
@@ -86,136 +79,136 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
     private List<ShiftView> shiftViewList;
     private List<EmployeeAvailabilityView> employeeAvailabilityViewList;
 
-    private ResponseEntity<RosterState> getRosterState(Integer id) {
-        return restTemplate.getForEntity(rosterPathURI + id, RosterState.class, TENANT_ID);
+    private Response getRosterState(Integer id) {
+        return RestAssured.get(rosterPathURI + id, TENANT_ID);
     }
 
-    private ResponseEntity<ShiftRosterView> getCurrentShiftRosterView(Integer pageNumber,
+    private Response getCurrentShiftRosterView(Integer pageNumber,
             Integer numberOfItemsPerPage) {
-        UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "shiftRosterView/current")
+        return RestAssured.given()
+                .basePath(rosterPathURI + "shiftRosterView/current")
+                .pathParam("tenantId", TENANT_ID)
                 .queryParam("p", pageNumber)
                 .queryParam("n", numberOfItemsPerPage)
-                .build()
-                .expand(Collections.singletonMap("tenantId", TENANT_ID));
-
-        return restTemplate.getForEntity(uriComponents.toUriString(), ShiftRosterView.class);
+                .get();
     }
 
-    private ResponseEntity<ShiftRosterView> getShiftRosterView(Integer pageNumber,
+    private Response getShiftRosterView(Integer pageNumber,
             Integer numberOfItemsPerPage, String startDateString,
             String endDateString) {
-        UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "shiftRosterView")
+        return RestAssured.given()
+                .basePath(rosterPathURI + "shiftRosterView")
+                .pathParam("tenantId", TENANT_ID)
                 .queryParam("p", pageNumber)
                 .queryParam("n", numberOfItemsPerPage)
                 .queryParam("startDate", startDateString)
                 .queryParam("endDate", endDateString)
-                .build()
-                .expand(Collections.singletonMap("tenantId", TENANT_ID));
-
-        return restTemplate.getForEntity(uriComponents.toUriString(), ShiftRosterView.class);
+                .get();
     }
 
-    private ResponseEntity<ShiftRosterView> getShiftRosterViewFor(String startDateString,
+    private Response getShiftRosterViewFor(String startDateString,
             String endDateString, List<Spot> spots) {
-        UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "shiftRosterView/for")
+        return RestAssured.given().basePath(rosterPathURI + "shiftRosterView/for")
+                .pathParam("tenantId", TENANT_ID)
                 .queryParam("startDate", startDateString)
                 .queryParam("endDate", endDateString)
-                .build()
-                .expand(Collections.singletonMap("tenantId", TENANT_ID));
-
-        return restTemplate.postForEntity(uriComponents.toUriString(), spots, ShiftRosterView.class);
+                .body(spots)
+                .post();
     }
 
-    private ResponseEntity<AvailabilityRosterView> getCurrentAvailabilityRosterView(Integer pageNumber,
+    private Response getCurrentAvailabilityRosterView(Integer pageNumber,
             Integer numberOfItemsPerPage) {
-        UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "availabilityRosterView" +
-                "/current")
+        return RestAssured.given().basePath(rosterPathURI + "availabilityRosterView/current")
+                .pathParam("tenantId", TENANT_ID)
                 .queryParam("p", pageNumber)
                 .queryParam("n", numberOfItemsPerPage)
-                .build()
-                .expand(Collections.singletonMap("tenantId", TENANT_ID));
-
-        return restTemplate.getForEntity(uriComponents.toUriString(), AvailabilityRosterView.class);
+                .get();
     }
 
-    private ResponseEntity<AvailabilityRosterView> getAvailabilityRosterView(Integer pageNumber,
+    private Response getAvailabilityRosterView(Integer pageNumber,
             Integer numberOfItemsPerPage,
             String startDateString,
             String endDateString) {
-        UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "availabilityRosterView")
+        return RestAssured.given().basePath(rosterPathURI + "availabilityRosterView")
+                .pathParam("tenantId", TENANT_ID)
                 .queryParam("p", pageNumber)
                 .queryParam("n", numberOfItemsPerPage)
                 .queryParam("startDate", startDateString)
                 .queryParam("endDate", endDateString)
-                .build()
-                .expand(Collections.singletonMap("tenantId", TENANT_ID));
-
-        return restTemplate.getForEntity(uriComponents.toUriString(), AvailabilityRosterView.class);
+                .get();
     }
 
-    private ResponseEntity<AvailabilityRosterView> getAvailabilityRosterViewFor(String startDateString,
+    private Response getAvailabilityRosterViewFor(String startDateString,
             String endDateString,
             List<Employee> employees) {
-        UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "availabilityRosterView/for")
+        return RestAssured.given().basePath(rosterPathURI + "availabilityRosterView/for")
+                .pathParam("tenantId", TENANT_ID)
                 .queryParam("startDate", startDateString)
                 .queryParam("endDate", endDateString)
-                .build()
-                .expand(Collections.singletonMap("tenantId", TENANT_ID));
-
-        return restTemplate.postForEntity(uriComponents.toUriString(), employees, AvailabilityRosterView.class);
+                .body(employees)
+                .post();
     }
 
-    private ResponseEntity<byte[]> getShiftRosterAsExcel(List<Spot> spotList,
+    private Response getShiftRosterAsExcel(List<Spot> spotList,
             LocalDate startDate,
             LocalDate endDate) {
-        UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "shiftRosterView/excel")
+        return RestAssured.given().basePath(rosterPathURI + "shiftRosterView/excel")
+                .pathParam("tenantId", TENANT_ID)
                 .queryParam("startDate", startDate.toString())
                 .queryParam("endDate", endDate.toString())
                 .queryParam("spotList", spotList.stream().map(Spot::getId).map(id -> id.toString())
                         .collect(Collectors.joining(",")))
-                .build()
-                .expand(Collections.singletonMap("tenantId", TENANT_ID));
-
-        return restTemplate.getForEntity(uriComponents.toUriString(), byte[].class);
+                .get();
     }
 
-    private ResponseEntity<PublishResult> publishAndProvision() {
-        return restTemplate.postForEntity(rosterPathURI + "publishAndProvision", null, PublishResult.class, TENANT_ID);
+    private Response publishAndProvision() {
+        return RestAssured.post(rosterPathURI + "publishAndProvision", TENANT_ID);
     }
 
-    private ResponseEntity<Void> commitChanges() {
-        return restTemplate.postForEntity(rosterPathURI + "commitChanges", null, Void.class, TENANT_ID);
+    private Response commitChanges() {
+        return RestAssured.post(rosterPathURI + "commitChanges", TENANT_ID);
     }
 
-    private ResponseEntity<Void> provision(Integer tenantId, Integer startRotationOffset, LocalDate fromDate,
+    private Response provision(Integer tenantId, Integer startRotationOffset, LocalDate fromDate,
             LocalDate toDate, List<Long> timeBucketIdList) {
-        UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "provision")
+        return RestAssured.given().basePath(rosterPathURI + "provision")
+                .pathParam("tenantId", TENANT_ID)
                 .queryParam("startRotationOffset", startRotationOffset.toString())
                 .queryParam("fromDate", fromDate.toString())
                 .queryParam("toDate", toDate.toString())
-                .build()
-                .expand(Collections.singletonMap("tenantId", tenantId));
-        return restTemplate.postForEntity(uriComponents.toUriString(), timeBucketIdList, Void.class);
+                .body(timeBucketIdList)
+                .post();
     }
 
     private Spot addSpot(String name) {
         SpotView spotView = new SpotView(TENANT_ID, name, Collections.emptySet());
-        return restTemplate.postForEntity(spotPathURI + "add", spotView, Spot.class, TENANT_ID).getBody();
+        return RestAssured.given().basePath(spotPathURI + "add")
+                .pathParam("tenantId", TENANT_ID)
+                .body(spotView)
+                .post().as(Spot.class);
     }
 
     private Contract addContract(String name) {
         ContractView contractView = new ContractView(TENANT_ID, name);
-        return restTemplate.postForEntity(contractPathURI + "add", contractView, Contract.class, TENANT_ID).getBody();
+        return RestAssured.given().basePath(contractPathURI + "add")
+                .pathParam("tenantId", TENANT_ID)
+                .body(contractView)
+                .post().as(Contract.class);
     }
 
     private Employee addEmployee(String name, Contract contract) {
         Employee employee = new Employee(TENANT_ID, name, contract, Collections.emptySet());
-        return restTemplate.postForEntity(employeePathURI + "add", employee, Employee.class, TENANT_ID).getBody();
+        return RestAssured.given().basePath(employeePathURI + "add")
+                .pathParam("tenantId", TENANT_ID)
+                .body(employee)
+                .post().as(Employee.class);
     }
 
     private TimeBucketView addTimeBucket(TimeBucketView timeBucket) {
-        return restTemplate.postForEntity(rotationPathURI + "add", timeBucket, TimeBucketView.class,
-                TENANT_ID).getBody();
+        return RestAssured.given().basePath(rotationPathURI + "add")
+                .pathParam("tenantId", TENANT_ID)
+                .body(timeBucket)
+                .post().as(TimeBucketView.class);
     }
 
     private ShiftView addShift(Spot spot, Employee employee, LocalDateTime startDateTime,
@@ -224,7 +217,10 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         if (employee != null) {
             shiftView.setEmployeeId(employee.getId());
         }
-        return restTemplate.postForEntity(shiftPathURI + "add", shiftView, ShiftView.class, TENANT_ID).getBody();
+        return RestAssured.given().basePath(shiftPathURI + "add")
+                .pathParam("tenantId", TENANT_ID)
+                .body(shiftView)
+                .post().as(ShiftView.class);
     }
 
     private EmployeeAvailabilityView addEmployeeAvailability(Employee employee,
@@ -235,8 +231,10 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
                 startDateTime,
                 startDateTime.plus(duration),
                 employeeAvailabilityState);
-        return restTemplate.postForEntity(employeeAvailabilityPathURI + "add", employeeAvailabilityView,
-                EmployeeAvailabilityView.class, TENANT_ID).getBody();
+        return RestAssured.given().basePath(employeeAvailabilityPathURI + "add")
+                .pathParam("tenantId", TENANT_ID)
+                .body(employeeAvailabilityView)
+                .post().as(EmployeeAvailabilityView.class);
     }
 
     private void createTestRoster() {
@@ -280,36 +278,37 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         rosterStateView.setTenant(tenant);
         rosterStateView.setTenantId(tenant.getId());
 
-        ResponseEntity<RosterState> rosterStateResponseEntity = getRosterState(TENANT_ID);
-        assertThat(rosterStateResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(rosterStateResponseEntity.getBody().getPublishNotice()).isEqualTo(7);
-        assertThat(rosterStateResponseEntity.getBody().getFirstDraftDate().toString()).isEqualTo("2000-01-01");
-        assertThat(rosterStateResponseEntity.getBody().getPublishLength()).isEqualTo(1);
-        assertThat(rosterStateResponseEntity.getBody().getDraftLength()).isEqualTo(7);
-        assertThat(rosterStateResponseEntity.getBody().getUnplannedRotationOffset()).isEqualTo(0);
-        assertThat(rosterStateResponseEntity.getBody().getRotationLength()).isEqualTo(7);
-        assertThat(rosterStateResponseEntity.getBody().getLastHistoricDate().toString()).isEqualTo("1999-12-24");
-        assertThat(rosterStateResponseEntity.getBody().getTimeZone().toString()).isEqualTo("Z");
-        assertThat(rosterStateResponseEntity.getBody().getTenantId()).isEqualTo(TENANT_ID);
-        assertThat(rosterStateResponseEntity.getBody().getTenant().getName()).isEqualTo("TestTenant");
-        assertThat(rosterStateResponseEntity.getBody().getTenant().getId()).isEqualTo(TENANT_ID);
+        Response rosterStateResponseEntity = getRosterState(TENANT_ID);
+        assertThat(rosterStateResponseEntity.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        RosterState rosterState = rosterStateResponseEntity.as(RosterState.class);
+        assertThat(rosterState.getPublishNotice()).isEqualTo(7);
+        assertThat(rosterState.getFirstDraftDate().toString()).isEqualTo("2000-01-01");
+        assertThat(rosterState.getPublishLength()).isEqualTo(1);
+        assertThat(rosterState.getDraftLength()).isEqualTo(7);
+        assertThat(rosterState.getUnplannedRotationOffset()).isEqualTo(0);
+        assertThat(rosterState.getRotationLength()).isEqualTo(7);
+        assertThat(rosterState.getLastHistoricDate().toString()).isEqualTo("1999-12-24");
+        assertThat(rosterState.getTimeZone().toString()).isEqualTo("Z");
+        assertThat(rosterState.getTenantId()).isEqualTo(TENANT_ID);
+        assertThat(rosterState.getTenant().getName()).isEqualTo("TestTenant");
+        assertThat(rosterState.getTenant().getId()).isEqualTo(TENANT_ID);
     }
 
     @Test
     public void testGetCurrentShiftRosterView() {
         createTestRoster();
 
-        ResponseEntity<ShiftRosterView> shiftRosterViewResponse = getCurrentShiftRosterView(0, 1);
-        ShiftRosterView shiftRosterView = shiftRosterViewResponse.getBody();
-        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Response shiftRosterViewResponse = getCurrentShiftRosterView(0, 1);
+        ShiftRosterView shiftRosterView = shiftRosterViewResponse.as(ShiftRosterView.class);
+        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(shiftRosterView).isNotNull();
         assertThat(shiftRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList);
         assertThat(shiftRosterView.getSpotList()).containsExactlyElementsOf(spotList.subList(0, 1));
         assertThat(shiftRosterView.getTenantId()).isEqualTo(TENANT_ID);
 
         shiftRosterViewResponse = getCurrentShiftRosterView(1, 1);
-        shiftRosterView = shiftRosterViewResponse.getBody();
-        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        shiftRosterView = shiftRosterViewResponse.as(ShiftRosterView.class);
+        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(shiftRosterView).isNotNull();
         assertThat(shiftRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList);
         assertThat(shiftRosterView.getSpotList()).containsExactlyElementsOf(spotList.subList(1, 2));
@@ -322,11 +321,11 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
 
         LocalDate startDate = LocalDate.of(2000, 1, 1);
         LocalDate endDate = LocalDate.of(2000, 1, 2);
-        ResponseEntity<ShiftRosterView> shiftRosterViewResponse = getShiftRosterView(0, 1,
+        Response shiftRosterViewResponse = getShiftRosterView(0, 1,
                 startDate.toString(),
                 endDate.toString());
-        ShiftRosterView shiftRosterView = shiftRosterViewResponse.getBody();
-        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        ShiftRosterView shiftRosterView = shiftRosterViewResponse.as(ShiftRosterView.class);
+        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(shiftRosterView).isNotNull();
         assertThat(shiftRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList);
         assertThat(shiftRosterView.getSpotList()).containsExactlyElementsOf(spotList.subList(0, 1));
@@ -337,8 +336,8 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         assertThat(shiftRosterView.getTenantId()).isEqualTo(TENANT_ID);
 
         shiftRosterViewResponse = getShiftRosterView(1, 1, startDate.toString(), endDate.toString());
-        shiftRosterView = shiftRosterViewResponse.getBody();
-        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        shiftRosterView = shiftRosterViewResponse.as(ShiftRosterView.class);
+        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(shiftRosterView).isNotNull();
         assertThat(shiftRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList);
         assertThat(shiftRosterView.getSpotList()).containsExactlyElementsOf(spotList.subList(1, 2));
@@ -355,11 +354,11 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
 
         LocalDate startDate = LocalDate.of(2000, 1, 1);
         LocalDate endDate = LocalDate.of(2000, 1, 2);
-        ResponseEntity<ShiftRosterView> shiftRosterViewResponse = getShiftRosterViewFor(startDate.toString(),
+        Response shiftRosterViewResponse = getShiftRosterViewFor(startDate.toString(),
                 endDate.toString(),
                 Collections.emptyList());
-        ShiftRosterView shiftRosterView = shiftRosterViewResponse.getBody();
-        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        ShiftRosterView shiftRosterView = shiftRosterViewResponse.as(ShiftRosterView.class);
+        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(shiftRosterView).isNotNull();
         assertThat(shiftRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList);
         assertThat(shiftRosterView.getSpotList()).isEmpty();
@@ -369,8 +368,8 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
 
         shiftRosterViewResponse = getShiftRosterViewFor(startDate.toString(), endDate.toString(),
                 Collections.emptyList());
-        shiftRosterView = shiftRosterViewResponse.getBody();
-        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        shiftRosterView = shiftRosterViewResponse.as(ShiftRosterView.class);
+        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(shiftRosterView).isNotNull();
         assertThat(shiftRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList);
         assertThat(shiftRosterView.getSpotList()).isEmpty();
@@ -385,9 +384,9 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
 
         LocalDate startDate = LocalDate.of(1999, 12, 24);
         LocalDate endDate = LocalDate.of(2000, 1, 25);
-        ResponseEntity<AvailabilityRosterView> availabilityRosterViewResponse = getCurrentAvailabilityRosterView(0, 1);
-        AvailabilityRosterView availabilityRosterView = availabilityRosterViewResponse.getBody();
-        assertThat(availabilityRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Response availabilityRosterViewResponse = getCurrentAvailabilityRosterView(0, 1);
+        AvailabilityRosterView availabilityRosterView = availabilityRosterViewResponse.as(AvailabilityRosterView.class);
+        assertThat(availabilityRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(availabilityRosterView).isNotNull();
         assertThat(availabilityRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList.subList(0, 1));
         assertThat(availabilityRosterView.getSpotList()).containsExactlyElementsOf(spotList);
@@ -398,8 +397,8 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         assertThat(availabilityRosterView.getTenantId()).isEqualTo(TENANT_ID);
 
         availabilityRosterViewResponse = getCurrentAvailabilityRosterView(1, 1);
-        availabilityRosterView = availabilityRosterViewResponse.getBody();
-        assertThat(availabilityRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        availabilityRosterView = availabilityRosterViewResponse.as(AvailabilityRosterView.class);
+        assertThat(availabilityRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(availabilityRosterView).isNotNull();
         assertThat(availabilityRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList.subList(1, 2));
         assertThat(availabilityRosterView.getSpotList()).containsExactlyElementsOf(spotList);
@@ -415,12 +414,12 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
 
         LocalDate startDate = LocalDate.of(2000, 1, 1);
         LocalDate endDate = LocalDate.of(2000, 1, 2);
-        ResponseEntity<AvailabilityRosterView> availabilityRosterViewResponse = getAvailabilityRosterView(
+        Response availabilityRosterViewResponse = getAvailabilityRosterView(
                 0, 1,
                 startDate.toString(),
                 endDate.toString());
-        AvailabilityRosterView availabilityRosterView = availabilityRosterViewResponse.getBody();
-        assertThat(availabilityRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        AvailabilityRosterView availabilityRosterView = availabilityRosterViewResponse.as(AvailabilityRosterView.class);
+        assertThat(availabilityRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(availabilityRosterView).isNotNull();
         assertThat(availabilityRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList.subList(0, 1));
         assertThat(availabilityRosterView.getSpotList()).containsExactlyElementsOf(spotList);
@@ -432,8 +431,8 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         assertThat(availabilityRosterView.getTenantId()).isEqualTo(TENANT_ID);
 
         availabilityRosterViewResponse = getAvailabilityRosterView(1, 1, startDate.toString(), endDate.toString());
-        availabilityRosterView = availabilityRosterViewResponse.getBody();
-        assertThat(availabilityRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        availabilityRosterView = availabilityRosterViewResponse.as(AvailabilityRosterView.class);
+        assertThat(availabilityRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(availabilityRosterView).isNotNull();
         assertThat(availabilityRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList.subList(1, 2));
         assertThat(availabilityRosterView.getSpotList()).containsExactlyElementsOf(spotList);
@@ -451,10 +450,10 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
 
         LocalDate startDate = LocalDate.of(2000, 1, 1);
         LocalDate endDate = LocalDate.of(2000, 1, 2);
-        ResponseEntity<AvailabilityRosterView> availabilityRosterViewResponse =
+        Response availabilityRosterViewResponse =
                 getAvailabilityRosterViewFor(startDate.toString(), endDate.toString(), Collections.emptyList());
-        AvailabilityRosterView availabilityRosterView = availabilityRosterViewResponse.getBody();
-        assertThat(availabilityRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        AvailabilityRosterView availabilityRosterView = availabilityRosterViewResponse.as(AvailabilityRosterView.class);
+        assertThat(availabilityRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(availabilityRosterView).isNotNull();
         assertThat(availabilityRosterView.getEmployeeList()).isEmpty();
         assertThat(availabilityRosterView.getSpotList()).containsExactlyElementsOf(spotList);
@@ -465,8 +464,8 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
 
         availabilityRosterViewResponse = getAvailabilityRosterViewFor(startDate.toString(), endDate.toString(),
                 Collections.emptyList());
-        availabilityRosterView = availabilityRosterViewResponse.getBody();
-        assertThat(availabilityRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        availabilityRosterView = availabilityRosterViewResponse.as(AvailabilityRosterView.class);
+        assertThat(availabilityRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(availabilityRosterView).isNotNull();
         assertThat(availabilityRosterView.getEmployeeList()).isEmpty();
         assertThat(availabilityRosterView.getSpotList()).containsExactlyElementsOf(spotList);
@@ -481,22 +480,22 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         createTestTenant();
 
         // To date before from date should result in an error
-        ResponseEntity<Void> publishResultResponseEntity = provision(TENANT_ID, 0, LocalDate.of(2000, 1, 5),
+        Response publishResultResponseEntity = provision(TENANT_ID, 0, LocalDate.of(2000, 1, 5),
                 LocalDate.of(2000, 1, 1),
                 Collections.emptyList());
-        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(Status.INTERNAL_SERVER_ERROR.getStatusCode());
 
         // Negative rotation start offset should result in an error
         publishResultResponseEntity = provision(TENANT_ID, -5, LocalDate.of(2000, 1, 5),
                 LocalDate.of(2000, 1, 5),
                 Collections.emptyList());
-        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(Status.INTERNAL_SERVER_ERROR.getStatusCode());
 
         // rotation start offset over rotation length should result in an error
         publishResultResponseEntity = provision(TENANT_ID, 9001, LocalDate.of(2000, 1, 5),
                 LocalDate.of(2000, 1, 5),
                 Collections.emptyList());
-        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(Status.INTERNAL_SERVER_ERROR.getStatusCode());
 
         Spot spot = addSpot("Spot");
         Contract contract = addContract("Contract");
@@ -514,7 +513,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         publishResultResponseEntity = provision(0, 0, fromDate,
                 toDate,
                 Collections.singletonList(timeBucketView.getId()));
-        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(Status.NOT_FOUND.getStatusCode());
 
         // Test valid request
         assertThat(timeBucketView.getTenantId()).isEqualTo(TENANT_ID);
@@ -522,14 +521,14 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
                 toDate,
                 Collections.singletonList(timeBucketView).stream()
                         .map(TimeBucketView::getId).collect(Collectors.toList()));
-        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        ResponseEntity<ShiftRosterView> shiftRosterViewResponse = getShiftRosterViewFor(fromDate.toString(),
+        Response shiftRosterViewResponse = getShiftRosterViewFor(fromDate.toString(),
                 toDate.plusDays(1).toString(),
                 Collections
                         .singletonList(spot));
-        ShiftRosterView shiftRosterView = shiftRosterViewResponse.getBody();
-        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        ShiftRosterView shiftRosterView = shiftRosterViewResponse.as(ShiftRosterView.class);
+        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(shiftRosterView).isNotNull();
         assertThat(shiftRosterView.getSpotList()).containsExactly(spot);
 
@@ -549,10 +548,11 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
     public void testPublishAndProvision() {
         createTestRoster();
 
-        ResponseEntity<PublishResult> publishResultResponseEntity = publishAndProvision();
-        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(publishResultResponseEntity.getBody().getPublishedFromDate()).isEqualTo("2000-01-01");
-        assertThat(publishResultResponseEntity.getBody().getPublishedToDate()).isEqualTo("2000-01-08");
+        Response publishResultResponseEntity = publishAndProvision();
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        PublishResult publishResult = publishResultResponseEntity.as(PublishResult.class);
+        assertThat(publishResult.getPublishedFromDate()).isEqualTo("2000-01-01");
+        assertThat(publishResult.getPublishedToDate()).isEqualTo("2000-01-08");
     }
 
     @Test
@@ -563,10 +563,11 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         LocalDate endDate = LocalDate.of(2000, 1, 2);
 
         List<Spot> requestSpotList = spotList.subList(0, 1);
-        ResponseEntity<byte[]> response = getShiftRosterAsExcel(requestSpotList, startDate, endDate);
+        Response response = getShiftRosterAsExcel(requestSpotList, startDate, endDate);
 
-        assertThat(response.getStatusCode()).as("Response should be successful for one spot").isEqualTo(HttpStatus.OK);
-        try (Workbook workbook = new XSSFWorkbook(new ByteArrayInputStream(response.getBody()))) {
+        assertThat(response.getStatusCode()).as("Response should be successful for one spot")
+                .isEqualTo(Status.OK.getStatusCode());
+        try (Workbook workbook = new XSSFWorkbook(new ByteArrayInputStream(response.asByteArray()))) {
             assertThat(workbook.getNumberOfSheets()).as("There should only be one sheet in the file").isEqualTo(1);
             Sheet spotSheet = workbook.getSheet(requestSpotList.get(0).getName());
             assertSheetForSpotIsCorrect(spotSheet, requestSpotList.get(0), startDate, endDate);
@@ -577,8 +578,9 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         requestSpotList = spotList;
         response = getShiftRosterAsExcel(requestSpotList, startDate, endDate);
 
-        assertThat(response.getStatusCode()).as("Response should be successful for two spots").isEqualTo(HttpStatus.OK);
-        try (Workbook workbook = new XSSFWorkbook(new ByteArrayInputStream(response.getBody()))) {
+        assertThat(response.getStatusCode()).as("Response should be successful for two spots")
+                .isEqualTo(Status.OK.getStatusCode());
+        try (Workbook workbook = new XSSFWorkbook(new ByteArrayInputStream(response.asByteArray()))) {
             assertThat(workbook.getNumberOfSheets()).as("There should only be two sheets in the file").isEqualTo(2);
             Sheet spotSheet = workbook.getSheet(requestSpotList.get(0).getName());
             assertSheetForSpotIsCorrect(spotSheet, requestSpotList.get(0), startDate, endDate);
@@ -595,7 +597,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         response = getShiftRosterAsExcel(requestSpotList, startDate, endDate);
 
         assertThat(response.getStatusCode()).as("Response should fail with BAD_REQUEST for non-existing spot in tenant")
-                .isEqualTo(HttpStatus.BAD_REQUEST);
+                .isEqualTo(Status.BAD_REQUEST.getStatusCode());
     }
 
     private void assertSheetForSpotIsCorrect(Sheet spotSheet, Spot spot, LocalDate from, LocalDate to) {
@@ -654,7 +656,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
     public void testCommitChanges() {
         createTestRoster();
 
-        ResponseEntity<Void> commitChangesResponseEntity = commitChanges();
-        assertThat(commitChangesResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Response commitChangesResponseEntity = commitChanges();
+        assertThat(commitChangesResponseEntity.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
     }
 }

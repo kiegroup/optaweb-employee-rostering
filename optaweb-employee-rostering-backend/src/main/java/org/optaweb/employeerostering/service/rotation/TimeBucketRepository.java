@@ -18,23 +18,22 @@ package org.optaweb.employeerostering.service.rotation;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.optaweb.employeerostering.domain.rotation.TimeBucket;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface TimeBucketRepository extends JpaRepository<TimeBucket, Long> {
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Sort;
 
-    @Query("select distinct tb from TimeBucket tb " +
-            "left join fetch tb.spot s " +
-            "where tb.tenantId = :tenantId " +
-            "order by tb.startTime, tb.endTime, s.name")
-    List<TimeBucket> findAllByTenantId(@Param("tenantId") Integer tenantId);
+@ApplicationScoped
+public class TimeBucketRepository implements PanacheRepository<TimeBucket> {
 
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("delete from TimeBucket tb where tb.tenantId = :tenantId")
-    void deleteForTenant(@Param("tenantId") Integer tenantId);
+    public List<TimeBucket> findAllByTenantId(Integer tenantId) {
+        return find("tenantId", Sort.ascending("startTime", "endTime", "spot.name"),
+                tenantId).list();
+    }
+
+    public void deleteForTenant(Integer tenantId) {
+        delete("tenantId", tenantId);
+    }
 }

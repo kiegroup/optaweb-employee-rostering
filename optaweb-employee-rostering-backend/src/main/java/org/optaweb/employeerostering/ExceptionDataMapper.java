@@ -22,15 +22,13 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.RollbackException;
+import javax.ws.rs.core.Response;
 
 import org.optaweb.employeerostering.domain.exception.ConstraintViolatedException;
 import org.optaweb.employeerostering.domain.exception.ServerSideExceptionInfo;
 import org.optaweb.employeerostering.util.HierarchyTree;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 
-@Component
 public class ExceptionDataMapper {
 
     private HierarchyTree<Class<? extends Throwable>, ExceptionData> exceptionHierarchyTree;
@@ -63,28 +61,28 @@ public class ExceptionDataMapper {
     }
 
     public enum ExceptionData {
-        GENERIC_EXCEPTION("ServerSideException.generic", HttpStatus.INTERNAL_SERVER_ERROR, Throwable.class,
+        GENERIC_EXCEPTION("ServerSideException.generic", Response.Status.INTERNAL_SERVER_ERROR, Throwable.class,
                 t -> Collections.emptyList()),
-        ENTITY_CONSTRAINT_VIOLATION("ServerSideException.entityConstraintViolation", HttpStatus.BAD_REQUEST,
+        ENTITY_CONSTRAINT_VIOLATION("ServerSideException.entityConstraintViolation", Response.Status.BAD_REQUEST,
                 ConstraintViolatedException.class,
                 t -> ((ConstraintViolatedException) t).getI18nMessageParameters()),
-        ILLEGAL_ARGUMENT("ServerSideException.illegalArgument", HttpStatus.INTERNAL_SERVER_ERROR,
+        ILLEGAL_ARGUMENT("ServerSideException.illegalArgument", Response.Status.INTERNAL_SERVER_ERROR,
                 IllegalArgumentException.class,
                 t -> Collections.singletonList(t.getMessage())),
-        NULL_POINTER("ServerSideException.nullPointer", HttpStatus.INTERNAL_SERVER_ERROR,
+        NULL_POINTER("ServerSideException.nullPointer", Response.Status.INTERNAL_SERVER_ERROR,
                 NullPointerException.class, t -> Collections.emptyList()),
-        ENTITY_NOT_FOUND("ServerSideException.entityNotFound", HttpStatus.NOT_FOUND,
+        ENTITY_NOT_FOUND("ServerSideException.entityNotFound", Response.Status.NOT_FOUND,
                 EntityNotFoundException.class,
                 t -> Collections.singletonList(t.getMessage())),
-        TRANSACTION_ROLLBACK("ServerSideException.rollback", HttpStatus.CONFLICT, DataIntegrityViolationException.class,
+        TRANSACTION_ROLLBACK("ServerSideException.rollback", Response.Status.CONFLICT, RollbackException.class,
                 t -> Collections.emptyList());
 
         private String i18nKey;
-        private HttpStatus statusCode;
+        private Response.Status statusCode;
         private Class<? extends Throwable> exceptionClass;
         private Function<Throwable, List<String>> parameterMapping;
 
-        ExceptionData(String i18nKey, HttpStatus statusCode, Class<? extends Throwable> exceptionClass,
+        ExceptionData(String i18nKey, Response.Status statusCode, Class<? extends Throwable> exceptionClass,
                 Function<Throwable, List<String>> parameterMapping) {
             this.i18nKey = i18nKey;
             this.statusCode = statusCode;
@@ -96,7 +94,7 @@ public class ExceptionDataMapper {
             return exceptionClass;
         }
 
-        public HttpStatus getStatusCode() {
+        public Response.Status getStatusCode() {
             return statusCode;
         }
 

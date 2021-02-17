@@ -23,7 +23,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import javax.validation.Validator;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
@@ -39,10 +42,8 @@ import org.optaweb.employeerostering.service.employee.EmployeeRepository;
 import org.optaweb.employeerostering.service.roster.RosterService;
 import org.optaweb.employeerostering.service.skill.SkillService;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@ApplicationScoped
 public class ShiftService extends AbstractRestService {
 
     private ShiftRepository shiftRepository;
@@ -57,6 +58,7 @@ public class ShiftService extends AbstractRestService {
 
     private IndictmentUtils indictmentUtils;
 
+    @Inject
     public ShiftService(Validator validator,
             ShiftRepository shiftRepository, SpotRepository spotRepository,
             SkillService skillService, EmployeeRepository employeeRepository,
@@ -86,7 +88,7 @@ public class ShiftService extends AbstractRestService {
     @Transactional
     public ShiftView getShift(Integer tenantId, Long id) {
         Shift shift = shiftRepository
-                .findById(id)
+                .findByIdOptional(id)
                 .orElseThrow(() -> new EntityNotFoundException("No Shift entity found with ID (" + id + ")."));
 
         validateBean(tenantId, shift);
@@ -100,7 +102,7 @@ public class ShiftService extends AbstractRestService {
         validateBean(tenantId, shiftView);
 
         Spot spot = spotRepository
-                .findById(shiftView.getSpotId())
+                .findByIdOptional(shiftView.getSpotId())
                 .orElseThrow(() -> new EntityNotFoundException("No Spot entity found with ID (" + shiftView.getSpotId()
                         + ")."));
 
@@ -110,7 +112,7 @@ public class ShiftService extends AbstractRestService {
         Employee rotationEmployee = null;
         if (rotationEmployeeId != null) {
             rotationEmployee = employeeRepository
-                    .findById(rotationEmployeeId)
+                    .findByIdOptional(rotationEmployeeId)
                     .orElseThrow(() -> new EntityNotFoundException("ShiftView (" + shiftView +
                             ") has an non-existing " +
                             "rotationEmployeeId (" +
@@ -122,7 +124,7 @@ public class ShiftService extends AbstractRestService {
         Employee originalEmployee = null;
         if (originalEmployeeId != null) {
             originalEmployee = employeeRepository
-                    .findById(originalEmployeeId)
+                    .findByIdOptional(originalEmployeeId)
                     .orElseThrow(() -> new EntityNotFoundException("ShiftView (" + shiftView +
                             ") has an non-existing " +
                             "originalEmployeeId (" +
@@ -141,7 +143,7 @@ public class ShiftService extends AbstractRestService {
         Long employeeId = shiftView.getEmployeeId();
         if (employeeId != null) {
             Employee employee = employeeRepository
-                    .findById(employeeId)
+                    .findByIdOptional(employeeId)
                     .orElseThrow(() -> new EntityNotFoundException("ShiftView (" + shiftView +
                             ") has an non-existing employeeId (" +
                             employeeId + ")."));
@@ -156,19 +158,19 @@ public class ShiftService extends AbstractRestService {
     @Transactional
     public ShiftView createShift(Integer tenantId, ShiftView shiftView) {
         Shift shift = convertFromView(tenantId, shiftView);
-        Shift persistedShift = shiftRepository.save(shift);
+        shiftRepository.persist(shift);
 
         Indictment<HardMediumSoftLongScore> indictment = indictmentUtils.getIndictmentMapForRoster(
-                rosterService.buildRoster(tenantId)).get(persistedShift);
+                rosterService.buildRoster(tenantId)).get(shift);
         return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(),
-                persistedShift, indictment);
+                shift, indictment);
     }
 
     @Transactional
     public ShiftView updateShift(Integer tenantId, ShiftView shiftView) {
         Shift newShift = convertFromView(tenantId, shiftView);
         Shift oldShift = shiftRepository
-                .findById(newShift.getId())
+                .findByIdOptional(newShift.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Shift entity with ID (" + newShift.getId() + ") not " +
                         "found."));
 
@@ -187,17 +189,17 @@ public class ShiftService extends AbstractRestService {
         oldShift.setRequiredSkillSet(newShift.getRequiredSkillSet());
 
         // Flush to increase version number before we duplicate it to ShiftView
-        Shift updatedShift = shiftRepository.saveAndFlush(oldShift);
+        shiftRepository.persistAndFlush(oldShift);
 
         Indictment<HardMediumSoftLongScore> indictment = indictmentUtils.getIndictmentMapForRoster(
-                rosterService.buildRoster(tenantId)).get(updatedShift);
+                rosterService.buildRoster(tenantId)).get(oldShift);
         return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(),
-                updatedShift, indictment);
+                oldShift, indictment);
     }
 
     @Transactional
     public Boolean deleteShift(Integer tenantId, Long id) {
-        Optional<Shift> shiftOptional = shiftRepository.findById(id);
+        Optional<Shift> shiftOptional = shiftRepository.findByIdOptional(id);
         if (!shiftOptional.isPresent()) {
             return false;
         }

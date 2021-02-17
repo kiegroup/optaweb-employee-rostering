@@ -39,6 +39,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
@@ -59,14 +62,14 @@ import org.optaweb.employeerostering.domain.violation.ShiftEmployeeConflict;
 import org.optaweb.employeerostering.domain.violation.UnassignedShiftPenalty;
 import org.optaweb.employeerostering.domain.violation.UnavailableEmployeeViolation;
 import org.optaweb.employeerostering.domain.violation.UndesiredTimeslotForEmployeePenalty;
-import org.springframework.stereotype.Component;
 
-@Component
+@ApplicationScoped
 public class IndictmentUtils {
 
     public static final String CONSTRAINT_MATCH_PACKAGE = "org.optaweb.employeerostering.service.solver";
     private ScoreManager<Roster, HardMediumSoftLongScore> scoreManager;
 
+    @Inject
     public IndictmentUtils(ScoreManager<Roster, HardMediumSoftLongScore> scoreManager) {
         this.scoreManager = scoreManager;
     }

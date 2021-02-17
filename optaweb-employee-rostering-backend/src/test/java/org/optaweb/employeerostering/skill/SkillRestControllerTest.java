@@ -18,7 +18,7 @@ package org.optaweb.employeerostering.skill;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,44 +26,38 @@ import org.junit.jupiter.api.Test;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureTestDatabase
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+@QuarkusTest
 public class SkillRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     private final String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
 
-    private ResponseEntity<List<Skill>> getSkills(Integer tenantId) {
-        return restTemplate.exchange(skillPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Skill>>() {
-                }, tenantId);
+    private Response getSkills(Integer tenantId) {
+        return RestAssured.get(skillPathURI, tenantId);
     }
 
-    private ResponseEntity<Skill> getSkill(Integer tenantId, Long id) {
-        return restTemplate.getForEntity(skillPathURI + id, Skill.class, tenantId);
+    private Response getSkill(Integer tenantId, Long id) {
+        return RestAssured.get(skillPathURI + id, tenantId);
     }
 
     private void deleteSkill(Integer tenantId, Long id) {
-        restTemplate.delete(skillPathURI + id, tenantId);
+        RestAssured.delete(skillPathURI + id, tenantId);
     }
 
-    private ResponseEntity<Skill> addSkill(Integer tenantId, SkillView skillView) {
-        return restTemplate.postForEntity(skillPathURI + "add", skillView, Skill.class, tenantId);
+    private Response addSkill(Integer tenantId, SkillView skillView) {
+        return RestAssured.given()
+                .body(skillView)
+                .post(skillPathURI + "add", tenantId);
     }
 
-    private ResponseEntity<Skill> updateSkill(Integer tenantId, SkillView skillView) {
-        return restTemplate.postForEntity(skillPathURI + "update", skillView, Skill.class, tenantId);
+    private Response updateSkill(Integer tenantId, SkillView skillView) {
+        return RestAssured.given()
+                .body(skillView)
+                .post(skillPathURI + "update", tenantId);
     }
 
     @BeforeEach
@@ -79,26 +73,26 @@ public class SkillRestControllerTest extends AbstractEntityRequireTenantRestServ
     @Test
     public void skillCrudTest() {
         SkillView skillView = new SkillView(TENANT_ID, "skill");
-        ResponseEntity<Skill> postResponse = addSkill(TENANT_ID, skillView);
-        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Response postResponse = addSkill(TENANT_ID, skillView);
+        assertThat(postResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        ResponseEntity<Skill> response = getSkill(TENANT_ID, postResponse.getBody().getId());
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
+        Response response = getSkill(TENANT_ID, postResponse.as(Skill.class).getId());
+        assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(postResponse.getBody());
 
         SkillView updatedSkill = new SkillView(TENANT_ID, "updatedSkill");
-        updatedSkill.setId(postResponse.getBody().getId());
-        ResponseEntity<Skill> putResponse = updateSkill(TENANT_ID, updatedSkill);
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        updatedSkill.setId(postResponse.as(Skill.class).getId());
+        Response putResponse = updateSkill(TENANT_ID, updatedSkill);
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        response = getSkill(TENANT_ID, putResponse.getBody().getId());
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(putResponse.getBody()).isEqualToComparingFieldByFieldRecursively(response.getBody());
+        response = getSkill(TENANT_ID, putResponse.as(Skill.class).getId());
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(putResponse.getBody()).usingRecursiveComparison().isEqualTo(response.getBody());
 
-        deleteSkill(TENANT_ID, postResponse.getBody().getId());
+        deleteSkill(TENANT_ID, postResponse.as(Skill.class).getId());
 
-        ResponseEntity<List<Skill>> getListResponse = getSkills(TENANT_ID);
-        assertThat(getListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getListResponse.getBody()).isEmpty();
+        Response getListResponse = getSkills(TENANT_ID);
+        assertThat(getListResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(getListResponse.jsonPath().getList("$", Skill.class)).isEmpty();
     }
 }

@@ -48,6 +48,7 @@
 
     <version.com.sun.xml.bind>2.3.0</version.com.sun.xml.bind>
     <version.frontend-maven-plugin>1.8.0</version.frontend-maven-plugin>
+    <version.io.quarkus>1.11.3.Final</version.io.quarkus>
     <version.io.springfox>2.9.2</version.io.springfox>
     <version.javax.activation>1.1.1</version.javax.activation>
     <version.javax.validation>2.0.1.Final</version.javax.validation>
@@ -111,9 +112,9 @@
 
       <!-- BOMs -->
       <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${version.org.springframework.boot}</version>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-bom</artifactId>
+        <version>${version.io.quarkus}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

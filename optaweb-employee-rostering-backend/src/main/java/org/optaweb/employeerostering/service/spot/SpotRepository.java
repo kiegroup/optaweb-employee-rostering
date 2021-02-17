@@ -18,23 +18,21 @@ package org.optaweb.employeerostering.service.spot;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.optaweb.employeerostering.domain.spot.Spot;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface SpotRepository extends JpaRepository<Spot, Long> {
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Sort;
 
-    @Query("select s from Spot s " +
-            "where s.tenantId = :tenantId " +
-            "order by LOWER(s.name)")
-    List<Spot> findAllByTenantId(@Param("tenantId") Integer tenantId, Pageable pageable);
+@ApplicationScoped
+public class SpotRepository implements PanacheRepository<Spot> {
 
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("delete from Spot s where s.tenantId = :tenantId")
-    void deleteForTenant(@Param("tenantId") Integer tenantId);
+    public List<Spot> findAllByTenantId(Integer tenantId) {
+        return find("tenantId", Sort.ascending("name"), tenantId).list();
+    }
+
+    public void deleteForTenant(Integer tenantId) {
+        delete("tenantId", tenantId);
+    }
 }

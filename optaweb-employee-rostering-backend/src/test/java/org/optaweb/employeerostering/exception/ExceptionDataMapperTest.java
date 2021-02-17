@@ -45,6 +45,6 @@ public class ExceptionDataMapperTest {
         assertThat(tested.getExceptionDataForExceptionClass(EntityNotFoundException.class))
                 .isEqualTo(ExceptionDataMapper.ExceptionData.ENTITY_NOT_FOUND);
         assertThat(tested.getExceptionDataForExceptionClass(RollbackException.class))
-                .isEqualTo(ExceptionDataMapper.ExceptionData.GENERIC_EXCEPTION);
+                .isEqualTo(ExceptionDataMapper.ExceptionData.TRANSACTION_ROLLBACK);
     }
 }

@@ -18,27 +18,27 @@ package org.optaweb.employeerostering.service.employee;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.optaweb.employeerostering.domain.employee.Employee;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Sort;
 
-    @Query("select e from Employee e " +
-            "where e.tenantId = :tenantId " +
-            "order by LOWER(e.name)")
-    List<Employee> findAllByTenantId(@Param("tenantId") Integer tenantId, Pageable pageable);
+@ApplicationScoped
+public class EmployeeRepository implements PanacheRepository<Employee> {
 
-    @Query("select e from Employee e " +
-            "where e.tenantId = :tenantId and e.name = :name")
-    Employee findEmployeeByName(@Param("tenantId") Integer tenantId, @Param("name") String name);
+    public List<Employee> findAllByTenantId(Integer tenantId) {
+        return find("tenantId", Sort.ascending("name"), tenantId).list();
+    }
 
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("delete from Employee e where e.tenantId = :tenantId")
-    void deleteForTenant(@Param("tenantId") Integer tenantId);
+    public Employee findEmployeeByName(Integer tenantId, String name) {
+        return find("tenantId = ?1 and name = ?2",
+                Sort.ascending("name"),
+                tenantId, name).singleResult();
+    }
+
+    public void deleteForTenant(Integer tenantId) {
+        delete("tenantId", tenantId);
+    }
 }

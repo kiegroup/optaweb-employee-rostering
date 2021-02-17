@@ -20,7 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalTime;
 import java.util.Collections;
-import java.util.List;
+
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,53 +31,46 @@ import org.optaweb.employeerostering.domain.rotation.TimeBucket;
 import org.optaweb.employeerostering.domain.rotation.view.TimeBucketView;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureTestDatabase
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+@QuarkusTest
 public class RotationRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     private final String timeBucketPathURI = "http://localhost:8080/rest/tenant/{tenantId}/rotation/";
     private final String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
 
-    private ResponseEntity<List<TimeBucketView>> getTimeBuckets(Integer tenantId) {
-        return restTemplate.exchange(timeBucketPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<TimeBucketView>>() {
-                }, tenantId);
+    private Response getTimeBuckets(Integer tenantId) {
+        return RestAssured.get(timeBucketPathURI, tenantId);
     }
 
-    private ResponseEntity<TimeBucketView> getTimeBucket(Integer tenantId, Long id) {
-        return restTemplate.getForEntity(timeBucketPathURI + id, TimeBucketView.class, tenantId);
+    private Response getTimeBucket(Integer tenantId, Long id) {
+        return RestAssured.get(timeBucketPathURI + id, tenantId);
     }
 
     private void deleteTimeBucket(Integer tenantId, Long id) {
-        restTemplate.delete(timeBucketPathURI + id, tenantId);
+        RestAssured.delete(timeBucketPathURI + id, tenantId);
     }
 
-    private ResponseEntity<TimeBucketView> addTimeBucket(Integer tenantId, TimeBucketView shiftTemplateView) {
-        return restTemplate.postForEntity(timeBucketPathURI + "add", shiftTemplateView, TimeBucketView.class,
-                tenantId);
+    private Response addTimeBucket(Integer tenantId, TimeBucketView shiftTemplateView) {
+        return RestAssured.given()
+                .body(shiftTemplateView)
+                .post(timeBucketPathURI + "add", tenantId);
     }
 
-    private ResponseEntity<TimeBucketView> updateTimeBucket(Integer tenantId,
-            HttpEntity<TimeBucketView> request) {
-        return restTemplate.exchange(timeBucketPathURI + "update", HttpMethod.PUT, request,
-                TimeBucketView.class, tenantId);
+    private Response updateTimeBucket(Integer tenantId,
+            TimeBucketView shiftTemplateView) {
+        return RestAssured.given()
+                .body(shiftTemplateView)
+                .put(timeBucketPathURI + "update", tenantId);
     }
 
-    private ResponseEntity<Spot> addSpot(Integer tenantId, SpotView spotView) {
-        return restTemplate.postForEntity(spotPathURI + "add", spotView, Spot.class, tenantId);
+    private Response addSpot(Integer tenantId, SpotView spotView) {
+        return RestAssured.given()
+                .body(spotView)
+                .post(spotPathURI + "add", tenantId);
     }
 
     @BeforeEach
@@ -91,20 +85,20 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
 
     @Test
     public void shiftTemplateCrudTest() {
-        ResponseEntity<Spot> spotResponseA = addSpot(TENANT_ID, new SpotView(TENANT_ID, "A",
+        Response spotResponseA = addSpot(TENANT_ID, new SpotView(TENANT_ID, "A",
                 Collections.emptySet()));
-        Spot spotA = spotResponseA.getBody();
+        Spot spotA = spotResponseA.as(Spot.class);
 
         TimeBucketView timeBucketView = new TimeBucketView(new TimeBucket(TENANT_ID, spotA, LocalTime.of(9, 0),
                 LocalTime.of(17, 0),
                 Collections.emptySet(),
                 Collections.emptySet(),
                 Collections.emptyList()));
-        ResponseEntity<TimeBucketView> postResponse = addTimeBucket(TENANT_ID, timeBucketView);
-        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Response postResponse = addTimeBucket(TENANT_ID, timeBucketView);
+        assertThat(postResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        ResponseEntity<TimeBucketView> response = getTimeBucket(TENANT_ID, postResponse.getBody().getId());
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Response response = getTimeBucket(TENANT_ID, postResponse.as(TimeBucketView.class).getId());
+        assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(postResponse.getBody());
 
         TimeBucketView updatedTimeBucket = new TimeBucketView(new TimeBucket(TENANT_ID, spotA, LocalTime.of(9, 0),
@@ -112,19 +106,18 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
                 Collections.emptySet(),
                 Collections.emptySet(),
                 Collections.emptyList()));
-        updatedTimeBucket.setId(postResponse.getBody().getId());
-        HttpEntity<TimeBucketView> request = new HttpEntity<>(updatedTimeBucket);
-        ResponseEntity<TimeBucketView> putResponse = updateTimeBucket(TENANT_ID, request);
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        updatedTimeBucket.setId(postResponse.as(TimeBucketView.class).getId());
+        Response putResponse = updateTimeBucket(TENANT_ID, updatedTimeBucket);
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        response = getTimeBucket(TENANT_ID, putResponse.getBody().getId());
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        response = getTimeBucket(TENANT_ID, putResponse.as(TimeBucketView.class).getId());
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(putResponse.getBody()).isEqualTo(response.getBody());
 
-        deleteTimeBucket(TENANT_ID, putResponse.getBody().getId());
+        deleteTimeBucket(TENANT_ID, putResponse.as(TimeBucketView.class).getId());
 
-        ResponseEntity<List<TimeBucketView>> getListResponse = getTimeBuckets(TENANT_ID);
-        assertThat(getListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getListResponse.getBody()).isEmpty();
+        Response getListResponse = getTimeBuckets(TENANT_ID);
+        assertThat(getListResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(getListResponse.jsonPath().getList("$", TimeBucketView.class)).isEmpty();
     }
 }

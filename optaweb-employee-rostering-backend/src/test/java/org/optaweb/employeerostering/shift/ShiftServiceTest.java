@@ -16,11 +16,13 @@
 
 package org.optaweb.employeerostering.shift;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,41 +39,24 @@ import org.optaweb.employeerostering.service.contract.ContractService;
 import org.optaweb.employeerostering.service.employee.EmployeeService;
 import org.optaweb.employeerostering.service.shift.ShiftService;
 import org.optaweb.employeerostering.service.spot.SpotService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 
-@SpringBootTest
-@AutoConfigureTestDatabase
-@AutoConfigureMockMvc
-@Transactional
+@QuarkusTest
 public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(ShiftServiceTest.class);
-
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
+    @Inject
     private ShiftService shiftService;
 
-    @Autowired
+    @Inject
     private SpotService spotService;
 
-    @Autowired
+    @Inject
     private ContractService contractService;
 
-    @Autowired
+    @Inject
     private EmployeeService employeeService;
 
     private Spot createSpot(Integer tenantId, String name) {
@@ -100,16 +85,15 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
     }
 
     @Test
-    public void getShiftListTest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/shift/", TENANT_ID)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk());
+    public void getShiftListTest() {
+        RestAssured.get("/rest/tenant/{tenantId}/shift/", TENANT_ID)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode());
     }
 
     @Test
-    public void getShiftTest() throws Exception {
+    public void getShiftTest() {
         Spot spot = createSpot(TENANT_ID, "spot");
         Contract contract = createContract(TENANT_ID, "contract");
         Employee rotationEmployee = createEmployee(TENANT_ID, "rotationEmployee", contract);
@@ -119,36 +103,31 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         ShiftView shiftView = new ShiftView(TENANT_ID, spot, startDateTime, endDateTime, rotationEmployee);
         ShiftView persistedShift = shiftService.createShift(TENANT_ID, shiftView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, persistedShift.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.rotationEmployeeId").value(
-                        persistedShift.getRotationEmployeeId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.spotId").value(persistedShift.getSpotId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.startDateTime").value(
-                        "2000-01-01T00:00:00"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.endDateTime").value(
-                        "2000-01-01T08:00:00"));
+        RestAssured.get("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, persistedShift.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("rotationEmployeeId", equalTo(persistedShift.getRotationEmployeeId()))
+                .body("spotId", equalTo(persistedShift.getSpotId()))
+                .body("startDateTime", equalTo("2000-01-01T00:00:00"))
+                .body("endDateTime", equalTo("2000-01-01T08:00:00"));
     }
 
     @Test
-    public void getNonExistentShiftTest() throws Exception {
+    public void getNonExistentShiftTest() {
         String exceptionMessage = "No Shift entity found with ID (0).";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, 0)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+        RestAssured.get("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, 0)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void deleteShiftTest() throws Exception {
+    public void deleteShiftTest() {
         Spot spot = createSpot(TENANT_ID, "spot");
         Contract contract = createContract(TENANT_ID, "contract");
         Employee rotationEmployee = createEmployee(TENANT_ID, "rotationEmployee", contract);
@@ -158,28 +137,24 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         ShiftView shiftView = new ShiftView(TENANT_ID, spot, startDateTime, endDateTime, rotationEmployee);
         ShiftView persistedShift = shiftService.createShift(TENANT_ID, shiftView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, persistedShift.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().string("true"));
+        RestAssured.delete("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, persistedShift.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", equalTo("true"));
     }
 
     @Test
-    public void deleteNonExistentShiftTest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, 0)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().string("false"));
+    public void deleteNonExistentShiftTest() {
+        RestAssured.delete("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, 0)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", equalTo("false"));
     }
 
     @Test
-    public void createShiftTest() throws Exception {
+    public void createShiftTest() {
         Spot spot = createSpot(TENANT_ID, "spot");
         Contract contract = createContract(TENANT_ID, "contract");
         Employee rotationEmployee = createEmployee(TENANT_ID, "rotationEmployee", contract);
@@ -187,26 +162,21 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);
         LocalDateTime endDateTime = startDateTime.plusHours(8);
         ShiftView shiftView = new ShiftView(TENANT_ID, spot, startDateTime, endDateTime, rotationEmployee);
-        String body = (new ObjectMapper()).writeValueAsString(shiftView);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(shiftView)
                 .post("/rest/tenant/{tenantId}/shift/add", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.rotationEmployeeId").value(
-                        shiftView.getRotationEmployeeId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.spotId").value(shiftView.getSpotId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.startDateTime").value(
-                        "2000-01-01T00:00:00"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.endDateTime").value(
-                        "2000-01-01T08:00:00"));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("rotationEmployeeId", equalTo(shiftView.getRotationEmployeeId()))
+                .body("spotId", equalTo(shiftView.getSpotId()))
+                .body("startDateTime", equalTo("2000-01-01T00:00:00"))
+                .body("endDateTime", equalTo("2000-01-01T08:00:00"));
     }
 
     @Test
-    public void createInvalidShiftTest() throws Exception {
+    public void createInvalidShiftTest() {
         Spot spot = createSpot(TENANT_ID, "spot");
         Contract contract = createContract(TENANT_ID, "contract");
         Employee rotationEmployee = createEmployee(TENANT_ID, "rotationEmployee", contract);
@@ -214,25 +184,23 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);
         LocalDateTime endDateTime = startDateTime;
         ShiftView shiftView = new ShiftView(TENANT_ID, spot, startDateTime, endDateTime, rotationEmployee);
-        String body = (new ObjectMapper()).writeValueAsString(shiftView);
 
         String exceptionMessage = "Shift's end date time is not at least 30 minutes" +
                 " after shift's start date time";
         String i18nKey = "ServerSideException.entityConstraintViolation";
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(shiftView)
                 .post("/rest/tenant/{tenantId}/shift/add", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.messageParameters[1]").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.i18nKey").value(i18nKey));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                .body("messageParameters[1]", equalTo(exceptionMessage))
+                .body("i18nKey", equalTo(i18nKey));
     }
 
     @Test
-    public void updateShiftTest() throws Exception {
+    public void updateShiftTest() {
         Spot spot = createSpot(TENANT_ID, "spot");
         Contract contract = createContract(TENANT_ID, "contract");
         Employee rotationEmployee = createEmployee(TENANT_ID, "rotationEmployee", contract);
@@ -246,23 +214,21 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         endDateTime = startDateTime.plusHours(10);
         ShiftView updatedShift = new ShiftView(TENANT_ID, spot, startDateTime, endDateTime, rotationEmployee);
         updatedShift.setId(persistedShift.getId());
-        String body = (new ObjectMapper()).writeValueAsString(updatedShift);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(updatedShift)
                 .put("/rest/tenant/{tenantId}/shift/update", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.startDateTime").value(
-                        "1999-12-31T23:59:59"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.endDateTime").value(
-                        "2000-01-01T09:59:59"));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("rotationEmployeeId", equalTo(updatedShift.getRotationEmployeeId()))
+                .body("spotId", equalTo(updatedShift.getSpotId()))
+                .body("startDateTime", equalTo("1999-12-31T23:59:59"))
+                .body("endDateTime", equalTo("2000-01-01T09:59:59"));
     }
 
     @Test
-    public void updateNonExistentShiftTest() throws Exception {
+    public void updateNonExistentShiftTest() {
         String exceptionMessage = "Shift entity with ID (0) not found.";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
@@ -271,15 +237,14 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         LocalDateTime endDateTime = startDateTime.plusHours(10);
         ShiftView updatedShift = new ShiftView(TENANT_ID, spot, startDateTime, endDateTime);
         updatedShift.setId(0L);
-        String body = (new ObjectMapper()).writeValueAsString(updatedShift);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(updatedShift)
                 .put("/rest/tenant/{tenantId}/shift/update", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 }

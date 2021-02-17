@@ -70,9 +70,9 @@ import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.ResponseEntity;
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
 
 public abstract class AbstractSolverTest {
 
@@ -84,11 +84,8 @@ public abstract class AbstractSolverTest {
             new RosterConstraintConfiguration();
     private static final String ROSTER_PATH_URI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
 
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    private ResponseEntity<Void> terminateSolver(Integer tenantId) {
-        return restTemplate.postForEntity(ROSTER_PATH_URI + "terminate", null, Void.class, tenantId);
+    private Response terminateSolver(Integer tenantId) {
+        return RestAssured.post(ROSTER_PATH_URI + "terminate", tenantId);
     }
 
     public abstract SolverFactory<Roster> getSolverFactory();

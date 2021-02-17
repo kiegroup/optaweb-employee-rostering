@@ -16,6 +16,10 @@
 
 package org.optaweb.employeerostering.service.admin;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import org.optaweb.employeerostering.service.contract.ContractRepository;
 import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityRepository;
 import org.optaweb.employeerostering.service.employee.EmployeeRepository;
@@ -27,10 +31,8 @@ import org.optaweb.employeerostering.service.skill.SkillRepository;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.optaweb.employeerostering.service.tenant.RosterConstraintConfigurationRepository;
 import org.optaweb.employeerostering.service.tenant.TenantRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@ApplicationScoped
 public class AdminService {
 
     private ShiftRepository shiftRepository;
@@ -46,6 +48,7 @@ public class AdminService {
 
     private RosterGenerator rosterGenerator;
 
+    @Inject
     public AdminService(ShiftRepository shiftRepository,
             EmployeeAvailabilityRepository employeeAvailabilityRepository,
             TimeBucketRepository timeBucketRepository,
@@ -78,15 +81,15 @@ public class AdminService {
 
     private void deleteAllEntities() {
         // IMPORTANT: Delete entries that has Many-to-One relations first, otherwise we break referential integrity
-        shiftRepository.deleteAllInBatch();
-        employeeAvailabilityRepository.deleteAllInBatch();
-        timeBucketRepository.deleteAllInBatch();
-        employeeRepository.deleteAllInBatch();
-        contractRepository.deleteAllInBatch();
-        spotRepository.deleteAllInBatch();
-        skillRepository.deleteAllInBatch();
-        rosterConstraintConfigurationRepository.deleteAllInBatch();
-        rosterStateRepository.deleteAllInBatch();
-        tenantRepository.deleteAllInBatch();
+        shiftRepository.deleteAll();
+        employeeAvailabilityRepository.deleteAll();
+        timeBucketRepository.deleteAll();
+        employeeRepository.deleteAll();
+        contractRepository.deleteAll();
+        spotRepository.deleteAll();
+        skillRepository.deleteAll();
+        rosterConstraintConfigurationRepository.deleteAll();
+        rosterStateRepository.deleteAll();
+        tenantRepository.deleteAll();
     }
 }

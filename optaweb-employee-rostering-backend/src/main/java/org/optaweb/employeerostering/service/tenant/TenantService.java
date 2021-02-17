@@ -20,7 +20,10 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import javax.validation.Validator;
 
 import org.optaweb.employeerostering.domain.roster.RosterState;
@@ -36,10 +39,8 @@ import org.optaweb.employeerostering.service.rotation.TimeBucketRepository;
 import org.optaweb.employeerostering.service.shift.ShiftRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@ApplicationScoped
 public class TenantService extends AbstractRestService {
 
     private final TenantRepository tenantRepository;
@@ -60,6 +61,7 @@ public class TenantService extends AbstractRestService {
 
     private final SkillRepository skillRepository;
 
+    @Inject
     public TenantService(Validator validator,
             TenantRepository tenantRepository,
             RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
@@ -102,13 +104,13 @@ public class TenantService extends AbstractRestService {
 
     @Transactional
     public List<Tenant> getTenantList() {
-        return tenantRepository.findAll();
+        return tenantRepository.findAllTenants();
     }
 
     @Transactional
     public Tenant getTenant(Integer id) {
         return tenantRepository
-                .findById(id)
+                .findByIdOptional(id.longValue())
                 .orElseThrow(() -> new EntityNotFoundException("No Tenant entity found with ID (" + id + ")."));
     }
 
@@ -116,15 +118,16 @@ public class TenantService extends AbstractRestService {
     public Tenant createTenant(RosterStateView initialRosterStateView) {
         RosterState initialRosterState = convertFromRosterStateView(initialRosterStateView);
 
-        Tenant databaseTenant = tenantRepository.save(initialRosterState.getTenant());
+        Tenant databaseTenant = initialRosterState.getTenant();
+        tenantRepository.persist(databaseTenant);
         initialRosterState.setTenant(databaseTenant);
         initialRosterState.setTenantId(databaseTenant.getId());
 
         RosterConstraintConfiguration rosterConstraintConfiguration = new RosterConstraintConfiguration();
         rosterConstraintConfiguration.setTenantId(databaseTenant.getId());
 
-        rosterStateRepository.save(initialRosterState);
-        rosterConstraintConfigurationRepository.save(rosterConstraintConfiguration);
+        rosterStateRepository.persist(initialRosterState);
+        rosterConstraintConfigurationRepository.persist(rosterConstraintConfiguration);
         return databaseTenant;
     }
 
@@ -142,7 +145,7 @@ public class TenantService extends AbstractRestService {
         skillRepository.deleteForTenant(id);
         rosterConstraintConfigurationRepository.deleteForTenant(id);
         rosterStateRepository.deleteForTenant(id);
-        tenantRepository.deleteById(id);
+        tenantRepository.delete("id", id);
         return true;
     }
 
@@ -200,12 +203,13 @@ public class TenantService extends AbstractRestService {
                 .getDesiredTimeSlot());
         oldRosterConstraintConfiguration.setNotRotationEmployee(rosterConstraintConfigurationView
                 .getNotRotationEmployee());
-        return rosterConstraintConfigurationRepository.save(oldRosterConstraintConfiguration);
+        rosterConstraintConfigurationRepository.persist(oldRosterConstraintConfiguration);
+        return oldRosterConstraintConfiguration;
     }
 
     public List<ZoneId> getSupportedTimezones() {
         return ZoneId.getAvailableZoneIds().stream()
-                .sorted().map(zoneId -> ZoneId.of(zoneId))
+                .sorted().map(ZoneId::of)
                 .collect(Collectors.toList());
     }
 }

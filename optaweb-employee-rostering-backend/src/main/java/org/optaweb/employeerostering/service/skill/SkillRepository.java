@@ -18,22 +18,21 @@ package org.optaweb.employeerostering.service.skill;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.optaweb.employeerostering.domain.skill.Skill;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface SkillRepository extends JpaRepository<Skill, Long> {
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Sort;
 
-    @Query("select s from Skill s " +
-            "where s.tenantId = :tenantId " +
-            "order by LOWER(s.name)")
-    List<Skill> findAllByTenantId(@Param("tenantId") Integer tenantId);
+@ApplicationScoped
+public class SkillRepository implements PanacheRepository<Skill> {
 
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("delete from Skill s where s.tenantId = :tenantId")
-    void deleteForTenant(@Param("tenantId") Integer tenantId);
+    public List<Skill> findAllByTenantId(Integer tenantId) {
+        return find("tenantId", Sort.ascending("name"), tenantId).list();
+    }
+
+    public void deleteForTenant(Integer tenantId) {
+        delete("tenantId", tenantId);
+    }
 }
