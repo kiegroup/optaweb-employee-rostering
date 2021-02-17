@@ -18,16 +18,18 @@ package org.optaweb.employeerostering.service.tenant;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.optaweb.employeerostering.domain.tenant.Tenant;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface TenantRepository extends JpaRepository<Tenant, Integer> {
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Sort;
 
-    @Query("select t from Tenant t " +
+@ApplicationScoped
+public class TenantRepository implements PanacheRepository<Tenant> {
+
     // Deliberately order by id instead of name to use generated order
-            "order by t.id")
-    List<Tenant> findAll();
+    public List<Tenant> findAllTenants() {
+        return findAll(Sort.ascending("id")).list();
+    }
 }

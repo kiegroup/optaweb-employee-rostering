@@ -18,70 +18,68 @@ package org.optaweb.employeerostering.service.shift;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
-@RestController
-@RequestMapping("/rest/tenant/{tenantId}/shift")
-@CrossOrigin
-@Validated
-@Api(tags = "Shift")
+@Path("/rest/tenant/{tenantId}/shift")
+@ApplicationScoped
+// @Api(tags = "Shift")
 public class ShiftController {
 
     private final ShiftService shiftService;
 
+    @Inject
     public ShiftController(ShiftService shiftService) {
         this.shiftService = shiftService;
-        Assert.notNull(shiftService, "shiftService must not be null.");
+        // Assert.notNull(shiftService, "shiftService must not be null.");
     }
 
-    @ApiOperation("Get a list of all shifts")
-    @GetMapping("/")
-    public ResponseEntity<List<ShiftView>> getShiftList(@PathVariable @Min(0) Integer tenantId) {
-        return new ResponseEntity<>(shiftService.getShiftList(tenantId), HttpStatus.OK);
+    // @ApiOperation("Get a list of all shifts")
+    @GET
+    @Path("/")
+    public List<ShiftView> getShiftList(@PathParam("tenantId") @Min(0) Integer tenantId) {
+        return shiftService.getShiftList(tenantId);
     }
 
-    @ApiOperation("Get a shift by id")
-    @GetMapping("/{id}")
-    public ResponseEntity<ShiftView> getShift(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
-        return new ResponseEntity<>(shiftService.getShift(tenantId, id), HttpStatus.OK);
+    // @ApiOperation("Get a shift by id")
+    @GET
+    @Path("/{id}")
+    public ShiftView getShift(@PathParam("tenantId") @Min(0) Integer tenantId,
+            @PathParam("id") @Min(0) Long id) {
+        return shiftService.getShift(tenantId, id);
     }
 
-    @ApiOperation("Delete a shift")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteShift(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
-        return new ResponseEntity<>(shiftService.deleteShift(tenantId, id), HttpStatus.OK);
+    // @ApiOperation("Delete a shift")
+    @DELETE
+    @Path("/{id}")
+    public Boolean deleteShift(@PathParam("tenantId") @Min(0) Integer tenantId,
+            @PathParam("id") @Min(0) Long id) {
+        return shiftService.deleteShift(tenantId, id);
     }
 
-    @ApiOperation("Add a new shift")
-    @PostMapping("/add")
-    public ResponseEntity<ShiftView> createShift(@PathVariable @Min(0) Integer tenantId,
-            @RequestBody @Valid ShiftView shiftView) {
-        return new ResponseEntity<>(shiftService.createShift(tenantId, shiftView), HttpStatus.OK);
+    // @ApiOperation("Add a new shift")
+    @POST
+    @Path("/add")
+    public ShiftView createShift(@PathParam("tenantId") @Min(0) Integer tenantId,
+            @Valid ShiftView shiftView) {
+        return shiftService.createShift(tenantId, shiftView);
     }
 
-    @ApiOperation("Update a shift")
-    @PutMapping("/update")
-    public ResponseEntity<ShiftView> updateShift(@PathVariable @Min(0) Integer tenantId,
-            @RequestBody @Valid ShiftView shiftView) {
-        return new ResponseEntity<>(shiftService.updateShift(tenantId, shiftView), HttpStatus.OK);
+    // @ApiOperation("Update a shift")
+    @PUT
+    @Path("/update")
+    public ShiftView updateShift(@PathParam("tenantId") @Min(0) Integer tenantId,
+            @Valid ShiftView shiftView) {
+        return shiftService.updateShift(tenantId, shiftView);
     }
 }

@@ -16,13 +16,16 @@
 
 package org.optaweb.employeerostering.spot;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,35 +36,18 @@ import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.optaweb.employeerostering.service.skill.SkillService;
 import org.optaweb.employeerostering.service.spot.SpotService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 
-@SpringBootTest
-@AutoConfigureTestDatabase
-@AutoConfigureMockMvc
-@Transactional
+@QuarkusTest
 public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(SpotServiceTest.class);
-
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
+    @Inject
     private SpotService spotService;
 
-    @Autowired
+    @Inject
     private SkillService skillService;
 
     private Skill createSkill(Integer tenantId, String name) {
@@ -80,16 +66,15 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
     }
 
     @Test
-    public void getSpotListTest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/spot/", TENANT_ID)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk());
+    public void getSpotListTest() {
+        RestAssured.get("/rest/tenant/{tenantId}/spot/", TENANT_ID)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode());
     }
 
     @Test
-    public void getSpotTest() throws Exception {
+    public void getSpotTest() {
         Skill skillA = createSkill(TENANT_ID, "A");
         Skill skillB = createSkill(TENANT_ID, "B");
 
@@ -100,32 +85,30 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         Spot spot = spotService.createSpot(TENANT_ID, spotView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, spot.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("spot"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.requiredSkillSet").isNotEmpty());
+        RestAssured.get("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, spot.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("tenantId", equalTo(TENANT_ID))
+                .body("name", equalTo("spot"))
+                .body("requiredSkillSet", Matchers.containsInAnyOrder(skillA, skillB));
     }
 
     @Test
-    public void getNonExistentSpotTest() throws Exception {
+    public void getNonExistentSpotTest() {
         String exceptionMessage = "No Spot entity found with ID (0).";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, 0)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+        RestAssured.get("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, 0)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void getNonMatchingSpotTest() throws Exception {
+    public void getNonMatchingSpotTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable (spot)'s tenantId (" +
                 TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -140,17 +123,16 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         Spot spot = spotService.createSpot(TENANT_ID, spotView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/spot/{id}", 0, spot.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+        RestAssured.get("/rest/tenant/{tenantId}/spot/{id}", 0, spot.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void deleteSpotTest() throws Exception {
+    public void deleteSpotTest() {
         Skill skillA = createSkill(TENANT_ID, "A");
         Skill skillB = createSkill(TENANT_ID, "B");
 
@@ -161,28 +143,24 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         Spot spot = spotService.createSpot(TENANT_ID, spotView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, spot.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().string("true"));
+        RestAssured.delete("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, spot.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", equalTo("true"));
     }
 
     @Test
-    public void deleteNonExistentSpotTest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, 0)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().string("false"));
+    public void deleteNonExistentSpotTest() {
+        RestAssured.delete("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, 0)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", equalTo("false"));
     }
 
     @Test
-    public void deleteNonMatchingSpotTest() throws Exception {
+    public void deleteNonMatchingSpotTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable (spot)'s tenantId (" +
                 TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -197,17 +175,16 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         Spot spot = spotService.createSpot(TENANT_ID, spotView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/spot/{id}", 0, spot.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+        RestAssured.delete("/rest/tenant/{tenantId}/spot/{id}", 0, spot.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void createSpotTest() throws Exception {
+    public void createSpotTest() {
         Skill skillA = createSkill(TENANT_ID, "A");
         Skill skillB = createSkill(TENANT_ID, "B");
 
@@ -216,22 +193,20 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         testSkillSet.add(skillB);
 
         SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(spotView);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(spotView)
                 .post("/rest/tenant/{tenantId}/spot/add", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("spot"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.requiredSkillSet").isNotEmpty());
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("tenantId", equalTo(TENANT_ID))
+                .body("name", equalTo("spot"))
+                .body("requiredSkillSet", Matchers.containsInAnyOrder(skillA, skillB));
     }
 
     @Test
-    public void createNonMatchingSpotTest() throws Exception {
+    public void createNonMatchingSpotTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable (spot)'s tenantId ("
                 + TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -244,20 +219,19 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         testSkillSet.add(skillB);
 
         SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(spotView);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(spotView)
                 .post("/rest/tenant/{tenantId}/spot/add", 0)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void updateSpotTest() throws Exception {
+    public void updateSpotTest() {
         Skill skillA = createSkill(TENANT_ID, "A");
         Skill skillB = createSkill(TENANT_ID, "B");
 
@@ -270,22 +244,20 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
 
         SpotView updatedSpot = new SpotView(TENANT_ID, "updatedSpot", testSkillSet);
         updatedSpot.setId(spot.getId());
-        String body = (new ObjectMapper()).writeValueAsString(updatedSpot);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(updatedSpot)
                 .post("/rest/tenant/{tenantId}/spot/update", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("updatedSpot"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.requiredSkillSet").isNotEmpty());
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("tenantId", equalTo(TENANT_ID))
+                .body("name", equalTo("updatedSpot"))
+                .body("requiredSkillSet", Matchers.containsInAnyOrder(skillA, skillB));
     }
 
     @Test
-    public void updateNonMatchingSpotTest() throws Exception {
+    public void updateNonMatchingSpotTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable (updatedSpot)'s tenantId (" +
                 TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -301,39 +273,37 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         spotService.createSpot(TENANT_ID, spotView);
 
         SpotView updatedSpot = new SpotView(TENANT_ID, "updatedSpot", testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(updatedSpot);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(updatedSpot)
                 .post("/rest/tenant/{tenantId}/spot/update", 0)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void updateNonExistentSpotTest() throws Exception {
+    public void updateNonExistentSpotTest() {
         String exceptionMessage = "Spot entity with ID (0) not found.";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
         SpotView spotView = new SpotView(TENANT_ID, "spot", Collections.emptySet());
         spotView.setId(0L);
-        String body = (new ObjectMapper()).writeValueAsString(spotView);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(spotView)
                 .post("/rest/tenant/{tenantId}/spot/update", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void updateChangeTenantIdSpotTest() throws Exception {
+    public void updateChangeTenantIdSpotTest() {
         String exceptionMessage = "Spot entity with tenantId (" + TENANT_ID + ") cannot change tenants.";
         String exceptionClass = "java.lang.IllegalStateException";
 
@@ -349,15 +319,14 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
 
         SpotView updatedSpot = new SpotView(0, "updatedSpot", testSkillSet);
         updatedSpot.setId(spot.getId());
-        String body = (new ObjectMapper()).writeValueAsString(updatedSpot);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(updatedSpot)
                 .post("/rest/tenant/{tenantId}/spot/update", 0)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 }

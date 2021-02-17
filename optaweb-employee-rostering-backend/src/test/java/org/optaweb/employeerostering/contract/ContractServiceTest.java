@@ -17,8 +17,10 @@
 package org.optaweb.employeerostering.contract;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.equalTo;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,32 +29,15 @@ import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.optaweb.employeerostering.service.contract.ContractService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 
-@SpringBootTest
-@AutoConfigureTestDatabase
-@AutoConfigureMockMvc
-@Transactional
+@QuarkusTest
 public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(ContractServiceTest.class);
-
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
+    @Inject
     private ContractService contractService;
 
     @BeforeEach
@@ -66,16 +51,15 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
     }
 
     @Test
-    public void getContractListTest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/contract/", TENANT_ID)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk());
+    public void getContractListTest() {
+        RestAssured.get("/rest/tenant/{tenantId}/contract/", TENANT_ID)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode());
     }
 
     @Test
-    public void getContractTest() throws Exception {
+    public void getContractTest() {
         Integer maximumMinutesPerDay = 50;
         Integer maximumMinutesPerWeek = 250;
         Integer maximumMinutesPerMonth = 1000;
@@ -85,35 +69,33 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
                 maximumMinutesPerMonth, maximumMinutesPerYear);
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("contract"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.maximumMinutesPerDay").value(maximumMinutesPerDay))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.maximumMinutesPerWeek").value(maximumMinutesPerWeek))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.maximumMinutesPerMonth").value(maximumMinutesPerMonth))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.maximumMinutesPerYear").value(maximumMinutesPerYear));
+        RestAssured.get("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("tenantId", equalTo(TENANT_ID))
+                .body("name", equalTo("contract"))
+                .body("maximumMinutesPerDay", equalTo(maximumMinutesPerDay))
+                .body("maximumMinutesPerWeek", equalTo(maximumMinutesPerWeek))
+                .body("maximumMinutesPerMonth", equalTo(maximumMinutesPerMonth))
+                .body("maximumMinutesPerYear", equalTo(maximumMinutesPerYear));
     }
 
     @Test
-    public void getNonExistentContractTest() throws Exception {
+    public void getNonExistentContractTest() {
         String exceptionMessage = "No Contract entity found with ID (0).";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, 0)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+        RestAssured.get("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, 0)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void getNonMatchingContractTest() throws Exception {
+    public void getNonMatchingContractTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable (contract)'s tenantId (" +
                 TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -121,58 +103,54 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/contract/{id}", 0, contract.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+        RestAssured.get("/rest/tenant/{tenantId}/contract/{id}", 0, contract.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void deleteContractTest() throws Exception {
+    public void deleteContractTest() {
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().string("true"));
+        RestAssured.delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", equalTo("true"));
     }
 
     @Test
-    public void deleteNonExistentContractTest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, 0)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().string("false"));
+    public void deleteNonExistentContractTest() {
+        RestAssured.delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, 0)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", equalTo("false"));
     }
 
     @Test
-    public void deleteNonMatchingContractTest() throws Exception {
+    public void deleteNonMatchingContractTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable (contract)'s tenantId (" +
                 TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
 
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         Contract contract = contractService.createContract(TENANT_ID, contractView);
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/contract/{id}", 0, contract.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+
+        RestAssured.delete("/rest/tenant/{tenantId}/contract/{id}", 0, contract.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void createContractTest() throws Exception {
+    public void createContractTest() {
         Integer maximumMinutesPerDay = 50;
         Integer maximumMinutesPerWeek = 250;
         Integer maximumMinutesPerMonth = 1000;
@@ -180,43 +158,41 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         ContractView contractView = new ContractView(TENANT_ID, "contract", maximumMinutesPerDay, maximumMinutesPerWeek,
                 maximumMinutesPerMonth, maximumMinutesPerYear);
-        String body = (new ObjectMapper()).writeValueAsString(contractView);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(contractView)
                 .post("/rest/tenant/{tenantId}/contract/add", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("contract"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.maximumMinutesPerDay").value(maximumMinutesPerDay))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.maximumMinutesPerWeek").value(maximumMinutesPerWeek))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.maximumMinutesPerMonth").value(maximumMinutesPerMonth))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.maximumMinutesPerYear").value(maximumMinutesPerYear));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("tenantId", equalTo(TENANT_ID))
+                .body("name", equalTo("contract"))
+                .body("maximumMinutesPerDay", equalTo(maximumMinutesPerDay))
+                .body("maximumMinutesPerWeek", equalTo(maximumMinutesPerWeek))
+                .body("maximumMinutesPerMonth", equalTo(maximumMinutesPerMonth))
+                .body("maximumMinutesPerYear", equalTo(maximumMinutesPerYear));
     }
 
     @Test
-    public void createNonMatchingContractTest() throws Exception {
+    public void createNonMatchingContractTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable (contract)'s tenantId ("
                 + TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
 
         ContractView contractView = new ContractView(TENANT_ID, "contract");
-        String body = (new ObjectMapper()).writeValueAsString(contractView);
-        mvc.perform(MockMvcRequestBuilders
+
+        RestAssured.given()
+                .body(contractView)
                 .post("/rest/tenant/{tenantId}/contract/add", 0)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void updateContractTest() throws Exception {
+    public void updateContractTest() {
         Integer maximumMinutesPerDay = 50;
         Integer maximumMinutesPerWeek = 250;
         Integer maximumMinutesPerMonth = 1000;
@@ -229,25 +205,23 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
                 maximumMinutesPerWeek,
                 maximumMinutesPerMonth, maximumMinutesPerYear);
         updatedContractView.setId(contract.getId());
-        String body = (new ObjectMapper()).writeValueAsString(updatedContractView);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(updatedContractView)
                 .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("updatedContract"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.maximumMinutesPerDay").value(maximumMinutesPerDay))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.maximumMinutesPerWeek").value(maximumMinutesPerWeek))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.maximumMinutesPerMonth").value(maximumMinutesPerMonth))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.maximumMinutesPerYear").value(maximumMinutesPerYear));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("tenantId", equalTo(TENANT_ID))
+                .body("name", equalTo("updatedContract"))
+                .body("maximumMinutesPerDay", equalTo(maximumMinutesPerDay))
+                .body("maximumMinutesPerWeek", equalTo(maximumMinutesPerWeek))
+                .body("maximumMinutesPerMonth", equalTo(maximumMinutesPerMonth))
+                .body("maximumMinutesPerYear", equalTo(maximumMinutesPerYear));
     }
 
     @Test
-    public void updateNonMatchingContractTest() throws Exception {
+    public void updateNonMatchingContractTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable (updatedContract)'s tenantId (" +
                 TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -256,37 +230,37 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         contractService.createContract(TENANT_ID, contractView);
 
         ContractView updatedContractView = new ContractView(TENANT_ID, "updatedContract");
-        String body = (new ObjectMapper()).writeValueAsString(updatedContractView);
-        mvc.perform(MockMvcRequestBuilders
-                .post("/rest/tenant/{tenantId}/contract/update", 0)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+
+        RestAssured.given()
+                .body(updatedContractView)
+                .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void updateNonExistentContractTest() throws Exception {
+    public void updateNonExistentContractTest() {
         String exceptionMessage = "Contract entity with ID (0) not found.";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         contractView.setId(0L);
-        String body = (new ObjectMapper()).writeValueAsString(contractView);
-        mvc.perform(MockMvcRequestBuilders
+
+        RestAssured.given()
+                .body(contractView)
                 .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void updateChangeTenantIdContractTest() throws Exception {
+    public void updateChangeTenantIdContractTest() {
         String exceptionMessage = "Contract entity with tenantId (" + TENANT_ID + ") cannot change tenants.";
         String exceptionClass = "java.lang.IllegalStateException";
 
@@ -295,15 +269,15 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         ContractView updatedContract = new ContractView(0, "updatedContract");
         updatedContract.setId(contract.getId());
-        String body = (new ObjectMapper()).writeValueAsString(updatedContract);
-        mvc.perform(MockMvcRequestBuilders
+
+        RestAssured.given()
+                .body(contractView)
                 .post("/rest/tenant/{tenantId}/contract/update", 0)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test

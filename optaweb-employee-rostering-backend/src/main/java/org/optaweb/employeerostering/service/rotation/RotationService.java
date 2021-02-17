@@ -23,7 +23,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
@@ -40,11 +43,8 @@ import org.optaweb.employeerostering.service.roster.RosterService;
 import org.optaweb.employeerostering.service.skill.SkillService;
 import org.optaweb.employeerostering.service.spot.SpotService;
 import org.optaweb.employeerostering.service.tenant.TenantService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
-@Service
+@ApplicationScoped
 public class RotationService extends AbstractRestService {
 
     private final TimeBucketRepository timeBucketRepository;
@@ -54,27 +54,19 @@ public class RotationService extends AbstractRestService {
     private final SkillService skillService;
     private final EmployeeService employeeService;
 
+    @Inject
     public RotationService(Validator validator,
             TimeBucketRepository timeBucketRepository, RosterService rosterService,
             TenantService tenantService, SpotService spotService, SkillService skillService,
             EmployeeService employeeService) {
         super(validator);
+
         this.timeBucketRepository = timeBucketRepository;
-
         this.tenantService = tenantService;
-        Assert.notNull(tenantService, "tenantService must not be null");
-
         this.rosterService = rosterService;
-        Assert.notNull(rosterService, "rosterService must not be null.");
-
         this.spotService = spotService;
-        Assert.notNull(spotService, "spotService must not be null.");
-
         this.skillService = skillService;
-        Assert.notNull(skillService, "skillService must not be null.");
-
         this.employeeService = employeeService;
-        Assert.notNull(employeeService, "employeeService must not be null.");
     }
 
     private Set<Skill> getRequiredSkillSet(Integer tenantId, TimeBucketView timeBucketView) {
@@ -92,7 +84,7 @@ public class RotationService extends AbstractRestService {
 
     public TimeBucketView getTimeBucket(@Min(0) Integer tenantId, @Min(0) Long id) {
         TimeBucket timeBucket = timeBucketRepository
-                .findById(id)
+                .findByIdOptional(id)
                 .orElseThrow(() -> new EntityNotFoundException("No TimeBucket entity found with ID (" + id + ")."));
 
         validateBean(tenantId, timeBucket);
@@ -101,7 +93,7 @@ public class RotationService extends AbstractRestService {
 
     @Transactional
     public Boolean deleteTimeBucket(@Min(0) Integer tenantId, @Min(0) Long id) {
-        Optional<TimeBucket> timeBucketOptional = timeBucketRepository.findById(id);
+        Optional<TimeBucket> timeBucketOptional = timeBucketRepository.findByIdOptional(id);
 
         if (!timeBucketOptional.isPresent()) {
             return false;
@@ -118,7 +110,7 @@ public class RotationService extends AbstractRestService {
         Set<Skill> additionalSkillSet = getRequiredSkillSet(tenantId, timeBucketView);
         Integer rotationLength = rosterService.getRosterState(tenantId).getRotationLength();
 
-        Set<DayOfWeek> repeatOnDaySet = timeBucketView.getRepeatOnDaySetList().stream().collect(Collectors.toSet());
+        Set<DayOfWeek> repeatOnDaySet = new HashSet<>(timeBucketView.getRepeatOnDaySetList());
         TimeBucket timeBucket;
 
         if (timeBucketView.getSeatList() != null) {
@@ -142,7 +134,7 @@ public class RotationService extends AbstractRestService {
         }
 
         validateBean(tenantId, timeBucket);
-        timeBucketRepository.save(timeBucket);
+        timeBucketRepository.persist(timeBucket);
         return new TimeBucketView(timeBucket);
     }
 
@@ -152,7 +144,7 @@ public class RotationService extends AbstractRestService {
         Set<Skill> additionalSkillSet = getRequiredSkillSet(tenantId, timeBucketView);
         Integer rotationLength = rosterService.getRosterState(tenantId).getRotationLength();
 
-        Set<DayOfWeek> repeatOnDaySet = timeBucketView.getRepeatOnDaySetList().stream().collect(Collectors.toSet());
+        Set<DayOfWeek> repeatOnDaySet = new HashSet<>(timeBucketView.getRepeatOnDaySetList());
         TimeBucket newTimeBucket;
 
         if (timeBucketView.getSeatList() != null) {
@@ -168,21 +160,19 @@ public class RotationService extends AbstractRestService {
             newTimeBucket = new TimeBucket(timeBucketView.getTenantId(),
                     spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
                     additionalSkillSet, repeatOnDaySet, seatList);
-            newTimeBucket.setId(timeBucketView.getId());
-            newTimeBucket.setVersion(timeBucketView.getVersion());
         } else {
             DayOfWeek startOfWeek = tenantService.getRosterConstraintConfiguration(tenantId).getWeekStartDay();
             newTimeBucket = new TimeBucket(timeBucketView.getTenantId(),
                     spot, timeBucketView.getStartTime(), timeBucketView.getEndTime(),
                     additionalSkillSet, repeatOnDaySet, startOfWeek, rotationLength);
-            newTimeBucket.setId(timeBucketView.getId());
-            newTimeBucket.setVersion(timeBucketView.getVersion());
         }
+        newTimeBucket.setId(timeBucketView.getId());
+        newTimeBucket.setVersion(timeBucketView.getVersion());
 
         validateBean(tenantId, newTimeBucket);
 
         TimeBucket oldTimeBucket = timeBucketRepository
-                .findById(newTimeBucket.getId())
+                .findByIdOptional(newTimeBucket.getId())
                 .orElseThrow(() -> new EntityNotFoundException("TimeBucket entity with ID (" +
                         newTimeBucket.getId() + ") not found."));
 
@@ -194,8 +184,8 @@ public class RotationService extends AbstractRestService {
         oldTimeBucket.setValuesFromTimeBucket(newTimeBucket);
 
         // Flush to increase version number before we duplicate it to TimeBucketView
-        TimeBucket updatedTimeBucket = timeBucketRepository.saveAndFlush(oldTimeBucket);
+        timeBucketRepository.persistAndFlush(oldTimeBucket);
 
-        return new TimeBucketView(updatedTimeBucket);
+        return new TimeBucketView(oldTimeBucket);
     }
 }

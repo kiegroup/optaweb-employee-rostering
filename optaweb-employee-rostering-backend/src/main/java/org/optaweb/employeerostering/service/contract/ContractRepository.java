@@ -18,17 +18,16 @@ package org.optaweb.employeerostering.service.contract;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.optaweb.employeerostering.domain.contract.Contract;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ContractRepository extends JpaRepository<Contract, Long> {
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Sort;
 
-    @Query("select c from Contract c " +
-            "where c.tenantId = :tenantId " +
-            "order by LOWER(c.name)")
-    List<Contract> findAllByTenantId(@Param("tenantId") Integer tenantId);
+@ApplicationScoped
+public class ContractRepository implements PanacheRepository<Contract> {
+    public List<Contract> findAllByTenantId(Integer tenantId) {
+        return find("tenantId", Sort.ascending("name"), tenantId).list();
+    }
 }

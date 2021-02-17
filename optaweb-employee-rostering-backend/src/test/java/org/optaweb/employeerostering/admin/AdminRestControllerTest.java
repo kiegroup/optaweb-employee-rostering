@@ -18,30 +18,26 @@ package org.optaweb.employeerostering.admin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureTestDatabase
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+@QuarkusTest
 public class AdminRestControllerTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     private final String adminPathURI = "http://localhost:8080/rest/admin/";
 
-    private ResponseEntity<Void> resetApplication() {
-        return restTemplate.postForEntity(adminPathURI + "reset", null, Void.class);
+    private Response resetApplication() {
+        return RestAssured.post(adminPathURI + "reset");
     }
 
     @Test
     public void resetApplicationTest() {
-        ResponseEntity<Void> resetResponse = resetApplication();
-        assertThat(resetResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Response resetResponse = resetApplication();
+        assertThat(resetResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
     }
 }

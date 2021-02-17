@@ -20,7 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
+
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,60 +32,59 @@ import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureTestDatabase
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+@QuarkusTest
 public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     private final String shiftPathURI = "http://localhost:8080/rest/tenant/{tenantId}/shift/";
     private final String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
     private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
     private final String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
 
-    private ResponseEntity<List<ShiftView>> getShifts(Integer tenantId) {
-        return restTemplate.exchange(shiftPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<ShiftView>>() {
-                }, tenantId);
+    private Response getShifts(Integer tenantId) {
+        return RestAssured.get(shiftPathURI, tenantId);
     }
 
-    private ResponseEntity<ShiftView> getShift(Integer tenantId, Long id) {
-        return restTemplate.getForEntity(shiftPathURI + id, ShiftView.class, tenantId);
+    private Response getShift(Integer tenantId, Long id) {
+        return RestAssured.get(shiftPathURI + id, tenantId);
     }
 
     private void deleteShift(Integer tenantId, Long id) {
-        restTemplate.delete(shiftPathURI + id, tenantId);
+        RestAssured.delete(shiftPathURI + id, tenantId);
     }
 
-    private ResponseEntity<ShiftView> addShift(Integer tenantId, ShiftView shiftView) {
-        return restTemplate.postForEntity(shiftPathURI + "add", shiftView, ShiftView.class, tenantId);
+    private Response addShift(Integer tenantId, ShiftView shiftView) {
+        return RestAssured.given()
+                .body(shiftView)
+                .post(shiftPathURI + "add", tenantId);
     }
 
-    private ResponseEntity<ShiftView> updateShift(Integer tenantId, HttpEntity<ShiftView> request) {
-        return restTemplate.exchange(shiftPathURI + "update", HttpMethod.PUT, request, ShiftView.class, tenantId);
+    private Response updateShift(Integer tenantId, ShiftView shiftView) {
+        return RestAssured.given()
+                .body(shiftView)
+                .put(shiftPathURI + "update", tenantId);
     }
 
-    private ResponseEntity<Employee> addEmployee(Integer tenantId, Employee employee) {
-        return restTemplate.postForEntity(employeePathURI + "add", employee, Employee.class, tenantId);
+    private Response addEmployee(Integer tenantId, Employee employee) {
+        return RestAssured.given()
+                .body(employee)
+                .post(employeePathURI + "add", tenantId);
     }
 
-    private ResponseEntity<Contract> addContract(Integer tenantId, Contract contract) {
-        return restTemplate.postForEntity(contractPathURI + "add", contract, Contract.class, tenantId);
+    private Response addContract(Integer tenantId, Contract contract) {
+        return RestAssured.given()
+                .body(contract)
+                .post(contractPathURI + "add", tenantId);
     }
 
-    private ResponseEntity<Spot> addSpot(Integer tenantId, SpotView spotView) {
-        return restTemplate.postForEntity(spotPathURI + "add", spotView, Spot.class, tenantId);
+    private Response addSpot(Integer tenantId, SpotView spotView) {
+        return RestAssured.given()
+                .body(spotView)
+                .post(spotPathURI + "add", tenantId);
     }
 
     @BeforeEach
@@ -99,43 +99,42 @@ public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServ
 
     @Test
     public void shiftCrudTest() {
-        ResponseEntity<Spot> spotResponseEntity = addSpot(TENANT_ID, new SpotView(TENANT_ID, "spot",
+        Response spotResponseEntity = addSpot(TENANT_ID, new SpotView(TENANT_ID, "spot",
                 Collections.emptySet()));
-        Spot spot = spotResponseEntity.getBody();
+        Spot spot = spotResponseEntity.as(Spot.class);
 
-        ResponseEntity<Contract> contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "contract"));
-        Contract contract = contractResponseEntity.getBody();
+        Response contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "contract"));
+        Contract contract = contractResponseEntity.as(Contract.class);
 
-        ResponseEntity<Employee> rotationEmployeeResponseEntity = addEmployee(TENANT_ID,
+        Response rotationEmployeeResponseEntity = addEmployee(TENANT_ID,
                 new Employee(TENANT_ID,
                         "rotationEmployee", contract,
                         Collections.emptySet()));
-        Employee rotationEmployee = rotationEmployeeResponseEntity.getBody();
+        Employee rotationEmployee = rotationEmployeeResponseEntity.as(Employee.class);
 
         LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);
         LocalDateTime endDateTime = startDateTime.plusHours(8);
         ShiftView shiftView = new ShiftView(TENANT_ID, spot, startDateTime, endDateTime, rotationEmployee);
-        ResponseEntity<ShiftView> postResponse = addShift(TENANT_ID, shiftView);
-        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Response postResponse = addShift(TENANT_ID, shiftView);
+        assertThat(postResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        ResponseEntity<ShiftView> getResponse = getShift(TENANT_ID, postResponse.getBody().getId());
-        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getResponse.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
+        Response getResponse = getShift(TENANT_ID, postResponse.as(ShiftView.class).getId());
+        assertThat(getResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(getResponse.getBody()).usingRecursiveComparison().isEqualTo(postResponse.getBody());
 
         ShiftView updatedShiftView = new ShiftView(TENANT_ID, spot, startDateTime, endDateTime);
-        updatedShiftView.setId(postResponse.getBody().getId());
-        HttpEntity<ShiftView> request = new HttpEntity<>(updatedShiftView);
-        ResponseEntity<ShiftView> putResponse = updateShift(TENANT_ID, request);
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        updatedShiftView.setId(postResponse.as(ShiftView.class).getId());
+        Response putResponse = updateShift(TENANT_ID, updatedShiftView);
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        getResponse = getShift(TENANT_ID, putResponse.getBody().getId());
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(putResponse.getBody()).isEqualToComparingFieldByFieldRecursively(getResponse.getBody());
+        getResponse = getShift(TENANT_ID, putResponse.as(ShiftView.class).getId());
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(putResponse.getBody()).usingRecursiveComparison().isEqualTo(getResponse.getBody());
 
-        deleteShift(TENANT_ID, putResponse.getBody().getId());
+        deleteShift(TENANT_ID, putResponse.as(ShiftView.class).getId());
 
-        ResponseEntity<List<ShiftView>> getShiftListResponse = getShifts(TENANT_ID);
-        assertThat(getShiftListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getShiftListResponse.getBody()).isEmpty();
+        Response getShiftListResponse = getShifts(TENANT_ID);
+        assertThat(getShiftListResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(getShiftListResponse.jsonPath().getList("$", ShiftView.class)).isEmpty();
     }
 }

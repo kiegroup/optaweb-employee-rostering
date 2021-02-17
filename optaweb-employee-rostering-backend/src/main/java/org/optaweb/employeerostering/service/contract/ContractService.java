@@ -19,21 +19,24 @@ package org.optaweb.employeerostering.service.contract;
 import java.util.List;
 import java.util.Optional;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import javax.validation.Validator;
 
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@ApplicationScoped
 public class ContractService extends AbstractRestService {
 
     private final ContractRepository contractRepository;
 
-    public ContractService(Validator validator, ContractRepository contractRepository) {
+    @Inject
+    public ContractService(Validator validator,
+            ContractRepository contractRepository) {
         super(validator);
         this.contractRepository = contractRepository;
     }
@@ -50,7 +53,6 @@ public class ContractService extends AbstractRestService {
         return contract;
     }
 
-    @Transactional
     public List<Contract> getContractList(Integer tenantId) {
         return contractRepository.findAllByTenantId(tenantId);
     }
@@ -58,7 +60,7 @@ public class ContractService extends AbstractRestService {
     @Transactional
     public Contract getContract(Integer tenantId, Long id) {
         Contract contract = contractRepository
-                .findById(id)
+                .findByIdOptional(id)
                 .orElseThrow(() -> new EntityNotFoundException("No Contract entity found with ID (" + id + ")."));
 
         validateBean(tenantId, contract);
@@ -67,7 +69,7 @@ public class ContractService extends AbstractRestService {
 
     @Transactional
     public Boolean deleteContract(Integer tenantId, Long id) {
-        Optional<Contract> contractOptional = contractRepository.findById(id);
+        Optional<Contract> contractOptional = contractRepository.findByIdOptional(id);
 
         if (!contractOptional.isPresent()) {
             return false;
@@ -81,7 +83,8 @@ public class ContractService extends AbstractRestService {
     @Transactional
     public Contract createContract(Integer tenantId, ContractView contractView) {
         Contract contract = convertFromView(tenantId, contractView);
-        return contractRepository.save(contract);
+        contractRepository.persist(contract);
+        return contract;
     }
 
     @Transactional
@@ -89,7 +92,7 @@ public class ContractService extends AbstractRestService {
         Contract newContract = convertFromView(tenantId, contractView);
 
         Contract oldContract = contractRepository
-                .findById(newContract.getId())
+                .findByIdOptional(newContract.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Contract entity with ID (" + newContract.getId() +
                         ") not found."));
 
@@ -103,7 +106,8 @@ public class ContractService extends AbstractRestService {
         oldContract.setMaximumMinutesPerWeek(newContract.getMaximumMinutesPerWeek());
         oldContract.setMaximumMinutesPerMonth(newContract.getMaximumMinutesPerMonth());
         oldContract.setMaximumMinutesPerYear(newContract.getMaximumMinutesPerYear());
-        return contractRepository.save(oldContract);
+        contractRepository.persist(oldContract);
+        return oldContract;
     }
 
     @Transactional
@@ -117,7 +121,8 @@ public class ContractService extends AbstractRestService {
             Contract contract = new Contract();
             contract.setName("Default Contract");
             contract.setTenantId(tenantId);
-            return contractRepository.save(contract);
+            contractRepository.persist(contract);
+            return contract;
         }
     }
 }

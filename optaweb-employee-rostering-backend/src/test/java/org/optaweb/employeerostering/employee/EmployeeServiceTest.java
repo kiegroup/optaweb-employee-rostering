@@ -17,8 +17,7 @@
 package org.optaweb.employeerostering.employee;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -33,6 +32,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,38 +51,21 @@ import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.optaweb.employeerostering.service.contract.ContractService;
 import org.optaweb.employeerostering.service.employee.EmployeeService;
 import org.optaweb.employeerostering.service.skill.SkillService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 
-@SpringBootTest
-@AutoConfigureTestDatabase
-@AutoConfigureMockMvc
-@Transactional
+@QuarkusTest
 public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(EmployeeServiceTest.class);
-
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
+    @Inject
     private EmployeeService employeeService;
 
-    @Autowired
+    @Inject
     private SkillService skillService;
 
-    @Autowired
+    @Inject
     private ContractService contractService;
 
     private Skill createSkill(Integer tenantId, String name) {
@@ -107,16 +93,15 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
     // ************************************************************************
 
     @Test
-    public void getEmployeeListTest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/employee/", TENANT_ID)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk());
+    public void getEmployeeListTest() {
+        RestAssured.get("/rest/tenant/{tenantId}/employee/", TENANT_ID)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode());
     }
 
     @Test
-    public void getEmployeeTest() throws Exception {
+    public void getEmployeeTest() {
         Skill skillA = createSkill(TENANT_ID, "A");
         Skill skillB = createSkill(TENANT_ID, "B");
 
@@ -129,32 +114,31 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/employee/{id}", TENANT_ID, employee.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("employee"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.contract").value(contract))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.skillProficiencySet").isNotEmpty());
+        RestAssured.get("/rest/tenant/{tenantId}/employee/", TENANT_ID)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("tenantId", equalTo(TENANT_ID))
+                .body("name", equalTo("employee"))
+                .body("contract", equalTo(contract))
+                .body("skillProficiencySet", Matchers.hasItems(testSkillSet));
     }
 
     @Test
-    public void getNonExistentEmployeeTest() throws Exception {
+    public void getNonExistentEmployeeTest() {
         String exceptionMessage = "No Employee entity found with ID (0).";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/employee/{id}", TENANT_ID, 0)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+
+        RestAssured.get("/rest/tenant/{tenantId}/employee/{id}", TENANT_ID, 0)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void getNonMatchingEmployeeTest() throws Exception {
+    public void getNonMatchingEmployeeTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable (employee)'s tenantId (" +
                 TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -171,17 +155,16 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/employee/{id}", 0, employee.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+        RestAssured.get("/rest/tenant/{tenantId}/employee/{id}", 0, employee.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void deleteEmployeeTest() throws Exception {
+    public void deleteEmployeeTest() {
         Skill skillA = createSkill(TENANT_ID, "A");
         Skill skillB = createSkill(TENANT_ID, "B");
 
@@ -194,28 +177,24 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/employee/{id}", TENANT_ID, employee.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().string("true"));
+        RestAssured.delete("/rest/tenant/{tenantId}/employee/{id}", TENANT_ID, employee.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", equalTo("true"));
     }
 
     @Test
-    public void deleteNonExistentEmployeeTest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/employee/{id}", TENANT_ID, 0)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().string("false"));
+    public void deleteNonExistentEmployeeTest() {
+        RestAssured.delete("/rest/tenant/{tenantId}/employee/{id}", TENANT_ID, 0)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", equalTo("false"));
     }
 
     @Test
-    public void deleteNonMatchingEmployeeTest() throws Exception {
+    public void deleteNonMatchingEmployeeTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable (employee)'s tenantId (" +
                 TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -232,17 +211,16 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/employee/{id}", 0, employee.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+        RestAssured.delete("/rest/tenant/{tenantId}/employee/{id}", 0, employee.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void createEmployeeTest() throws Exception {
+    public void createEmployeeTest() {
         Skill skillA = createSkill(TENANT_ID, "A");
         Skill skillB = createSkill(TENANT_ID, "B");
 
@@ -253,23 +231,21 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         Contract contract = createContract(TENANT_ID, "contract");
 
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(employeeView);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(employeeView)
                 .post("/rest/tenant/{tenantId}/employee/add", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("employee"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.contract").value(contract))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.skillProficiencySet").isNotEmpty());
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("tenantId", equalTo(TENANT_ID))
+                .body("name", equalTo("employee"))
+                .body("contract", equalTo(contract))
+                .body("skillProficiencySet", Matchers.hasItems(testSkillSet));
     }
 
     @Test
-    public void createNonMatchingEmployeeTest() throws Exception {
+    public void createNonMatchingEmployeeTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable (employee)'s tenantId (" +
                 TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -284,20 +260,19 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         Contract contract = createContract(TENANT_ID, "contract");
 
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(employeeView);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(employeeView)
                 .post("/rest/tenant/{tenantId}/employee/add", 0)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void createNonMatchingSkillProficiencyTest() throws Exception {
+    public void createNonMatchingSkillProficiencyTest() {
         String exceptionMessage = "The tenantId (" + TENANT_ID + ") does not match the skillProficiency (A)'s " +
                 "tenantId (0).";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -310,20 +285,19 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         Contract contract = createContract(TENANT_ID, "contract");
 
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(employeeView);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(employeeView)
                 .post("/rest/tenant/{tenantId}/employee/add", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void updateEmployeeTest() throws Exception {
+    public void updateEmployeeTest() {
         Skill skillA = createSkill(TENANT_ID, "A");
         Skill skillB = createSkill(TENANT_ID, "B");
 
@@ -338,23 +312,21 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         EmployeeView updatedEmployee = new EmployeeView(TENANT_ID, "updatedEmployee", contract, testSkillSet);
         updatedEmployee.setId(employee.getId());
-        String body = (new ObjectMapper()).writeValueAsString(updatedEmployee);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(updatedEmployee)
                 .post("/rest/tenant/{tenantId}/employee/update", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("updatedEmployee"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.contract").value(contract))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.skillProficiencySet").isNotEmpty());
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("tenantId", equalTo(TENANT_ID))
+                .body("name", equalTo("updatedEmployee"))
+                .body("contract", equalTo(contract))
+                .body("skillProficiencySet", Matchers.hasItems(testSkillSet));
     }
 
     @Test
-    public void updateNonMatchingEmployeeTest() throws Exception {
+    public void updateNonMatchingEmployeeTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable (updatedEmployee)'s tenantId (" +
                 TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -372,20 +344,19 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         employeeService.createEmployee(TENANT_ID, employeeView);
 
         EmployeeView updatedEmployee = new EmployeeView(TENANT_ID, "updatedEmployee", contract, testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(updatedEmployee);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(updatedEmployee)
                 .post("/rest/tenant/{tenantId}/employee/update", 0)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void updateNonExistentEmployeeTest() throws Exception {
+    public void updateNonExistentEmployeeTest() {
         String exceptionMessage = "Employee entity with ID (0) not found.";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
@@ -393,20 +364,19 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
         employeeView.setId(0L);
-        String body = (new ObjectMapper()).writeValueAsString(employeeView);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(employeeView)
                 .post("/rest/tenant/{tenantId}/employee/update", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void updateChangeTenantIdEmployeeTest() throws Exception {
+    public void updateChangeTenantIdEmployeeTest() {
         String exceptionMessage = "Employee entity with tenantId (" + TENANT_ID + ") cannot change tenants.";
         String exceptionClass = "java.lang.IllegalStateException";
 
@@ -425,16 +395,15 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         EmployeeView updatedEmployee = new EmployeeView(0, "updatedEmployee", contractB, Collections.emptySet());
         updatedEmployee.setId(employee.getId());
-        String body = (new ObjectMapper()).writeValueAsString(updatedEmployee);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(updatedEmployee)
                 .post("/rest/tenant/{tenantId}/employee/update", 0)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     // ************************************************************************
@@ -442,7 +411,7 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
     // ************************************************************************
 
     @Test
-    public void getEmployeeAvailabilityTest() throws Exception {
+    public void getEmployeeAvailabilityTest() {
         Contract contract = createContract(TENANT_ID, "contract");
 
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
@@ -456,35 +425,33 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeAvailabilityView persistedEmployeeAvailabilityView =
                 employeeService.createEmployeeAvailability(TENANT_ID, employeeAvailabilityView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/employee/availability/{id}", TENANT_ID,
-                        persistedEmployeeAvailabilityView.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employeeId").value(employee.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.startDateTime").value("1999-12-31T23:59:00"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.endDateTime").value("2000-01-01T00:00:00"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.state").value("UNAVAILABLE"));
+        RestAssured.get("/rest/tenant/{tenantId}/employee/availability/{id}", TENANT_ID,
+                persistedEmployeeAvailabilityView.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("tenantId", equalTo(TENANT_ID))
+                .body("employeeId", equalTo(employee.getId()))
+                .body("startDateTime", equalTo("1999-12-31T23:59:00"))
+                .body("endDateTime", equalTo("2000-01-01T00:00:00"))
+                .body("state", equalTo("UNAVAILABLE"));
     }
 
     @Test
-    public void getNonExistentEmployeeAvailabilityTest() throws Exception {
+    public void getNonExistentEmployeeAvailabilityTest() {
         String exceptionMessage = "No EmployeeAvailability entity found with ID (0).";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/employee/availability/{id}", TENANT_ID, 0)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+        RestAssured.get("/rest/tenant/{tenantId}/employee/availability/{id}", TENANT_ID, 0)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void getNonMatchingEmployeeAvailabilityTest() throws Exception {
+    public void getNonMatchingEmployeeAvailabilityTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable " +
                 "(employee:1999-12-31T23:59Z-2000-01-01T00:00Z)'s tenantId (" + TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -502,18 +469,16 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeAvailabilityView persistedEmployeeAvailabilityView =
                 employeeService.createEmployeeAvailability(TENANT_ID, employeeAvailabilityView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/employee/availability/{id}", 0,
-                        persistedEmployeeAvailabilityView.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+        RestAssured.get("/rest/tenant/{tenantId}/employee/availability/{id}", 0, persistedEmployeeAvailabilityView.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void deleteEmployeeAvailabilityTest() throws Exception {
+    public void deleteEmployeeAvailabilityTest() {
         Contract contract = createContract(TENANT_ID, "contract");
 
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
@@ -527,29 +492,26 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeAvailabilityView persistedEmployeeAvailabilityView =
                 employeeService.createEmployeeAvailability(TENANT_ID, employeeAvailabilityView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/employee/availability/{id}", TENANT_ID,
-                        persistedEmployeeAvailabilityView.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().string("true"));
+        RestAssured.delete("/rest/tenant/{tenantId}/employee/availability/{id}", TENANT_ID,
+                persistedEmployeeAvailabilityView.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", equalTo("true"));
     }
 
     @Test
-    public void deleteNonExistentEmployeeAvailabilityTest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/employee/availability/{id}", TENANT_ID, 0)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().string("false"));
+    public void deleteNonExistentEmployeeAvailabilityTest() {
+        RestAssured.delete("/rest/tenant/{tenantId}/employee/availability/{id}", TENANT_ID,
+                0)
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", equalTo("false"));
     }
 
     @Test
-    public void deleteNonMatchingEmployeeAvailabilityTest() throws Exception {
+    public void deleteNonMatchingEmployeeAvailabilityTest() {
         String exceptionMessage = "The tenantId (0) does not match the persistable " +
                 "(employee:1999-12-31T23:59Z-2000-01-01T00:00Z)'s tenantId (" + TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
@@ -567,18 +529,17 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeAvailabilityView persistedEmployeeAvailabilityView =
                 employeeService.createEmployeeAvailability(TENANT_ID, employeeAvailabilityView);
 
-        mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/employee/availability/{id}", 0,
-                        persistedEmployeeAvailabilityView.getId())
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+        RestAssured.delete("/rest/tenant/{tenantId}/employee/availability/{id}", 0,
+                persistedEmployeeAvailabilityView.getId())
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void createEmployeeAvailabilityTest() throws Exception {
+    public void createEmployeeAvailabilityTest() {
         Contract contract = createContract(TENANT_ID, "contract");
 
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
@@ -589,24 +550,22 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeAvailabilityView employeeAvailabilityView = new EmployeeAvailabilityView(TENANT_ID, employee,
                 startDateTime, endDateTime,
                 EmployeeAvailabilityState.UNAVAILABLE);
-        String body = (new ObjectMapper()).writeValueAsString(employeeAvailabilityView);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(employeeAvailabilityView)
                 .post("/rest/tenant/{tenantId}/employee/availability/add", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employeeId").value(employee.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.startDateTime").value("1999-12-31T23:59:00"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.endDateTime").value("2000-01-01T00:00:00"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.state").value("UNAVAILABLE"));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("tenantId", equalTo(TENANT_ID))
+                .body("employeeId", equalTo(employee.getId()))
+                .body("startDateTime", equalTo("1999-12-31T23:59:00"))
+                .body("endDateTime", equalTo("2000-01-01T00:00:00"))
+                .body("state", equalTo("UNAVAILABLE"));
     }
 
     @Test
-    public void createNonMatchingEmployeeAvailabilityTest() throws Exception {
+    public void createNonMatchingEmployeeAvailabilityTest() {
         Contract contract = createContract(TENANT_ID, "contract");
 
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
@@ -617,7 +576,6 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeAvailabilityView employeeAvailabilityView = new EmployeeAvailabilityView(TENANT_ID, employee,
                 startDateTime, endDateTime,
                 EmployeeAvailabilityState.UNAVAILABLE);
-        String body = (new ObjectMapper()).writeValueAsString(employeeAvailabilityView);
         String employeeAvailabilityName =
                 employeeAvailabilityView.getEmployeeId() + ":" + startDateTime + "-" + endDateTime;
 
@@ -625,18 +583,18 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 ")'s tenantId (" + TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(employeeAvailabilityView)
                 .post("/rest/tenant/{tenantId}/employee/availability/add", 0)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void updateEmployeeAvailabilityTest() throws Exception {
+    public void updateEmployeeAvailabilityTest() {
         Contract contract = createContract(TENANT_ID, "contract");
 
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
@@ -654,24 +612,22 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 startDateTime, endDateTime,
                 EmployeeAvailabilityState.DESIRED);
         updatedEmployeeAvailability.setId(persistedEmployeeAvailabilityView.getId());
-        String body = (new ObjectMapper()).writeValueAsString(updatedEmployeeAvailability);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(updatedEmployeeAvailability)
                 .put("/rest/tenant/{tenantId}/employee/availability/update", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.employeeId").value(employee.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.startDateTime").value("1999-12-31T23:59:00"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.endDateTime").value("2000-01-01T00:00:00"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.state").value("DESIRED"));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("tenantId", equalTo(TENANT_ID))
+                .body("employeeId", equalTo(employee.getId()))
+                .body("startDateTime", equalTo("1999-12-31T23:59:00"))
+                .body("endDateTime", equalTo("2000-01-01T00:00:00"))
+                .body("state", equalTo("DESIRED"));
     }
 
     @Test
-    public void updateNonMatchingEmployeeAvailabilityTest() throws Exception {
+    public void updateNonMatchingEmployeeAvailabilityTest() {
         Contract contract = createContract(TENANT_ID, "contract");
 
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
@@ -689,7 +645,6 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 startDateTime, endDateTime,
                 EmployeeAvailabilityState.DESIRED);
         updatedEmployeeAvailability.setId(persistedEmployeeAvailabilityView.getId());
-        String body = (new ObjectMapper()).writeValueAsString(updatedEmployeeAvailability);
 
         String employeeAvailabilityName =
                 updatedEmployeeAvailability.getEmployeeId() + ":" + startDateTime + "-" + endDateTime;
@@ -698,18 +653,18 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 ")'s tenantId (" + TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(updatedEmployeeAvailability)
                 .put("/rest/tenant/{tenantId}/employee/availability/update", 0)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     @Test
-    public void updateNonExistentEmployeeAvailabilityTest() throws Exception {
+    public void updateNonExistentEmployeeAvailabilityTest() {
         String exceptionMessage = "EmployeeAvailability entity with ID (0) not found.";
         String exceptionClass = "javax.persistence.EntityNotFoundException";
 
@@ -724,16 +679,15 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 startDateTime, endDateTime,
                 EmployeeAvailabilityState.DESIRED);
         employeeAvailabilityView.setId(0L);
-        String body = (new ObjectMapper()).writeValueAsString(employeeAvailabilityView);
 
-        mvc.perform(MockMvcRequestBuilders
+        RestAssured.given()
+                .body(employeeAvailabilityView)
                 .put("/rest/tenant/{tenantId}/employee/availability/update", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
+                .then()
+                .contentType(ContentType.JSON)
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode())
+                .body("exceptionMessage", equalTo(exceptionMessage))
+                .body("exceptionClass", equalTo(exceptionClass));
     }
 
     private Set<Skill> getSkillSet(String... names) {

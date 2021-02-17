@@ -16,19 +16,19 @@
 
 package org.optaweb.employeerostering.solver;
 
+import javax.inject.Inject;
+
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.config.solver.SolverConfig;
 import org.optaplanner.core.config.solver.termination.TerminationConfig;
 import org.optaweb.employeerostering.domain.roster.Roster;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureTestDatabase
+import io.quarkus.test.junit.QuarkusTest;
+
+@QuarkusTest
 public class DroolsSolverTest extends AbstractSolverTest {
 
-    @Autowired
+    @Inject
     private SolverConfig solverConfig;
 
     @Override

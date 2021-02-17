@@ -19,52 +19,46 @@ package org.optaweb.employeerostering.spot;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
-import java.util.List;
+
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
-import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureTestDatabase
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+@QuarkusTest
 public class SpotRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     private final String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
 
-    private ResponseEntity<List<Spot>> getSpots(Integer tenantId) {
-        return restTemplate.exchange(spotPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Spot>>() {
-                }, tenantId);
+    private Response getSpots(Integer tenantId) {
+        return RestAssured.get(spotPathURI, tenantId);
     }
 
-    private ResponseEntity<Spot> getSpot(Integer tenantId, Long id) {
-        return restTemplate.getForEntity(spotPathURI + id, Spot.class, tenantId);
+    private Response getSpot(Integer tenantId, Long id) {
+        return RestAssured.get(spotPathURI + id, tenantId);
     }
 
     private void deleteSpot(Integer tenantId, Long id) {
-        restTemplate.delete(spotPathURI + id, tenantId);
+        RestAssured.delete(spotPathURI + id, tenantId);
     }
 
-    private ResponseEntity<Spot> addSpot(Integer tenantId, SpotView spotView) {
-        return restTemplate.postForEntity(spotPathURI + "add", spotView, Spot.class, tenantId);
+    private Response addSpot(Integer tenantId, SpotView spotView) {
+        return RestAssured.given()
+                .body(spotView)
+                .post(spotPathURI + "add", tenantId);
     }
 
-    private ResponseEntity<Spot> updateSpot(Integer tenantId, SpotView spotView) {
-        return restTemplate.postForEntity(spotPathURI + "update", spotView, Spot.class, tenantId);
+    private Response updateSpot(Integer tenantId, SpotView spotView) {
+        return RestAssured.given()
+                .body(spotView)
+                .post(spotPathURI + "update", tenantId);
     }
 
     @BeforeEach
@@ -80,26 +74,26 @@ public class SpotRestControllerTest extends AbstractEntityRequireTenantRestServi
     @Test
     public void spotCrudTest() {
         SpotView spotView = new SpotView(TENANT_ID, "spot", Collections.emptySet());
-        ResponseEntity<Spot> postResponse = addSpot(TENANT_ID, spotView);
-        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Response postResponse = addSpot(TENANT_ID, spotView);
+        assertThat(postResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        ResponseEntity<Spot> response = getSpot(TENANT_ID, postResponse.getBody().getId());
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
+        Response response = getSpot(TENANT_ID, postResponse.as(SpotView.class).getId());
+        assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(postResponse.getBody());
 
         SpotView updatedSpot = new SpotView(TENANT_ID, "updatedSpot", Collections.emptySet());
-        updatedSpot.setId(postResponse.getBody().getId());
-        ResponseEntity<Spot> putResponse = updateSpot(TENANT_ID, updatedSpot);
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        updatedSpot.setId(postResponse.as(SpotView.class).getId());
+        Response putResponse = updateSpot(TENANT_ID, updatedSpot);
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        response = getSpot(TENANT_ID, putResponse.getBody().getId());
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(putResponse.getBody()).isEqualToComparingFieldByFieldRecursively(response.getBody());
+        response = getSpot(TENANT_ID, putResponse.as(SpotView.class).getId());
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(putResponse.getBody()).usingRecursiveComparison().isEqualTo(response.getBody());
 
-        deleteSpot(TENANT_ID, postResponse.getBody().getId());
+        deleteSpot(TENANT_ID, postResponse.as(SpotView.class).getId());
 
-        ResponseEntity<List<Spot>> getListResponse = getSpots(TENANT_ID);
-        assertThat(getListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getListResponse.getBody()).isEmpty();
+        Response getListResponse = getSpots(TENANT_ID);
+        assertThat(getListResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(getListResponse.jsonPath().getList("$", SpotView.class)).isEmpty();
     }
 }

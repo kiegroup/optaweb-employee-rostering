@@ -16,27 +16,29 @@
 
 package org.optaweb.employeerostering;
 
-import org.optaweb.employeerostering.domain.exception.ServerSideExceptionInfo;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
-@ControllerAdvice
-public class OptaWebExceptionHandler extends ResponseEntityExceptionHandler {
+@Provider
+@ApplicationScoped
+public class OptaWebExceptionHandler implements ExceptionMapper<Throwable> {
 
     private ExceptionDataMapper exceptionDataMapper;
 
+    @Inject
     public OptaWebExceptionHandler(ExceptionDataMapper exceptionDataMapper) {
         this.exceptionDataMapper = exceptionDataMapper;
     }
 
-    @ExceptionHandler(value = { Exception.class, RuntimeException.class })
-    protected ResponseEntity<ServerSideExceptionInfo> handleException(Throwable t, WebRequest request) {
+    @Override
+    public Response toResponse(Throwable e) {
         final ExceptionDataMapper.ExceptionData exceptionData =
-                exceptionDataMapper.getExceptionDataForExceptionClass(t.getClass());
-        return new ResponseEntity<>(exceptionData.getServerSideExceptionInfoFromException(t),
-                exceptionData.getStatusCode());
+                exceptionDataMapper.getExceptionDataForExceptionClass(e.getClass());
+        return Response.status(exceptionData.getStatusCode())
+                .entity(exceptionData.getServerSideExceptionInfoFromException(e))
+                .build();
     }
 }

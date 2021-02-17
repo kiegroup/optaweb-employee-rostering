@@ -41,8 +41,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.optaweb.employeerostering.domain.contract.Contract;
@@ -60,13 +64,11 @@ import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.admin.SystemPropertiesRetriever;
 import org.optaweb.employeerostering.service.common.generator.StringDataGenerator;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-@Component
-public class RosterGenerator implements ApplicationRunner {
+import io.quarkus.runtime.StartupEvent;
+
+@ApplicationScoped
+public class RosterGenerator {
 
     private static final double[] EXTRA_SHIFT_THRESHOLDS = { 0.5, 0.8, 0.95 };
 
@@ -394,14 +396,14 @@ public class RosterGenerator implements ApplicationRunner {
      *
      * @param entityManager never null
      */
+    @Inject
     public RosterGenerator(EntityManager entityManager) {
         this.entityManager = entityManager;
         random = new Random(37);
     }
 
-    @Override
     @Transactional
-    public void run(ApplicationArguments args) {
+    public void run(@Observes StartupEvent event) {
         checkForExistingData();
     }
 

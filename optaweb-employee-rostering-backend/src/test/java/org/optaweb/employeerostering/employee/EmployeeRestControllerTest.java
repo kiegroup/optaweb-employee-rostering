@@ -21,8 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,22 +34,13 @@ import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 import org.optaweb.employeerostering.domain.skill.Skill;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureTestDatabase
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+@QuarkusTest
 public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     private final String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
     private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
@@ -56,54 +48,62 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
     private final String employeeAvailabilityPathURI =
             "http://localhost:8080/rest/tenant/{tenantId}/employee/availability/";
 
-    private ResponseEntity<List<Employee>> getEmployees(Integer tenantId) {
-        return restTemplate.exchange(employeePathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Employee>>() {
-                }, tenantId);
+    private Response getEmployees(Integer tenantId) {
+        return RestAssured.get(employeePathURI, tenantId);
     }
 
-    private ResponseEntity<Employee> getEmployee(Integer tenantId, Long id) {
-        return restTemplate.getForEntity(employeePathURI + id, Employee.class, tenantId);
+    private Response getEmployee(Integer tenantId, Long id) {
+        return RestAssured.get(employeePathURI + id, tenantId);
     }
 
     private void deleteEmployee(Integer tenantId, Long id) {
-        restTemplate.delete(employeePathURI + id, tenantId);
+        RestAssured.delete(employeePathURI + id, tenantId);
     }
 
-    private ResponseEntity<Employee> addEmployee(Integer tenantId, Employee employee) {
-        return restTemplate.postForEntity(employeePathURI + "add", employee, Employee.class, tenantId);
+    private Response addEmployee(Integer tenantId, Employee employee) {
+        return RestAssured.given()
+                .body(employee)
+                .post(employeePathURI + "add", tenantId);
     }
 
-    private ResponseEntity<Employee> updateEmployee(Integer tenantId, Employee employee) {
-        return restTemplate.postForEntity(employeePathURI + "update", employee, Employee.class, tenantId);
+    private Response updateEmployee(Integer tenantId, Employee employee) {
+        return RestAssured.given()
+                .body(employee)
+                .post(employeePathURI + "update", tenantId);
     }
 
-    private ResponseEntity<Skill> addSkill(Integer tenantId, Skill skill) {
-        return restTemplate.postForEntity(skillPathURI + "add", skill, Skill.class, tenantId);
+    private Response addSkill(Integer tenantId, Skill skill) {
+        return RestAssured.given()
+                .body(skill)
+                .post(skillPathURI + "add", tenantId);
     }
 
-    private ResponseEntity<Contract> addContract(Integer tenantId, Contract contract) {
-        return restTemplate.postForEntity(contractPathURI + "add", contract, Contract.class, tenantId);
+    private Response addContract(Integer tenantId, Contract contract) {
+        return RestAssured.given()
+                .body(contract)
+                .post(contractPathURI + "add", tenantId);
     }
 
-    private ResponseEntity<EmployeeAvailabilityView> getEmployeeAvailability(Integer tenantId, Long id) {
-        return restTemplate.getForEntity(employeeAvailabilityPathURI + id, EmployeeAvailabilityView.class, tenantId);
+    private Response getEmployeeAvailability(Integer tenantId, Long id) {
+        return RestAssured.get(employeeAvailabilityPathURI + id, tenantId);
     }
 
     private void deleteEmployeeAvailability(Integer tenantId, Long id) {
-        restTemplate.delete(employeeAvailabilityPathURI + id, tenantId);
+        RestAssured.delete(employeeAvailabilityPathURI + id, tenantId);
     }
 
-    private ResponseEntity<EmployeeAvailabilityView> addEmployeeAvailability(Integer tenantId,
+    private Response addEmployeeAvailability(Integer tenantId,
             EmployeeAvailabilityView employeeAvailabilityView) {
-        return restTemplate.postForEntity(employeeAvailabilityPathURI + "add", employeeAvailabilityView,
-                EmployeeAvailabilityView.class, tenantId);
+        return RestAssured.given()
+                .body(employeeAvailabilityView)
+                .post(employeeAvailabilityPathURI + "add", tenantId);
     }
 
-    private ResponseEntity<EmployeeAvailabilityView> updateEmployeeAvailability(Integer tenantId,
-            HttpEntity<EmployeeAvailabilityView> request) {
-        return restTemplate.exchange(employeeAvailabilityPathURI + "update", HttpMethod.PUT, request,
-                EmployeeAvailabilityView.class, tenantId);
+    private Response updateEmployeeAvailability(Integer tenantId,
+            EmployeeAvailabilityView employeeAvailabilityView) {
+        return RestAssured.given()
+                .body(employeeAvailabilityView)
+                .post(employeeAvailabilityPathURI + "update", tenantId);
     }
 
     @BeforeEach
@@ -122,42 +122,42 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
 
     @Test
     public void employeeCrudTest() {
-        ResponseEntity<Skill> skillResponseA = addSkill(TENANT_ID, new Skill(TENANT_ID, "A"));
-        ResponseEntity<Skill> skillResponseB = addSkill(TENANT_ID, new Skill(TENANT_ID, "B"));
+        Response skillResponseA = addSkill(TENANT_ID, new Skill(TENANT_ID, "A"));
+        Response skillResponseB = addSkill(TENANT_ID, new Skill(TENANT_ID, "B"));
 
-        Skill skillA = skillResponseA.getBody();
-        Skill skillB = skillResponseB.getBody();
+        Skill skillA = skillResponseA.as(Skill.class);
+        Skill skillB = skillResponseB.as(Skill.class);
 
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        ResponseEntity<Contract> contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "A"));
-        Contract contractA = contractResponseEntity.getBody();
+        Response contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "A"));
+        Contract contractA = contractResponseEntity.as(Contract.class);
 
         Employee employee = new Employee(TENANT_ID, "employee", contractA, testSkillSet);
-        ResponseEntity<Employee> postResponse = addEmployee(TENANT_ID, employee);
-        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Response postResponse = addEmployee(TENANT_ID, employee);
+        assertThat(postResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        ResponseEntity<Employee> response = getEmployee(TENANT_ID, postResponse.getBody().getId());
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
+        Response response = getEmployee(TENANT_ID, postResponse.as(Employee.class).getId());
+        assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(postResponse.getBody());
 
         Employee updatedEmployee = new Employee(TENANT_ID, "updatedEmployee", contractA,
                 testSkillSet);
-        updatedEmployee.setId(postResponse.getBody().getId());
-        ResponseEntity<Employee> putResponse = updateEmployee(TENANT_ID, updatedEmployee);
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        updatedEmployee.setId(postResponse.as(Employee.class).getId());
+        Response putResponse = updateEmployee(TENANT_ID, updatedEmployee);
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        response = getEmployee(TENANT_ID, putResponse.getBody().getId());
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(putResponse.getBody()).isEqualToComparingFieldByFieldRecursively(response.getBody());
+        response = getEmployee(TENANT_ID, putResponse.as(Employee.class).getId());
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(putResponse.as(Employee.class)).usingRecursiveComparison().isEqualTo(response.as(Employee.class));
 
-        deleteEmployee(TENANT_ID, putResponse.getBody().getId());
+        deleteEmployee(TENANT_ID, putResponse.as(Employee.class).getId());
 
-        ResponseEntity<List<Employee>> getListResponse = getEmployees(TENANT_ID);
-        assertThat(getListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getListResponse.getBody()).isEmpty();
+        Response getListResponse = getEmployees(TENANT_ID);
+        assertThat(getListResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(getListResponse.jsonPath().getList("$", Employee.class)).isEmpty();
     }
 
     // ************************************************************************
@@ -166,42 +166,41 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
 
     @Test
     public void employeeAvailabilityCrudTest() {
-        ResponseEntity<Contract> contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "contract"));
-        Contract contract = contractResponseEntity.getBody();
+        Response contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "contract"));
+        Contract contract = contractResponseEntity.as(Contract.class);
 
-        ResponseEntity<Employee> employeeResponseEntity = addEmployee(TENANT_ID,
+        Response employeeResponseEntity = addEmployee(TENANT_ID,
                 new Employee(TENANT_ID, "employee",
                         contract,
                         Collections.emptySet()));
-        Employee employee = employeeResponseEntity.getBody();
+        Employee employee = employeeResponseEntity.as(Employee.class);
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);
         LocalDateTime endDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
-        ResponseEntity<EmployeeAvailabilityView> postResponse =
+        Response postResponse =
                 addEmployeeAvailability(TENANT_ID, new EmployeeAvailabilityView(TENANT_ID, employee,
                         startDateTime,
                         endDateTime,
                         EmployeeAvailabilityState.UNAVAILABLE));
-        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(postResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        ResponseEntity<EmployeeAvailabilityView> getResponse = getEmployeeAvailability(TENANT_ID,
-                postResponse.getBody().getId());
-        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getResponse.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
+        Response getResponse = getEmployeeAvailability(TENANT_ID,
+                postResponse.as(EmployeeAvailabilityView.class).getId());
+        assertThat(getResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(getResponse.getBody()).usingRecursiveComparison().isEqualTo(postResponse.getBody());
 
         EmployeeAvailabilityView newEmployeeAvailabilityView =
                 new EmployeeAvailabilityView(TENANT_ID, employee,
                         startDateTime, endDateTime,
                         EmployeeAvailabilityState.DESIRED);
-        newEmployeeAvailabilityView.setId(postResponse.getBody().getId());
-        HttpEntity<EmployeeAvailabilityView> request = new HttpEntity<>(newEmployeeAvailabilityView);
-        ResponseEntity<EmployeeAvailabilityView> putResponse = updateEmployeeAvailability(TENANT_ID, request);
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        newEmployeeAvailabilityView.setId(postResponse.as(EmployeeAvailabilityView.class).getId());
+        Response putResponse = updateEmployeeAvailability(TENANT_ID, newEmployeeAvailabilityView);
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        getResponse = getEmployeeAvailability(TENANT_ID, putResponse.getBody().getId());
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getResponse.getBody()).isEqualToComparingFieldByFieldRecursively(putResponse.getBody());
+        getResponse = getEmployeeAvailability(TENANT_ID, putResponse.as(EmployeeAvailabilityView.class).getId());
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(getResponse.getBody()).usingRecursiveComparison().isEqualTo(putResponse.getBody());
 
-        deleteEmployeeAvailability(TENANT_ID, putResponse.getBody().getId());
+        deleteEmployeeAvailability(TENANT_ID, putResponse.as(EmployeeAvailabilityView.class).getId());
     }
 }

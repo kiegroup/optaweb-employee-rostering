@@ -19,20 +19,22 @@ package org.optaweb.employeerostering.service.skill;
 import java.util.List;
 import java.util.Optional;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import javax.validation.Validator;
 
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@ApplicationScoped
 public class SkillService extends AbstractRestService {
 
     private final SkillRepository skillRepository;
 
+    @Inject
     public SkillService(Validator validator, SkillRepository skillRepository) {
         super(validator);
         this.skillRepository = skillRepository;
@@ -55,7 +57,7 @@ public class SkillService extends AbstractRestService {
     @Transactional
     public Skill getSkill(Integer tenantId, Long id) {
         Skill skill = skillRepository
-                .findById(id)
+                .findByIdOptional(id)
                 .orElseThrow(() -> new EntityNotFoundException("No Skill entity found with ID (" + id + ")."));
 
         validateBean(tenantId, skill);
@@ -64,7 +66,7 @@ public class SkillService extends AbstractRestService {
 
     @Transactional
     public Boolean deleteSkill(Integer tenantId, Long id) {
-        Optional<Skill> skillOptional = skillRepository.findById(id);
+        Optional<Skill> skillOptional = skillRepository.findByIdOptional(id);
 
         if (!skillOptional.isPresent()) {
             return false;
@@ -78,14 +80,15 @@ public class SkillService extends AbstractRestService {
     @Transactional
     public Skill createSkill(Integer tenantId, SkillView skillView) {
         Skill skill = convertFromView(tenantId, skillView);
-        return skillRepository.save(skill);
+        skillRepository.persist(skill);
+        return skill;
     }
 
     @Transactional
     public Skill updateSkill(Integer tenantId, SkillView skillView) {
         Skill newSkill = convertFromView(tenantId, skillView);
         Skill oldSkill = skillRepository
-                .findById(newSkill.getId())
+                .findByIdOptional(newSkill.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Skill entity with ID (" + newSkill.getId() + ") not " +
                         "found."));
 
@@ -95,6 +98,7 @@ public class SkillService extends AbstractRestService {
         }
 
         oldSkill.setName(newSkill.getName());
-        return skillRepository.save(oldSkill);
+        skillRepository.persist(oldSkill);
+        return oldSkill;
     }
 }

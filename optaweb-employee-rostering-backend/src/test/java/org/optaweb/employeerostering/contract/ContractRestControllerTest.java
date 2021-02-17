@@ -18,7 +18,7 @@ package org.optaweb.employeerostering.contract;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,44 +26,51 @@ import org.junit.jupiter.api.Test;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureTestDatabase
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+@QuarkusTest
 public class ContractRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
 
-    private ResponseEntity<List<Contract>> getContracts(Integer tenantId) {
-        return restTemplate.exchange(contractPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Contract>>() {
-                }, tenantId);
+    private Response getContracts(Integer tenantId) {
+        return RestAssured.given()
+                .basePath(contractPathURI)
+                .pathParam("tenantId", tenantId)
+                .get();
     }
 
-    private ResponseEntity<Contract> getContract(Integer tenantId, Long id) {
-        return restTemplate.getForEntity(contractPathURI + id, Contract.class, tenantId);
+    private Response getContract(Integer tenantId, Long id) {
+        return RestAssured.given()
+                .basePath(contractPathURI + id)
+                .pathParam("tenantId", tenantId)
+                .get();
     }
 
-    private void deleteContract(Integer tenantId, Long id) {
-        restTemplate.delete(contractPathURI + id, tenantId);
+    private Response deleteContract(Integer tenantId, Long id) {
+        return RestAssured.given()
+                .basePath(contractPathURI + id)
+                .pathParam("tenantId", tenantId)
+                .delete();
     }
 
-    private ResponseEntity<Contract> addContract(Integer tenantId, ContractView contractView) {
-        return restTemplate.postForEntity(contractPathURI + "add", contractView, Contract.class, tenantId);
+    private Response addContract(Integer tenantId, ContractView contractView) {
+        return RestAssured.given()
+                .basePath(contractPathURI + "add")
+                .pathParam("tenantId", tenantId)
+                .body(contractView)
+                .post();
     }
 
-    private ResponseEntity<Contract> updateContract(Integer tenantId, ContractView contractView) {
-        return restTemplate.postForEntity(contractPathURI + "update", contractView, Contract.class, tenantId);
+    private Response updateContract(Integer tenantId, ContractView contractView) {
+        return RestAssured.given()
+                .basePath(contractPathURI + "update")
+                .pathParam("tenantId", tenantId)
+                .body(contractView)
+                .post();
     }
 
     @BeforeEach
@@ -85,27 +92,31 @@ public class ContractRestControllerTest extends AbstractEntityRequireTenantRestS
 
         ContractView contractView = new ContractView(TENANT_ID, "contract", maximumMinutesPerDay, maximumMinutesPerWeek,
                 maximumMinutesPerMonth, maximumMinutesPerYear);
-        ResponseEntity<Contract> postResponse = addContract(TENANT_ID, contractView);
-        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Response postResponse = addContract(TENANT_ID, contractView);
+        assertThat(postResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        Contract postedContract = postResponse.as(Contract.class);
 
-        ResponseEntity<Contract> response = getContract(TENANT_ID, postResponse.getBody().getId());
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
+        Response response = getContract(TENANT_ID, postedContract.getId());
+        assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+
+        Contract getContract = response.as(Contract.class);
+        assertThat(getContract).usingRecursiveComparison().isEqualTo(postedContract);
 
         ContractView updatedContractView = new ContractView(TENANT_ID, "updatedContract", maximumMinutesPerDay,
                 maximumMinutesPerWeek, maximumMinutesPerMonth, maximumMinutesPerYear);
-        updatedContractView.setId(postResponse.getBody().getId());
-        ResponseEntity<Contract> putResponse = updateContract(TENANT_ID, updatedContractView);
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        updatedContractView.setId(postedContract.getId());
+        Response putResponse = updateContract(TENANT_ID, updatedContractView);
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
-        response = getContract(TENANT_ID, putResponse.getBody().getId());
-        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(putResponse.getBody()).isEqualToComparingFieldByFieldRecursively(response.getBody());
+        Contract putContract = putResponse.as(Contract.class);
+        response = getContract(TENANT_ID, putContract.getId());
+        assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(putResponse.getBody()).usingRecursiveComparison().isEqualTo(response.getBody());
 
-        deleteContract(TENANT_ID, putResponse.getBody().getId());
+        deleteContract(TENANT_ID, putContract.getId());
 
-        ResponseEntity<List<Contract>> getListResponse = getContracts(TENANT_ID);
-        assertThat(getListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getListResponse.getBody()).isEmpty();
+        Response getListResponse = getContracts(TENANT_ID);
+        assertThat(getListResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(getListResponse.body().jsonPath().getList(".", Contract.class)).isEmpty();
     }
 }

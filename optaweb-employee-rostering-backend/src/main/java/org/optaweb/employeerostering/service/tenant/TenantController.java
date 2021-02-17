@@ -19,36 +19,28 @@ package org.optaweb.employeerostering.service.tenant;
 import java.time.ZoneId;
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
 import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.domain.tenant.view.RosterConstraintConfigurationView;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
-@RestController
-@RequestMapping("/rest/tenant")
-@CrossOrigin
-@Validated
-@Api(tags = "Tenant")
+@Path("/rest/tenant")
+@ApplicationScoped
+// @Api(tags = "Tenant")
 public class TenantController {
 
     private final TenantService tenantService;
 
+    @Inject
     public TenantController(TenantService tenantService) {
         this.tenantService = tenantService;
     }
@@ -57,53 +49,59 @@ public class TenantController {
     // Tenant
     // ************************************************************************
 
-    @ApiOperation("Get a list of all tenants")
-    @GetMapping("/")
-    public ResponseEntity<List<Tenant>> getTenantList() {
-        return new ResponseEntity<>(tenantService.getTenantList(), HttpStatus.OK);
+    // @ApiOperation("Get a list of all tenants")
+    @GET
+    @Path("/")
+    public List<Tenant> getTenantList() {
+        return tenantService.getTenantList();
     }
 
-    @ApiOperation("Get a tenant by id")
-    @GetMapping("/{id}")
-    public ResponseEntity<Tenant> getTenant(@PathVariable @Min(0) Integer id) {
-        return new ResponseEntity<>(tenantService.getTenant(id), HttpStatus.OK);
+    // @ApiOperation("Get a tenant by id")
+    @GET
+    @Path("/{id}")
+    public Tenant getTenant(@PathParam("id") @Min(0) Integer id) {
+        return tenantService.getTenant(id);
     }
 
-    @ApiOperation("Add a new tenant")
-    @PostMapping("/add")
-    public ResponseEntity<Tenant> createTenant(@RequestBody @Valid RosterStateView initialRosterStateView) {
-        return new ResponseEntity<>(tenantService.createTenant(initialRosterStateView), HttpStatus.OK);
+    // @ApiOperation("Add a new tenant")
+    @POST
+    @Path("/add")
+    public Tenant createTenant(@Valid RosterStateView initialRosterStateView) {
+        return tenantService.createTenant(initialRosterStateView);
     }
 
-    @ApiOperation("Delete a tenant")
-    @PostMapping("/remove/{id}")
-    public ResponseEntity<Boolean> deleteTenant(@PathVariable @Min(0) Integer id) {
-        return new ResponseEntity<>(tenantService.deleteTenant(id), HttpStatus.OK);
+    // @ApiOperation("Delete a tenant")
+    @POST
+    @Path("/remove/{id}")
+    public Boolean deleteTenant(@PathParam("id") @Min(0) Integer id) {
+        return tenantService.deleteTenant(id);
     }
 
     // ************************************************************************
     // RosterConstraintConfiguration
     // ************************************************************************
 
-    @ApiOperation("Get a tenant constraint configuration")
-    @GetMapping("/{tenantId}/config/constraint")
-    public ResponseEntity<RosterConstraintConfiguration> getRosterConstraintConfiguration(
-            @PathVariable @Min(0) Integer tenantId) {
-        return new ResponseEntity<>(tenantService.getRosterConstraintConfiguration(tenantId), HttpStatus.OK);
+    // @ApiOperation("Get a tenant constraint configuration")
+    @GET
+    @Path("/{tenantId}/config/constraint")
+    public RosterConstraintConfiguration getRosterConstraintConfiguration(
+            @PathParam("tenantId") @Min(0) Integer tenantId) {
+        return tenantService.getRosterConstraintConfiguration(tenantId);
     }
 
-    @ApiOperation("Update a tenant roster parametrization")
-    @PostMapping("/{tenantId}/config/constraint/update")
-    public ResponseEntity<RosterConstraintConfiguration> updateRosterConstraintConfiguration(
-            @RequestBody @Valid RosterConstraintConfigurationView rosterConstraintConfigurationView) {
-        return new ResponseEntity<>(
-                tenantService.updateRosterConstraintConfiguration(rosterConstraintConfigurationView), HttpStatus.OK);
+    // @ApiOperation("Update a tenant roster parametrization")
+    @POST
+    @Path("/{tenantId}/config/constraint/update")
+    public RosterConstraintConfiguration updateRosterConstraintConfiguration(
+            @Valid RosterConstraintConfigurationView rosterConstraintConfigurationView) {
+        return tenantService.updateRosterConstraintConfiguration(rosterConstraintConfigurationView);
     }
 
     // TODO: Where should this be?
-    @ApiOperation("Get supported timezones")
-    @GetMapping("/supported/timezones")
-    public ResponseEntity<List<ZoneId>> getSupportedTimezones() {
-        return new ResponseEntity<>(tenantService.getSupportedTimezones(), HttpStatus.OK);
+    // @ApiOperation("Get supported timezones")
+    @GET
+    @Path("/supported/timezones")
+    public List<ZoneId> getSupportedTimezones() {
+        return tenantService.getSupportedTimezones();
     }
 }

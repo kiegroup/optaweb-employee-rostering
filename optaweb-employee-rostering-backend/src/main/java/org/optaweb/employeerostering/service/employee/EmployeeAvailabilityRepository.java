@@ -20,36 +20,31 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Set;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface EmployeeAvailabilityRepository extends JpaRepository<EmployeeAvailability, Long> {
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Sort;
 
-    @Query("select distinct ea from EmployeeAvailability ea" +
-            " left join fetch ea.employee e" +
-            " where ea.tenantId = :tenantId" +
-            " order by e.name, ea.startDateTime")
-    List<EmployeeAvailability> findAllByTenantId(@Param("tenantId") Integer tenantId);
+@ApplicationScoped
+public class EmployeeAvailabilityRepository implements PanacheRepository<EmployeeAvailability> {
 
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("delete from EmployeeAvailability ea where ea.tenantId = :tenantId")
-    void deleteForTenant(@Param("tenantId") Integer tenantId);
+    public List<EmployeeAvailability> findAllByTenantId(Integer tenantId) {
+        return find("tenantId", Sort.ascending("name", "startDateTime"), tenantId).list();
+    }
 
-    @Query("select distinct ea from EmployeeAvailability ea" +
-            " left join fetch ea.employee e" +
-            " where ea.tenantId = :tenantId" +
-            " and ea.employee IN :employeeSet" +
-            " and ea.endDateTime >= :startDateTime" +
-            " and ea.startDateTime < :endDateTime" +
-            " order by e.name, ea.startDateTime")
-    List<EmployeeAvailability> filterWithEmployee(@Param("tenantId") Integer tenantId,
-            @Param("employeeSet") Set<Employee> employeeSet,
-            @Param("startDateTime") OffsetDateTime startDateTime,
-            @Param("endDateTime") OffsetDateTime endDateTime);
+    public void deleteForTenant(Integer tenantId) {
+        delete("tenantId", tenantId);
+    }
+
+    public List<EmployeeAvailability> filterWithEmployee(Integer tenantId,
+            Set<Employee> employeeSet,
+            OffsetDateTime startDateTime,
+            OffsetDateTime endDateTime) {
+        return find("tenantId = ?1 and employee in ?2 endDateTime >= ?3 and startDateTime < ?4",
+                Sort.ascending("employee.name", "startDateTime"),
+                tenantId, employeeSet, startDateTime, endDateTime).list();
+    }
 }

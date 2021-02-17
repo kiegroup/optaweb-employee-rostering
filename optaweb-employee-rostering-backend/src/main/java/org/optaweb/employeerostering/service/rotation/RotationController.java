@@ -18,72 +18,67 @@ package org.optaweb.employeerostering.service.rotation;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.optaweb.employeerostering.domain.rotation.view.TimeBucketView;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
-@RestController
-@RequestMapping("/rest/tenant/{tenantId}/rotation")
-@CrossOrigin
-@Validated
-@Api(tags = "Rotation")
+@Path("/rest/tenant/{tenantId}/rotation")
+@ApplicationScoped
+// @Api(tags = "Rotation")
 public class RotationController {
 
     private final RotationService rotationService;
 
+    @Inject
     public RotationController(RotationService rotationService) {
         this.rotationService = rotationService;
-        Assert.notNull(rotationService, "rotationService must not be null.");
     }
 
-    @ApiOperation("Get a list of all shift templates")
-    @GetMapping("/")
-    public ResponseEntity<List<TimeBucketView>> getTimeBucketList(@PathVariable @Min(0) Integer tenantId) {
-        return new ResponseEntity<>(rotationService.getTimeBucketList(tenantId), HttpStatus.OK);
+    // @ApiOperation("Get a list of all shift templates")
+    @GET
+    @Path("/")
+    public List<TimeBucketView> getTimeBucketList(@PathParam("tenantId") @Min(0) Integer tenantId) {
+        return rotationService.getTimeBucketList(tenantId);
     }
 
-    @ApiOperation("Get a shift template by id")
-    @GetMapping("/{id}")
-    public ResponseEntity<TimeBucketView> getTimeBucket(@PathVariable @Min(0) Integer tenantId,
-            @PathVariable @Min(0) Long id) {
-        return new ResponseEntity<>(rotationService.getTimeBucket(tenantId, id), HttpStatus.OK);
+    // @ApiOperation("Get a shift template by id")
+    @GET
+    @Path("/{id}")
+    public TimeBucketView getTimeBucket(@PathParam("tenantId") @Min(0) Integer tenantId,
+            @PathParam("id") @Min(0) Long id) {
+        return rotationService.getTimeBucket(tenantId, id);
     }
 
-    @ApiOperation("Delete a shift template")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteTimeBucket(@PathVariable @Min(0) Integer tenantId,
-            @PathVariable @Min(0) Long id) {
-        return new ResponseEntity<>(rotationService.deleteTimeBucket(tenantId, id), HttpStatus.OK);
+    // @ApiOperation("Delete a shift template")
+    @DELETE
+    @Path("/{id}")
+    public Boolean deleteTimeBucket(@PathParam("tenantId") @Min(0) Integer tenantId,
+            @PathParam("id") @Min(0) Long id) {
+        return rotationService.deleteTimeBucket(tenantId, id);
     }
 
-    @ApiOperation("Add a new shift template")
-    @PostMapping("/add")
-    public ResponseEntity<TimeBucketView> createTimeBucket(@PathVariable @Min(0) Integer tenantId,
-            @RequestBody @Valid TimeBucketView timeBucketView) {
-        return new ResponseEntity<>(rotationService.createTimeBucket(tenantId, timeBucketView), HttpStatus.OK);
+    // @ApiOperation("Add a new shift template")
+    @POST
+    @Path("/add")
+    public TimeBucketView createTimeBucket(@PathParam("tenantId") @Min(0) Integer tenantId,
+            @Valid TimeBucketView timeBucketView) {
+        return rotationService.createTimeBucket(tenantId, timeBucketView);
     }
 
-    @ApiOperation("Update a shift template")
-    @PutMapping("/update")
-    public ResponseEntity<TimeBucketView> updateTimeBucket(@PathVariable @Min(0) Integer tenantId,
-            @RequestBody @Valid TimeBucketView timeBucketView) {
-        return new ResponseEntity<>(rotationService.updateTimeBucket(tenantId, timeBucketView), HttpStatus.OK);
+    // @ApiOperation("Update a shift template")
+    @PUT
+    @Path("/update")
+    public TimeBucketView updateTimeBucket(@PathParam("tenantId") @Min(0) Integer tenantId,
+            @Valid TimeBucketView timeBucketView) {
+        return rotationService.updateTimeBucket(tenantId, timeBucketView);
     }
 }

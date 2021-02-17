@@ -18,7 +18,8 @@ package org.optaweb.employeerostering.generator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
+import javax.inject.Inject;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,23 +32,15 @@ import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureTestDatabase
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+@QuarkusTest
 public class RosterGeneratorTest {
 
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
+    @Inject
     private RosterGenerator rosterGenerator;
 
     private Integer tenantId;
@@ -60,46 +53,32 @@ public class RosterGeneratorTest {
     private final String tenantPathURI = "http://localhost:8080/rest/tenant/";
     private final String shiftPathURI = "http://localhost:8080/rest/tenant/{tenantId}/shift/";
 
-    private ResponseEntity<List<Skill>> getSkills(Integer tenantId) {
-        return restTemplate.exchange(skillPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Skill>>() {
-                }, tenantId);
+    private Response getSkills(Integer tenantId) {
+        return RestAssured.get(skillPathURI, tenantId);
     }
 
-    private ResponseEntity<List<Spot>> getSpots(Integer tenantId) {
-        return restTemplate.exchange(spotPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Spot>>() {
-                }, tenantId);
+    private Response getSpots(Integer tenantId) {
+        return RestAssured.get(spotPathURI, tenantId);
     }
 
-    private ResponseEntity<List<Contract>> getContracts(Integer tenantId) {
-        return restTemplate.exchange(contractPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Contract>>() {
-                }, tenantId);
+    private Response getContracts(Integer tenantId) {
+        return RestAssured.get(contractPathURI, tenantId);
     }
 
-    private ResponseEntity<List<Employee>> getEmployees(Integer tenantId) {
-        return restTemplate.exchange(employeePathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Employee>>() {
-                }, tenantId);
+    private Response getEmployees(Integer tenantId) {
+        return RestAssured.get(employeePathURI, tenantId);
     }
 
-    private ResponseEntity<List<TimeBucketView>> getTimeBuckets(Integer tenantId) {
-        return restTemplate.exchange(rotationPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<TimeBucketView>>() {
-                }, tenantId);
+    private Response getTimeBuckets(Integer tenantId) {
+        return RestAssured.get(rotationPathURI, tenantId);
     }
 
-    private ResponseEntity<List<ShiftView>> getShifts(Integer tenantId) {
-        return restTemplate.exchange(shiftPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<ShiftView>>() {
-                }, tenantId);
+    private Response getShifts(Integer tenantId) {
+        return RestAssured.get(shiftPathURI, tenantId);
     }
 
-    private ResponseEntity<List<Tenant>> getTenants() {
-        return restTemplate.exchange(tenantPathURI, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Tenant>>() {
-                });
+    private Response getTenants() {
+        return RestAssured.get(tenantPathURI, tenantId);
     }
 
     @BeforeEach
@@ -109,60 +88,62 @@ public class RosterGeneratorTest {
 
     @AfterEach
     public void cleanup() {
-        restTemplate.postForEntity(tenantPathURI + "remove/" + tenantId, null, Void.class);
+        RestAssured.post(tenantPathURI + "remove/" + tenantId);
     }
 
     @Test
     public void generateSkillListTest() {
-        ResponseEntity<List<Skill>> response = getSkills(tenantId);
+        Response response = getSkills(tenantId);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).size().isGreaterThan(0);
+        assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(response.getBody().jsonPath().getList("$", Skill.class)).size().isGreaterThan(0);
     }
 
     @Test
     public void generateSpotListTest() {
-        ResponseEntity<List<Spot>> response = getSpots(tenantId);
+        Response response = getSpots(tenantId);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).size().isGreaterThan(0);
+        assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(response.getBody().jsonPath().getList("$", Spot.class)).size().isGreaterThan(0);
     }
 
     @Test
     public void generateContractListTest() {
-        ResponseEntity<List<Contract>> response = getContracts(tenantId);
+        Response response = getContracts(tenantId);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).size().isGreaterThan(0);
+        assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(response.getBody().jsonPath().getList("$", Contract.class)).size().isGreaterThan(0);
     }
 
     @Test
     public void generateEmployeeListTest() {
-        ResponseEntity<List<Employee>> response = getEmployees(tenantId);
+        Response response = getEmployees(tenantId);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).size().isGreaterThan(0);
+        assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(response.getBody().jsonPath().getList("$", Employee.class)).size().isGreaterThan(0);
     }
 
     @Test
     public void generateShiftTemplateListTest() {
-        ResponseEntity<List<TimeBucketView>> response = getTimeBuckets(tenantId);
+        Response response = getTimeBuckets(tenantId);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).size().isGreaterThan(0);
+        assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(response.getBody().jsonPath().getList("$", TimeBucketView.class)).size().isGreaterThan(0);
     }
 
     @Test
     public void generateShiftListTest() {
-        ResponseEntity<List<ShiftView>> response = getShifts(tenantId);
+        Response response = getShifts(tenantId);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(response.getBody().jsonPath().getList("$", ShiftView.class)).size().isGreaterThan(0);
     }
 
     @Test
     public void generateTenantListTest() {
-        ResponseEntity<List<Tenant>> response = getTenants();
+        Response response = getTenants();
 
-        assertThat(response.getBody()).size().isGreaterThan(0);
+        assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(response.getBody().jsonPath().getList("$", Tenant.class)).size().isGreaterThan(0);
     }
 }

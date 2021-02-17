@@ -22,13 +22,13 @@ import java.time.ZoneOffset;
 
 import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
-import org.optaweb.employeerostering.service.tenant.TenantService;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import io.restassured.RestAssured;
+
+// Cannot inject tenantService if this will be reused for native tests
 public class AbstractEntityRequireTenantRestServiceTest {
 
-    @Autowired
-    protected TenantService tenantService;
+    private final String tenantPathURI = "http://localhost:8080/rest/tenant/";
 
     protected Integer TENANT_ID;
 
@@ -56,13 +56,19 @@ public class AbstractEntityRequireTenantRestServiceTest {
      */
     protected Tenant createTestTenant(RosterStateView rosterStateView) {
         rosterStateView.setTenant(new Tenant("TestTenant"));
-        Tenant tenant = tenantService.createTenant(rosterStateView);
+        Tenant tenant = RestAssured.given()
+                .basePath(tenantPathURI + "add")
+                .body(rosterStateView)
+                .post()
+                .as(Tenant.class);
         TENANT_ID = tenant.getId();
         return tenant;
     }
 
     protected void deleteTestTenant() {
-        tenantService.deleteTenant(TENANT_ID);
+        RestAssured.given()
+                .basePath(tenantPathURI + "remove/" + TENANT_ID)
+                .post();
         TENANT_ID = null;
     }
 }
