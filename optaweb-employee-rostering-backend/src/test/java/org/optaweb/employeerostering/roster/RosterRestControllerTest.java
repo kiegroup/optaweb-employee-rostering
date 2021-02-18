@@ -61,7 +61,6 @@ import org.optaweb.employeerostering.util.ShiftRosterXlsxFileIO;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
@@ -178,7 +177,6 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
                 .queryParam("fromDate", fromDate.toString())
                 .queryParam("toDate", toDate.toString())
                 .body(timeBucketIdList)
-                .contentType(ContentType.JSON)
                 .post();
     }
 
@@ -187,7 +185,6 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return RestAssured.given().basePath(spotPathURI + "add")
                 .pathParam("tenantId", TENANT_ID)
                 .body(spotView)
-                .contentType(ContentType.JSON)
                 .post().as(Spot.class);
     }
 
@@ -196,7 +193,6 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return RestAssured.given().basePath(contractPathURI + "add")
                 .pathParam("tenantId", TENANT_ID)
                 .body(contractView)
-                .contentType(ContentType.JSON)
                 .post().as(Contract.class);
     }
 
@@ -205,7 +201,6 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return RestAssured.given().basePath(employeePathURI + "add")
                 .pathParam("tenantId", TENANT_ID)
                 .body(employee)
-                .contentType(ContentType.JSON)
                 .post().as(Employee.class);
     }
 
@@ -213,7 +208,6 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return RestAssured.given().basePath(rotationPathURI + "add")
                 .pathParam("tenantId", TENANT_ID)
                 .body(timeBucket)
-                .contentType(ContentType.JSON)
                 .post().as(TimeBucketView.class);
     }
 
@@ -226,7 +220,6 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return RestAssured.given().basePath(shiftPathURI + "add")
                 .pathParam("tenantId", TENANT_ID)
                 .body(shiftView)
-                .contentType(ContentType.JSON)
                 .post().as(ShiftView.class);
     }
 
@@ -241,7 +234,6 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return RestAssured.given().basePath(employeeAvailabilityPathURI + "add")
                 .pathParam("tenantId", TENANT_ID)
                 .body(employeeAvailabilityView)
-                .contentType(ContentType.JSON)
                 .post().as(EmployeeAvailabilityView.class);
     }
 

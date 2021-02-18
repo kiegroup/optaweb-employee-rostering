@@ -37,7 +37,6 @@ import org.optaweb.employeerostering.domain.skill.Skill;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
@@ -64,28 +63,24 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
     private Response addEmployee(Integer tenantId, Employee employee) {
         return RestAssured.given()
                 .body(employee)
-                .contentType(ContentType.JSON)
                 .post(employeePathURI + "add", tenantId);
     }
 
     private Response updateEmployee(Integer tenantId, Employee employee) {
         return RestAssured.given()
                 .body(employee)
-                .contentType(ContentType.JSON)
                 .post(employeePathURI + "update", tenantId);
     }
 
     private Response addSkill(Integer tenantId, Skill skill) {
         return RestAssured.given()
                 .body(skill)
-                .contentType(ContentType.JSON)
                 .post(skillPathURI + "add", tenantId);
     }
 
     private Response addContract(Integer tenantId, Contract contract) {
         return RestAssured.given()
                 .body(contract)
-                .contentType(ContentType.JSON)
                 .post(contractPathURI + "add", tenantId);
     }
 
@@ -101,7 +96,6 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
             EmployeeAvailabilityView employeeAvailabilityView) {
         return RestAssured.given()
                 .body(employeeAvailabilityView)
-                .contentType(ContentType.JSON)
                 .post(employeeAvailabilityPathURI + "add", tenantId);
     }
 
@@ -109,7 +103,6 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
             EmployeeAvailabilityView employeeAvailabilityView) {
         return RestAssured.given()
                 .body(employeeAvailabilityView)
-                .contentType(ContentType.JSON)
                 .post(employeeAvailabilityPathURI + "update", tenantId);
     }
 

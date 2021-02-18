@@ -36,7 +36,6 @@ import org.optaweb.employeerostering.domain.tenant.view.RosterConstraintConfigur
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
@@ -51,7 +50,6 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
     private Response addTenant(RosterStateView initialRosterStateView) {
         return RestAssured.given()
                 .body(initialRosterStateView)
-                .contentType(ContentType.JSON)
                 .post(tenantPathURI + "add");
     }
 
@@ -67,7 +65,6 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
             Integer tenantId, RosterConstraintConfigurationView rosterConstraintConfigurationView) {
         return RestAssured.given()
                 .body(rosterConstraintConfigurationView)
-                .contentType(ContentType.JSON)
                 .post(tenantPathURI + tenantId + "/config/constraint/update");
     }
 

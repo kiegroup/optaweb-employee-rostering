@@ -29,7 +29,6 @@ import org.optaweb.employeerostering.domain.contract.view.ContractView;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
@@ -63,7 +62,6 @@ public class ContractRestControllerTest extends AbstractEntityRequireTenantRestS
                 .basePath(contractPathURI + "add")
                 .pathParam("tenantId", tenantId)
                 .body(contractView)
-                .contentType(ContentType.JSON)
                 .post();
     }
 
@@ -72,7 +70,6 @@ public class ContractRestControllerTest extends AbstractEntityRequireTenantRestS
                 .basePath(contractPathURI + "update")
                 .pathParam("tenantId", tenantId)
                 .body(contractView)
-                .contentType(ContentType.JSON)
                 .post();
     }
 
