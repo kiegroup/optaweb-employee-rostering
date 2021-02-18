@@ -42,7 +42,7 @@ public class RosterState extends AbstractPersistable {
     @NotNull
     private LocalDate firstDraftDate;
     @NotNull
-    private final Integer publishLength; // In number of days
+    private Integer publishLength; // In number of days
     @NotNull
     private Integer draftLength; // In number of days
     @NotNull

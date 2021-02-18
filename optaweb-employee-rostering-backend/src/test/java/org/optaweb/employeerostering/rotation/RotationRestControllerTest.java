@@ -34,13 +34,14 @@ import org.optaweb.employeerostering.domain.spot.view.SpotView;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
 public class RotationRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
 
-    private final String timeBucketPathURI = "http://localhost:8080/rest/tenant/{tenantId}/rotation/";
-    private final String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
+    private final String timeBucketPathURI = "/rest/tenant/{tenantId}/rotation/";
+    private final String spotPathURI = "/rest/tenant/{tenantId}/spot/";
 
     private Response getTimeBuckets(Integer tenantId) {
         return RestAssured.get(timeBucketPathURI, tenantId);
@@ -57,6 +58,7 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
     private Response addTimeBucket(Integer tenantId, TimeBucketView shiftTemplateView) {
         return RestAssured.given()
                 .body(shiftTemplateView)
+                .contentType(ContentType.JSON)
                 .post(timeBucketPathURI + "add", tenantId);
     }
 
@@ -99,7 +101,8 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
 
         Response response = getTimeBucket(TENANT_ID, postResponse.as(TimeBucketView.class).getId());
         assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(postResponse.getBody());
+        assertThat(response.getBody()).usingRecursiveComparison().ignoringFields("groovyResponse")
+                .isEqualTo(postResponse.getBody());
 
         TimeBucketView updatedTimeBucket = new TimeBucketView(new TimeBucket(TENANT_ID, spotA, LocalTime.of(9, 0),
                 LocalTime.of(17, 0),

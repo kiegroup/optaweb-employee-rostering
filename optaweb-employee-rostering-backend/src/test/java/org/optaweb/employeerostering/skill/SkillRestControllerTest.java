@@ -29,12 +29,13 @@ import org.optaweb.employeerostering.domain.skill.view.SkillView;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
 public class SkillRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
 
-    private final String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
+    private final String skillPathURI = "/rest/tenant/{tenantId}/skill/";
 
     private Response getSkills(Integer tenantId) {
         return RestAssured.get(skillPathURI, tenantId);
@@ -51,6 +52,7 @@ public class SkillRestControllerTest extends AbstractEntityRequireTenantRestServ
     private Response addSkill(Integer tenantId, SkillView skillView) {
         return RestAssured.given()
                 .body(skillView)
+                .contentType(ContentType.JSON)
                 .post(skillPathURI + "add", tenantId);
     }
 
@@ -78,7 +80,8 @@ public class SkillRestControllerTest extends AbstractEntityRequireTenantRestServ
 
         Response response = getSkill(TENANT_ID, postResponse.as(Skill.class).getId());
         assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(postResponse.getBody());
+        assertThat(response.getBody()).usingRecursiveComparison().ignoringFields("groovyResponse")
+                .isEqualTo(postResponse.getBody());
 
         SkillView updatedSkill = new SkillView(TENANT_ID, "updatedSkill");
         updatedSkill.setId(postResponse.as(Skill.class).getId());
@@ -87,7 +90,8 @@ public class SkillRestControllerTest extends AbstractEntityRequireTenantRestServ
 
         response = getSkill(TENANT_ID, putResponse.as(Skill.class).getId());
         assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(putResponse.getBody()).usingRecursiveComparison().isEqualTo(response.getBody());
+        assertThat(putResponse.getBody()).usingRecursiveComparison().ignoringFields("groovyResponse")
+                .isEqualTo(response.getBody());
 
         deleteSkill(TENANT_ID, postResponse.as(Skill.class).getId());
 

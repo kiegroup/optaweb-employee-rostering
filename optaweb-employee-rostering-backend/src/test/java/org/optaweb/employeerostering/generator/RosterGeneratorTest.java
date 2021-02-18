@@ -45,13 +45,13 @@ public class RosterGeneratorTest {
 
     private Integer tenantId;
 
-    private final String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
-    private final String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
-    private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
-    private final String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
-    private final String rotationPathURI = "http://localhost:8080/rest/tenant/{tenantId}/rotation/";
-    private final String tenantPathURI = "http://localhost:8080/rest/tenant/";
-    private final String shiftPathURI = "http://localhost:8080/rest/tenant/{tenantId}/shift/";
+    private final String skillPathURI = "/rest/tenant/{tenantId}/skill/";
+    private final String spotPathURI = "/rest/tenant/{tenantId}/spot/";
+    private final String contractPathURI = "/rest/tenant/{tenantId}/contract/";
+    private final String employeePathURI = "/rest/tenant/{tenantId}/employee/";
+    private final String rotationPathURI = "/rest/tenant/{tenantId}/rotation/";
+    private final String tenantPathURI = "/rest/tenant/";
+    private final String shiftPathURI = "/rest/tenant/{tenantId}/shift/";
 
     private Response getSkills(Integer tenantId) {
         return RestAssured.get(skillPathURI, tenantId);

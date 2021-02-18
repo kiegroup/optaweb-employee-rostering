@@ -24,11 +24,12 @@ import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 
 // Cannot inject tenantService if this will be reused for native tests
 public class AbstractEntityRequireTenantRestServiceTest {
 
-    private final String tenantPathURI = "http://localhost:8080/rest/tenant/";
+    private final String tenantPathURI = "/rest/tenant/";
 
     protected Integer TENANT_ID;
 
@@ -56,9 +57,12 @@ public class AbstractEntityRequireTenantRestServiceTest {
      */
     protected Tenant createTestTenant(RosterStateView rosterStateView) {
         rosterStateView.setTenant(new Tenant("TestTenant"));
+        rosterStateView.setTenantId(-1);
+        rosterStateView.getTenant().setId(-1);
         Tenant tenant = RestAssured.given()
                 .basePath(tenantPathURI + "add")
                 .body(rosterStateView)
+                .contentType(ContentType.JSON)
                 .post()
                 .as(Tenant.class);
         TENANT_ID = tenant.getId();

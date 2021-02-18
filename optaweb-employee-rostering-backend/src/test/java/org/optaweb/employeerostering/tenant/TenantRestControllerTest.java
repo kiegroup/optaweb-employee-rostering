@@ -36,12 +36,13 @@ import org.optaweb.employeerostering.domain.tenant.view.RosterConstraintConfigur
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
 public class TenantRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
 
-    private final String tenantPathURI = "http://localhost:8080/rest/tenant/";
+    private final String tenantPathURI = "/rest/tenant/";
 
     private Response getTenant(Integer id) {
         return RestAssured.get(tenantPathURI + id);
@@ -50,6 +51,7 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
     private Response addTenant(RosterStateView initialRosterStateView) {
         return RestAssured.given()
                 .body(initialRosterStateView)
+                .contentType(ContentType.JSON)
                 .post(tenantPathURI + "add");
     }
 
@@ -65,6 +67,7 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
             Integer tenantId, RosterConstraintConfigurationView rosterConstraintConfigurationView) {
         return RestAssured.given()
                 .body(rosterConstraintConfigurationView)
+                .contentType(ContentType.JSON)
                 .post(tenantPathURI + tenantId + "/config/constraint/update");
     }
 
@@ -92,7 +95,8 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
 
         Response getResponse = getTenant(postResponse.as(Tenant.class).getId());
         assertThat(getResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(getResponse.as(Tenant.class)).usingRecursiveComparison().isEqualTo(postResponse.as(Tenant.class));
+        assertThat(getResponse.as(Tenant.class)).usingRecursiveComparison().ignoringFields("groovyResponse")
+                .isEqualTo(postResponse.as(Tenant.class));
 
         deleteTenant(postResponse.as(Tenant.class).getId());
     }

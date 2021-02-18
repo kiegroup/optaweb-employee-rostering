@@ -30,6 +30,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
@@ -45,7 +46,7 @@ import org.optaweb.employeerostering.domain.spot.Spot;
 @Entity
 @PlanningEntity(pinningFilter = PinningShiftFilter.class)
 public class Shift extends AbstractPersistable {
-
+    @Transient
     private final AtomicLong lengthInMinutes = new AtomicLong(-1);
     @ManyToOne
     private Employee rotationEmployee;

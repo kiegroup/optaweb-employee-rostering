@@ -61,18 +61,19 @@ import org.optaweb.employeerostering.util.ShiftRosterXlsxFileIO;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
 public class RosterRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
-    private final String rosterPathURI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
-    private final String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
-    private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
-    private final String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
-    private final String shiftPathURI = "http://localhost:8080/rest/tenant/{tenantId}/shift/";
-    private final String rotationPathURI = "http://localhost:8080/rest/tenant/{tenantId}/rotation/";
+    private final String rosterPathURI = "/rest/tenant/{tenantId}/roster/";
+    private final String spotPathURI = "/rest/tenant/{tenantId}/spot/";
+    private final String contractPathURI = "/rest/tenant/{tenantId}/contract/";
+    private final String employeePathURI = "/rest/tenant/{tenantId}/employee/";
+    private final String shiftPathURI = "/rest/tenant/{tenantId}/shift/";
+    private final String rotationPathURI = "/rest/tenant/{tenantId}/rotation/";
     private final String employeeAvailabilityPathURI =
-            "http://localhost:8080/rest/tenant/{tenantId}/employee/availability/";
+            "/rest/tenant/{tenantId}/employee/availability/";
 
     private List<Spot> spotList;
     private List<Employee> employeeList;
@@ -177,6 +178,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
                 .queryParam("fromDate", fromDate.toString())
                 .queryParam("toDate", toDate.toString())
                 .body(timeBucketIdList)
+                .contentType(ContentType.JSON)
                 .post();
     }
 
@@ -185,6 +187,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return RestAssured.given().basePath(spotPathURI + "add")
                 .pathParam("tenantId", TENANT_ID)
                 .body(spotView)
+                .contentType(ContentType.JSON)
                 .post().as(Spot.class);
     }
 
@@ -193,6 +196,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return RestAssured.given().basePath(contractPathURI + "add")
                 .pathParam("tenantId", TENANT_ID)
                 .body(contractView)
+                .contentType(ContentType.JSON)
                 .post().as(Contract.class);
     }
 
@@ -201,6 +205,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return RestAssured.given().basePath(employeePathURI + "add")
                 .pathParam("tenantId", TENANT_ID)
                 .body(employee)
+                .contentType(ContentType.JSON)
                 .post().as(Employee.class);
     }
 
@@ -208,6 +213,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return RestAssured.given().basePath(rotationPathURI + "add")
                 .pathParam("tenantId", TENANT_ID)
                 .body(timeBucket)
+                .contentType(ContentType.JSON)
                 .post().as(TimeBucketView.class);
     }
 
@@ -220,6 +226,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return RestAssured.given().basePath(shiftPathURI + "add")
                 .pathParam("tenantId", TENANT_ID)
                 .body(shiftView)
+                .contentType(ContentType.JSON)
                 .post().as(ShiftView.class);
     }
 
@@ -234,6 +241,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         return RestAssured.given().basePath(employeeAvailabilityPathURI + "add")
                 .pathParam("tenantId", TENANT_ID)
                 .body(employeeAvailabilityView)
+                .contentType(ContentType.JSON)
                 .post().as(EmployeeAvailabilityView.class);
     }
 

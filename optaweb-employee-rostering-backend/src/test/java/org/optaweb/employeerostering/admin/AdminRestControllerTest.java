@@ -29,7 +29,7 @@ import io.restassured.response.Response;
 @QuarkusTest
 public class AdminRestControllerTest {
 
-    private final String adminPathURI = "http://localhost:8080/rest/admin/";
+    private final String adminPathURI = "/rest/admin/";
 
     private Response resetApplication() {
         return RestAssured.post(adminPathURI + "reset");
