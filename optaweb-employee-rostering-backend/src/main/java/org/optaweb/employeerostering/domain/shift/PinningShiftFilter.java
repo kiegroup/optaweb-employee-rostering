@@ -25,6 +25,7 @@ public class PinningShiftFilter implements PinningFilter<Roster, Shift> {
     @Override
     public boolean accept(Roster roster, Shift shift) {
         RosterState rosterState = roster.getRosterState();
+
         if (roster.isNondisruptivePlanning()) {
             return shift.getStartDateTime().isBefore(roster.getNondisruptiveReplanFrom());
         } else {

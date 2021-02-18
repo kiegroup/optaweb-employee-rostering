@@ -29,6 +29,10 @@ public class AbstractRestService {
 
     private Validator validator;
 
+    public AbstractRestService() {
+        this(null);
+    }
+
     public AbstractRestService(Validator validator) {
         this.validator = validator;
     }

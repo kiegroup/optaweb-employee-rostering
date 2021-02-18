@@ -385,10 +385,11 @@ public class RosterGenerator {
     private Random random;
 
     @PersistenceContext
-    private EntityManager entityManager;
+    EntityManager entityManager;
 
     @SuppressWarnings("unused")
     public RosterGenerator() {
+        this(null);
     }
 
     /**

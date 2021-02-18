@@ -32,7 +32,7 @@ import org.optaweb.employeerostering.service.common.AbstractRestService;
 @ApplicationScoped
 public class SpotService extends AbstractRestService {
 
-    private final SpotRepository spotRepository;
+    SpotRepository spotRepository;
 
     @Inject
     public SpotService(Validator validator, SpotRepository spotRepository) {

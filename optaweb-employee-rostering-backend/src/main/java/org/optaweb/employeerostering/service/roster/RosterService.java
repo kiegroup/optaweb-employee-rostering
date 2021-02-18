@@ -120,6 +120,7 @@ public class RosterService extends AbstractRestService {
         this.solverManager = solverManager;
         this.scoreManager = scoreManager;
         this.indictmentUtils = indictmentUtils;
+        this.transaction = transaction;
     }
 
     // ************************************************************************

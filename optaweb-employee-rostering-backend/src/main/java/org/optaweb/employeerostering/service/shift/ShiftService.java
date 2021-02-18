@@ -46,17 +46,17 @@ import org.optaweb.employeerostering.service.spot.SpotRepository;
 @ApplicationScoped
 public class ShiftService extends AbstractRestService {
 
-    private ShiftRepository shiftRepository;
+    ShiftRepository shiftRepository;
 
-    private SpotRepository spotRepository;
+    SpotRepository spotRepository;
 
-    private SkillService skillService;
+    SkillService skillService;
 
-    private EmployeeRepository employeeRepository;
+    EmployeeRepository employeeRepository;
 
-    private RosterService rosterService;
+    RosterService rosterService;
 
-    private IndictmentUtils indictmentUtils;
+    IndictmentUtils indictmentUtils;
 
     @Inject
     public ShiftService(Validator validator,

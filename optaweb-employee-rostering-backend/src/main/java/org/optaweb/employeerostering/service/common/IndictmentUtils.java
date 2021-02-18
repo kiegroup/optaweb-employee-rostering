@@ -126,8 +126,8 @@ public class IndictmentUtils {
         return indictment.getConstraintMatchSet().stream()
                 .filter(constraintMatch -> constraintMatch.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         constraintMatch.getConstraintName().equals(CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE))
-                .map(constraintMatch -> new UnavailableEmployeeViolation((Shift) constraintMatch.getJustificationList().get(0),
-                        (EmployeeAvailability) constraintMatch.getJustificationList().get(1),
+                .map(constraintMatch -> new UnavailableEmployeeViolation((Shift) constraintMatch.getJustificationList().get(1),
+                        (EmployeeAvailability) constraintMatch.getJustificationList().get(0),
                         constraintMatch.getScore()))
                 .collect(toList());
     }
@@ -141,8 +141,8 @@ public class IndictmentUtils {
                 .filter(constraintMatch -> constraintMatch.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         constraintMatch.getConstraintName().equals(CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE))
                 .map(constraintMatch -> new DesiredTimeslotForEmployeeReward(
-                        (Shift) constraintMatch.getJustificationList().get(0),
-                        (EmployeeAvailability) constraintMatch.getJustificationList().get(1),
+                        (Shift) constraintMatch.getJustificationList().get(1),
+                        (EmployeeAvailability) constraintMatch.getJustificationList().get(0),
                         constraintMatch.getScore()))
                 .collect(toList());
     }
@@ -156,9 +156,9 @@ public class IndictmentUtils {
                 .filter(constraintMatch -> constraintMatch.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         constraintMatch.getConstraintName().equals(CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE))
                 .map(constraintMatch -> new UndesiredTimeslotForEmployeePenalty(
-                        (Shift) constraintMatch.getJustificationList().get(0),
+                        (Shift) constraintMatch.getJustificationList().get(1),
                         (EmployeeAvailability) constraintMatch.getJustificationList()
-                                .get(1),
+                                .get(0),
                         constraintMatch.getScore()))
                 .collect(toList());
     }

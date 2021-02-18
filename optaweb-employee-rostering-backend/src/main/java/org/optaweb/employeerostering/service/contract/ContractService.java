@@ -32,7 +32,7 @@ import org.optaweb.employeerostering.service.common.AbstractRestService;
 @ApplicationScoped
 public class ContractService extends AbstractRestService {
 
-    private final ContractRepository contractRepository;
+    private ContractRepository contractRepository;
 
     @Inject
     public ContractService(Validator validator,
