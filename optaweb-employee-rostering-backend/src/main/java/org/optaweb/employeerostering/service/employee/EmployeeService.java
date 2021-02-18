@@ -44,13 +44,13 @@ import org.optaweb.employeerostering.util.EmployeeListXlsxFileIO;
 @ApplicationScoped
 public class EmployeeService extends AbstractRestService {
 
-    private final EmployeeRepository employeeRepository;
+    EmployeeRepository employeeRepository;
 
-    private final EmployeeAvailabilityRepository employeeAvailabilityRepository;
+    EmployeeAvailabilityRepository employeeAvailabilityRepository;
 
-    private final RosterStateRepository rosterStateRepository;
+    RosterStateRepository rosterStateRepository;
 
-    private final EmployeeListXlsxFileIO employeeListXlsxFileIO;
+    EmployeeListXlsxFileIO employeeListXlsxFileIO;
 
     @Inject
     public EmployeeService(Validator validator,

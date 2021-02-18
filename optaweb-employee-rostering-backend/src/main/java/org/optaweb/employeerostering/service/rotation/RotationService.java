@@ -47,12 +47,12 @@ import org.optaweb.employeerostering.service.tenant.TenantService;
 @ApplicationScoped
 public class RotationService extends AbstractRestService {
 
-    private final TimeBucketRepository timeBucketRepository;
-    private final RosterService rosterService;
-    private final TenantService tenantService;
-    private final SpotService spotService;
-    private final SkillService skillService;
-    private final EmployeeService employeeService;
+    TimeBucketRepository timeBucketRepository;
+    RosterService rosterService;
+    TenantService tenantService;
+    SpotService spotService;
+    SkillService skillService;
+    EmployeeService employeeService;
 
     @Inject
     public RotationService(Validator validator,

@@ -32,16 +32,20 @@ import io.quarkus.panache.common.Sort;
 @ApplicationScoped
 public class ShiftRepository implements PanacheRepository<Shift> {
 
+    // FIXME: When https://github.com/quarkusio/quarkus/issues/15088 is fixed,
+    //        add employee.name as a last parameter to sort
     public List<Shift> findAllByTenantId(Integer tenantId) {
-        return find("tenantId", Sort.ascending("startDateTime", "spot.name", "employee.name"),
+        return find("tenantId", Sort.ascending("startDateTime", "spot.name"),
                 tenantId).list();
     }
 
+    // FIXME: When https://github.com/quarkusio/quarkus/issues/15088 is fixed,
+    //        add employee.name as a last parameter to sort
     public List<Shift> findAllByTenantIdBetweenDates(Integer tenantId,
             OffsetDateTime startDateTime,
             OffsetDateTime endDateTime) {
         return find("tenantId = ?1 and endDateTime >= ?2 and startDateTime < ?3",
-                Sort.ascending("startDateTime", "spot.name", "employee.name"),
+                Sort.ascending("startDateTime", "spot.name"),
                 tenantId, startDateTime, endDateTime).list();
     }
 
@@ -49,20 +53,24 @@ public class ShiftRepository implements PanacheRepository<Shift> {
         delete("tenantId", tenantId);
     }
 
+    // FIXME: When https://github.com/quarkusio/quarkus/issues/15088 is fixed,
+    //        add employee.name as a last parameter to sort
     public List<Shift> filterWithSpots(Integer tenantId, Set<Spot> spotSet,
             OffsetDateTime startDateTime,
             OffsetDateTime endDateTime) {
-        return find("tenantId = ?1 and spot in ?2 endDateTime >= ?3 and startDateTime < ?4",
-                Sort.ascending("startDateTime", "spot.name", "employee.name"),
+        return find("tenantId = ?1 and spot in ?2 and endDateTime >= ?3 and startDateTime < ?4",
+                Sort.ascending("startDateTime", "spot.name"),
                 tenantId, spotSet, startDateTime, endDateTime).list();
     }
 
+    // FIXME: When https://github.com/quarkusio/quarkus/issues/15088 is fixed,
+    //        add employee.name as a last parameter to sort
     public List<Shift> filterWithEmployees(Integer tenantId,
             Set<Employee> employeeSet,
             OffsetDateTime startDateTime,
             OffsetDateTime endDateTime) {
-        return find("tenantId = ?1 and employee in ?2 endDateTime >= ?3 and startDateTime < ?4",
-                Sort.ascending("startDateTime", "spot.name", "employee.name"),
+        return find("tenantId = ?1 and employee in ?2 and endDateTime >= ?3 and startDateTime < ?4",
+                Sort.ascending("startDateTime", "spot.name"),
                 tenantId, employeeSet, startDateTime, endDateTime).list();
     }
 }

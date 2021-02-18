@@ -32,7 +32,7 @@ import org.optaweb.employeerostering.service.common.AbstractRestService;
 @ApplicationScoped
 public class SkillService extends AbstractRestService {
 
-    private final SkillRepository skillRepository;
+    SkillRepository skillRepository;
 
     @Inject
     public SkillService(Validator validator, SkillRepository skillRepository) {

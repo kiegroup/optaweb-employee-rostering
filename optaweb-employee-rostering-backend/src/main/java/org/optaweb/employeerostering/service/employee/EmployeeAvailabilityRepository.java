@@ -32,7 +32,7 @@ import io.quarkus.panache.common.Sort;
 public class EmployeeAvailabilityRepository implements PanacheRepository<EmployeeAvailability> {
 
     public List<EmployeeAvailability> findAllByTenantId(Integer tenantId) {
-        return find("tenantId", Sort.ascending("name", "startDateTime"), tenantId).list();
+        return find("tenantId", Sort.ascending("employee.name", "startDateTime"), tenantId).list();
     }
 
     public void deleteForTenant(Integer tenantId) {
@@ -43,7 +43,7 @@ public class EmployeeAvailabilityRepository implements PanacheRepository<Employe
             Set<Employee> employeeSet,
             OffsetDateTime startDateTime,
             OffsetDateTime endDateTime) {
-        return find("tenantId = ?1 and employee in ?2 endDateTime >= ?3 and startDateTime < ?4",
+        return find("tenantId = ?1 and employee in ?2 and endDateTime >= ?3 and startDateTime < ?4",
                 Sort.ascending("employee.name", "startDateTime"),
                 tenantId, employeeSet, startDateTime, endDateTime).list();
     }

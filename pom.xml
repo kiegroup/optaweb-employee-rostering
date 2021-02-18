@@ -195,6 +195,14 @@
         <artifactId>activation</artifactId>
         <version>${version.javax.activation}</version>
       </dependency>
+
+      <!-- TODO: Find a way to remove the dependencyManagement -->
+      <!--       on hibernate-core                             -->
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>5.4.27.SP1</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

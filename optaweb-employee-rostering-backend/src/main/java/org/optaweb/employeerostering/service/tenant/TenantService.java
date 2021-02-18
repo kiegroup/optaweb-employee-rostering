@@ -43,23 +43,23 @@ import org.optaweb.employeerostering.service.spot.SpotRepository;
 @ApplicationScoped
 public class TenantService extends AbstractRestService {
 
-    private final TenantRepository tenantRepository;
+    TenantRepository tenantRepository;
 
-    private final RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository;
+    RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository;
 
-    private final RosterStateRepository rosterStateRepository;
+    RosterStateRepository rosterStateRepository;
 
-    private final ShiftRepository shiftRepository;
+    ShiftRepository shiftRepository;
 
-    private final EmployeeAvailabilityRepository employeeAvailabilityRepository;
+    EmployeeAvailabilityRepository employeeAvailabilityRepository;
 
-    private final TimeBucketRepository timeBucketRepository;
+    TimeBucketRepository timeBucketRepository;
 
-    private final EmployeeRepository employeeRepository;
+    EmployeeRepository employeeRepository;
 
-    private final SpotRepository spotRepository;
+    SpotRepository spotRepository;
 
-    private final SkillRepository skillRepository;
+    SkillRepository skillRepository;
 
     @Inject
     public TenantService(Validator validator,

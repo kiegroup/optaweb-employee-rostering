@@ -26,12 +26,8 @@ import javax.ws.rs.ext.Provider;
 @ApplicationScoped
 public class OptaWebExceptionHandler implements ExceptionMapper<Throwable> {
 
-    private ExceptionDataMapper exceptionDataMapper;
-
     @Inject
-    public OptaWebExceptionHandler(ExceptionDataMapper exceptionDataMapper) {
-        this.exceptionDataMapper = exceptionDataMapper;
-    }
+    ExceptionDataMapper exceptionDataMapper;
 
     @Override
     public Response toResponse(Throwable e) {
