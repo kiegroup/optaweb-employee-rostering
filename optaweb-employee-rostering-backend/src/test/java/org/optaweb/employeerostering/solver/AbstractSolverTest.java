@@ -82,7 +82,7 @@ public abstract class AbstractSolverTest {
     private static final LocalDate START_DATE = LocalDate.of(2019, 5, 13);
     private static final RosterConstraintConfiguration ROSTER_CONSTRAINT_CONFIGURATION =
             new RosterConstraintConfiguration();
-    private static final String ROSTER_PATH_URI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
+    private static final String ROSTER_PATH_URI = "/rest/tenant/{tenantId}/roster/";
 
     private Response terminateSolver(Integer tenantId) {
         return RestAssured.post(ROSTER_PATH_URI + "terminate", tenantId);

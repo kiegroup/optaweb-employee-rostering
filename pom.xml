@@ -203,6 +203,17 @@
         <artifactId>hibernate-core</artifactId>
         <version>5.4.27.SP1</version>
       </dependency>
+
+      <!-- Need to set mockito version
+           since mockito brings it own
+           version of bytebuddy that overrides
+           hibernate version                    -->
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>3.7.0</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

@@ -37,16 +37,17 @@ import org.optaweb.employeerostering.domain.skill.Skill;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
 public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
 
-    private final String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
-    private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
-    private final String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
+    private final String employeePathURI = "/rest/tenant/{tenantId}/employee/";
+    private final String contractPathURI = "/rest/tenant/{tenantId}/contract/";
+    private final String skillPathURI = "/rest/tenant/{tenantId}/skill/";
     private final String employeeAvailabilityPathURI =
-            "http://localhost:8080/rest/tenant/{tenantId}/employee/availability/";
+            "/rest/tenant/{tenantId}/employee/availability/";
 
     private Response getEmployees(Integer tenantId) {
         return RestAssured.get(employeePathURI, tenantId);
@@ -63,24 +64,28 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
     private Response addEmployee(Integer tenantId, Employee employee) {
         return RestAssured.given()
                 .body(employee)
+                .contentType(ContentType.JSON)
                 .post(employeePathURI + "add", tenantId);
     }
 
     private Response updateEmployee(Integer tenantId, Employee employee) {
         return RestAssured.given()
                 .body(employee)
+                .contentType(ContentType.JSON)
                 .post(employeePathURI + "update", tenantId);
     }
 
     private Response addSkill(Integer tenantId, Skill skill) {
         return RestAssured.given()
                 .body(skill)
+                .contentType(ContentType.JSON)
                 .post(skillPathURI + "add", tenantId);
     }
 
     private Response addContract(Integer tenantId, Contract contract) {
         return RestAssured.given()
                 .body(contract)
+                .contentType(ContentType.JSON)
                 .post(contractPathURI + "add", tenantId);
     }
 
@@ -96,6 +101,7 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
             EmployeeAvailabilityView employeeAvailabilityView) {
         return RestAssured.given()
                 .body(employeeAvailabilityView)
+                .contentType(ContentType.JSON)
                 .post(employeeAvailabilityPathURI + "add", tenantId);
     }
 
@@ -103,6 +109,7 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
             EmployeeAvailabilityView employeeAvailabilityView) {
         return RestAssured.given()
                 .body(employeeAvailabilityView)
+                .contentType(ContentType.JSON)
                 .post(employeeAvailabilityPathURI + "update", tenantId);
     }
 
@@ -141,7 +148,8 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
 
         Response response = getEmployee(TENANT_ID, postResponse.as(Employee.class).getId());
         assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(postResponse.getBody());
+        assertThat(response.getBody()).usingRecursiveComparison().ignoringFields("groovyResponse")
+                .isEqualTo(postResponse.getBody());
 
         Employee updatedEmployee = new Employee(TENANT_ID, "updatedEmployee", contractA,
                 testSkillSet);
@@ -151,7 +159,8 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
 
         response = getEmployee(TENANT_ID, putResponse.as(Employee.class).getId());
         assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(putResponse.as(Employee.class)).usingRecursiveComparison().isEqualTo(response.as(Employee.class));
+        assertThat(putResponse.as(Employee.class)).usingRecursiveComparison().ignoringFields("groovyResponse")
+                .isEqualTo(response.as(Employee.class));
 
         deleteEmployee(TENANT_ID, putResponse.as(Employee.class).getId());
 
@@ -187,7 +196,8 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
         Response getResponse = getEmployeeAvailability(TENANT_ID,
                 postResponse.as(EmployeeAvailabilityView.class).getId());
         assertThat(getResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(getResponse.getBody()).usingRecursiveComparison().isEqualTo(postResponse.getBody());
+        assertThat(getResponse.getBody()).usingRecursiveComparison().ignoringFields("groovyResponse")
+                .isEqualTo(postResponse.getBody());
 
         EmployeeAvailabilityView newEmployeeAvailabilityView =
                 new EmployeeAvailabilityView(TENANT_ID, employee,
@@ -199,7 +209,8 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
 
         getResponse = getEmployeeAvailability(TENANT_ID, putResponse.as(EmployeeAvailabilityView.class).getId());
         assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(getResponse.getBody()).usingRecursiveComparison().isEqualTo(putResponse.getBody());
+        assertThat(getResponse.getBody()).usingRecursiveComparison().ignoringFields("groovyResponse")
+                .isEqualTo(putResponse.getBody());
 
         deleteEmployeeAvailability(TENANT_ID, putResponse.as(EmployeeAvailabilityView.class).getId());
     }

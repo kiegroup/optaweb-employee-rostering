@@ -29,12 +29,13 @@ import org.optaweb.employeerostering.domain.contract.view.ContractView;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
 public class ContractRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
 
-    private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
+    private final String contractPathURI = "/rest/tenant/{tenantId}/contract/";
 
     private Response getContracts(Integer tenantId) {
         return RestAssured.given()
@@ -62,6 +63,7 @@ public class ContractRestControllerTest extends AbstractEntityRequireTenantRestS
                 .basePath(contractPathURI + "add")
                 .pathParam("tenantId", tenantId)
                 .body(contractView)
+                .contentType(ContentType.JSON)
                 .post();
     }
 
@@ -70,6 +72,7 @@ public class ContractRestControllerTest extends AbstractEntityRequireTenantRestS
                 .basePath(contractPathURI + "update")
                 .pathParam("tenantId", tenantId)
                 .body(contractView)
+                .contentType(ContentType.JSON)
                 .post();
     }
 
@@ -100,7 +103,7 @@ public class ContractRestControllerTest extends AbstractEntityRequireTenantRestS
         assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
 
         Contract getContract = response.as(Contract.class);
-        assertThat(getContract).usingRecursiveComparison().isEqualTo(postedContract);
+        assertThat(getContract).usingRecursiveComparison().ignoringFields("groovyResponse").isEqualTo(postedContract);
 
         ContractView updatedContractView = new ContractView(TENANT_ID, "updatedContract", maximumMinutesPerDay,
                 maximumMinutesPerWeek, maximumMinutesPerMonth, maximumMinutesPerYear);
@@ -111,7 +114,8 @@ public class ContractRestControllerTest extends AbstractEntityRequireTenantRestS
         Contract putContract = putResponse.as(Contract.class);
         response = getContract(TENANT_ID, putContract.getId());
         assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(putResponse.getBody()).usingRecursiveComparison().isEqualTo(response.getBody());
+        assertThat(putResponse.getBody()).usingRecursiveComparison().ignoringFields("groovyResponse")
+                .isEqualTo(response.getBody());
 
         deleteContract(TENANT_ID, putContract.getId());
 

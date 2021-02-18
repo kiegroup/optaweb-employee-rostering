@@ -35,15 +35,16 @@ import org.optaweb.employeerostering.domain.spot.view.SpotView;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
 public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
 
-    private final String shiftPathURI = "http://localhost:8080/rest/tenant/{tenantId}/shift/";
-    private final String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
-    private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
-    private final String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
+    private final String shiftPathURI = "/rest/tenant/{tenantId}/shift/";
+    private final String employeePathURI = "/rest/tenant/{tenantId}/employee/";
+    private final String contractPathURI = "/rest/tenant/{tenantId}/contract/";
+    private final String spotPathURI = "/rest/tenant/{tenantId}/spot/";
 
     private Response getShifts(Integer tenantId) {
         return RestAssured.get(shiftPathURI, tenantId);
@@ -60,30 +61,35 @@ public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServ
     private Response addShift(Integer tenantId, ShiftView shiftView) {
         return RestAssured.given()
                 .body(shiftView)
+                .contentType(ContentType.JSON)
                 .post(shiftPathURI + "add", tenantId);
     }
 
     private Response updateShift(Integer tenantId, ShiftView shiftView) {
         return RestAssured.given()
                 .body(shiftView)
+                .contentType(ContentType.JSON)
                 .put(shiftPathURI + "update", tenantId);
     }
 
     private Response addEmployee(Integer tenantId, Employee employee) {
         return RestAssured.given()
                 .body(employee)
+                .contentType(ContentType.JSON)
                 .post(employeePathURI + "add", tenantId);
     }
 
     private Response addContract(Integer tenantId, Contract contract) {
         return RestAssured.given()
                 .body(contract)
+                .contentType(ContentType.JSON)
                 .post(contractPathURI + "add", tenantId);
     }
 
     private Response addSpot(Integer tenantId, SpotView spotView) {
         return RestAssured.given()
                 .body(spotView)
+                .contentType(ContentType.JSON)
                 .post(spotPathURI + "add", tenantId);
     }
 
@@ -120,7 +126,8 @@ public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServ
 
         Response getResponse = getShift(TENANT_ID, postResponse.as(ShiftView.class).getId());
         assertThat(getResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(getResponse.getBody()).usingRecursiveComparison().isEqualTo(postResponse.getBody());
+        assertThat(getResponse.getBody()).usingRecursiveComparison().ignoringFields("groovyResponse")
+                .isEqualTo(postResponse.getBody());
 
         ShiftView updatedShiftView = new ShiftView(TENANT_ID, spot, startDateTime, endDateTime);
         updatedShiftView.setId(postResponse.as(ShiftView.class).getId());
@@ -129,7 +136,8 @@ public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServ
 
         getResponse = getShift(TENANT_ID, putResponse.as(ShiftView.class).getId());
         assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(putResponse.getBody()).usingRecursiveComparison().isEqualTo(getResponse.getBody());
+        assertThat(putResponse.getBody()).usingRecursiveComparison().ignoringFields("groovyResponse")
+                .isEqualTo(getResponse.getBody());
 
         deleteShift(TENANT_ID, putResponse.as(ShiftView.class).getId());
 
