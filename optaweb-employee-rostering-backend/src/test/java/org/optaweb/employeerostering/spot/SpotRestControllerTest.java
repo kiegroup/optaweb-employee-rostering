@@ -30,7 +30,6 @@ import org.optaweb.employeerostering.domain.spot.view.SpotView;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
@@ -53,14 +52,12 @@ public class SpotRestControllerTest extends AbstractEntityRequireTenantRestServi
     private Response addSpot(Integer tenantId, SpotView spotView) {
         return RestAssured.given()
                 .body(spotView)
-                .contentType(ContentType.JSON)
                 .post(spotPathURI + "add", tenantId);
     }
 
     private Response updateSpot(Integer tenantId, SpotView spotView) {
         return RestAssured.given()
                 .body(spotView)
-                .contentType(ContentType.JSON)
                 .post(spotPathURI + "update", tenantId);
     }
 

@@ -38,6 +38,6 @@ public class AdminRestControllerTest {
     @Test
     public void resetApplicationTest() {
         Response resetResponse = resetApplication();
-        assertThat(resetResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(resetResponse.getStatusCode()).isEqualTo(Status.NO_CONTENT.getStatusCode());
     }
 }

@@ -35,7 +35,6 @@ import org.optaweb.employeerostering.domain.spot.view.SpotView;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
@@ -61,35 +60,30 @@ public class ShiftRestControllerTest extends AbstractEntityRequireTenantRestServ
     private Response addShift(Integer tenantId, ShiftView shiftView) {
         return RestAssured.given()
                 .body(shiftView)
-                .contentType(ContentType.JSON)
                 .post(shiftPathURI + "add", tenantId);
     }
 
     private Response updateShift(Integer tenantId, ShiftView shiftView) {
         return RestAssured.given()
                 .body(shiftView)
-                .contentType(ContentType.JSON)
                 .put(shiftPathURI + "update", tenantId);
     }
 
     private Response addEmployee(Integer tenantId, Employee employee) {
         return RestAssured.given()
                 .body(employee)
-                .contentType(ContentType.JSON)
                 .post(employeePathURI + "add", tenantId);
     }
 
     private Response addContract(Integer tenantId, Contract contract) {
         return RestAssured.given()
                 .body(contract)
-                .contentType(ContentType.JSON)
                 .post(contractPathURI + "add", tenantId);
     }
 
     private Response addSpot(Integer tenantId, SpotView spotView) {
         return RestAssured.given()
                 .body(spotView)
-                .contentType(ContentType.JSON)
                 .post(spotPathURI + "add", tenantId);
     }
 

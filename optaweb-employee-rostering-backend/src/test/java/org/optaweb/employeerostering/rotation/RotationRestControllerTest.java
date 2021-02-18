@@ -34,7 +34,6 @@ import org.optaweb.employeerostering.domain.spot.view.SpotView;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
@@ -58,7 +57,6 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
     private Response addTimeBucket(Integer tenantId, TimeBucketView shiftTemplateView) {
         return RestAssured.given()
                 .body(shiftTemplateView)
-                .contentType(ContentType.JSON)
                 .post(timeBucketPathURI + "add", tenantId);
     }
 

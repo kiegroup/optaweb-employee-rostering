@@ -29,7 +29,6 @@ import org.optaweb.employeerostering.domain.skill.view.SkillView;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 @QuarkusTest
@@ -52,7 +51,6 @@ public class SkillRestControllerTest extends AbstractEntityRequireTenantRestServ
     private Response addSkill(Integer tenantId, SkillView skillView) {
         return RestAssured.given()
                 .body(skillView)
-                .contentType(ContentType.JSON)
                 .post(skillPathURI + "add", tenantId);
     }
 
