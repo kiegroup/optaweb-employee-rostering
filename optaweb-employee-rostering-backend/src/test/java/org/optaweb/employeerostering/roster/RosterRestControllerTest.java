@@ -158,6 +158,8 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
                 .queryParam("endDate", endDate.toString())
                 .queryParam("spotList", spotList.stream().map(Spot::getId).map(id -> id.toString())
                         .collect(Collectors.joining(",")))
+                .contentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                .accept("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 .get();
     }
 
@@ -172,7 +174,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
     private Response provision(Integer tenantId, Integer startRotationOffset, LocalDate fromDate,
             LocalDate toDate, List<Long> timeBucketIdList) {
         return RestAssured.given().basePath(rosterPathURI + "provision")
-                .pathParam("tenantId", TENANT_ID)
+                .pathParam("tenantId", tenantId)
                 .queryParam("startRotationOffset", startRotationOffset.toString())
                 .queryParam("fromDate", fromDate.toString())
                 .queryParam("toDate", toDate.toString())
@@ -521,7 +523,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
                 toDate,
                 Collections.singletonList(timeBucketView).stream()
                         .map(TimeBucketView::getId).collect(Collectors.toList()));
-        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(Status.NO_CONTENT.getStatusCode());
 
         Response shiftRosterViewResponse = getShiftRosterViewFor(fromDate.toString(),
                 toDate.plusDays(1).toString(),
@@ -657,6 +659,6 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         createTestRoster();
 
         Response commitChangesResponseEntity = commitChanges();
-        assertThat(commitChangesResponseEntity.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(commitChangesResponseEntity.getStatusCode()).isEqualTo(Status.NO_CONTENT.getStatusCode());
     }
 }

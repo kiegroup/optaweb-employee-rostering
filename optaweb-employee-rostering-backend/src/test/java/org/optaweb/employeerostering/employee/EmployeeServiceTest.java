@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -114,14 +113,15 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
-        RestAssured.get("/rest/tenant/{tenantId}/employee/", TENANT_ID)
+        List<Skill> skillList = RestAssured.get("/rest/tenant/{tenantId}/employee/" + employee.getId(), TENANT_ID)
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
                 .body("name", equalTo("employee"))
-                .body("contract", equalTo(contract))
-                .body("skillProficiencySet", Matchers.hasItems(testSkillSet));
+                .body("contract.id", equalTo(contract.getId().intValue()))
+                .extract().jsonPath().getList("skillProficiencySet", Skill.class);
+        assertThat(skillList).containsExactlyInAnyOrderElementsOf(testSkillSet);
     }
 
     @Test
@@ -234,7 +234,7 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
 
-        RestAssured.given()
+        List<Skill> skillList = RestAssured.given()
                 .body(employeeView)
                 .post("/rest/tenant/{tenantId}/employee/add", TENANT_ID)
                 .then()
@@ -242,8 +242,9 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
                 .body("name", equalTo("employee"))
-                .body("contract", equalTo(contract))
-                .body("skillProficiencySet", Matchers.hasItems(testSkillSet));
+                .body("contract.id", equalTo(contract.getId().intValue()))
+                .extract().jsonPath().getList("skillProficiencySet", Skill.class);
+        assertThat(skillList).containsExactlyInAnyOrderElementsOf(testSkillSet);
     }
 
     @Test
@@ -315,7 +316,7 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeView updatedEmployee = new EmployeeView(TENANT_ID, "updatedEmployee", contract, testSkillSet);
         updatedEmployee.setId(employee.getId());
 
-        RestAssured.given()
+        List<Skill> skillList = RestAssured.given()
                 .body(updatedEmployee)
                 .post("/rest/tenant/{tenantId}/employee/update", TENANT_ID)
                 .then()
@@ -323,8 +324,9 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
                 .body("name", equalTo("updatedEmployee"))
-                .body("contract", equalTo(contract))
-                .body("skillProficiencySet", Matchers.hasItems(testSkillSet));
+                .body("contract.id", equalTo(contract.getId().intValue()))
+                .extract().jsonPath().getList("skillProficiencySet", Skill.class);
+        assertThat(skillList).containsExactlyInAnyOrderElementsOf(testSkillSet);
     }
 
     @Test
@@ -433,7 +435,7 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
-                .body("employeeId", equalTo(employee.getId()))
+                .body("employeeId", equalTo(employee.getId().intValue()))
                 .body("startDateTime", equalTo("1999-12-31T23:59:00"))
                 .body("endDateTime", equalTo("2000-01-01T00:00:00"))
                 .body("state", equalTo("UNAVAILABLE"));
@@ -562,7 +564,7 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
-                .body("employeeId", equalTo(employee.getId()))
+                .body("employeeId", equalTo(employee.getId().intValue()))
                 .body("startDateTime", equalTo("1999-12-31T23:59:00"))
                 .body("endDateTime", equalTo("2000-01-01T00:00:00"))
                 .body("state", equalTo("UNAVAILABLE"));
@@ -624,7 +626,7 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
-                .body("employeeId", equalTo(employee.getId()))
+                .body("employeeId", equalTo(employee.getId().intValue()))
                 .body("startDateTime", equalTo("1999-12-31T23:59:00"))
                 .body("endDateTime", equalTo("2000-01-01T00:00:00"))
                 .body("state", equalTo("DESIRED"));

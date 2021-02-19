@@ -21,28 +21,72 @@ import java.time.DayOfWeek;
 import javax.validation.constraints.NotNull;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import org.optaplanner.persistence.jackson.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreJacksonDeserializer;
+import org.optaplanner.persistence.jackson.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreJacksonSerializer;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class RosterConstraintConfigurationView extends AbstractPersistable {
 
     @NotNull
     private DayOfWeek weekStartDay = DayOfWeek.MONDAY;
 
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore requiredSkill = HardMediumSoftLongScore.ofHard(100);
+
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore unavailableTimeSlot = HardMediumSoftLongScore.ofHard(50);
+
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore noOverlappingShifts = HardMediumSoftLongScore.ofHard(20);
+
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore noMoreThan2ConsecutiveShifts = HardMediumSoftLongScore.ofHard(10);
+
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore breakBetweenNonConsecutiveShiftsAtLeast10Hours = HardMediumSoftLongScore.ofHard(1);
+
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore contractMaximumDailyMinutes = HardMediumSoftLongScore.ofHard(1);
+
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore contractMaximumWeeklyMinutes = HardMediumSoftLongScore.ofHard(1);
+
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore contractMaximumMonthlyMinutes = HardMediumSoftLongScore.ofHard(1);
+
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore contractMaximumYearlyMinutes = HardMediumSoftLongScore.ofHard(1);
 
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore assignEveryShift = HardMediumSoftLongScore.ofMedium(1);
 
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore notOriginalEmployee = HardMediumSoftLongScore.ofSoft(100_000_000_000L);
+
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore undesiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
+
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore desiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
+
+    @JsonSerialize(using = HardMediumSoftLongScoreJacksonSerializer.class)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ofSoft(1);
 
     @SuppressWarnings("unused")

@@ -213,7 +213,7 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
                 .then()
                 .contentType(ContentType.JSON)
-                .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
                 .body("name", equalTo("updatedContract"))
                 .body("maximumMinutesPerDay", equalTo(maximumMinutesPerDay))
@@ -229,13 +229,14 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         String exceptionClass = "java.lang.IllegalStateException";
 
         ContractView contractView = new ContractView(TENANT_ID, "contract");
-        contractService.createContract(TENANT_ID, contractView);
+        Contract contract = contractService.createContract(TENANT_ID, contractView);
 
         ContractView updatedContractView = new ContractView(TENANT_ID, "updatedContract");
+        updatedContractView.setId(contract.getId());
 
         RestAssured.given()
                 .body(updatedContractView)
-                .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
+                .post("/rest/tenant/{tenantId}/contract/update", 0)
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
@@ -263,7 +264,7 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
 
     @Test
     public void updateChangeTenantIdContractTest() {
-        String exceptionMessage = "Contract entity with tenantId (" + TENANT_ID + ") cannot change tenants.";
+        String exceptionMessage = "The tenantId (0) does not match the persistable (contract)'s tenantId (" + TENANT_ID + ").";
         String exceptionClass = "java.lang.IllegalStateException";
 
         ContractView contractView = new ContractView(TENANT_ID, "contract");

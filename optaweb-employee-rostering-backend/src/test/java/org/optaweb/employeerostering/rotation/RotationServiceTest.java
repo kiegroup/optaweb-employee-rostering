@@ -90,7 +90,7 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
-                .body("spotId", equalTo(spot.getId()))
+                .body("spotId", equalTo(spot.getId().intValue()))
                 .body("startTime", equalTo("09:00:00"))
                 .body("endTime", equalTo("17:00:00"));
     }
@@ -169,7 +169,7 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
-                .body("spotId", equalTo(spot.getId()))
+                .body("spotId", equalTo(spot.getId().intValue()))
                 .body("startTime", equalTo("09:00:00"))
                 .body("endTime", equalTo("17:00:00"));
     }
@@ -227,7 +227,7 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
-                .body("spotId", equalTo(spotB.getId()))
+                .body("spotId", equalTo(spotB.getId().intValue()))
                 .body("startTime", equalTo("09:00:00"))
                 .body("endTime", equalTo("17:00:00"));
     }

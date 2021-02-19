@@ -108,8 +108,8 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("rotationEmployeeId", equalTo(persistedShift.getRotationEmployeeId()))
-                .body("spotId", equalTo(persistedShift.getSpotId()))
+                .body("rotationEmployeeId", equalTo(persistedShift.getRotationEmployeeId().intValue()))
+                .body("spotId", equalTo(persistedShift.getSpotId().intValue()))
                 .body("startDateTime", equalTo("2000-01-01T00:00:00"))
                 .body("endDateTime", equalTo("2000-01-01T08:00:00"));
     }
@@ -172,8 +172,8 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("rotationEmployeeId", equalTo(shiftView.getRotationEmployeeId()))
-                .body("spotId", equalTo(shiftView.getSpotId()))
+                .body("rotationEmployeeId", equalTo(shiftView.getRotationEmployeeId().intValue()))
+                .body("spotId", equalTo(shiftView.getSpotId().intValue()))
                 .body("startDateTime", equalTo("2000-01-01T00:00:00"))
                 .body("endDateTime", equalTo("2000-01-01T08:00:00"));
     }
@@ -224,8 +224,8 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("rotationEmployeeId", equalTo(updatedShift.getRotationEmployeeId()))
-                .body("spotId", equalTo(updatedShift.getSpotId()))
+                .body("rotationEmployeeId", equalTo(updatedShift.getRotationEmployeeId().intValue()))
+                .body("spotId", equalTo(updatedShift.getSpotId().intValue()))
                 .body("startDateTime", equalTo("1999-12-31T23:59:59"))
                 .body("endDateTime", equalTo("2000-01-01T09:59:59"));
     }
