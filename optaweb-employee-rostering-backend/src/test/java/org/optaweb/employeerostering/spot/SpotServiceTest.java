@@ -21,12 +21,12 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -86,13 +86,14 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         Spot spot = spotService.createSpot(TENANT_ID, spotView);
 
-        RestAssured.get("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, spot.getId())
+        List<Skill> skillList = RestAssured.get("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, spot.getId())
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
                 .body("name", equalTo("spot"))
-                .body("requiredSkillSet", Matchers.containsInAnyOrder(skillA, skillB));
+                .extract().jsonPath().getList("requiredSkillSet", Skill.class);
+        assertThat(skillList).containsExactlyInAnyOrderElementsOf(testSkillSet);
     }
 
     @Test
@@ -159,7 +160,7 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
                 .extract().as(Boolean.class);
-        assertThat(result).isTrue();
+        assertThat(result).isFalse();
     }
 
     @Test
@@ -197,7 +198,7 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
 
         SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
 
-        RestAssured.given()
+        List<Skill> skillList = RestAssured.given()
                 .body(spotView)
                 .post("/rest/tenant/{tenantId}/spot/add", TENANT_ID)
                 .then()
@@ -205,7 +206,8 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
                 .body("name", equalTo("spot"))
-                .body("requiredSkillSet", Matchers.containsInAnyOrder(skillA, skillB));
+                .extract().jsonPath().getList("requiredSkillSet", Skill.class);
+        assertThat(skillList).containsExactlyInAnyOrderElementsOf(testSkillSet);
     }
 
     @Test
@@ -248,7 +250,7 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         SpotView updatedSpot = new SpotView(TENANT_ID, "updatedSpot", testSkillSet);
         updatedSpot.setId(spot.getId());
 
-        RestAssured.given()
+        List<Skill> skillList = RestAssured.given()
                 .body(updatedSpot)
                 .post("/rest/tenant/{tenantId}/spot/update", TENANT_ID)
                 .then()
@@ -256,7 +258,8 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("tenantId", equalTo(TENANT_ID))
                 .body("name", equalTo("updatedSpot"))
-                .body("requiredSkillSet", Matchers.containsInAnyOrder(skillA, skillB));
+                .extract().jsonPath().getList("requiredSkillSet", Skill.class);
+        assertThat(skillList).containsExactlyInAnyOrderElementsOf(testSkillSet);
     }
 
     @Test

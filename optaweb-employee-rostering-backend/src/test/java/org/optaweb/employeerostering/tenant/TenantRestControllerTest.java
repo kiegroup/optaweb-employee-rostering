@@ -44,6 +44,7 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
     private final String tenantPathURI = "/rest/tenant/";
 
     private Response getTenant(Integer id) {
+        System.out.println(tenantPathURI + id);
         return RestAssured.get(tenantPathURI + id);
     }
 
@@ -107,7 +108,7 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
         Response updateResponse =
                 updateRosterConstraintParametrization(TENANT_ID, new RosterConstraintConfigurationView(
                         TENANT_ID, DayOfWeek.TUESDAY));
-        assertThat(updateResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(updateResponse.statusCode()).isEqualTo(Status.OK.getStatusCode());
         RosterConstraintConfigurationView updateBody = updateResponse.as(RosterConstraintConfigurationView.class);
         assertThat(updateBody.getWeekStartDay()).isEqualTo(DayOfWeek.TUESDAY);
         assertThat(updateBody.getRequiredSkill()).isEqualTo(HardMediumSoftLongScore.ofHard(100));

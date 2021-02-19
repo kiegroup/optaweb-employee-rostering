@@ -216,12 +216,12 @@ public class EmployeeService extends AbstractRestService {
                 .orElseThrow(() -> new EntityNotFoundException("No EmployeeAvailability entity found with ID (" + id +
                         ")."));
 
-        validateBean(tenantId, employeeAvailability);
-
         RosterState rosterState = rosterStateRepository
-                .findByTenantId(tenantId)
+                .findByTenantId(employeeAvailability.getTenantId())
                 .orElseThrow(() -> new EntityNotFoundException("No RosterState entity found with tenantId (" +
                         tenantId + ")."));
+        validateBean(tenantId, employeeAvailability.inTimeZone(rosterState.getTimeZone()));
+
         return new EmployeeAvailabilityView(rosterState.getTimeZone(), employeeAvailability);
     }
 
@@ -281,7 +281,12 @@ public class EmployeeService extends AbstractRestService {
             return false;
         }
 
-        validateBean(tenantId, employeeAvailabilityOptional.get());
+        RosterState rosterState = rosterStateRepository
+                .findByTenantId(employeeAvailabilityOptional.get().getTenantId())
+                .orElseThrow(() -> new EntityNotFoundException("No RosterState entity found with tenantId (" +
+                        tenantId + ")."));
+
+        validateBean(tenantId, employeeAvailabilityOptional.get().inTimeZone(rosterState.getTimeZone()));
         employeeAvailabilityRepository.deleteById(id);
         return true;
     }

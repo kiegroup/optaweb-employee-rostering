@@ -110,7 +110,7 @@ public class TenantService extends AbstractRestService {
     @Transactional
     public Tenant getTenant(Integer id) {
         return tenantRepository
-                .findByIdOptional(id.longValue())
+                .findByIdOptional(id)
                 .orElseThrow(() -> new EntityNotFoundException("No Tenant entity found with ID (" + id + ")."));
     }
 

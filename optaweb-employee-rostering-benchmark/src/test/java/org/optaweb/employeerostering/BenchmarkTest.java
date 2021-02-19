@@ -27,14 +27,20 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.quarkus.test.junit.QuarkusTest;
+import javax.inject.Inject;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 public class BenchmarkTest {
 
     private static Set<File> oldBenchmarkFilesInDirectory = Collections.emptySet();
+
+    @Inject
+    OptaWebEmployeeRosteringBenchmarkApplication app;
 
     @BeforeAll
     public static void setup() {
@@ -46,6 +52,7 @@ public class BenchmarkTest {
 
     @Test
     public void isBenchmarkReportGeneratedTest() throws FileNotFoundException {
+        app.run();
         File benchmarkReport = Arrays.stream(Paths.get("local/benchmarkReport").toFile().listFiles())
                 .filter(f -> !oldBenchmarkFilesInDirectory.contains(f))
                 .findAny()

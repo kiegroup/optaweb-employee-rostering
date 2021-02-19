@@ -113,7 +113,7 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
 
         response = getTimeBucket(TENANT_ID, putResponse.as(TimeBucketView.class).getId());
         assertThat(putResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(putResponse.getBody()).isEqualTo(response.getBody());
+        assertThat(putResponse.getBody().as(TimeBucketView.class)).isEqualTo(response.getBody().as(TimeBucketView.class));
 
         deleteTimeBucket(TENANT_ID, putResponse.as(TimeBucketView.class).getId());
 

@@ -103,7 +103,7 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
             EmployeeAvailabilityView employeeAvailabilityView) {
         return RestAssured.given()
                 .body(employeeAvailabilityView)
-                .post(employeeAvailabilityPathURI + "update", tenantId);
+                .put(employeeAvailabilityPathURI + "update", tenantId);
     }
 
     @BeforeEach
