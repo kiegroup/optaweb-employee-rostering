@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.spot;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.util.Collections;
@@ -45,10 +46,10 @@ import io.restassured.http.ContentType;
 public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
     @Inject
-    private SpotService spotService;
+    SpotService spotService;
 
     @Inject
-    private SkillService skillService;
+    SkillService skillService;
 
     private Skill createSkill(Integer tenantId, String name) {
         SkillView skillView = new SkillView(tenantId, name);
@@ -143,20 +144,22 @@ public class SpotServiceTest extends AbstractEntityRequireTenantRestServiceTest 
         SpotView spotView = new SpotView(TENANT_ID, "spot", testSkillSet);
         Spot spot = spotService.createSpot(TENANT_ID, spotView);
 
-        RestAssured.delete("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, spot.getId())
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, spot.getId())
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("true"));
+                .extract().as(Boolean.class);
+        assertThat(result).isTrue();
     }
 
     @Test
     public void deleteNonExistentSpotTest() {
-        RestAssured.delete("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, 0)
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/spot/{id}", TENANT_ID, 0)
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("false"));
+                .extract().as(Boolean.class);
+        assertThat(result).isTrue();
     }
 
     @Test

@@ -387,9 +387,12 @@ public class RosterGenerator {
     @PersistenceContext
     EntityManager entityManager;
 
+    @Inject
+    SystemPropertiesRetriever systemPropertiesRetriever;
+
     @SuppressWarnings("unused")
     public RosterGenerator() {
-        this(null);
+        this(null, new SystemPropertiesRetriever());
     }
 
     /**
@@ -398,8 +401,10 @@ public class RosterGenerator {
      * @param entityManager never null
      */
     @Inject
-    public RosterGenerator(EntityManager entityManager) {
+    public RosterGenerator(EntityManager entityManager,
+            SystemPropertiesRetriever systemPropertiesRetriever) {
         this.entityManager = entityManager;
+        this.systemPropertiesRetriever = systemPropertiesRetriever;
         random = new Random(37);
     }
 
@@ -423,8 +428,8 @@ public class RosterGenerator {
 
     @Transactional
     public void setUpGeneratedData() {
-        ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
-        SystemPropertiesRetriever.InitialData initialData = SystemPropertiesRetriever.determineInitialData();
+        ZoneId zoneId = systemPropertiesRetriever.determineZoneId();
+        SystemPropertiesRetriever.InitialData initialData = systemPropertiesRetriever.determineInitialData();
 
         random = new Random(37);
 
@@ -487,7 +492,7 @@ public class RosterGenerator {
 
     @Transactional
     public Roster generateRoster(int spotListSize, int lengthInDays) {
-        ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
+        ZoneId zoneId = systemPropertiesRetriever.determineZoneId();
         return generateRoster(spotListSize, lengthInDays, hospitalGeneratorType, zoneId);
     }
 

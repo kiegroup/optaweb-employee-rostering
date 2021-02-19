@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.rotation;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.time.LocalTime;
@@ -45,10 +46,10 @@ import io.restassured.http.ContentType;
 public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
     @Inject
-    private RotationService rotationService;
+    RotationService rotationService;
 
     @Inject
-    private SpotService spotService;
+    SpotService spotService;
 
     private Spot createSpot(Integer tenantId, String name, Set<Skill> requiredSkillSet) {
         SpotView spotView = new SpotView(tenantId, name, requiredSkillSet);
@@ -118,11 +119,12 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
                 Collections.emptyList()));
         TimeBucketView persistedTimeBucket = rotationService.createTimeBucket(TENANT_ID, timeBucketView);
 
-        RestAssured.delete("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, persistedTimeBucket.getId())
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, persistedTimeBucket.getId())
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("true"));
+                .extract().as(Boolean.class);
+        assertThat(result).isTrue();
     }
 
     @Test

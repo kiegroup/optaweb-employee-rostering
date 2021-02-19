@@ -31,6 +31,7 @@ import io.restassured.http.ContentType;
 public class AbstractEntityRequireTenantRestServiceTest {
 
     private final String tenantPathURI = "/rest/tenant/";
+    private final String adminPathURI = "/rest/admin/";
 
     protected Integer TENANT_ID;
 
@@ -75,7 +76,7 @@ public class AbstractEntityRequireTenantRestServiceTest {
 
     protected void deleteTestTenant() {
         RestAssured.given()
-                .basePath(tenantPathURI + "remove/" + TENANT_ID)
+                .basePath(adminPathURI + "reset")
                 .post();
         TENANT_ID = null;
     }

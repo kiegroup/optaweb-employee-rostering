@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.shift;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.time.LocalDateTime;
@@ -48,16 +49,16 @@ import io.restassured.http.ContentType;
 public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
     @Inject
-    private ShiftService shiftService;
+    ShiftService shiftService;
 
     @Inject
-    private SpotService spotService;
+    SpotService spotService;
 
     @Inject
-    private ContractService contractService;
+    ContractService contractService;
 
     @Inject
-    private EmployeeService employeeService;
+    EmployeeService employeeService;
 
     private Spot createSpot(Integer tenantId, String name) {
         SpotView spotView = new SpotView(tenantId, name, Collections.emptySet());
@@ -137,20 +138,22 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         ShiftView shiftView = new ShiftView(TENANT_ID, spot, startDateTime, endDateTime, rotationEmployee);
         ShiftView persistedShift = shiftService.createShift(TENANT_ID, shiftView);
 
-        RestAssured.delete("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, persistedShift.getId())
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, persistedShift.getId())
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("true"));
+                .extract().as(Boolean.class);
+        assertThat(result).isTrue();
     }
 
     @Test
     public void deleteNonExistentShiftTest() {
-        RestAssured.delete("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, 0)
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, 0)
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("false"));
+                .extract().as(Boolean.class);
+        assertThat(result).isFalse();
     }
 
     @Test

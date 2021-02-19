@@ -21,21 +21,21 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
+import io.quarkus.runtime.Quarkus;
+import io.quarkus.runtime.QuarkusApplication;
+import io.quarkus.runtime.annotations.QuarkusMain;
 import org.optaplanner.benchmark.api.PlannerBenchmark;
 import org.optaplanner.benchmark.api.PlannerBenchmarkFactory;
 import org.optaweb.employeerostering.domain.roster.Roster;
+import org.optaweb.employeerostering.service.admin.SystemPropertiesRetriever;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootApplication
-public class OptaWebEmployeeRosteringBenchmarkApplication implements ApplicationRunner {
+@QuarkusMain
+public class OptaWebEmployeeRosteringBenchmarkApplication implements QuarkusApplication {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -43,22 +43,22 @@ public class OptaWebEmployeeRosteringBenchmarkApplication implements Application
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public static void main(String[] args) {
-        SpringApplication.run(OptaWebEmployeeRosteringBenchmarkApplication.class, args);
+        Quarkus.run(args);
     }
 
-    @Override
     @Transactional
-    public void run(ApplicationArguments args) {
+    public int run(String ...args) {
         List<Roster> rosterList = generateRosters();
 
         PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource(
                 "employeeRosteringBenchmarkConfig.xml", getClass().getClassLoader());
         PlannerBenchmark plannerBenchmark = benchmarkFactory.buildPlannerBenchmark(rosterList);
         plannerBenchmark.benchmark();
+        return 0;
     }
 
     private List<Roster> generateRosters() {
-        RosterGenerator rosterGenerator = new RosterGenerator(entityManager);
+        RosterGenerator rosterGenerator = new RosterGenerator(entityManager, new SystemPropertiesRetriever());
 
         List<Roster> rosterList = new ArrayList<>();
         rosterList.add(rosterGenerator.generateRoster(10, 7));

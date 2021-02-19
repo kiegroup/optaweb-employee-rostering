@@ -17,9 +17,11 @@
 package org.optaweb.employeerostering.domain.violation;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import org.optaplanner.persistence.jackson.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreJacksonDeserializer;
 import org.optaweb.employeerostering.domain.employee.Employee;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 public class ContractMinutesViolation implements ConstraintMatchView {
 
@@ -27,6 +29,9 @@ public class ContractMinutesViolation implements ConstraintMatchView {
     private Type type;
     private Long minutesWorked;
 
+    // TODO: Find a way to pass the OptaplannerModule to RestAssured
+    //       (adding it via config doesn't work)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore score;
 
     public ContractMinutesViolation() {
