@@ -356,23 +356,23 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         LocalDate endDate = LocalDate.of(2000, 1, 2);
         Response shiftRosterViewResponse = getShiftRosterViewFor(startDate.toString(),
                 endDate.toString(),
-                Collections.emptyList());
+                spotList);
         ShiftRosterView shiftRosterView = shiftRosterViewResponse.as(ShiftRosterView.class);
         assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(shiftRosterView).isNotNull();
         assertThat(shiftRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList);
-        assertThat(shiftRosterView.getSpotList()).isEmpty();
+        assertThat(shiftRosterView.getSpotList()).isEqualTo(spotList);
         assertThat(shiftRosterView.getStartDate()).isEqualTo(startDate);
         assertThat(shiftRosterView.getEndDate()).isEqualTo(endDate);
         assertThat(shiftRosterView.getTenantId()).isEqualTo(TENANT_ID);
 
         shiftRosterViewResponse = getShiftRosterViewFor(startDate.toString(), endDate.toString(),
-                Collections.emptyList());
+                spotList);
         shiftRosterView = shiftRosterViewResponse.as(ShiftRosterView.class);
         assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
         assertThat(shiftRosterView).isNotNull();
         assertThat(shiftRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList);
-        assertThat(shiftRosterView.getSpotList()).isEmpty();
+        assertThat(shiftRosterView.getSpotList()).isEqualTo(spotList);
         assertThat(shiftRosterView.getStartDate()).isEqualTo(startDate);
         assertThat(shiftRosterView.getEndDate()).isEqualTo(endDate);
         assertThat(shiftRosterView.getTenantId()).isEqualTo(TENANT_ID);

@@ -157,8 +157,9 @@ public class EmployeeService extends AbstractRestService {
             return Stream.of(employee);
         }).forEach(employee -> {
             validateEmployee(tenantId, convertFromEmployeeView(tenantId, employee));
-            Employee oldEmployee = employeeRepository.findEmployeeByName(tenantId, employee.getName());
-            if (oldEmployee != null) {
+            Optional<Employee> maybeOldEmployee = employeeRepository.findEmployeeByName(tenantId, employee.getName());
+            if (maybeOldEmployee.isPresent()) {
+                Employee oldEmployee = maybeOldEmployee.get();
                 employee.setContract(oldEmployee.getContract());
                 employee.setId(oldEmployee.getId());
                 employee.setVersion(oldEmployee.getVersion());

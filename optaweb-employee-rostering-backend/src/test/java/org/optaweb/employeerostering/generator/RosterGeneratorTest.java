@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response.Status;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.rotation.view.TimeBucketView;
@@ -38,10 +39,10 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
 @QuarkusTest
-public class RosterGeneratorTest {
+public class RosterGeneratorTest extends AbstractEntityRequireTenantRestServiceTest {
 
     @Inject
-    private RosterGenerator rosterGenerator;
+    RosterGenerator rosterGenerator;
 
     private Integer tenantId;
 
@@ -78,7 +79,7 @@ public class RosterGeneratorTest {
     }
 
     private Response getTenants() {
-        return RestAssured.get(tenantPathURI, tenantId);
+        return RestAssured.get(tenantPathURI);
     }
 
     @BeforeEach
@@ -88,7 +89,7 @@ public class RosterGeneratorTest {
 
     @AfterEach
     public void cleanup() {
-        RestAssured.post(tenantPathURI + "remove/" + tenantId);
+        deleteTestTenant();
     }
 
     @Test

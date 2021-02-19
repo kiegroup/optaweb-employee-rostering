@@ -27,11 +27,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = OptaWebEmployeeRosteringBenchmarkApplication.class)
+@QuarkusTest
 public class BenchmarkTest {
 
     private static Set<File> oldBenchmarkFilesInDirectory = Collections.emptySet();

@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.skill;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import javax.inject.Inject;
@@ -37,7 +38,7 @@ import io.restassured.http.ContentType;
 public class SkillServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
     @Inject
-    private SkillService skillService;
+    SkillService skillService;
 
     @BeforeEach
     public void setup() {
@@ -105,20 +106,22 @@ public class SkillServiceTest extends AbstractEntityRequireTenantRestServiceTest
         SkillView skillView = new SkillView(TENANT_ID, "skill");
         Skill skill = skillService.createSkill(TENANT_ID, skillView);
 
-        RestAssured.delete("/rest/tenant/{tenantId}/skill/{id}", TENANT_ID, skill.getId())
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/skill/{id}", TENANT_ID, skill.getId())
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("true"));
+                .extract().as(Boolean.class);
+        assertThat(result).isTrue();
     }
 
     @Test
     public void deleteNonExistentSkillTest() {
-        RestAssured.delete("/rest/tenant/{tenantId}/skill/{id}", TENANT_ID, 0)
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/skill/{id}", TENANT_ID, 0)
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("false"));
+                .extract().as(Boolean.class);
+        assertThat(result).isFalse();
     }
 
     @Test

@@ -43,6 +43,8 @@ import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @PlanningEntity(pinningFilter = PinningShiftFilter.class)
 public class Shift extends AbstractPersistable {
@@ -121,6 +123,7 @@ public class Shift extends AbstractPersistable {
 
     @AssertTrue(message = "Shift's end date time is not at least 30 minutes" +
             " after shift's start date time")
+    @JsonIgnore
     public boolean isValid() {
         return startDateTime != null && endDateTime != null &&
                 (Duration.between(startDateTime, endDateTime).getSeconds() / 60) >= 30;
@@ -145,6 +148,7 @@ public class Shift extends AbstractPersistable {
         return newLengthInMinutes;
     }
 
+    @JsonIgnore
     public boolean isMoved() {
         return originalEmployee != null && originalEmployee != employee;
     }

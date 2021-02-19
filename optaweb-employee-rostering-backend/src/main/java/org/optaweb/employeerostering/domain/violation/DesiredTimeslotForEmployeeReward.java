@@ -17,14 +17,20 @@
 package org.optaweb.employeerostering.domain.violation;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import org.optaplanner.persistence.jackson.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreJacksonDeserializer;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.shift.Shift;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 public class DesiredTimeslotForEmployeeReward implements ConstraintMatchView {
 
     private EmployeeAvailability employeeAvailability;
     private Shift shift;
 
+    // TODO: Find a way to pass the OptaplannerModule to RestAssured
+    //       (adding it via config doesn't work)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore score;
 
     public DesiredTimeslotForEmployeeReward() {

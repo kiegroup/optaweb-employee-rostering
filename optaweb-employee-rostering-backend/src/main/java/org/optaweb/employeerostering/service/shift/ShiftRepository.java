@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.service.shift;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -58,6 +59,10 @@ public class ShiftRepository implements PanacheRepository<Shift> {
     public List<Shift> filterWithSpots(Integer tenantId, Set<Spot> spotSet,
             OffsetDateTime startDateTime,
             OffsetDateTime endDateTime) {
+        // Panache doesn't like empty parameters
+        if (spotSet.isEmpty()) {
+            return Collections.emptyList();
+        }
         return find("tenantId = ?1 and spot in ?2 and endDateTime >= ?3 and startDateTime < ?4",
                 Sort.ascending("startDateTime", "spot.name"),
                 tenantId, spotSet, startDateTime, endDateTime).list();
@@ -69,6 +74,10 @@ public class ShiftRepository implements PanacheRepository<Shift> {
             Set<Employee> employeeSet,
             OffsetDateTime startDateTime,
             OffsetDateTime endDateTime) {
+        // Panache doesn't like empty parameters
+        if (employeeSet.isEmpty()) {
+            return Collections.emptyList();
+        }
         return find("tenantId = ?1 and employee in ?2 and endDateTime >= ?3 and startDateTime < ?4",
                 Sort.ascending("startDateTime", "spot.name"),
                 tenantId, employeeSet, startDateTime, endDateTime).list();

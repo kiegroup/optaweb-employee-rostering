@@ -38,7 +38,7 @@ import io.restassured.http.ContentType;
 public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
     @Inject
-    private ContractService contractService;
+    ContractService contractService;
 
     @BeforeEach
     public void setup() {
@@ -116,20 +116,22 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
-        RestAssured.delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("true"));
+                .extract().as(Boolean.class);
+        assertThat(result).isTrue();
     }
 
     @Test
     public void deleteNonExistentContractTest() {
-        RestAssured.delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, 0)
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, 0)
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("false"));
+                .extract().as(Boolean.class);
+        assertThat(result).isFalse();
     }
 
     @Test

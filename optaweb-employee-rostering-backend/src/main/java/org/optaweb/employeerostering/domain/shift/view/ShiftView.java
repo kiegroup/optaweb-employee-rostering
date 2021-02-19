@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import org.optaplanner.persistence.jackson.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreJacksonDeserializer;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.common.DateTimeUtils;
 import org.optaweb.employeerostering.domain.employee.Employee;
@@ -42,6 +43,7 @@ import org.optaweb.employeerostering.domain.violation.UnassignedShiftPenalty;
 import org.optaweb.employeerostering.domain.violation.UnavailableEmployeeViolation;
 import org.optaweb.employeerostering.domain.violation.UndesiredTimeslotForEmployeePenalty;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
@@ -70,6 +72,9 @@ public class ShiftView extends AbstractPersistable {
 
     private List<PublishedShiftReassignedPenalty> publishedShiftReassignedPenaltyList;
 
+    // TODO: Find a way to pass the OptaplannerModule to RestAssured
+    //       (adding it via config doesn't work)
+    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore indictmentScore;
 
     private boolean pinnedByUser = false;

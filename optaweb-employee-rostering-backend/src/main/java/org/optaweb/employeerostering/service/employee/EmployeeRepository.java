@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.service.employee;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -32,10 +33,10 @@ public class EmployeeRepository implements PanacheRepository<Employee> {
         return find("tenantId", Sort.ascending("name"), tenantId).list();
     }
 
-    public Employee findEmployeeByName(Integer tenantId, String name) {
+    public Optional<Employee> findEmployeeByName(Integer tenantId, String name) {
         return find("tenantId = ?1 and name = ?2",
                 Sort.ascending("name"),
-                tenantId, name).singleResult();
+                tenantId, name).singleResultOptional();
     }
 
     public void deleteForTenant(Integer tenantId) {

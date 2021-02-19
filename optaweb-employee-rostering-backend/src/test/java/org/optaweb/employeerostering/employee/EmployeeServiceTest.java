@@ -60,13 +60,13 @@ import io.restassured.http.ContentType;
 public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
     @Inject
-    private EmployeeService employeeService;
+    EmployeeService employeeService;
 
     @Inject
-    private SkillService skillService;
+    SkillService skillService;
 
     @Inject
-    private ContractService contractService;
+    ContractService contractService;
 
     private Skill createSkill(Integer tenantId, String name) {
         SkillView skillView = new SkillView(tenantId, name);
@@ -177,20 +177,22 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
-        RestAssured.delete("/rest/tenant/{tenantId}/employee/{id}", TENANT_ID, employee.getId())
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/employee/{id}", TENANT_ID, employee.getId())
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("true"));
+                .extract().as(Boolean.class);
+        assertThat(result).isTrue();
     }
 
     @Test
     public void deleteNonExistentEmployeeTest() {
-        RestAssured.delete("/rest/tenant/{tenantId}/employee/{id}", TENANT_ID, 0)
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/employee/{id}", TENANT_ID, 0)
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("false"));
+                .extract().as(Boolean.class);
+        assertThat(result).isFalse();
     }
 
     @Test
@@ -492,22 +494,24 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         EmployeeAvailabilityView persistedEmployeeAvailabilityView =
                 employeeService.createEmployeeAvailability(TENANT_ID, employeeAvailabilityView);
 
-        RestAssured.delete("/rest/tenant/{tenantId}/employee/availability/{id}", TENANT_ID,
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/employee/availability/{id}", TENANT_ID,
                 persistedEmployeeAvailabilityView.getId())
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("true"));
+                .extract().as(Boolean.class);
+        assertThat(result).isTrue();
     }
 
     @Test
     public void deleteNonExistentEmployeeAvailabilityTest() {
-        RestAssured.delete("/rest/tenant/{tenantId}/employee/availability/{id}", TENANT_ID,
+        boolean result = RestAssured.delete("/rest/tenant/{tenantId}/employee/availability/{id}", TENANT_ID,
                 0)
                 .then()
                 .contentType(ContentType.JSON)
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", equalTo("false"));
+                .extract().as(Boolean.class);
+        assertThat(result).isFalse();
     }
 
     @Test

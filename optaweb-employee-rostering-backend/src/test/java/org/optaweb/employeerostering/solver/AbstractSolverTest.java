@@ -69,6 +69,7 @@ import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
+import org.optaweb.employeerostering.service.admin.SystemPropertiesRetriever;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
 
 import io.restassured.RestAssured;
@@ -632,7 +633,7 @@ public abstract class AbstractSolverTest {
             return invocation;
         }).when(entityManager).persist(any(AbstractPersistable.class));
 
-        RosterGenerator rosterGenerator = new RosterGenerator(entityManager);
+        RosterGenerator rosterGenerator = new RosterGenerator(entityManager, new SystemPropertiesRetriever());
         rosterGenerator.setUpGeneratedData();
         return rosterGenerator;
     }

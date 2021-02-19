@@ -29,7 +29,7 @@ import io.quarkus.test.junit.QuarkusTest;
 public class DroolsSolverTest extends AbstractSolverTest {
 
     @Inject
-    private SolverConfig solverConfig;
+    SolverConfig solverConfig;
 
     @Override
     public SolverFactory<Roster> getSolverFactory() {
