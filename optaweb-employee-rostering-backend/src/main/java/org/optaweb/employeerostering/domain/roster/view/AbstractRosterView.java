@@ -22,13 +22,10 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
-import org.optaplanner.persistence.jackson.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreJacksonDeserializer;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.violation.IndictmentSummary;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 public class AbstractRosterView {
 
@@ -47,9 +44,6 @@ public class AbstractRosterView {
 
     private IndictmentSummary indictmentSummary;
 
-    // TODO: Find a way to pass the OptaplannerModule to RestAssured
-    //       (adding it via config doesn't work)
-    @JsonDeserialize(using = HardMediumSoftLongScoreJacksonDeserializer.class)
     private HardMediumSoftLongScore score = null;
 
     @Override

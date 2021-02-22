@@ -19,6 +19,7 @@ package org.optaweb.employeerostering.service.contract;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.ws.rs.DELETE;
@@ -37,9 +38,9 @@ public class ContractController {
 
     private final ContractService contractService;
 
+    @Inject
     public ContractController(ContractService contractService) {
         this.contractService = contractService;
-        assert contractService != null;// contractService must not be null.
     }
 
     // @ApiOperation("Get a list of all contracts")

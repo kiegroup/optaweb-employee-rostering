@@ -41,7 +41,6 @@ public class ShiftController {
     @Inject
     public ShiftController(ShiftService shiftService) {
         this.shiftService = shiftService;
-        // Assert.notNull(shiftService, "shiftService must not be null.");
     }
 
     // @ApiOperation("Get a list of all shifts")

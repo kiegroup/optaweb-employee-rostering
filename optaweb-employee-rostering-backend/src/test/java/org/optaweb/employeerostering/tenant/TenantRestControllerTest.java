@@ -44,7 +44,6 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
     private final String tenantPathURI = "/rest/tenant/";
 
     private Response getTenant(Integer id) {
-        System.out.println(tenantPathURI + id);
         return RestAssured.get(tenantPathURI + id);
     }
 

@@ -19,16 +19,10 @@ package org.optaweb.employeerostering.domain.violation;
 import java.util.Map;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
-import org.optaplanner.persistence.jackson.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreJacksonDeserializer;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 public class IndictmentSummary {
     private Map<String, Integer> constraintToCountMap;
 
-    // TODO: Find a way to pass the OptaplannerModule to RestAssured
-    //       (adding it via config doesn't work)
-    @JsonDeserialize(contentUsing = HardMediumSoftLongScoreJacksonDeserializer.class)
     private Map<String, HardMediumSoftLongScore> constraintToScoreImpactMap;
 
     public Map<String, Integer> getConstraintToCountMap() {

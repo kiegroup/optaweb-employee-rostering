@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.RollbackException;
 import javax.ws.rs.core.Response;
@@ -30,13 +29,12 @@ import org.optaweb.employeerostering.domain.exception.ConstraintViolatedExceptio
 import org.optaweb.employeerostering.domain.exception.ServerSideExceptionInfo;
 import org.optaweb.employeerostering.util.HierarchyTree;
 
-@ApplicationScoped
 public class ExceptionDataMapper {
 
-    private HierarchyTree<Class<? extends Throwable>, ExceptionData> exceptionHierarchyTree;
+    private final HierarchyTree<Class<? extends Throwable>, ExceptionData> exceptionHierarchyTree;
 
     public ExceptionDataMapper() {
-        exceptionHierarchyTree = new HierarchyTree<>((a, b) -> {
+        this.exceptionHierarchyTree = new HierarchyTree<>((a, b) -> {
             if (a.equals(b)) {
                 return HierarchyTree.HierarchyRelationship.IS_THE_SAME_AS;
             } else if (a.isAssignableFrom(b)) {

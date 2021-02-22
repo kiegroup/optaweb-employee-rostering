@@ -27,9 +27,6 @@ import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-
 public class EmployeeAvailabilityView extends AbstractPersistable {
 
     @NotNull
@@ -80,7 +77,6 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
         this.employeeId = employeeId;
     }
 
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
     public LocalDateTime getStartDateTime() {
         return startDateTime;
     }
@@ -89,7 +85,6 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
         this.startDateTime = startDateTime;
     }
 
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
     public LocalDateTime getEndDateTime() {
         return endDateTime;
     }
