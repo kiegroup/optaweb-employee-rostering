@@ -21,9 +21,14 @@ import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.info.Info;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+
 @Path("/rest/admin")
 @ApplicationScoped
-// @Api(tags = "Admin")
+@Tag(name="Admin")
 public class AdminController {
 
     private final AdminService adminService;
@@ -33,7 +38,7 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    // @ApiOperation("Reset the application")
+    @Operation(summary="Reset Application", description="Resets the application")
     @POST
     @Path("/reset")
     public void resetApplication() {

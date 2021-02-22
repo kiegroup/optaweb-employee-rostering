@@ -28,12 +28,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
 
 @Path("/rest/tenant/{tenantId}/skill")
 @ApplicationScoped
-// @Api(tags = "Skill")
+@Tag(name = "Skill")
 public class SkillController {
 
     private final SkillService skillService;
@@ -43,40 +45,40 @@ public class SkillController {
         this.skillService = skillService;
     }
 
-    // @ApiOperation("Get a list of all skills")
     @GET
     @Path("/")
+    @Operation(summary="List Skills", description="Get a list of all skills")
     public List<Skill> getSkillList(@PathParam("tenantId") @Min(0) Integer tenantId) {
         return skillService.getSkillList(tenantId);
     }
 
-    // @ApiOperation("Get a skill by id")
     @GET
     @Path("/{id}")
+    @Operation(summary="Get Skill", description="Gets a skill by id")
     public Skill getSkill(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return skillService.getSkill(tenantId, id);
     }
 
-    // @ApiOperation("Delete a skill")
     @DELETE
     @Path("/{id}")
+    @Operation(summary="Delete Skill", description="Deletes a skill by id")
     public Boolean deleteSkill(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return skillService.deleteSkill(tenantId, id);
     }
 
-    // @ApiOperation("Add a new skill")
     @POST
     @Path("/add")
+    @Operation(summary="Add Skill", description="Adds a new skill")
     public Skill createSkill(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid SkillView skillView) {
         return skillService.createSkill(tenantId, skillView);
     }
 
-    // @ApiOperation("Update a skill")
     @POST
     @Path("/update")
+    @Operation(summary="Update Skill", description="Updates a skill")
     public Skill updateSkill(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid SkillView skillView) {
         return skillService.updateSkill(tenantId, skillView);
