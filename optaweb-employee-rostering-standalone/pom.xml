@@ -25,6 +25,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-undertow</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.optaweb.employeerostering</groupId>
       <artifactId>optaweb-employee-rostering-backend</artifactId>
     </dependency>
@@ -58,14 +62,44 @@
                   <groupId>org.optaweb.employeerostering</groupId>
                   <artifactId>optaweb-employee-rostering-frontend</artifactId>
                   <type>zip</type>
-                  <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>org.optaweb.employeerostering</groupId>
-                  <artifactId>optaweb-employee-rostering-backend</artifactId>
-                  <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                  <outputDirectory>${project.build.outputDirectory}/META-INF/resources</outputDirectory>
                 </artifactItem>
               </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-maven-plugin</artifactId>
+        <version>${version.io.quarkus}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build</goal>
+              <goal>generate-code</goal>
+              <goal>generate-code-tests</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>package-quarkus-app</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/assembly-optaweb-employee-rostering-quarkus-app.xml</descriptor>
+              </descriptors>
             </configuration>
           </execution>
         </executions>
@@ -109,13 +143,13 @@
                 <configuration>
                   <name>Run application</name>
                   <healthcheckUrl>http://localhost:${application.port}</healthcheckUrl>
-                  <workingDir>${project.build.directory}</workingDir>
+                  <workingDir>${project.build.directory}/quarkus-app</workingDir>
                   <processLogFile>${project.build.directory}/${project.artifactId}.log</processLogFile>
                   <arguments>
                     <argument>java</argument>
-                    <argument>-Dserver.port=${application.port}</argument>
+                    <argument>-Dquarkus.http.port=${application.port}</argument>
                     <argument>-jar</argument>
-                    <argument>${project.artifactId}-${project.version}-exec.jar</argument>
+                    <argument>quarkus-run.jar</argument>
                   </arguments>
                 </configuration>
               </execution>
