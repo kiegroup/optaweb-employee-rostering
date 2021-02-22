@@ -16,21 +16,38 @@
 
 package org.optaweb.employeerostering.standalone;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import java.io.IOException;
 
-@Configuration
-public class WebConfig implements WebMvcConfigurer {
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpFilter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        // Arcane Spring Boot Magic from https://stackoverflow.com/a/42998817
+@WebFilter(urlPatterns = "/*")
+public class WebConfig extends HttpFilter {
 
-        // Forwards requests without file extensions (/0/employees, /admin,
-        // but not /assets/images/optaplanner.png) to /index.html
-        registry.addViewController("/**/{spring:\\w+}")
-                .setViewName("forward:/");
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) res;
+        chain.doFilter(request, response);
+
+        final String PATH = request.getRequestURI();
+        if (!PATH.startsWith("/rest/") && response.getStatus() != 200 && !response.isCommitted()) {
+            try {
+                response.setStatus(200);
+                if (PATH.startsWith("/assets/") || PATH.startsWith("/static/")) {
+                    request.getRequestDispatcher("/").forward(request, response);
+                } else {
+                    response.setContentType("text/html");
+                    request.getRequestDispatcher("/index.html").forward(request, response);
+                }
+            } finally {
+                response.getOutputStream().close();
+            }
+        }
     }
-
 }

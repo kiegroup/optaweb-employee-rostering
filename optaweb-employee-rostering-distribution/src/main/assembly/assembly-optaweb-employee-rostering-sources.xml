@@ -59,11 +59,12 @@
   <dependencySets>
     <dependencySet>
       <includes>
-        <include>org.optaweb.employeerostering:optaweb-employee-rostering-standalone:jar:exec</include>
+        <include>org.optaweb.employeerostering:optaweb-employee-rostering-standalone:zip:quarkus-app</include>
       </includes>
       <outputDirectory>bin</outputDirectory>
       <useStrictFiltering>true</useStrictFiltering>
       <useProjectArtifact>false</useProjectArtifact>
+      <unpack>true</unpack>
     </dependencySet>
     <!-- Reference manual -->
     <dependencySet>
