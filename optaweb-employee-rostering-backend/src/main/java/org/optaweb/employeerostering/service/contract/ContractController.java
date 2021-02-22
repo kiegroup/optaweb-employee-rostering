@@ -45,14 +45,14 @@ public class ContractController {
         this.contractService = contractService;
     }
 
-    @Operation(summary="List Contracts", description="Get a list of all contracts")
+    @Operation(summary = "List Contracts", description = "Get a list of all contracts")
     @GET
     @Path("/")
     public List<Contract> getContractList(@PathParam("tenantId") @Min(0) Integer tenantId) {
         return contractService.getContractList(tenantId);
     }
 
-    @Operation(summary="Get Contract", description="Get a contract by id")
+    @Operation(summary = "Get Contract", description = "Get a contract by id")
     @GET
     @Path("/{id}")
     public Contract getContract(@PathParam("tenantId") @Min(0) Integer tenantId,
@@ -60,7 +60,7 @@ public class ContractController {
         return contractService.getContract(tenantId, id);
     }
 
-    @Operation(summary="Delete Contract", description="Deletes a contract")
+    @Operation(summary = "Delete Contract", description = "Deletes a contract")
     @DELETE
     @Path("/{id}")
     public Boolean deleteContract(@PathParam("tenantId") @Min(0) Integer tenantId,
@@ -68,7 +68,7 @@ public class ContractController {
         return contractService.deleteContract(tenantId, id);
     }
 
-    @Operation(summary="Add Contract", description="Adds a contract")
+    @Operation(summary = "Add Contract", description = "Adds a contract")
     @POST
     @Path("/add")
     public Contract createContract(@PathParam("tenantId") @Min(0) Integer tenantId,
@@ -76,7 +76,7 @@ public class ContractController {
         return contractService.createContract(tenantId, contractView);
     }
 
-    @Operation(summary="Update Contract", description="Updates a contract")
+    @Operation(summary = "Update Contract", description = "Updates a contract")
     @POST
     @Path("/update")
     public Contract updateContract(@PathParam("tenantId") @Min(0) Integer tenantId,

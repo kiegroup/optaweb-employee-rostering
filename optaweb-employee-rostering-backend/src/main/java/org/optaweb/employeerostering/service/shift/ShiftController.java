@@ -48,14 +48,14 @@ public class ShiftController {
     // @ApiOperation("Get a list of all shifts")
     @GET
     @Path("/")
-    @Operation(summary="List Shifts", description="Get a list of all shifts")
+    @Operation(summary = "List Shifts", description = "Get a list of all shifts")
     public List<ShiftView> getShiftList(@PathParam("tenantId") @Min(0) Integer tenantId) {
         return shiftService.getShiftList(tenantId);
     }
 
     @GET
     @Path("/{id}")
-    @Operation(summary="Get Shift", description="Gets a shift by id")
+    @Operation(summary = "Get Shift", description = "Gets a shift by id")
     public ShiftView getShift(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return shiftService.getShift(tenantId, id);
@@ -63,7 +63,7 @@ public class ShiftController {
 
     @DELETE
     @Path("/{id}")
-    @Operation(summary="Delete Shift", description="Deletes a shift by id")
+    @Operation(summary = "Delete Shift", description = "Deletes a shift by id")
     public Boolean deleteShift(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return shiftService.deleteShift(tenantId, id);
@@ -71,7 +71,7 @@ public class ShiftController {
 
     @POST
     @Path("/add")
-    @Operation(summary="Add Shift", description="Adds a new shift")
+    @Operation(summary = "Add Shift", description = "Adds a new shift")
     public ShiftView createShift(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid ShiftView shiftView) {
         return shiftService.createShift(tenantId, shiftView);
@@ -79,7 +79,7 @@ public class ShiftController {
 
     @PUT
     @Path("/update")
-    @Operation(summary="Update Shift", description="Updates a shift")
+    @Operation(summary = "Update Shift", description = "Updates a shift")
     public ShiftView updateShift(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid ShiftView shiftView) {
         return shiftService.updateShift(tenantId, shiftView);

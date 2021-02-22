@@ -47,14 +47,14 @@ public class SkillController {
 
     @GET
     @Path("/")
-    @Operation(summary="List Skills", description="Get a list of all skills")
+    @Operation(summary = "List Skills", description = "Get a list of all skills")
     public List<Skill> getSkillList(@PathParam("tenantId") @Min(0) Integer tenantId) {
         return skillService.getSkillList(tenantId);
     }
 
     @GET
     @Path("/{id}")
-    @Operation(summary="Get Skill", description="Gets a skill by id")
+    @Operation(summary = "Get Skill", description = "Gets a skill by id")
     public Skill getSkill(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return skillService.getSkill(tenantId, id);
@@ -62,7 +62,7 @@ public class SkillController {
 
     @DELETE
     @Path("/{id}")
-    @Operation(summary="Delete Skill", description="Deletes a skill by id")
+    @Operation(summary = "Delete Skill", description = "Deletes a skill by id")
     public Boolean deleteSkill(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return skillService.deleteSkill(tenantId, id);
@@ -70,7 +70,7 @@ public class SkillController {
 
     @POST
     @Path("/add")
-    @Operation(summary="Add Skill", description="Adds a new skill")
+    @Operation(summary = "Add Skill", description = "Adds a new skill")
     public Skill createSkill(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid SkillView skillView) {
         return skillService.createSkill(tenantId, skillView);
@@ -78,7 +78,7 @@ public class SkillController {
 
     @POST
     @Path("/update")
-    @Operation(summary="Update Skill", description="Updates a skill")
+    @Operation(summary = "Update Skill", description = "Updates a skill")
     public Skill updateSkill(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid SkillView skillView) {
         return skillService.updateSkill(tenantId, skillView);

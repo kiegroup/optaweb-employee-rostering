@@ -47,14 +47,14 @@ public class SpotController {
 
     @GET
     @Path("/")
-    @Operation(summary="List Spots", description="Get a list of all spots")
+    @Operation(summary = "List Spots", description = "Get a list of all spots")
     public List<Spot> getSpotList(@PathParam("tenantId") @Min(0) Integer tenantId) {
         return spotService.getSpotList(tenantId);
     }
 
     @GET
     @Path("/{id}")
-    @Operation(summary="Get Spot", description="Gets a spot by id")
+    @Operation(summary = "Get Spot", description = "Gets a spot by id")
     public Spot getSpot(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return spotService.getSpot(tenantId, id);
@@ -62,7 +62,7 @@ public class SpotController {
 
     @DELETE
     @Path("/{id}")
-    @Operation(summary="Delete Spot", description="Deletes a spot by id")
+    @Operation(summary = "Delete Spot", description = "Deletes a spot by id")
     public Boolean deleteSpot(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return spotService.deleteSpot(tenantId, id);
@@ -70,7 +70,7 @@ public class SpotController {
 
     @POST
     @Path("/add")
-    @Operation(summary="Add Spot", description="Adds a new spot")
+    @Operation(summary = "Add Spot", description = "Adds a new spot")
     public Spot createSpot(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid SpotView spotView) {
         return spotService.createSpot(tenantId, spotView);
@@ -78,7 +78,7 @@ public class SpotController {
 
     @POST
     @Path("/update")
-    @Operation(summary="Update Spot", description="Updates a spot")
+    @Operation(summary = "Update Spot", description = "Updates a spot")
     public Spot updateSpot(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid SpotView spotView) {
         return spotService.updateSpot(tenantId, spotView);
