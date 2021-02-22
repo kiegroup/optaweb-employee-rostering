@@ -28,7 +28,6 @@ import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.rotation.view.TimeBucketView;
-import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
@@ -137,7 +136,7 @@ public class RosterGeneratorTest extends AbstractEntityRequireTenantRestServiceT
         Response response = getShifts(tenantId);
 
         assertThat(response.getStatusCode()).isEqualTo(Status.OK.getStatusCode());
-        assertThat(response.getBody().jsonPath().getList("$", ShiftView.class)).size().isGreaterThan(0);
+        assertThat(response.getBody().jsonPath().getList("$")).size().isGreaterThan(0);
     }
 
     @Test

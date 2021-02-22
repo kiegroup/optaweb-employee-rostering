@@ -41,7 +41,6 @@ public class SkillController {
     @Inject
     public SkillController(SkillService skillService) {
         this.skillService = skillService;
-        // Assert.notNull(skillService, "skillService must not be null.");
     }
 
     // @ApiOperation("Get a list of all skills")

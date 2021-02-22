@@ -41,7 +41,6 @@ public class SpotController {
     @Inject
     public SpotController(SpotService spotService) {
         this.spotService = spotService;
-        // Assert.notNull(spotService, "spotService must not be null.");
     }
 
     // @ApiOperation("Get a list of all spots")

@@ -31,7 +31,6 @@ public class AdminController {
     @Inject
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
-        assert adminService != null;// adminService must not be null.
     }
 
     // @ApiOperation("Reset the application")

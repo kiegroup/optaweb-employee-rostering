@@ -17,7 +17,6 @@
 package org.optaweb.employeerostering;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -25,9 +24,11 @@ import javax.ws.rs.ext.Provider;
 @Provider
 @ApplicationScoped
 public class OptaWebExceptionHandler implements ExceptionMapper<Throwable> {
+    private final ExceptionDataMapper exceptionDataMapper;
 
-    @Inject
-    ExceptionDataMapper exceptionDataMapper;
+    public OptaWebExceptionHandler() {
+        this.exceptionDataMapper = new ExceptionDataMapper();
+    }
 
     @Override
     public Response toResponse(Throwable e) {
