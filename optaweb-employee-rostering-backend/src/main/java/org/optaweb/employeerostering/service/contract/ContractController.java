@@ -28,12 +28,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
 
 @Path("/rest/tenant/{tenantId}/contract")
 @ApplicationScoped
-// @Api(tags = "Contract")
+@Tag(name = "Contract")
 public class ContractController {
 
     private final ContractService contractService;
@@ -43,14 +45,14 @@ public class ContractController {
         this.contractService = contractService;
     }
 
-    // @ApiOperation("Get a list of all contracts")
+    @Operation(summary="List Contracts", description="Get a list of all contracts")
     @GET
     @Path("/")
     public List<Contract> getContractList(@PathParam("tenantId") @Min(0) Integer tenantId) {
         return contractService.getContractList(tenantId);
     }
 
-    // @ApiOperation("Get a contract by id")
+    @Operation(summary="Get Contract", description="Get a contract by id")
     @GET
     @Path("/{id}")
     public Contract getContract(@PathParam("tenantId") @Min(0) Integer tenantId,
@@ -58,7 +60,7 @@ public class ContractController {
         return contractService.getContract(tenantId, id);
     }
 
-    // @ApiOperation("Delete a contract")
+    @Operation(summary="Delete Contract", description="Deletes a contract")
     @DELETE
     @Path("/{id}")
     public Boolean deleteContract(@PathParam("tenantId") @Min(0) Integer tenantId,
@@ -66,7 +68,7 @@ public class ContractController {
         return contractService.deleteContract(tenantId, id);
     }
 
-    // @ApiOperation("Add a new contract")
+    @Operation(summary="Add Contract", description="Adds a contract")
     @POST
     @Path("/add")
     public Contract createContract(@PathParam("tenantId") @Min(0) Integer tenantId,
@@ -74,7 +76,7 @@ public class ContractController {
         return contractService.createContract(tenantId, contractView);
     }
 
-    // @ApiOperation("Update a contract")
+    @Operation(summary="Update Contract", description="Updates a contract")
     @POST
     @Path("/update")
     public Contract updateContract(@PathParam("tenantId") @Min(0) Integer tenantId,

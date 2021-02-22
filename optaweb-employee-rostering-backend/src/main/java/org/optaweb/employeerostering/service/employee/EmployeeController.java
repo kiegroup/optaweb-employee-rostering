@@ -33,6 +33,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.optaweb.employeerostering.domain.common.MultipartBody;
 import org.optaweb.employeerostering.domain.employee.Employee;
@@ -40,7 +42,7 @@ import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityVi
 import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
 
 @Path("/rest/tenant/{tenantId}/employee")
-// @Api(tags = "Employee")
+@Tag(name = "Employee")
 @ApplicationScoped
 public class EmployeeController {
 
@@ -55,42 +57,42 @@ public class EmployeeController {
     // Employee
     // ************************************************************************
 
-    // @ApiOperation("Get a list of all employees")
     @GET
     @Path("/")
+    @Operation(summary="List Employees", description="Get a list of all employees")
     public List<Employee> getEmployeeList(@PathParam("tenantId") @Min(0) Integer tenantId) {
         return employeeService.getEmployeeList(tenantId);
     }
 
-    // @ApiOperation("Get an employee by id")
     @GET
     @Path("/{id}")
+    @Operation(summary="Get Employee", description="Get an employee by id")
     public Employee getEmployee(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return employeeService.getEmployee(tenantId, id);
     }
 
-    // @ApiOperation("Delete an employee")
     @DELETE
     @Path("/{id}")
+    @Operation(summary="Delete Employee", description="Delete an employee by id")
     public Boolean deleteEmployee(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return employeeService.deleteEmployee(tenantId, id);
     }
 
-    // @ApiOperation("Add a new employee")
     @POST
     @Path("/add")
+    @Operation(summary="Add Employee", description="Add a new employee")
     public Employee createEmployee(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid EmployeeView employeeView) {
         return employeeService.createEmployee(tenantId, employeeView);
     }
 
-    // @ApiOperation("Import employees from an Excel file")
     @POST
     @Path("/import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary="Import Employees", description="Import employees from an Excel file")
     public List<Employee> addEmployeesFromExcelFile(@PathParam("tenantId") @Min(0) Integer tenantId,
             @MultipartForm MultipartBody excelDataFile)
             throws IOException {
@@ -98,9 +100,9 @@ public class EmployeeController {
         return employeeService.importEmployeesFromExcel(tenantId, excelDataFile.file);
     }
 
-    // @ApiOperation("Update an employee")
     @POST
     @Path("/update")
+    @Operation(summary="Update Employee", description="Updates an employee")
     public Employee updateEmployee(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid EmployeeView employeeView) {
         return employeeService.updateEmployee(tenantId, employeeView);
@@ -110,33 +112,33 @@ public class EmployeeController {
     // EmployeeAvailability
     // ************************************************************************
 
-    // @ApiOperation("Get an employee availability by id")
     @GET
     @Path("/availability/{id}")
+    @Operation(summary="Get Employee Availability", description="Get an employee availability by id")
     public EmployeeAvailabilityView getEmployeeAvailability(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return employeeService.getEmployeeAvailability(tenantId, id);
     }
 
-    // @ApiOperation("Add a new employee availability")
     @POST
     @Path("/availability/add")
+    @Operation(summary="Add Employee Availability", description="Add a new employee availability")
     public EmployeeAvailabilityView createEmployeeAvailability(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid EmployeeAvailabilityView employeeAvailabilityView) {
         return employeeService.createEmployeeAvailability(tenantId, employeeAvailabilityView);
     }
 
-    // @ApiOperation("Update an employee availability")
     @PUT
     @Path("/availability/update")
+    @Operation(summary="Update Employee Availability", description="Updates an employee availability")
     public EmployeeAvailabilityView updateEmployeeAvailability(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid EmployeeAvailabilityView employeeAvailabilityView) {
         return employeeService.updateEmployeeAvailability(tenantId, employeeAvailabilityView);
     }
 
-    // @ApiOperation("Delete an employee availability")
     @DELETE
     @Path("/availability/{id}")
+    @Operation(summary="Delete Employee Availability", description="Deletes an employee availability")
     public Boolean deleteEmployeeAvailability(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return employeeService.deleteEmployeeAvailability(tenantId, id);
