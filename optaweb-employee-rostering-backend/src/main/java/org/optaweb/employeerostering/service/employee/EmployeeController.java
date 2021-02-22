@@ -59,14 +59,14 @@ public class EmployeeController {
 
     @GET
     @Path("/")
-    @Operation(summary="List Employees", description="Get a list of all employees")
+    @Operation(summary = "List Employees", description = "Get a list of all employees")
     public List<Employee> getEmployeeList(@PathParam("tenantId") @Min(0) Integer tenantId) {
         return employeeService.getEmployeeList(tenantId);
     }
 
     @GET
     @Path("/{id}")
-    @Operation(summary="Get Employee", description="Get an employee by id")
+    @Operation(summary = "Get Employee", description = "Get an employee by id")
     public Employee getEmployee(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return employeeService.getEmployee(tenantId, id);
@@ -74,7 +74,7 @@ public class EmployeeController {
 
     @DELETE
     @Path("/{id}")
-    @Operation(summary="Delete Employee", description="Delete an employee by id")
+    @Operation(summary = "Delete Employee", description = "Delete an employee by id")
     public Boolean deleteEmployee(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return employeeService.deleteEmployee(tenantId, id);
@@ -82,7 +82,7 @@ public class EmployeeController {
 
     @POST
     @Path("/add")
-    @Operation(summary="Add Employee", description="Add a new employee")
+    @Operation(summary = "Add Employee", description = "Add a new employee")
     public Employee createEmployee(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid EmployeeView employeeView) {
         return employeeService.createEmployee(tenantId, employeeView);
@@ -92,7 +92,7 @@ public class EmployeeController {
     @Path("/import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary="Import Employees", description="Import employees from an Excel file")
+    @Operation(summary = "Import Employees", description = "Import employees from an Excel file")
     public List<Employee> addEmployeesFromExcelFile(@PathParam("tenantId") @Min(0) Integer tenantId,
             @MultipartForm MultipartBody excelDataFile)
             throws IOException {
@@ -102,7 +102,7 @@ public class EmployeeController {
 
     @POST
     @Path("/update")
-    @Operation(summary="Update Employee", description="Updates an employee")
+    @Operation(summary = "Update Employee", description = "Updates an employee")
     public Employee updateEmployee(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid EmployeeView employeeView) {
         return employeeService.updateEmployee(tenantId, employeeView);
@@ -114,7 +114,7 @@ public class EmployeeController {
 
     @GET
     @Path("/availability/{id}")
-    @Operation(summary="Get Employee Availability", description="Get an employee availability by id")
+    @Operation(summary = "Get Employee Availability", description = "Get an employee availability by id")
     public EmployeeAvailabilityView getEmployeeAvailability(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return employeeService.getEmployeeAvailability(tenantId, id);
@@ -122,7 +122,7 @@ public class EmployeeController {
 
     @POST
     @Path("/availability/add")
-    @Operation(summary="Add Employee Availability", description="Add a new employee availability")
+    @Operation(summary = "Add Employee Availability", description = "Add a new employee availability")
     public EmployeeAvailabilityView createEmployeeAvailability(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid EmployeeAvailabilityView employeeAvailabilityView) {
         return employeeService.createEmployeeAvailability(tenantId, employeeAvailabilityView);
@@ -130,7 +130,7 @@ public class EmployeeController {
 
     @PUT
     @Path("/availability/update")
-    @Operation(summary="Update Employee Availability", description="Updates an employee availability")
+    @Operation(summary = "Update Employee Availability", description = "Updates an employee availability")
     public EmployeeAvailabilityView updateEmployeeAvailability(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid EmployeeAvailabilityView employeeAvailabilityView) {
         return employeeService.updateEmployeeAvailability(tenantId, employeeAvailabilityView);
@@ -138,7 +138,7 @@ public class EmployeeController {
 
     @DELETE
     @Path("/availability/{id}")
-    @Operation(summary="Delete Employee Availability", description="Deletes an employee availability")
+    @Operation(summary = "Delete Employee Availability", description = "Deletes an employee availability")
     public Boolean deleteEmployeeAvailability(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return employeeService.deleteEmployeeAvailability(tenantId, id);

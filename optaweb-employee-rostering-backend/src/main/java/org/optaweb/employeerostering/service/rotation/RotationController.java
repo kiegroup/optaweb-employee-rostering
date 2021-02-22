@@ -47,14 +47,14 @@ public class RotationController {
 
     @GET
     @Path("/")
-    @Operation(summary="List Time Buckets", description="Get a list of all time buckets")
+    @Operation(summary = "List Time Buckets", description = "Get a list of all time buckets")
     public List<TimeBucketView> getTimeBucketList(@PathParam("tenantId") @Min(0) Integer tenantId) {
         return rotationService.getTimeBucketList(tenantId);
     }
 
     @GET
     @Path("/{id}")
-    @Operation(summary="Get Time Bucket", description="Gets a time bucket by id")
+    @Operation(summary = "Get Time Bucket", description = "Gets a time bucket by id")
     public TimeBucketView getTimeBucket(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return rotationService.getTimeBucket(tenantId, id);
@@ -62,7 +62,7 @@ public class RotationController {
 
     @DELETE
     @Path("/{id}")
-    @Operation(summary="Delete Time Bucket", description="Deletes a time bucket by id")
+    @Operation(summary = "Delete Time Bucket", description = "Deletes a time bucket by id")
     public Boolean deleteTimeBucket(@PathParam("tenantId") @Min(0) Integer tenantId,
             @PathParam("id") @Min(0) Long id) {
         return rotationService.deleteTimeBucket(tenantId, id);
@@ -70,7 +70,7 @@ public class RotationController {
 
     @POST
     @Path("/add")
-    @Operation(summary="Add Time Bucket", description="Adds a new time bucket")
+    @Operation(summary = "Add Time Bucket", description = "Adds a new time bucket")
     public TimeBucketView createTimeBucket(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid TimeBucketView timeBucketView) {
         return rotationService.createTimeBucket(tenantId, timeBucketView);
@@ -78,7 +78,7 @@ public class RotationController {
 
     @PUT
     @Path("/update")
-    @Operation(summary="Update Time Bucket", description="Updates a time bucket")
+    @Operation(summary = "Update Time Bucket", description = "Updates a time bucket")
     public TimeBucketView updateTimeBucket(@PathParam("tenantId") @Min(0) Integer tenantId,
             @Valid TimeBucketView timeBucketView) {
         return rotationService.updateTimeBucket(tenantId, timeBucketView);
