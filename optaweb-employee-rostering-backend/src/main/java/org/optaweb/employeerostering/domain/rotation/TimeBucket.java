@@ -44,7 +44,7 @@ import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 
-@Entity
+@Entity(name = "Time_Bucket")
 public class TimeBucket extends AbstractPersistable {
     private LocalTime startTime;
     private LocalTime endTime;
@@ -65,7 +65,7 @@ public class TimeBucket extends AbstractPersistable {
                     @JoinColumn(name = "day_id",
                             referencedColumnName = "id",
                             foreignKey = @ForeignKey(name = "DAY_FK",
-                                    foreignKeyDefinition = "FOREIGN KEY (day_id) references public.timebucket (id)" +
+                                    foreignKeyDefinition = "FOREIGN KEY (day_id) references public.time_bucket (id)" +
                                             " ON UPDATE NO ACTION ON DELETE CASCADE"))
             })
     private Set<DayOfWeek> repeatOnDaySet;
@@ -76,7 +76,7 @@ public class TimeBucket extends AbstractPersistable {
                     @JoinColumn(name = "seat_id",
                             referencedColumnName = "id",
                             foreignKey = @ForeignKey(name = "SEAT_FK",
-                                    foreignKeyDefinition = "FOREIGN KEY (seat_id) references public.timebucket (id)" +
+                                    foreignKeyDefinition = "FOREIGN KEY (seat_id) references public.time_bucket (id)" +
                                             " ON UPDATE NO ACTION ON DELETE CASCADE"))
             })
     private List<Seat> seatList;
