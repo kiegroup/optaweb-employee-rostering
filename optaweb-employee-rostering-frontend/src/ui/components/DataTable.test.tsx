@@ -22,10 +22,11 @@ import { usePageableData } from 'util/FunctionalComponentUtils';
 import { CloseIcon, EditIcon, SaveIcon, TrashIcon } from '@patternfly/react-icons';
 import { List } from 'immutable';
 import { Button, Pagination } from '@patternfly/react-core';
+import { Th } from '@patternfly/react-table';
 import { FilterComponent } from './FilterComponent';
 import {
   DataTable, DataTableProps, PaginationControls, RowEditButtons,
-  RowViewButtons, TableCell, TableRow,
+  RowViewButtons, setSorterInUrl, TableCell, TableRow,
 } from './DataTable';
 
 describe('RowViewButtons', () => {
@@ -295,12 +296,21 @@ describe('DataTable component', () => {
     columns: [{ name: 'Name' }, { name: 'Number', sorter: (a, b) => b.number - a.number }],
     sortByIndex: 0,
     onSorterChange: jest.fn(),
-    rowWrapper: jest.fn().mockImplementation((row: MockData) => (
+    rowWrapper: (row: MockData) => (
       <TableRow key={row.name}>
         <TableCell columnName="Name">{row.name}</TableCell>
         <TableCell columnName="Number">{row.number}</TableCell>
       </TableRow>
-    )),
+    ),
+    newRowWrapper: removeRow => (
+      <TableRow>
+        <TableCell columnName="Name">New Data Name</TableCell>
+        <TableCell columnName="Number">New Data Number</TableCell>
+        <TableCell columnName="Number">
+          <Button onClick={removeRow}>Remove</Button>
+        </TableCell>
+      </TableRow>
+    ),
   };
 
   const exampleData = [
@@ -329,5 +339,49 @@ describe('DataTable component', () => {
   it('should render correctly with a few rows', () => {
     const dataTable = shallow(<DataTable {...tableProps} {...routerProps} {...useTableRows(exampleData)} />);
     expect(toJson(dataTable)).toMatchSnapshot();
+  });
+
+  it('should render correctly when adding a row', () => {
+    const dataTable = shallow(<DataTable {...tableProps} {...routerProps} {...useTableRows(exampleData)} />);
+    dataTable.find(PaginationControls).simulate('createNewRow');
+    expect(toJson(dataTable)).toMatchSnapshot();
+
+    dataTable.find(TableRow).filterWhere(wrapper => wrapper.contains('New Data Name')).find(Button).simulate('click');
+    expect(toJson(dataTable)).toMatchSnapshot();
+  });
+
+  it('should call onAddButtonClick if prop is set', () => {
+    const onAddButtonClick = jest.fn();
+    const dataTable = shallow(<DataTable
+      onAddButtonClick={onAddButtonClick}
+      {...tableProps}
+      {...routerProps}
+      {...useTableRows(exampleData)}
+    />);
+    dataTable.find(PaginationControls).simulate('createNewRow');
+    expect(onAddButtonClick).toBeCalled();
+  });
+
+  it('should call onSorterChange when a header is clicked', () => {
+    const dataTable = shallow(<DataTable {...tableProps} {...routerProps} {...useTableRows(exampleData)} />);
+    const header = dataTable.find(Th).filterWhere(wrapper => wrapper.contains('Number'));
+    (header.prop('sort')?.onSort as Function)();
+
+    expect(tableProps.onSorterChange).toBeCalledWith(1);
+  });
+
+  it('setSorterInUrl should set sortBy and asc', () => {
+    setSorterInUrl(routerProps, { asc: null }, 0, 1);
+    expect(routerProps.history.push).toBeCalledWith('/table?sortBy=1&asc=true');
+
+    jest.clearAllMocks();
+
+    setSorterInUrl(routerProps, { asc: 'true' }, 1, 1);
+    expect(routerProps.history.push).toBeCalledWith('/table?sortBy=1&asc=false');
+
+    jest.clearAllMocks();
+
+    setSorterInUrl(routerProps, { asc: 'false' }, 1, 1);
+    expect(routerProps.history.push).toBeCalledWith('/table?sortBy=1&asc=true');
   });
 });

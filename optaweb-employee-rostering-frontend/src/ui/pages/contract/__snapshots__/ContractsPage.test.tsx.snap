@@ -182,6 +182,65 @@ exports[`Contracts page clicking on the edit button in the viewer should show th
 </TableRow>
 `;
 
+exports[`Contracts page clicking on the edit button should show editor 1`] = `
+<EditableContractRow
+  contract={
+    Object {
+      "id": 0,
+      "maximumMinutesPerDay": 1,
+      "maximumMinutesPerMonth": null,
+      "maximumMinutesPerWeek": 2,
+      "maximumMinutesPerYear": null,
+      "name": "Contract 1",
+      "tenantId": 0,
+      "version": 0,
+    }
+  }
+  isNew={false}
+  onClose={[Function]}
+/>
+`;
+
+exports[`Contracts page clicking on the edit button should show editor 2`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Text>
+      Contract 1
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerDay)"
+  >
+    <Text>
+      1
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerWeek)"
+  >
+    <Text>
+      2
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerMonth)"
+  >
+    <Text />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerYear)"
+  >
+    <Text />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
 exports[`Contracts page should render correctly with a few skills 1`] = `
 <DataTable
   columns={

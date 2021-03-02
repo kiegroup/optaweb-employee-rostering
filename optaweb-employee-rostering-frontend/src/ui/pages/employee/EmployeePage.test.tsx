@@ -18,7 +18,7 @@ import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { Employee } from 'domain/Employee';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { FileUpload, TextInput } from '@patternfly/react-core';
+import { Button, FileUpload, TextInput } from '@patternfly/react-core';
 import { Map } from 'immutable';
 import { mockStore } from 'store/mockStore';
 import { Contract } from 'domain/Contract';
@@ -33,6 +33,7 @@ import { Skill } from 'domain/Skill';
 import { skillSelectors } from 'store/skill';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import * as ColorPicker from 'ui/components/ColorPicker';
+import { ArrowIcon } from '@patternfly/react-icons';
 import { EditableEmployeeRow, EmployeeRow, EmployeesPage } from './EmployeesPage';
 
 const noEmployeesNoContractsStore = mockStore({
@@ -164,6 +165,28 @@ describe('Employees page', () => {
     getRouterProps('/0/employees', {});
     const viewer = shallow(<EmployeeRow {...employee} />);
     expect(toJson(viewer)).toMatchSnapshot();
+  });
+
+  it('clicking on the edit button should show editor', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const viewer = shallow(<EmployeeRow {...employee} />);
+    viewer.find(RowViewButtons).simulate('edit');
+
+    expect(viewer).toMatchSnapshot();
+    viewer.find(EditableEmployeeRow).simulate('close');
+    expect(viewer).toMatchSnapshot();
+  });
+
+  it('clicking on the arrow should take you to the Availability Page', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    const routerProps = getRouterProps('/0/employees', {});
+    const viewer = shallow(<EmployeeRow {...employee} />);
+    viewer.find(Button).filterWhere(wrapper => wrapper.contains(<ArrowIcon />)).simulate('click');
+    expect(routerProps.history.push)
+      .toBeCalledWith(`/${employee.tenantId}/availability?employee=${encodeURIComponent(employee.name)}`);
   });
 
   it('should render the editor correctly', () => {

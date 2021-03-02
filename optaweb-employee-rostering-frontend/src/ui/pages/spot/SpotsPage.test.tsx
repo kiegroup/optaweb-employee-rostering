@@ -26,9 +26,10 @@ import { spotOperations, spotSelectors } from 'store/spot';
 import { mockRedux } from 'setupTests';
 import { DataTable, RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
 import { doNothing } from 'types';
-import { TextInput } from '@patternfly/react-core';
+import { Button, TextInput } from '@patternfly/react-core';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import { skillSelectors } from 'store/skill';
+import { ArrowIcon } from '@patternfly/react-icons';
 import { SpotsPage, SpotRow, EditableSpotRow } from './SpotsPage';
 
 const noSpotsStore = mockStore({
@@ -101,6 +102,27 @@ describe('Spots page', () => {
     getRouterProps('/0/spot', {});
     const viewer = shallow(<SpotRow {...spot} />);
     expect(toJson(viewer)).toMatchSnapshot();
+  });
+
+  it('clicking on the arrow should take you to the Adjustment Page', () => {
+    const spot = spotSelectors.getSpotById(twoSpotsStore.getState(), 2);
+    mockRedux(twoSpotsStore);
+    const routerProps = getRouterProps('/0/spot', {});
+    const viewer = shallow(<SpotRow {...spot} />);
+    viewer.find(Button).filterWhere(wrapper => wrapper.contains(<ArrowIcon />)).simulate('click');
+    expect(routerProps.history.push).toBeCalledWith(`/${spot.tenantId}/adjust?spot=${encodeURIComponent(spot.name)}`);
+  });
+
+  it('clicking on the edit button should show editor', () => {
+    const spot = spotSelectors.getSpotById(twoSpotsStore.getState(), 2);
+    mockRedux(twoSpotsStore);
+    getRouterProps('/0/spot', {});
+    const viewer = shallow(<SpotRow {...spot} />);
+    viewer.find(RowViewButtons).simulate('edit');
+
+    expect(viewer).toMatchSnapshot();
+    viewer.find(EditableSpotRow).simulate('close');
+    expect(viewer).toMatchSnapshot();
   });
 
   it('should render the editor correctly', () => {

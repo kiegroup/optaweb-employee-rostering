@@ -87,6 +87,17 @@ describe('Skills page', () => {
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
+  it('clicking on the edit button should show editor', () => {
+    const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
+    mockRedux(twoSkillsStore);
+    const viewer = shallow(<SkillRow {...skill} />);
+    viewer.find(RowViewButtons).simulate('edit');
+
+    expect(viewer).toMatchSnapshot();
+    viewer.find(EditableSkillRow).simulate('close');
+    expect(viewer).toMatchSnapshot();
+  });
+
   it('should render the editor correctly', () => {
     const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
     mockRedux(twoSkillsStore);

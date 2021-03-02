@@ -95,6 +95,17 @@ describe('Contracts page', () => {
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
+  it('clicking on the edit button should show editor', () => {
+    const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
+    mockRedux(twoContractsStore);
+    const viewer = shallow(<ContractRow {...contract} />);
+    viewer.find(RowViewButtons).simulate('edit');
+
+    expect(viewer).toMatchSnapshot();
+    viewer.find(EditableContractRow).simulate('close');
+    expect(viewer).toMatchSnapshot();
+  });
+
   it('should render the editor correctly', () => {
     const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
     mockRedux(twoContractsStore);

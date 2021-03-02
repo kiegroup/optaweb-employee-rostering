@@ -176,6 +176,91 @@ exports[`Spots page clicking on the edit button in the viewer should show the ed
 </TableRow>
 `;
 
+exports[`Spots page clicking on the edit button should show editor 1`] = `
+<EditableSpotRow
+  isNew={false}
+  onClose={[Function]}
+  spot={
+    Object {
+      "id": 2,
+      "name": "Spot 2",
+      "requiredSkillSet": Array [
+        Object {
+          "id": 0,
+          "name": "Skill 1",
+          "tenantId": 0,
+          "version": 0,
+        },
+      ],
+      "tenantId": 0,
+      "version": 0,
+    }
+  }
+/>
+`;
+
+exports[`Spots page clicking on the edit button should show editor 2`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Flex>
+      <FlexItem>
+        <Text>
+          Spot 2
+        </Text>
+      </FlexItem>
+      <FlexItem>
+        <Button
+          onClick={[Function]}
+          variant="link"
+        >
+          <ArrowIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+          />
+        </Button>
+      </FlexItem>
+    </Flex>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=requiredSkillSet)"
+  >
+    <ChipGroup
+      aria-label="Chip group category"
+      categoryName=""
+      closeBtnAriaLabel="Close chip group"
+      collapsedText="\${remaining} more"
+      defaultIsOpen={false}
+      expandedText="Show Less"
+      isClosable={false}
+      numChips={3}
+      onClick={[Function]}
+      onOverflowChipClick={[Function]}
+      tooltipPosition="top"
+    >
+      <Chip
+        className=""
+        closeBtnAriaLabel="close"
+        component="div"
+        isOverflowChip={false}
+        isReadOnly={true}
+        key="Skill 1"
+        onClick={[Function]}
+        tooltipPosition="top"
+      >
+        Skill 1
+      </Chip>
+    </ChipGroup>
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
 exports[`Spots page should render correctly with a few spots 1`] = `
 <DataTable
   columns={

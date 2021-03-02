@@ -90,6 +90,37 @@ exports[`Skills page clicking on the edit button in the viewer should show the e
 </TableRow>
 `;
 
+exports[`Skills page clicking on the edit button should show editor 1`] = `
+<EditableSkillRow
+  isNew={false}
+  onClose={[Function]}
+  skill={
+    Object {
+      "id": 1,
+      "name": "Skill",
+      "tenantId": 0,
+      "version": 0,
+    }
+  }
+/>
+`;
+
+exports[`Skills page clicking on the edit button should show editor 2`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Text>
+      Skill
+    </Text>
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
 exports[`Skills page should render correctly with a few skills 1`] = `
 <DataTable
   columns={

@@ -1,5 +1,344 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`DataTable component should render correctly when adding a row 1`] = `
+<Fragment>
+  <PaginationControls
+    columns={
+      Array [
+        Object {
+          "name": "Name",
+        },
+        Object {
+          "name": "Number",
+          "sorter": [Function],
+        },
+      ]
+    }
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "name": "More Data",
+          "number": 2,
+        },
+        Object {
+          "name": "Some Data",
+          "number": 1,
+        },
+      ]
+    }
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/table",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isCreatingNewRow={true}
+    isReversed={false}
+    itemsPerPage={5}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/table",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/table",
+        "url": "localhost:8080/table",
+      }
+    }
+    newRowWrapper={[Function]}
+    numOfFilteredRows={2}
+    onCreateNewRow={[Function]}
+    onSorterChange={[MockFunction]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "name": "More Data",
+          "number": 2,
+        },
+        Object {
+          "name": "Some Data",
+          "number": 1,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Data Table"
+  />
+  <TableComposable>
+    <Caption>
+      Data Table
+    </Caption>
+    <Thead>
+      <Tr
+        role="row"
+      >
+        <Th
+          key="Name"
+          role="columnheader"
+          scope="col"
+        >
+          Name
+        </Th>
+        <Th
+          key="Number"
+          role="columnheader"
+          scope="col"
+          sort={
+            Object {
+              "columnIndex": 1,
+              "onSort": [Function],
+              "sortBy": Object {
+                "direction": "asc",
+                "index": 0,
+              },
+            }
+          }
+        >
+          Number
+        </Th>
+        <Th
+          role="columnheader"
+          scope="col"
+        />
+      </Tr>
+    </Thead>
+    <Tbody>
+      <TableRow>
+        <TableCell
+          columnName="Name"
+        >
+          New Data Name
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          New Data Number
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          <Button
+            onClick={[Function]}
+          >
+            Remove
+          </Button>
+        </TableCell>
+      </TableRow>
+      <TableRow
+        key="More Data"
+      >
+        <TableCell
+          columnName="Name"
+        >
+          More Data
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          2
+        </TableCell>
+      </TableRow>
+      <TableRow
+        key="Some Data"
+      >
+        <TableCell
+          columnName="Name"
+        >
+          Some Data
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          1
+        </TableCell>
+      </TableRow>
+    </Tbody>
+  </TableComposable>
+</Fragment>
+`;
+
+exports[`DataTable component should render correctly when adding a row 2`] = `
+<Fragment>
+  <PaginationControls
+    columns={
+      Array [
+        Object {
+          "name": "Name",
+        },
+        Object {
+          "name": "Number",
+          "sorter": [Function],
+        },
+      ]
+    }
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "name": "More Data",
+          "number": 2,
+        },
+        Object {
+          "name": "Some Data",
+          "number": 1,
+        },
+      ]
+    }
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/table",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isCreatingNewRow={false}
+    isReversed={false}
+    itemsPerPage={5}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/table",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/table",
+        "url": "localhost:8080/table",
+      }
+    }
+    newRowWrapper={[Function]}
+    numOfFilteredRows={2}
+    onCreateNewRow={[Function]}
+    onSorterChange={[MockFunction]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "name": "More Data",
+          "number": 2,
+        },
+        Object {
+          "name": "Some Data",
+          "number": 1,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Data Table"
+  />
+  <TableComposable>
+    <Caption>
+      Data Table
+    </Caption>
+    <Thead>
+      <Tr
+        role="row"
+      >
+        <Th
+          key="Name"
+          role="columnheader"
+          scope="col"
+        >
+          Name
+        </Th>
+        <Th
+          key="Number"
+          role="columnheader"
+          scope="col"
+          sort={
+            Object {
+              "columnIndex": 1,
+              "onSort": [Function],
+              "sortBy": Object {
+                "direction": "asc",
+                "index": 0,
+              },
+            }
+          }
+        >
+          Number
+        </Th>
+        <Th
+          role="columnheader"
+          scope="col"
+        />
+      </Tr>
+    </Thead>
+    <Tbody>
+      <TableRow
+        key="More Data"
+      >
+        <TableCell
+          columnName="Name"
+        >
+          More Data
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          2
+        </TableCell>
+      </TableRow>
+      <TableRow
+        key="Some Data"
+      >
+        <TableCell
+          columnName="Name"
+        >
+          Some Data
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          1
+        </TableCell>
+      </TableRow>
+    </Tbody>
+  </TableComposable>
+</Fragment>
+`;
+
 exports[`DataTable component should render correctly with a few rows 1`] = `
 <Fragment>
   <PaginationControls
@@ -66,60 +405,12 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
         "url": "localhost:8080/table",
       }
     }
+    newRowWrapper={[Function]}
     numOfFilteredRows={2}
     onCreateNewRow={[Function]}
     onSorterChange={[MockFunction]}
     page={1}
-    rowWrapper={
-      [MockFunction] {
-        "calls": Array [
-          Array [
-            Object {
-              "name": "More Data",
-              "number": 2,
-            },
-          ],
-          Array [
-            Object {
-              "name": "Some Data",
-              "number": 1,
-            },
-          ],
-        ],
-        "results": Array [
-          Object {
-            "type": "return",
-            "value": <TableRow>
-              <TableCell
-                columnName="Name"
-              >
-                More Data
-              </TableCell>
-              <TableCell
-                columnName="Number"
-              >
-                2
-              </TableCell>
-            </TableRow>,
-          },
-          Object {
-            "type": "return",
-            "value": <TableRow>
-              <TableCell
-                columnName="Name"
-              >
-                Some Data
-              </TableCell>
-              <TableCell
-                columnName="Number"
-              >
-                1
-              </TableCell>
-            </TableRow>,
-          },
-        ],
-      }
-    }
+    rowWrapper={[Function]}
     rowsInPage={
       Immutable.List [
         Object {
@@ -262,11 +553,12 @@ exports[`DataTable component should render correctly with no rows 1`] = `
         "url": "localhost:8080/table",
       }
     }
+    newRowWrapper={[Function]}
     numOfFilteredRows={0}
     onCreateNewRow={[Function]}
     onSorterChange={[MockFunction]}
     page={1}
-    rowWrapper={[MockFunction]}
+    rowWrapper={[Function]}
     rowsInPage={Immutable.List []}
     sortByIndex={0}
     title="Data Table"
