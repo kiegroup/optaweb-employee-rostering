@@ -82,23 +82,7 @@ export interface ColorPickerProps {
   currentColor: string;
   onChangeColor: (newColor: string) => void;
 }
-export const StatefulColorPicker: React.FC<ColorPickerProps> = (props) => {
-  const [color, setColor] = useState(props.currentColor);
-  React.useEffect(() => {
-    setColor(props.currentColor);
-  }, [setColor, props.currentColor]);
 
-  return (
-    <ColorPicker
-      isDisabled={props.isDisabled}
-      onChangeColor={(newColor) => {
-        setColor(newColor);
-        props.onChangeColor(newColor);
-      }}
-      currentColor={color}
-    />
-  );
-};
 export const ColorPicker: React.FC<ColorPickerProps> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
