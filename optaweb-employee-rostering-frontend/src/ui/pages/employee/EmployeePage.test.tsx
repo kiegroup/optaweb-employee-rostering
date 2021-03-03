@@ -13,346 +13,317 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
-import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
-import { Sorter } from 'types';
 import { Employee } from 'domain/Employee';
-import { act } from 'react-dom/test-utils';
-import { useTranslation, Trans } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { FileUpload } from '@patternfly/react-core';
-import { EmployeesPage, Props } from './EmployeesPage';
+import { Button, FileUpload, TextInput } from '@patternfly/react-core';
+import { Map } from 'immutable';
+import { mockStore } from 'store/mockStore';
+import { Contract } from 'domain/Contract';
+import DomainObjectView from 'domain/DomainObjectView';
+import { mockRedux, mockTranslate } from 'setupTests';
+import { employeeOperations, employeeSelectors } from 'store/employee';
+import { DataTable, RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
+import { alert } from 'store/alert';
+import { doNothing } from 'types';
+import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
+import { Skill } from 'domain/Skill';
+import { skillSelectors } from 'store/skill';
+import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
+import * as ColorPicker from 'ui/components/ColorPicker';
+import { ArrowIcon } from '@patternfly/react-icons';
+import { EditableEmployeeRow, EmployeeRow, EmployeesPage } from './EmployeesPage';
+
+const noEmployeesNoContractsStore = mockStore({
+  skillList: {
+    isLoading: false,
+    skillMapById: Map(),
+  },
+  contractList: {
+    isLoading: false,
+    contractMapById: Map(),
+  },
+  employeeList: {
+    isLoading: false,
+    employeeMapById: Map(),
+  },
+}).store;
+
+const contract1: Contract = {
+  id: 0,
+  tenantId: 0,
+  name: 'Contract',
+  maximumMinutesPerDay: null,
+  maximumMinutesPerWeek: null,
+  maximumMinutesPerMonth: null,
+  maximumMinutesPerYear: null,
+};
+
+const contract2: Contract = {
+  id: 1,
+  tenantId: 0,
+  name: 'Contract 2',
+  maximumMinutesPerDay: 5,
+  maximumMinutesPerWeek: null,
+  maximumMinutesPerMonth: null,
+  maximumMinutesPerYear: null,
+};
+
+const skill1: Skill = {
+  id: 0,
+  tenantId: 0,
+  name: 'Skill 1',
+};
+
+const noEmployeesOneContractsStore = mockStore({
+  skillList: {
+    isLoading: false,
+    skillMapById: Map(),
+  },
+  contractList: {
+    isLoading: false,
+    contractMapById: Map<number, Contract>()
+      .set(0, contract1)
+      .set(1, contract2),
+  },
+  employeeList: {
+    isLoading: false,
+    employeeMapById: Map(),
+  },
+}).store;
+
+const twoEmployeesOneContractsStore = mockStore({
+  skillList: {
+    isLoading: false,
+    skillMapById: Map<number, Skill>()
+      .set(0, skill1),
+  },
+  contractList: {
+    isLoading: false,
+    contractMapById: Map<number, Contract>()
+      .set(0, contract1),
+  },
+  employeeList: {
+    isLoading: false,
+    employeeMapById: Map<number, DomainObjectView<Employee>>()
+      .set(1, {
+        tenantId: 0,
+        id: 1,
+        name: 'Employee 1',
+        contract: contract1.id as number,
+        shortId: 'E1',
+        color: '#FF0000',
+        skillProficiencySet: [],
+      }).set(2, {
+        tenantId: 0,
+        id: 2,
+        name: 'Employee 2',
+        contract: contract1.id as number,
+        shortId: 'E2',
+        color: '#00FF00',
+        skillProficiencySet: [],
+      }),
+  },
+}).store;
+
 
 describe('Employees page', () => {
+  const addEmployee = (employee: Employee) => ['add', employee];
+  const updateEmployee = (employee: Employee) => ['update', employee];
+  const removeEmployee = (employee: Employee) => ['remove', employee];
+  const uploadEmployeeList = (file: File) => ['upload', file];
+  const showErrorMessage = (key: string, params: any) => ['showErrorMessage', key, params];
+
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(employeeOperations, 'addEmployee').mockImplementation(employee => addEmployee(employee) as any);
+    jest.spyOn(employeeOperations, 'updateEmployee').mockImplementation(employee => updateEmployee(employee) as any);
+    jest.spyOn(employeeOperations, 'removeEmployee').mockImplementation(employee => removeEmployee(employee) as any);
+    jest.spyOn(employeeOperations, 'uploadEmployeeList').mockImplementation(file => uploadEmployeeList(file) as any);
+    jest.spyOn(alert, 'showErrorMessage').mockImplementation((key, params) => showErrorMessage(key, params) as any);
+    jest.spyOn(twoEmployeesOneContractsStore, 'dispatch').mockImplementation(doNothing);
+    jest.spyOn(noEmployeesNoContractsStore, 'dispatch').mockImplementation(doNothing);
   });
 
   it('should render correctly with no employees', () => {
-    const employeesPage = shallow(<EmployeesPage {...noEmployees} />);
+    mockRedux(noEmployeesOneContractsStore);
+    const employeesPage = shallow(<EmployeesPage {...getRouterProps('/0/employee', {})} />);
     expect(toJson(employeesPage)).toMatchSnapshot();
   });
 
   it('should render correctly with a few employees', () => {
-    const employeesPage = shallow(<EmployeesPage {...twoEmployees} />);
+    mockRedux(twoEmployeesOneContractsStore);
+    const employeesPage = shallow(<EmployeesPage {...getRouterProps('/0/employee', {})} />);
     expect(toJson(employeesPage)).toMatchSnapshot();
   });
 
   it('should render the viewer correctly', () => {
-    const employeesPage = new EmployeesPage(twoEmployees);
-    const spot = twoEmployees.tableData[1];
-    const viewer = shallow(employeesPage.renderViewer(spot));
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const viewer = shallow(<EmployeeRow {...employee} />);
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
+  it('clicking on the edit button should show editor', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const viewer = shallow(<EmployeeRow {...employee} />);
+    viewer.find(RowViewButtons).simulate('edit');
+
+    expect(viewer).toMatchSnapshot();
+    viewer.find(EditableEmployeeRow).simulate('close');
+    expect(viewer).toMatchSnapshot();
+  });
+
+  it('clicking on the arrow should take you to the Availability Page', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    const routerProps = getRouterProps('/0/employees', {});
+    const viewer = shallow(<EmployeeRow {...employee} />);
+    viewer.find(Button).filterWhere(wrapper => wrapper.contains(<ArrowIcon />)).simulate('click');
+    expect(routerProps.history.push)
+      .toBeCalledWith(`/${employee.tenantId}/availability?employee=${encodeURIComponent(employee.name)}`);
+  });
+
   it('should render the editor correctly', () => {
-    const employeesPage = new EmployeesPage(twoEmployees);
-    const spot = twoEmployees.tableData[1];
-    const editor = shallow(employeesPage.renderEditor(spot));
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const editor = shallow(<EditableEmployeeRow employee={employee} isNew={false} onClose={jest.fn()} />);
     expect(toJson(editor)).toMatchSnapshot();
   });
 
-  it('should update properties on change', () => {
-    const employeesPage = new EmployeesPage(twoEmployees);
-    const setProperty = jest.fn();
-    const editor = employeesPage.editDataRow(employeesPage.getInitialStateForNewRow(), setProperty);
-    const nameCol = shallow(editor[0] as React.ReactElement);
-    nameCol.simulate('change', 'Test');
-    expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('name', 'Test');
-    expect(setProperty).toBeCalledWith('shortId', 'T');
-
-    setProperty.mockClear();
-    const contractCol = mount(editor[1] as React.ReactElement);
-    act(() => {
-      contractCol.find(TypeaheadSelectInput).props().onChange(twoEmployees.contractList[0]);
-    });
-    expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('contract', twoEmployees.contractList[0]);
-
-    setProperty.mockClear();
-    const skillProficiencySetCol = mount(editor[2] as React.ReactElement);
-    act(() => {
-      skillProficiencySetCol.find(MultiTypeaheadSelectInput).props()
-        .onChange([twoEmployees.skillList[0]]);
-    });
-    expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('skillProficiencySet', [twoEmployees.skillList[0]]);
-
-    setProperty.mockClear();
-    const shortIdCol = shallow(editor[3] as React.ReactElement);
-    shortIdCol.simulate('change', 'ID');
-    expect(setProperty).toBeCalledWith('shortId', 'ID');
-
-    setProperty.mockClear();
-    // Mount and set props on shortIdCol so the ref is updated
-    mount(editor[3] as React.ReactElement).setProps({ value: 'ID' });
-    nameCol.simulate('change', 'Mimi');
-    expect(setProperty).toBeCalledWith('name', 'Mimi');
-    expect(setProperty).not.toBeCalledWith('shortId', expect.any(String));
-
-    setProperty.mockClear();
-    const colorCol = shallow(editor[4] as React.ReactElement);
-    colorCol.simulate('changeColor', '#ffffff');
-    expect(setProperty).toBeCalledWith('color', '#ffffff');
-  });
-
-  it('should call addEmployee on addData', () => {
-    const employeesPage = new EmployeesPage(twoEmployees);
-    const employee: Employee = {
-      name: 'Employee',
-      skillProficiencySet: [],
-      contract: twoEmployees.contractList[0],
-      tenantId: 0,
-      id: 1,
-      version: 0,
-      shortId: 'N',
-      color: '#FFFFFF',
-    };
-    employeesPage.addData(employee);
-    expect(twoEmployees.addEmployee).toBeCalled();
-    expect(twoEmployees.addEmployee).toBeCalledWith(employee);
-  });
-
-  it('should call updateEmployee on updateData', () => {
-    const employeesPage = new EmployeesPage(twoEmployees);
-    const employee: Employee = {
-      name: 'Employee',
-      skillProficiencySet: [],
-      contract: twoEmployees.contractList[0],
-      tenantId: 0,
-      id: 1,
-      version: 0,
-      shortId: 'N',
-      color: '#FFFFFF',
-    };
-    employeesPage.updateData(employee);
-    expect(twoEmployees.updateEmployee).toBeCalled();
-    expect(twoEmployees.updateEmployee).toBeCalledWith(employee);
-  });
-
-  it('should call removeEmployee on removeData', () => {
-    const employeesPage = new EmployeesPage(twoEmployees);
-    const employee: Employee = {
-      name: 'Employee',
-      skillProficiencySet: [],
-      contract: twoEmployees.contractList[0],
-      tenantId: 0,
-      id: 1,
-      version: 0,
-      shortId: 'N',
-      color: '#FFFFFF',
-    };
-    employeesPage.removeData(employee);
-    expect(twoEmployees.removeEmployee).toBeCalled();
-    expect(twoEmployees.removeEmployee).toBeCalledWith(employee);
-  });
-
-  it('should return a filter that match by name, skills and contract', () => {
-    const employeesPage = new EmployeesPage(twoEmployees);
-    const filter = employeesPage.getFilter();
-
-    expect(twoEmployees.tableData.filter(filter('1'))).toEqual([
-      twoEmployees.tableData[0],
-      twoEmployees.tableData[1],
-    ]);
-    expect(twoEmployees.tableData.filter(filter('Skill 1'))).toEqual([
-      twoEmployees.tableData[1],
-    ]);
-    expect(twoEmployees.tableData.filter(filter('2'))).toEqual([twoEmployees.tableData[1]]);
-    expect(twoEmployees.tableData.filter(filter('Contract 2'))).toEqual([
-      twoEmployees.tableData[1],
-    ]);
-    expect(twoEmployees.tableData.filter(filter('Employee 2'))).toEqual([
-      twoEmployees.tableData[1],
-    ]);
-  });
-
-  it('should return a sorter that sort by name and contract', () => {
-    const employeesPage = new EmployeesPage(twoEmployees);
-    const nameSorter = employeesPage.getSorters()[0] as Sorter<Employee>;
-    let list = [twoEmployees.tableData[1], twoEmployees.tableData[0]];
-    expect(list.sort(nameSorter)).toEqual(twoEmployees.tableData);
-    list = [twoEmployees.tableData[1], twoEmployees.tableData[0]];
-    const contractSorter = employeesPage.getSorters()[1] as Sorter<Employee>;
-    expect(list.sort(contractSorter)).toEqual(twoEmployees.tableData);
-    expect(employeesPage.getSorters()[2]).toBeNull();
-  });
-
-  it('should go to the Contract page if the user click on the link', () => {
-    const employeesPage = shallow(<EmployeesPage
-      {...noEmployees}
-    />);
-    mount((employeesPage.find(Trans).prop('components') as any)[2]).simulate('click');
-    expect(noEmployees.history.push).toBeCalled();
-    expect(noEmployees.history.push).toBeCalledWith('/0/contracts');
-  });
-
-  it('should treat incomplete data as incomplete', () => {
-    const employeesPage = new EmployeesPage(twoEmployees);
-    const noName = {
-      tenantId: 0,
-      skillProficiencySet: [],
-      contract: twoEmployees.contractList[0],
-    };
-    const result1 = employeesPage.isDataComplete(noName);
-    expect(result1).toEqual(false);
-
-    const noSkills = {
-      tenantId: 0,
-      name: 'Name',
-      contract: twoEmployees.contractList[0],
-    };
-    const result2 = employeesPage.isDataComplete(noSkills);
-    expect(result2).toEqual(false);
-
-    const noContract = {
-      tenantId: 0,
-      name: 'Name',
-      skillProficiencySet: [],
-    };
-    const result3 = employeesPage.isDataComplete(noContract);
-    expect(result3).toEqual(false);
-
-    const completed: Employee = {
-      tenantId: 0,
-      name: 'Name',
-      skillProficiencySet: [],
-      contract: twoEmployees.contractList[0],
-      shortId: 'N',
-      color: '#FFFFFF',
-    };
-    const result4 = employeesPage.isDataComplete(completed);
-    expect(result4).toEqual(true);
-  });
-
-  it('should treat empty name as invalid', () => {
-    const employeesPage = new EmployeesPage(twoEmployees);
-    const noName: Employee = {
-      tenantId: 0,
+  it('no name should be invalid', () => {
+    const employee = {
+      ...employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2),
       name: '',
-      skillProficiencySet: [],
-      contract: twoEmployees.contractList[0],
-      shortId: 'N',
-      color: '#FFFFFF',
     };
-    const result1 = employeesPage.isValid(noName);
-    expect(result1).toEqual(false);
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const editor = shallow(<EditableEmployeeRow employee={employee} isNew={false} onClose={jest.fn()} />);
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(false);
   });
 
-  it('should treat non-empty name as valid', () => {
-    const employeesPage = new EmployeesPage(twoEmployees);
-    const components = twoEmployees.tableData[0];
-    const result = employeesPage.isValid(components);
-    expect(result).toEqual(true);
+  it('duplicate name should be invalid', () => {
+    const employee = {
+      ...employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2),
+      name: 'Employee 1',
+      id: 3,
+    };
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const editor = shallow(<EditableEmployeeRow employee={employee} isNew={false} onClose={jest.fn()} />);
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(false);
+  });
+
+  it('saving new employee should call add employee', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const editor = shallow(<EditableEmployeeRow employee={employee} isNew onClose={jest.fn()} />);
+
+    const name = 'New Employee Name';
+    const contract = contract2;
+    const skillProficiencySet = skillSelectors.getSkillList(twoEmployeesOneContractsStore.getState());
+    const shortId = 'NEN';
+    const color = '#FF00FF';
+
+    editor.find(`[columnName="${mockTranslate('name')}"]`).find(TextInput).simulate('change', name);
+    editor.find(`[columnName="${mockTranslate('contract')}"]`)
+      .find(TypeaheadSelectInput).simulate('change', contract);
+    editor.find(`[columnName="${mockTranslate('skillProficiencies')}"]`)
+      .find(MultiTypeaheadSelectInput).simulate('change', skillProficiencySet);
+    editor.find(`[columnName="${mockTranslate('shortId')}"]`)
+      .find(TextInput).simulate('change', shortId);
+    editor.find(`[columnName="${mockTranslate('color')}"]`)
+      .find(ColorPicker.ColorPicker).simulate('changeColor', color);
+
+    const newEmployee = {
+      ...employee,
+      name,
+      contract,
+      skillProficiencySet,
+      shortId,
+      color,
+    };
+
+    editor.find(RowEditButtons).prop('onSave')();
+    expect(employeeOperations.addEmployee).toBeCalledWith(newEmployee);
+    expect(twoEmployeesOneContractsStore.dispatch).toBeCalledWith(addEmployee(newEmployee));
+  });
+
+  it('saving updated employee should call update employee', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const editor = shallow(<EditableEmployeeRow employee={employee} isNew={false} onClose={jest.fn()} />);
+    editor.find(RowEditButtons).prop('onSave')();
+    expect(employeeOperations.updateEmployee).toBeCalledWith(employee);
+    expect(twoEmployeesOneContractsStore.dispatch).toBeCalledWith(updateEmployee(employee));
+  });
+
+  it('clicking on the edit button in the viewer should show the editor', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    const viewer = shallow(<EmployeeRow {...employee} />);
+
+    // Clicking the edit button should show the editor
+    viewer.find(RowViewButtons).prop('onEdit')();
+    expect(viewer).toMatchSnapshot();
+
+    // Clicking the close button should show the viwer
+    viewer.find(EditableEmployeeRow).prop('onClose')();
+    expect(viewer).toMatchSnapshot();
+  });
+
+  it('deleting should call delete employee', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    getRouterProps('/0/employees', {});
+    const viewer = shallow(<EmployeeRow {...employee} />);
+    viewer.find(RowViewButtons).prop('onDelete')();
+    expect(employeeOperations.removeEmployee).toBeCalledWith(employee);
+    expect(twoEmployeesOneContractsStore.dispatch).toBeCalledWith(removeEmployee(employee));
   });
 
   it('should upload the file on Excel input', () => {
-    const employeesPage = shallow(<EmployeesPage {...noEmployees} />);
+    mockRedux(noEmployeesNoContractsStore);
+    const employeesPage = shallow(<EmployeesPage {...getRouterProps('/0/employee', {})} />);
     const file = new File([], 'hello.xlsx');
     employeesPage.find(FileUpload).simulate('change', file);
-    expect(noEmployees.uploadEmployeeList).toBeCalledWith(file);
+    expect(noEmployeesNoContractsStore.dispatch).toBeCalledWith(uploadEmployeeList(file));
   });
 
   it('should show an error on non-excel input', () => {
-    const employeesPage = shallow(<EmployeesPage {...noEmployees} />);
+    mockRedux(noEmployeesNoContractsStore);
+    const employeesPage = shallow(<EmployeesPage {...getRouterProps('/0/employee', {})} />);
     employeesPage.find(FileUpload).simulate('change', '');
-    expect(noEmployees.uploadEmployeeList).not.toBeCalled();
-    expect(noEmployees.showErrorMessage).toBeCalledWith('badFileType', { fileTypes: 'Excel (.xlsx)' });
+    expect(employeeOperations.uploadEmployeeList).not.toBeCalled();
+    expect(noEmployeesNoContractsStore.dispatch)
+      .toBeCalledWith(showErrorMessage('badFileType', { fileTypes: 'Excel (.xlsx)' }));
+  });
+
+  it('DataTable rowWrapper should be EmployeeRow', () => {
+    const employee = employeeSelectors.getEmployeeById(twoEmployeesOneContractsStore.getState(), 2);
+    mockRedux(twoEmployeesOneContractsStore);
+    const employeePage = shallow(<EmployeesPage {...getRouterProps('/0/employee', {})} />);
+    const rowWrapper = shallow(employeePage.find(DataTable).prop('rowWrapper')(employee));
+    expect(rowWrapper).toMatchSnapshot();
+  });
+
+  it('DataTable newRowWrapper should be EditableEmployeeRow', () => {
+    mockRedux(twoEmployeesOneContractsStore);
+    const employeePage = shallow(<EmployeesPage {...getRouterProps('/0/employee', {})} />);
+    const removeRow = jest.fn();
+
+    jest.spyOn(ColorPicker, 'getRandomColor').mockImplementation(() => '#040404'); // chosen by fair dice roll
+    const newRowWrapper = shallow((employeePage.find(DataTable).prop('newRowWrapper') as any)(removeRow));
+    expect(newRowWrapper).toMatchSnapshot();
+    newRowWrapper.find(RowEditButtons).prop('onClose')();
+    expect(removeRow).toBeCalled();
   });
 });
-
-const noEmployees: Props = {
-  ...useTranslation('EmployeePage'),
-  tReady: true,
-  tenantId: 0,
-  title: 'Employees',
-  columnTitles: ['Name', 'Contract', 'Skill Set'],
-  tableData: [],
-  skillList: [],
-  contractList: [],
-  addEmployee: jest.fn(),
-  updateEmployee: jest.fn(),
-  removeEmployee: jest.fn(),
-  uploadEmployeeList: jest.fn(),
-  showErrorMessage: jest.fn(),
-  ...getRouterProps('/contacts', {}),
-};
-
-const twoEmployees: Props = {
-  ...useTranslation('EmployeePage'),
-  tReady: true,
-  tenantId: 0,
-  title: 'Employees',
-  columnTitles: ['Name', 'Contract', 'Skill Set'],
-  tableData: [{
-    id: 0,
-    version: 0,
-    tenantId: 0,
-    name: 'Employee 1',
-    skillProficiencySet: [],
-    contract: {
-      tenantId: 0,
-      id: 0,
-      version: 0,
-      name: 'Contract 1',
-      maximumMinutesPerDay: null,
-      maximumMinutesPerWeek: null,
-      maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null,
-    },
-    shortId: 'e1',
-    color: '#FFFFFF',
-  },
-  {
-    id: 1,
-    version: 0,
-    tenantId: 0,
-    name: 'Employee 2',
-    skillProficiencySet: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
-    contract: {
-      tenantId: 0,
-      id: 1,
-      version: 0,
-      name: 'Contract 2',
-      maximumMinutesPerDay: null,
-      maximumMinutesPerWeek: null,
-      maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null,
-    },
-    shortId: 'e1',
-    color: '#FFFFFF',
-  }],
-  skillList: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
-  contractList: [
-    {
-      tenantId: 0,
-      id: 0,
-      version: 0,
-      name: 'Contract 1',
-      maximumMinutesPerDay: null,
-      maximumMinutesPerWeek: null,
-      maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null,
-    },
-    {
-      tenantId: 0,
-      id: 1,
-      version: 0,
-      name: 'Contract 2',
-      maximumMinutesPerDay: null,
-      maximumMinutesPerWeek: null,
-      maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null,
-    },
-  ],
-  addEmployee: jest.fn(),
-  updateEmployee: jest.fn(),
-  removeEmployee: jest.fn(),
-  uploadEmployeeList: jest.fn(),
-  showErrorMessage: jest.fn(),
-  ...getRouterProps('/employees', {}),
-};

@@ -27,19 +27,6 @@ export interface MultiTypeaheadSelectProps<T> {
   autoSize?: boolean;
 }
 
-const StatefulMultiTypeaheadSelectInput: React.FC<MultiTypeaheadSelectProps<any>> = (props) => {
-  const [value, setValue] = React.useState(props.value);
-  return (
-    <MultiTypeaheadSelectInput
-      {...props}
-      value={value}
-      onChange={(v) => { props.onChange(v); setValue(v); }}
-    />
-  );
-};
-
-export { StatefulMultiTypeaheadSelectInput };
-
 export default class MultiTypeaheadSelectInput<T> extends React.Component<
 MultiTypeaheadSelectProps<T>
 > {

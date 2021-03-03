@@ -2,16 +2,17 @@
 
 exports[`App clicking the nav button should show the sidebar 1`] = `
 <Page
-  breadcrumb={null}
-  className=""
   defaultManagedSidebarIsOpen={true}
   header={
     <Header
       onNavToggle={[Function]}
     />
   }
+  isBreadcrumbWidthLimited={false}
   isManagedSidebar={false}
-  mainContainerId={null}
+  isNotificationDrawerExpanded={false}
+  mainTabIndex={-1}
+  onNotificationDrawerExpand={[Function]}
   onPageResize={[Function]}
   sidebar={
     <PageSidebar
@@ -23,7 +24,6 @@ exports[`App clicking the nav button should show the sidebar 1`] = `
       }
     />
   }
-  skipToContent={null}
 >
   <Background />
   <ConnectionStatus />
@@ -81,15 +81,7 @@ exports[`App clicking the nav button should show the sidebar 1`] = `
         path="/:tenantId/rotation"
       />
       <Route
-        component={
-          Object {
-            "$$typeof": Symbol(react.memo),
-            "WrappedComponent": [Function],
-            "compare": null,
-            "displayName": "Connect(withRouter(AdminPage))",
-            "type": [Function],
-          }
-        }
+        component={[Function]}
         exact={true}
         path="/admin"
       />
@@ -100,16 +92,17 @@ exports[`App clicking the nav button should show the sidebar 1`] = `
 
 exports[`App clicking the nav button twice should hide the sidebar 1`] = `
 <Page
-  breadcrumb={null}
-  className=""
   defaultManagedSidebarIsOpen={true}
   header={
     <Header
       onNavToggle={[Function]}
     />
   }
+  isBreadcrumbWidthLimited={false}
   isManagedSidebar={false}
-  mainContainerId={null}
+  isNotificationDrawerExpanded={false}
+  mainTabIndex={-1}
+  onNotificationDrawerExpand={[Function]}
   onPageResize={[Function]}
   sidebar={
     <PageSidebar
@@ -121,7 +114,6 @@ exports[`App clicking the nav button twice should hide the sidebar 1`] = `
       }
     />
   }
-  skipToContent={null}
 >
   <Background />
   <ConnectionStatus />
@@ -179,15 +171,7 @@ exports[`App clicking the nav button twice should hide the sidebar 1`] = `
         path="/:tenantId/rotation"
       />
       <Route
-        component={
-          Object {
-            "$$typeof": Symbol(react.memo),
-            "WrappedComponent": [Function],
-            "compare": null,
-            "displayName": "Connect(withRouter(AdminPage))",
-            "type": [Function],
-          }
-        }
+        component={[Function]}
         exact={true}
         path="/admin"
       />
@@ -198,16 +182,17 @@ exports[`App clicking the nav button twice should hide the sidebar 1`] = `
 
 exports[`App should render correctly on a desktop 1`] = `
 <Page
-  breadcrumb={null}
-  className=""
   defaultManagedSidebarIsOpen={true}
   header={
     <Header
       onNavToggle={[Function]}
     />
   }
+  isBreadcrumbWidthLimited={false}
   isManagedSidebar={false}
-  mainContainerId={null}
+  isNotificationDrawerExpanded={false}
+  mainTabIndex={-1}
+  onNotificationDrawerExpand={[Function]}
   onPageResize={[Function]}
   sidebar={
     <PageSidebar
@@ -219,7 +204,6 @@ exports[`App should render correctly on a desktop 1`] = `
       }
     />
   }
-  skipToContent={null}
 >
   <Background />
   <ConnectionStatus />
@@ -277,15 +261,7 @@ exports[`App should render correctly on a desktop 1`] = `
         path="/:tenantId/rotation"
       />
       <Route
-        component={
-          Object {
-            "$$typeof": Symbol(react.memo),
-            "WrappedComponent": [Function],
-            "compare": null,
-            "displayName": "Connect(withRouter(AdminPage))",
-            "type": [Function],
-          }
-        }
+        component={[Function]}
         exact={true}
         path="/admin"
       />
@@ -296,16 +272,17 @@ exports[`App should render correctly on a desktop 1`] = `
 
 exports[`App should render correctly on a mobile 1`] = `
 <Page
-  breadcrumb={null}
-  className=""
   defaultManagedSidebarIsOpen={true}
   header={
     <Header
       onNavToggle={[Function]}
     />
   }
+  isBreadcrumbWidthLimited={false}
   isManagedSidebar={false}
-  mainContainerId={null}
+  isNotificationDrawerExpanded={false}
+  mainTabIndex={-1}
+  onNotificationDrawerExpand={[Function]}
   onPageResize={[Function]}
   sidebar={
     <PageSidebar
@@ -317,7 +294,6 @@ exports[`App should render correctly on a mobile 1`] = `
       }
     />
   }
-  skipToContent={null}
 >
   <Background />
   <ConnectionStatus />
@@ -375,15 +351,7 @@ exports[`App should render correctly on a mobile 1`] = `
         path="/:tenantId/rotation"
       />
       <Route
-        component={
-          Object {
-            "$$typeof": Symbol(react.memo),
-            "WrappedComponent": [Function],
-            "compare": null,
-            "displayName": "Connect(withRouter(AdminPage))",
-            "type": [Function],
-          }
-        }
+        component={[Function]}
         exact={true}
         path="/admin"
       />

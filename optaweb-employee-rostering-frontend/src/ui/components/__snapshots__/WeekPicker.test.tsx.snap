@@ -4,7 +4,7 @@ exports[`WeekPicker component should render correctly 1`] = `
 <div
   className="week-picker-container"
 >
-  <Component
+  <Button
     aria-label="Previous Week"
     onClick={[Function]}
     variant="plain"
@@ -27,7 +27,7 @@ exports[`WeekPicker component should render correctly 1`] = `
         transform=""
       />
     </svg>
-  </Component>
+  </Button>
   <t
     allowSameDay={false}
     customInput={
@@ -83,7 +83,7 @@ exports[`WeekPicker component should render correctly 1`] = `
     timeIntervals={30}
     withPortal={false}
   />
-  <Component
+  <Button
     aria-label="Next Week"
     onClick={[Function]}
     variant="plain"
@@ -106,7 +106,7 @@ exports[`WeekPicker component should render correctly 1`] = `
         transform=""
       />
     </svg>
-  </Component>
+  </Button>
 </div>
 `;
 
@@ -127,7 +127,7 @@ exports[`WeekPicker custom input component custom input should render correctly 
   >
     06/30/2019 - 07/06/2019
   </Text>
-  <Component
+  <Button
     onClick={[Function]}
     style={
       Object {
@@ -140,10 +140,9 @@ exports[`WeekPicker custom input component custom input should render correctly 
       color="currentColor"
       noVerticalAlign={false}
       size="sm"
-      title={null}
     />
-  </Component>
-  <Component
+  </Button>
+  <Button
     onClick={[Function]}
     style={
       Object {
@@ -156,8 +155,7 @@ exports[`WeekPicker custom input component custom input should render correctly 
       color="currentColor"
       noVerticalAlign={false}
       size="sm"
-      title={null}
     />
-  </Component>
+  </Button>
 </div>
 `;

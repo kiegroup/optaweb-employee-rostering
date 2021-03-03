@@ -62,10 +62,13 @@ export function isDay(start: Date, end: Date) {
 const localizer = momentLocalizer(moment);
 export default function Schedule<T extends object>(props: Props<T>): React.ReactElement<Props<T>> {
   const length = Math.ceil(moment(props.endDate).diff(moment(props.startDate), 'days')) + 1;
+  const ref = React.useRef<HTMLElement>();
   return (
-    <div style={{
-      height: 'calc(100% - 20px)',
-    }}
+    <div
+      style={{
+        height: 'calc(100% - 20px)',
+      }}
+      ref={ref}
     >
       <DragAndDropCalendar
         className={(props.showAllDayCell) ? undefined : 'rbc-no-allday-cell'}
@@ -145,6 +148,7 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
                 ...wrapperProps.style,
                 ...((style.style) ? style.style : {}),
               },
+              boundary: ref,
               className: style.className ? style.className : '',
               popoverHeader: props.popoverHeader(wrapperProps.event),
               popoverBody: props.popoverBody(wrapperProps.event),

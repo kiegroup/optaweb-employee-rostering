@@ -3,3 +3,6 @@ maxMinutesPerDay: Max Minutes Per Day
 maxMinutesPerWeek: Max Minutes Per Week
 maxMinutesPerMonth: Max Minutes Per Month
 maxMinutesPerYear: Max Minutes Per Year
+
+contractEmptyNameError: Contract cannot have an empty name
+contractNameAlreadyTakenError: Name ({{name}}) is already taken by another contract

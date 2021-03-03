@@ -27,6 +27,7 @@ export default function EventWrapper(props: React.PropsWithChildren<{
   continuesEarlier: boolean;
   continuesLater: boolean;
   className: string;
+  boundary: React.MutableRefObject<HTMLElement | undefined>;
   popoverHeader: React.ReactNode;
   popoverBody: React.ReactNode;
   style?: React.CSSProperties;
@@ -47,6 +48,8 @@ export default function EventWrapper(props: React.PropsWithChildren<{
     }
   }
 
+  // zIndex need to be higher than .rbc-event:hover:not(.rbc-addons-dnd-drag-preview)
+  // in ReactBigCalendarOverrides.css
   return (
     <div
       className={className}
@@ -55,7 +58,8 @@ export default function EventWrapper(props: React.PropsWithChildren<{
       <Popover
         headerContent={props.popoverHeader}
         bodyContent={props.popoverBody}
-        boundary="viewport"
+        appendTo={props.boundary.current}
+        zIndex={1000001}
       >
         <div style={{ maxHeight: '200px' }}>{props.children as React.ReactElement}</div>
       </Popover>

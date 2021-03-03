@@ -18,7 +18,7 @@ import { employeeSelectors } from 'store/employee';
 import { useSelector } from 'react-redux';
 import {
   Text, GridItem, Modal, InputGroup, Button,
-  SplitItem, Split, InputGroupText, FlexItem, Flex, FlexModifiers, Bullseye,
+  SplitItem, Split, InputGroupText, FlexItem, Flex, Bullseye,
 } from '@patternfly/react-core';
 import {
   UsersIcon, UserIcon, TrashIcon,
@@ -121,7 +121,7 @@ export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps>
   return (
     <Modal
       title={t('editEmployeeStubList')}
-      isSmall
+      variant="small"
       onClose={props.onClose}
       isOpen={props.isVisible}
       actions={[
@@ -149,7 +149,7 @@ export const EditEmployeeStubListModal: React.FC<EditEmployeeStubListModalProps>
         ),
       ]}
     >
-      <Flex breakpointMods={[{ modifier: FlexModifiers.column }]}>
+      <Flex direction={{ default: 'column' }}>
         {editedStubList.map((stub, index) => (
           <FlexItem key={stub.key}>
             <Split>
@@ -233,12 +233,11 @@ export const EmployeeStubList: React.FC<EmployeeStubListProps> = (props) => {
         <FlexItem>
           <Text>
             {t('employeeStub')}
-:
           </Text>
         </FlexItem>
 
         <FlexItem>
-          <Flex breakpointMods={[{ modifier: FlexModifiers['align-items-stretch'] }]}>
+          <Flex>
             <FlexItem>
               <EmployeeStub
                 isSelected={props.selectedStub === 'NO_SHIFT'}

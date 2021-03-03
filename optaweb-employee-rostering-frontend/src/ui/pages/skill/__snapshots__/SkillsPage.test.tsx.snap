@@ -1,394 +1,308 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Skills page should render correctly with a few skills 1`] = `
-<Fragment>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
+exports[`Skills page DataTable newRowWrapper should be EditableSkillRow 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
   >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
+    <TextInput
+      onChange={[Function]}
+      value=""
+    />
+    <InputGroupText
+      key="0"
     >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
+      <Tooltip
+        content={
+          <List
+            style={
+              Object {
+                "color": "white",
+              }
+            }
+          >
+            <ListItem>
+              Trans(i18nKey=skillEmptyNameError)
+            </ListItem>
+          </List>
+        }
       >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Skills"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Name",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={
-      Array [
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <ForwardRef
-                    aria-label="Name"
-                    defaultValue="Skill 1"
-                    name="name"
-                    onChange={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    Skill 1
-                  </Text>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <ForwardRef
-                    aria-label="Name"
-                    defaultValue="Skill 2"
-                    name="name"
-                    onChange={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    Skill 2
-                  </Text>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-      ]
-    }
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 0,
-      }
-    }
+        <WarningTriangleIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Tooltip>
+    </InputGroupText>
+  </TableCell>
+  <RowEditButtons
+    isValid={false}
+    onClose={[Function]}
+    onSave={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Skills page DataTable rowWrapper should be SkillRow 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
   >
-    <TableHeader />
-    <TableBody />
-  </Component>
-</Fragment>
+    <Text>
+      Skill
+    </Text>
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Skills page clicking on the edit button in the viewer should show the editor 1`] = `
+<EditableSkillRow
+  isNew={false}
+  onClose={[Function]}
+  skill={
+    Object {
+      "id": 0,
+      "name": "Updated Skill",
+      "tenantId": 0,
+      "version": 0,
+    }
+  }
+/>
+`;
+
+exports[`Skills page clicking on the edit button in the viewer should show the editor 2`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Text>
+      Updated Skill
+    </Text>
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Skills page clicking on the edit button should show editor 1`] = `
+<EditableSkillRow
+  isNew={false}
+  onClose={[Function]}
+  skill={
+    Object {
+      "id": 1,
+      "name": "Skill",
+      "tenantId": 0,
+      "version": 0,
+    }
+  }
+/>
+`;
+
+exports[`Skills page clicking on the edit button should show editor 2`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Text>
+      Skill
+    </Text>
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Skills page should render correctly with a few skills 1`] = `
+<DataTable
+  columns={
+    Array [
+      Object {
+        "name": "Trans(i18nKey=name)",
+        "sorter": [Function],
+      },
+    ]
+  }
+  filterText=""
+  filteredRows={
+    Immutable.List [
+      Object {
+        "id": 0,
+        "name": "Skill 1",
+        "tenantId": 0,
+        "version": 0,
+      },
+      Object {
+        "id": 1,
+        "name": "Skill 2",
+        "tenantId": 0,
+        "version": 0,
+      },
+    ]
+  }
+  history={
+    Object {
+      "action": "PUSH",
+      "block": [MockFunction],
+      "createHref": [MockFunction],
+      "go": [MockFunction],
+      "goBack": [MockFunction],
+      "goForward": [MockFunction],
+      "length": 1,
+      "listen": [MockFunction],
+      "location": Object {
+        "hash": "",
+        "pathname": "/0/skill",
+        "search": "",
+        "state": undefined,
+      },
+      "push": [MockFunction],
+      "replace": [MockFunction],
+    }
+  }
+  isReversed={false}
+  itemsPerPage={10}
+  location={
+    Object {
+      "hash": "",
+      "pathname": "/0/skill",
+      "search": "",
+      "state": undefined,
+    }
+  }
+  match={
+    Object {
+      "isExact": true,
+      "params": Object {},
+      "path": "/0/skill",
+      "url": "localhost:8080/0/skill",
+    }
+  }
+  newRowWrapper={[Function]}
+  numOfFilteredRows={2}
+  onSorterChange={[Function]}
+  page={1}
+  rowWrapper={[Function]}
+  rowsInPage={
+    Immutable.List [
+      Object {
+        "id": 0,
+        "name": "Skill 1",
+        "tenantId": 0,
+        "version": 0,
+      },
+      Object {
+        "id": 1,
+        "name": "Skill 2",
+        "tenantId": 0,
+        "version": 0,
+      },
+    ]
+  }
+  sortByIndex={0}
+  title="Trans(i18nKey=skills)"
+/>
 `;
 
 exports[`Skills page should render correctly with no skills 1`] = `
-<Fragment>
-  <Level
-    gutter="sm"
-    style={
+<DataTable
+  columns={
+    Array [
       Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
+        "name": "Trans(i18nKey=name)",
+        "sorter": [Function],
+      },
+    ]
+  }
+  filterText=""
+  filteredRows={Immutable.List []}
+  history={
+    Object {
+      "action": "PUSH",
+      "block": [MockFunction],
+      "createHref": [MockFunction],
+      "go": [MockFunction],
+      "goBack": [MockFunction],
+      "goForward": [MockFunction],
+      "length": 1,
+      "listen": [MockFunction],
+      "location": Object {
+        "hash": "",
+        "pathname": "/0/skill",
+        "search": "",
+        "state": undefined,
+      },
+      "push": [MockFunction],
+      "replace": [MockFunction],
     }
-  >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={0}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Skills"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Name",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
+  }
+  isReversed={false}
+  itemsPerPage={10}
+  location={
+    Object {
+      "hash": "",
+      "pathname": "/0/skill",
+      "search": "",
+      "state": undefined,
     }
-    onSort={[Function]}
-    rows={Array []}
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 0,
-      }
+  }
+  match={
+    Object {
+      "isExact": true,
+      "params": Object {},
+      "path": "/0/skill",
+      "url": "localhost:8080/0/skill",
     }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
-</Fragment>
+  }
+  newRowWrapper={[Function]}
+  numOfFilteredRows={0}
+  onSorterChange={[Function]}
+  page={1}
+  rowWrapper={[Function]}
+  rowsInPage={Immutable.List []}
+  sortByIndex={0}
+  title="Trans(i18nKey=skills)"
+/>
 `;
 
 exports[`Skills page should render the editor correctly 1`] = `
-<tr>
-  <td
-    key="0"
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
   >
-    <ForwardRef
-      aria-label="Name"
-      defaultValue="Skill"
-      key="0"
-      name="name"
+    <TextInput
       onChange={[Function]}
+      value="Skill"
     />
-  </td>
-</tr>
+  </TableCell>
+  <RowEditButtons
+    isValid={true}
+    onClose={[Function]}
+    onSave={[Function]}
+  />
+</TableRow>
 `;
 
 exports[`Skills page should render the viewer correctly 1`] = `
-<tr>
-  <td
-    key="0"
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
   >
-    <Text
-      key="0"
-    >
+    <Text>
       Skill
     </Text>
-  </td>
-</tr>
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
 `;

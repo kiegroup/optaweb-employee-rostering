@@ -4,33 +4,36 @@ exports[`ConfirmDialog component should render correctly when closed 1`] = `
 <Modal
   actions={
     Array [
-      <Unknown
+      <Button
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Unknown>,
-      <Unknown
+      </Button>,
+      <Button
         aria-label="Trans(i18nKey=confirm)"
         data-cy="confirm"
         onClick={[Function]}
       >
         Trans(i18nKey=confirm)
-      </Unknown>,
+      </Button>,
     ]
   }
-  appendTo={<body />}
-  ariaDescribedById=""
+  appendTo={[Function]}
+  aria-describedby=""
+  aria-label=""
+  aria-labelledby=""
   className=""
-  hideTitle={false}
-  isFooterLeftAligned={false}
-  isLarge={false}
+  hasNoBodyWrapper={false}
   isOpen={false}
-  isSmall={true}
   onClose={[MockFunction]}
+  ouiaSafe={true}
   showClose={true}
   title="Confirm Dialog Title"
+  titleIconVariant={null}
+  titleLabel=""
+  variant="small"
 >
   Body
 </Modal>
@@ -40,33 +43,36 @@ exports[`ConfirmDialog component should render correctly when opened 1`] = `
 <Modal
   actions={
     Array [
-      <Unknown
+      <Button
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Unknown>,
-      <Unknown
+      </Button>,
+      <Button
         aria-label="Trans(i18nKey=confirm)"
         data-cy="confirm"
         onClick={[Function]}
       >
         Trans(i18nKey=confirm)
-      </Unknown>,
+      </Button>,
     ]
   }
-  appendTo={<body />}
-  ariaDescribedById=""
+  appendTo={[Function]}
+  aria-describedby=""
+  aria-label=""
+  aria-labelledby=""
   className=""
-  hideTitle={false}
-  isFooterLeftAligned={false}
-  isLarge={false}
+  hasNoBodyWrapper={false}
   isOpen={true}
-  isSmall={true}
   onClose={[MockFunction]}
+  ouiaSafe={true}
   showClose={true}
   title="Confirm Dialog Title"
+  titleIconVariant={null}
+  titleLabel=""
+  variant="small"
 >
   Body
 </Modal>

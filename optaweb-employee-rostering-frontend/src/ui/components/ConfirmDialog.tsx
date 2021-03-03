@@ -55,7 +55,7 @@ export const ConfirmDialog: FC<PropsWithChildren<ConfirmDialogProps>> = (props) 
         ),
         ]
       }
-      isSmall
+      variant="small"
     >
       {props.children}
     </Modal>

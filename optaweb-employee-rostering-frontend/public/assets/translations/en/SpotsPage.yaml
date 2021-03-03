@@ -1,3 +1,6 @@
 ---
 requiredSkillSet: Required Skill Set
 selectRequiredSkills: Select required skills...
+
+spotEmptyNameError: Spot cannot have an empty name
+spotNameAlreadyTakenError: Name ({{name}}) is already taken by another spot

@@ -4,31 +4,34 @@ exports[`EditTimeBucketModal Component It should render correctly when open 1`] 
 <Modal
   actions={
     Array [
-      <Unknown
+      <Button
         onClick={[MockFunction]}
         variant="secondary"
       >
         Cancel
-      </Unknown>,
-      <Unknown
+      </Button>,
+      <Button
         onClick={[Function]}
         variant="primary"
       >
         Save
-      </Unknown>,
+      </Button>,
     ]
   }
-  appendTo={<body />}
-  ariaDescribedById=""
+  appendTo={[Function]}
+  aria-describedby=""
+  aria-label=""
+  aria-labelledby=""
   className=""
-  hideTitle={false}
-  isFooterLeftAligned={false}
-  isLarge={false}
+  hasNoBodyWrapper={false}
   isOpen={true}
-  isSmall={true}
   onClose={[MockFunction]}
+  ouiaSafe={true}
   showClose={true}
   title="Create Working Time Bucket"
+  titleIconVariant={null}
+  titleLabel=""
+  variant="small"
 >
   <TimeBucketEditor
     name="Time Bucket"
@@ -91,25 +94,26 @@ exports[`EditTimeBucketModal Component It should render correctly when open 1`] 
 exports[`TimeBucketEditor Component should render correctly 1`] = `
 <Fragment>
   <Title
+    headingLevel="h1"
     size="lg"
   >
     Title
   </Title>
   <Flex
-    breakpointMods={
-      Array [
-        Object {
-          "modifier": "column",
-        },
-        Object {
-          "modifier": "space-items-md",
-        },
-      ]
+    direction={
+      Object {
+        "default": "column",
+      }
+    }
+    spaceItems={
+      Object {
+        "default": "spaceItemsMd",
+      }
     }
   >
     <FlexItem>
       <InputGroup>
-        <ForwardRef
+        <TextInput
           aria-label="Start Time"
           onChange={[Function]}
           type="time"
@@ -118,7 +122,7 @@ exports[`TimeBucketEditor Component should render correctly 1`] = `
         <InputGroupText>
           to
         </InputGroupText>
-        <ForwardRef
+        <TextInput
           aria-label="End Time"
           onChange={[Function]}
           type="time"
@@ -128,7 +132,7 @@ exports[`TimeBucketEditor Component should render correctly 1`] = `
     </FlexItem>
     <FlexItem>
       <Grid
-        gutter="md"
+        hasGutter={true}
       >
         <GridItem
           span={4}

@@ -97,7 +97,7 @@ export const ExportScheduleModal: React.FC<StateProps & OwnProps> = (props) => {
           </a>,
         ]
       }
-      isSmall
+      variant="small"
     >
       <Form id="modal-element" onSubmit={e => e.preventDefault()}>
         <InputGroup>

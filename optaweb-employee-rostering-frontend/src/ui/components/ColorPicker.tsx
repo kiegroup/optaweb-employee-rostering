@@ -63,6 +63,10 @@ export const defaultColorList = [
   '#009596', // Light Cyan
 ];
 
+export function getRandomColor() {
+  return defaultColorList[Math.floor(Math.random() * defaultColorList.length)];
+}
+
 export function getColor(color: string): Color {
   if (color.startsWith('var')) {
     // CSS variable

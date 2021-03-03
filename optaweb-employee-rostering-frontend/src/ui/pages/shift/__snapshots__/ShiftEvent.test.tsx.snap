@@ -6655,7 +6655,6 @@ exports[`ShiftEvent should render ShiftEvent correctly when pinned 1`] = `
       color="currentColor"
       noVerticalAlign={false}
       size="sm"
-      title={null}
     />
     <span
       style={
@@ -6886,7 +6885,7 @@ exports[`ShiftEvent should render ShiftPopupHeader correctly 1`] = `
   <Text>
     Spot, 9:00 AM-5:00 PM: Employee 1
   </Text>
-  <Component
+  <Button
     onClick={[Function]}
     variant="link"
   >
@@ -6894,10 +6893,9 @@ exports[`ShiftEvent should render ShiftPopupHeader correctly 1`] = `
       color="currentColor"
       noVerticalAlign={false}
       size="sm"
-      title={null}
     />
-  </Component>
-  <Component
+  </Button>
+  <Button
     onClick={[Function]}
     variant="link"
   >
@@ -6905,10 +6903,9 @@ exports[`ShiftEvent should render ShiftPopupHeader correctly 1`] = `
       color="currentColor"
       noVerticalAlign={false}
       size="sm"
-      title={null}
     />
-  </Component>
-  <Component
+  </Button>
+  <Button
     onClick={[Function]}
     variant="link"
   >
@@ -6916,8 +6913,7 @@ exports[`ShiftEvent should render ShiftPopupHeader correctly 1`] = `
       color="currentColor"
       noVerticalAlign={false}
       size="sm"
-      title={null}
     />
-  </Component>
+  </Button>
 </span>
 `;

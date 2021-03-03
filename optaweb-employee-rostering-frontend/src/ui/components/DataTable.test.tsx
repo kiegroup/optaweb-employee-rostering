@@ -13,320 +13,375 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { stringSorter } from 'util/CommonSorters';
-import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { DataTable, DataTableProps, DataTableUrlProps } from './DataTable';
+import { usePageableData } from 'util/FunctionalComponentUtils';
+import { CloseIcon, EditIcon, SaveIcon, TrashIcon } from '@patternfly/react-icons';
+import { List } from 'immutable';
+import { Button, Pagination } from '@patternfly/react-core';
+import { Th } from '@patternfly/react-table';
+import { FilterComponent } from './FilterComponent';
+import {
+  DataTable, DataTableProps, PaginationControls, RowEditButtons,
+  RowViewButtons, setSorterInUrl, TableCell, TableRow,
+} from './DataTable';
 
-interface MockData {name: string; number: number}
-class MockDataTable extends DataTable<MockData, DataTableProps<MockData>> {
-  displayDataRow = jest.fn(data => [<span key={0} id="viewer">{data.name}</span>,
-    <span key={1}>{data.number}</span>]);
+describe('RowViewButtons', () => {
+  it('should call onEdit when the edit icon is clicked', () => {
+    const onDelete = jest.fn();
+    const onEdit = jest.fn();
+    const viewButtons = shallow(<RowViewButtons onEdit={onEdit} onDelete={onDelete} />);
+    viewButtons.findWhere(component => component.children(EditIcon).length > 0).simulate('click');
+    expect(onEdit).toBeCalled();
+    expect(onDelete).not.toBeCalled();
+  });
 
-  getInitialStateForNewRow = jest.fn(() => ({}));
+  it('should call onDelete when the trash icon is clicked', () => {
+    const onDelete = jest.fn();
+    const onEdit = jest.fn();
+    const viewButtons = shallow(<RowViewButtons onEdit={onEdit} onDelete={onDelete} />);
+    viewButtons.findWhere(component => component.children(TrashIcon).length > 0).simulate('click');
+    expect(onEdit).not.toBeCalled();
+    expect(onDelete).toBeCalled();
+  });
 
-  editDataRow = jest.fn(() => [<input key={0} id="editor" />,
-    <input key={1} />]);
+  it('should render correctly', () => {
+    const onDelete = jest.fn();
+    const onEdit = jest.fn();
+    const viewButtons = shallow(<RowViewButtons onEdit={onEdit} onDelete={onDelete} />);
+    expect(viewButtons).toMatchSnapshot();
+  });
+});
 
-  isValid = jest.fn();
+describe('RowEditButtons', () => {
+  it('should call onClose when the close icon is clicked', () => {
+    const onClose = jest.fn();
+    const onSave = jest.fn();
+    const editButtons = shallow(<RowEditButtons isValid onSave={onSave} onClose={onClose} />);
+    editButtons.findWhere(component => component.children(CloseIcon).length > 0).simulate('click');
+    expect(onClose).toBeCalled();
+    expect(onSave).not.toBeCalled();
+  });
 
-  isDataComplete = jest.fn() as any;
+  it('should call onSave and onClose when the save icon is clicked', () => {
+    const onClose = jest.fn();
+    const onSave = jest.fn();
+    const editButtons = shallow(<RowEditButtons isValid onSave={onSave} onClose={onClose} />);
+    editButtons.findWhere(component => component.children(SaveIcon).length > 0).simulate('click');
 
-  getSorters = jest.fn(() => [null, stringSorter((d: MockData) => String(d.number))]);
+    // saving invokes both onClose and onSave
+    expect(onClose).toBeCalled();
+    expect(onSave).toBeCalled();
+  });
 
-  getFilter = jest.fn((() => () => () => Boolean(true)));
+  it('save button should be disabled if it is invalid', () => {
+    const onClose = jest.fn();
+    const onSave = jest.fn();
+    const editButtons = shallow(<RowEditButtons isValid={false} onSave={onSave} onClose={onClose} />);
+    expect(editButtons.findWhere(component => component.children(SaveIcon).length > 0)
+      .prop('isDisabled')).toEqual(true);
+  });
 
-  updateData = jest.fn();
+  it('save button should not be disabled if it is valid', () => {
+    const onClose = jest.fn();
+    const onSave = jest.fn();
+    const editButtons = shallow(<RowEditButtons isValid onSave={onSave} onClose={onClose} />);
+    expect(editButtons.findWhere(component => component.children(SaveIcon).length > 0)
+      .prop('isDisabled')).toEqual(false);
+  });
 
-  addData = jest.fn();
+  it('should render correctly', () => {
+    const onClose = jest.fn();
+    const onSave = jest.fn();
+    const editButtons = shallow(<RowEditButtons isValid onSave={onSave} onClose={onClose} />);
+    expect(editButtons).toMatchSnapshot();
+  });
+});
 
-  removeData = jest.fn();
-}
+describe('PaginationControls', () => {
+  it('should render correctly', () => {
+    const routerProps = getRouterProps('/table', {});
+    const paginationControls = shallow(
+      <PaginationControls
+        filterText="My filter"
+        page={1}
+        itemsPerPage={10}
+        filteredRows={List()}
+        rowsInPage={List()}
+        numOfFilteredRows={100}
+        isReversed={false}
+        {...routerProps}
+        isCreatingNewRow={false}
+        onCreateNewRow={jest.fn()}
+      />,
+    );
+    expect(paginationControls).toMatchSnapshot();
+  });
+
+  it('changing filter should change props in the url', () => {
+    const routerProps = getRouterProps('/table', {});
+    const paginationControls = shallow(
+      <PaginationControls
+        filterText="My filter"
+        page={1}
+        itemsPerPage={10}
+        filteredRows={List()}
+        rowsInPage={List()}
+        numOfFilteredRows={100}
+        isReversed={false}
+        {...routerProps}
+        isCreatingNewRow={false}
+        onCreateNewRow={jest.fn()}
+      />,
+    );
+
+    const newFilter = 'New Text';
+    paginationControls.find(FilterComponent).simulate('change', newFilter);
+    const searchParams = new URLSearchParams(routerProps.location.search);
+    searchParams.set('page', '1');
+    searchParams.set('filter', newFilter);
+    expect(routerProps.history.push).toBeCalledWith(`/table?${searchParams.toString()}`);
+  });
+
+  it('clicking the add button should call onCreateNewRow', () => {
+    const routerProps = getRouterProps('/table', {});
+    const onCreateNewRow = jest.fn();
+    const paginationControls = shallow(
+      <PaginationControls
+        filterText="My filter"
+        page={1}
+        itemsPerPage={10}
+        filteredRows={List()}
+        rowsInPage={List()}
+        numOfFilteredRows={100}
+        isReversed={false}
+        {...routerProps}
+        isCreatingNewRow={false}
+        onCreateNewRow={onCreateNewRow}
+      />,
+    );
+    expect(paginationControls.find(Button).prop('isDisabled')).toEqual(false);
+    paginationControls.find(Button).simulate('click');
+    expect(onCreateNewRow).toBeCalled();
+  });
+
+  it('add button should be disabled if is creating new row', () => {
+    const routerProps = getRouterProps('/table', {});
+    const onCreateNewRow = jest.fn();
+    const paginationControls = shallow(
+      <PaginationControls
+        filterText="My filter"
+        page={1}
+        itemsPerPage={10}
+        filteredRows={List()}
+        rowsInPage={List()}
+        numOfFilteredRows={100}
+        isReversed={false}
+        {...routerProps}
+        isCreatingNewRow
+        onCreateNewRow={onCreateNewRow}
+      />,
+    );
+    expect(paginationControls.find(Button).prop('isDisabled')).toEqual(true);
+  });
+
+  it('setting page should change props in the url', () => {
+    const routerProps = getRouterProps('/table', {});
+    const paginationControls = shallow(
+      <PaginationControls
+        filterText="My filter"
+        page={1}
+        itemsPerPage={10}
+        filteredRows={List()}
+        rowsInPage={List()}
+        numOfFilteredRows={100}
+        isReversed={false}
+        {...routerProps}
+        isCreatingNewRow={false}
+        onCreateNewRow={jest.fn()}
+      />,
+    );
+
+    const newPage = 3;
+    paginationControls.find(Pagination).simulate('setPage', null, newPage);
+    const searchParams = new URLSearchParams(routerProps.location.search);
+    searchParams.set('page', `${newPage}`);
+    expect(routerProps.history.push).toBeCalledWith(`/table?${searchParams.toString()}`);
+  });
+
+  it('setting items per page should change props in the url', () => {
+    const routerProps = getRouterProps('/table', {});
+    let paginationControls = shallow(
+      <PaginationControls
+        filterText="My filter"
+        page={2}
+        itemsPerPage={10}
+        filteredRows={List()}
+        rowsInPage={List()}
+        numOfFilteredRows={100}
+        isReversed={false}
+        {...routerProps}
+        isCreatingNewRow={false}
+        onCreateNewRow={jest.fn()}
+      />,
+    );
+
+    let newItemsPerPage = 5;
+    paginationControls.find(Pagination).simulate('perPageSelect', null, newItemsPerPage);
+    let searchParams = new URLSearchParams(routerProps.location.search);
+    // first item on page 2 with 10 per page is the 11th item;
+    // the 11th item is on the 3rd page with 5 per page
+    searchParams.set('page', `${3}`);
+    searchParams.set('itemsPerPage', `${newItemsPerPage}`);
+    expect(routerProps.history.push).toBeCalledWith(`/table?${searchParams.toString()}`);
+    jest.clearAllMocks();
+
+    paginationControls = shallow(
+      <PaginationControls
+        filterText="My filter"
+        page={3}
+        itemsPerPage={5}
+        filteredRows={List()}
+        rowsInPage={List()}
+        numOfFilteredRows={100}
+        isReversed={false}
+        {...routerProps}
+        isCreatingNewRow={false}
+        onCreateNewRow={jest.fn()}
+      />,
+    );
+    newItemsPerPage = 10;
+    paginationControls.find(Pagination).simulate('perPageSelect', null, newItemsPerPage);
+    searchParams = new URLSearchParams(routerProps.location.search);
+    // first item on page 3 with 5 per page is the 11th item;
+    // the 11th item is on the 2nd page with 10 per page
+    searchParams.set('page', `${2}`);
+    searchParams.set('itemsPerPage', `${newItemsPerPage}`);
+    expect(routerProps.history.push).toBeCalledWith(`/table?${searchParams.toString()}`);
+    jest.clearAllMocks();
+
+    paginationControls = shallow(
+      <PaginationControls
+        filterText="My filter"
+        page={5}
+        itemsPerPage={3}
+        filteredRows={List()}
+        rowsInPage={List()}
+        numOfFilteredRows={100}
+        isReversed={false}
+        {...routerProps}
+        isCreatingNewRow={false}
+        onCreateNewRow={jest.fn()}
+      />,
+    );
+    newItemsPerPage = 10;
+    paginationControls.find(Pagination).simulate('perPageSelect', null, newItemsPerPage);
+    searchParams = new URLSearchParams(routerProps.location.search);
+    // first item on page 5 with 3 per page is the 13th item;
+    // the 13th item is on the 2nd page with 10 per page
+    searchParams.set('page', `${2}`);
+    searchParams.set('itemsPerPage', `${newItemsPerPage}`);
+    expect(routerProps.history.push).toBeCalledWith(`/table?${searchParams.toString()}`);
+  });
+});
 
 describe('DataTable component', () => {
+  interface MockData {name: string; number: number}
+
+  const tableProps: DataTableProps<MockData> = {
+    title: 'Data Table',
+    columns: [{ name: 'Name' }, { name: 'Number', sorter: (a, b) => b.number - a.number }],
+    sortByIndex: 0,
+    onSorterChange: jest.fn(),
+    rowWrapper: (row: MockData) => (
+      <TableRow key={row.name}>
+        <TableCell columnName="Name">{row.name}</TableCell>
+        <TableCell columnName="Number">{row.number}</TableCell>
+      </TableRow>
+    ),
+    newRowWrapper: removeRow => (
+      <TableRow>
+        <TableCell columnName="Name">New Data Name</TableCell>
+        <TableCell columnName="Number">New Data Number</TableCell>
+        <TableCell columnName="Number">
+          <Button onClick={removeRow}>Remove</Button>
+        </TableCell>
+      </TableRow>
+    ),
+  };
+
+  const exampleData = [
+    { name: 'Some Data', number: 1 },
+    { name: 'More Data', number: 2 },
+  ];
+
+  const routerProps = getRouterProps('/table', {});
+  const pageInfo = {
+    page: '1',
+    itemsPerPage: '5',
+    filter: '',
+    sortBy: '0',
+    asc: 'true',
+  };
+
+  const useTableRows = (tableData: MockData[]) => usePageableData<MockData>(pageInfo,
+    tableData, data => [data.name, `${data.number}`],
+    stringSorter(data => data.name));
+
   it('should render correctly with no rows', () => {
-    const dataTable = shallow(<MockDataTable {...noRows} />);
+    const dataTable = shallow(<DataTable {...tableProps} {...routerProps} {...useTableRows([])} />);
     expect(toJson(dataTable)).toMatchSnapshot();
   });
 
   it('should render correctly with a few rows', () => {
-    const dataTable = shallow(<MockDataTable {...twoRows} />);
+    const dataTable = shallow(<DataTable {...tableProps} {...routerProps} {...useTableRows(exampleData)} />);
     expect(toJson(dataTable)).toMatchSnapshot();
   });
 
-  it('should call display data row and edit data row for each row in render', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.render();
-    expect(dataTable.displayDataRow).toBeCalledTimes(2);
-    expect(dataTable.displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
-    expect(dataTable.displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
-    expect(dataTable.editDataRow).toBeCalledTimes(2);
-    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0], expect.any(Function));
-    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1], expect.any(Function));
+  it('should render correctly when adding a row', () => {
+    const dataTable = shallow(<DataTable {...tableProps} {...routerProps} {...useTableRows(exampleData)} />);
+    dataTable.find(PaginationControls).simulate('createNewRow');
+    expect(toJson(dataTable)).toMatchSnapshot();
+
+    dataTable.find(TableRow).filterWhere(wrapper => wrapper.contains('New Data Name')).find(Button).simulate('click');
+    expect(toJson(dataTable)).toMatchSnapshot();
   });
 
-  it('should render viewer initially', () => {
-    const dataTable = new MockDataTable(twoRows);
-    const table = shallow(<div>{dataTable.render()}</div>);
-    expect(toJson(table)).toMatchSnapshot();
+  it('should call onAddButtonClick if prop is set', () => {
+    const onAddButtonClick = jest.fn();
+    const dataTable = shallow(<DataTable
+      onAddButtonClick={onAddButtonClick}
+      {...tableProps}
+      {...routerProps}
+      {...useTableRows(exampleData)}
+    />);
+    dataTable.find(PaginationControls).simulate('createNewRow');
+    expect(onAddButtonClick).toBeCalled();
   });
 
-  it('should set new row data to initial state if no row is being added', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.getInitialStateForNewRow.mockReturnValue({ name: 'Hi' });
-    dataTable.setState = jest.fn();
-    dataTable.createNewRow();
+  it('should call onSorterChange when a header is clicked', () => {
+    const dataTable = shallow(<DataTable {...tableProps} {...routerProps} {...useTableRows(exampleData)} />);
+    const header = dataTable.find(Th).filterWhere(wrapper => wrapper.contains('Number'));
+    (header.prop('sort')?.onSort as Function)();
 
-    expect(dataTable.getInitialStateForNewRow).toBeCalled();
-    expect(dataTable.setState).toBeCalled();
-    expect(dataTable.setState).toBeCalledWith({ newRowData: { name: 'Hi' } });
+    expect(tableProps.onSorterChange).toBeCalledWith(1);
   });
 
-  it('should not set new row data to initial state if no row is being added', () => {
-    const dataTable = mount(<MockDataTable {...twoRows} />);
-    dataTable.setState({ newRowData: { name: 'Hi' } });
-    (dataTable.instance() as MockDataTable).setState = jest.fn();
-    (dataTable.instance() as MockDataTable).createNewRow();
+  it('setSorterInUrl should set sortBy and asc', () => {
+    setSorterInUrl(routerProps, { asc: null }, 0, 1);
+    expect(routerProps.history.push).toBeCalledWith('/table?sortBy=1&asc=true');
 
-    expect((dataTable.instance() as MockDataTable).getInitialStateForNewRow).not.toBeCalled();
-    expect((dataTable.instance() as MockDataTable).setState).not.toBeCalled();
-  });
+    jest.clearAllMocks();
 
-  it('should render editor for new row', () => {
-    const dataTable = mount(<MockDataTable {...twoRows} />);
-    (dataTable.instance() as MockDataTable).displayDataRow.mockClear();
-    (dataTable.instance() as MockDataTable).editDataRow.mockClear();
-    (dataTable.instance() as MockDataTable).createNewRow();
+    setSorterInUrl(routerProps, { asc: 'true' }, 1, 1);
+    expect(routerProps.history.push).toBeCalledWith('/table?sortBy=1&asc=false');
 
-    expect((dataTable.instance() as MockDataTable).getInitialStateForNewRow).toBeCalled();
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toBeCalledTimes(2);
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(3);
-    expect((dataTable.instance() as MockDataTable).editDataRow)
-      .toHaveBeenNthCalledWith(1, {}, expect.any(Function));
-    expect((dataTable.instance() as MockDataTable).editDataRow)
-      .toHaveBeenNthCalledWith(2, twoRows.tableData[0], expect.any(Function));
-    expect((dataTable.instance() as MockDataTable).editDataRow)
-      .toHaveBeenNthCalledWith(3, twoRows.tableData[1], expect.any(Function));
-    expect(toJson(shallow(<div>{dataTable.instance().render()}</div>))).toMatchSnapshot();
-  });
+    jest.clearAllMocks();
 
-  it('clicking edit button should edit row', () => {
-    const dataTable = new MockDataTable(twoRows);
-    const data: MockData = { name: 'Hello', number: 1 };
-    const toggleEditing = jest.fn();
-    const buttons = mount(dataTable.getEditButtons(data, { ...data }, false, toggleEditing));
-    buttons.find('button[aria-label="Edit"]').simulate('click');
-    expect(toggleEditing).toBeCalled();
-  });
-
-  it('clicking delete button should delete row', () => {
-    const dataTable = new MockDataTable(twoRows);
-    const data: MockData = { name: 'Hello', number: 1 };
-    const toggleEditing = jest.fn();
-    const buttons = mount(dataTable.getEditButtons(data, { ...data }, false, toggleEditing));
-    buttons.find('button[aria-label="Delete"]').simulate('click');
-
-    expect(dataTable.removeData).toBeCalled();
-    expect(dataTable.removeData).toBeCalledWith(data);
-  });
-
-  it('clicking cancel button on edited row should stop editing', () => {
-    const dataTable = new MockDataTable(twoRows);
-    const data: MockData = { name: 'Hello', number: 1 };
-    const toggleEditing = jest.fn();
-    const buttons = mount(dataTable.getEditButtons(data, { ...data }, true, toggleEditing));
-    buttons.find('button[aria-label="Cancel"]').simulate('click');
-
-    expect(toggleEditing).toBeCalled();
-  });
-
-  it('should not save edited row when save button is clicked if incomplete', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.isDataComplete.mockReturnValue(false);
-
-    const data: MockData = { name: 'Hello', number: 1 };
-    const toggleEditing = jest.fn();
-    const buttons = mount(dataTable.getEditButtons(data, { ...data }, true, toggleEditing));
-    buttons.find('button[aria-label="Save"]').simulate('click');
-    expect(dataTable.isDataComplete).toBeCalled();
-    expect(dataTable.isDataComplete).toBeCalledWith(data);
-    expect(dataTable.isValid).not.toBeCalled();
-    expect(dataTable.addData).not.toBeCalled();
-  });
-
-  it('clicking save button on edited row should not save if invalid', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.isValid.mockReturnValue(false);
-    dataTable.isDataComplete.mockReturnValue(true);
-    const data: MockData = { name: 'Hello', number: 1 };
-    const toggleEditing = jest.fn();
-    const buttons = mount(dataTable.getEditButtons(data, { ...data }, true, toggleEditing));
-    buttons.find('button[aria-label="Save"]').simulate('click');
-
-    expect(dataTable.isDataComplete).toBeCalled();
-    expect(dataTable.isDataComplete).toBeCalledWith(data);
-    expect(dataTable.isValid).toBeCalled();
-    expect(dataTable.isValid).toBeCalledWith(data);
-    expect(dataTable.updateData).not.toBeCalled();
-    expect(toggleEditing).not.toBeCalled();
-  });
-
-  it('clicking save button on edited row should save if valid', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.isValid.mockReturnValue(true);
-    dataTable.isDataComplete.mockReturnValue(true);
-    const oldValue: MockData = { name: 'Hello', number: 1 };
-    const newValue: MockData = { name: 'New Data', number: 2 };
-    const toggleEditing = jest.fn();
-    const buttons = mount(dataTable.getEditButtons(oldValue, newValue, true, toggleEditing));
-    buttons.find('button[aria-label="Save"]').simulate('click');
-
-    expect(dataTable.isDataComplete).toBeCalled();
-    expect(dataTable.isDataComplete).toBeCalledWith(newValue);
-    expect(dataTable.isValid).toBeCalled();
-    expect(dataTable.isValid).toBeCalledWith(newValue);
-    expect(dataTable.updateData).toBeCalled();
-    expect(dataTable.updateData).toBeCalledWith(newValue);
-    expect(toggleEditing).toBeCalled();
-  });
-
-  it('should remove new row when cancel button is clicked', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.cancelAddingRow = jest.fn();
-
-    const dataStore: any = {};
-    const buttons = mount(dataTable.getAddButtons(dataStore));
-    buttons.find('button[aria-label="Cancel"]').simulate('click');
-    expect(dataTable.cancelAddingRow).toBeCalled();
-  });
-
-  it('should not save new row when save button is clicked if incomplete', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.isDataComplete.mockReturnValue(false);
-
-    const dataStore: any = ['New Data', 1];
-    const buttons = mount(dataTable.getAddButtons(dataStore));
-    buttons.find('button[aria-label="Save"]').simulate('click');
-    expect(dataTable.isDataComplete).toBeCalled();
-    expect(dataTable.isDataComplete).toBeCalledWith(dataStore);
-    expect(dataTable.isValid).not.toBeCalled();
-    expect(dataTable.addData).not.toBeCalled();
-  });
-
-  it('should not save new row when save button is clicked if invalid', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.isDataComplete.mockReturnValue(true);
-    dataTable.isValid.mockReturnValue(false);
-
-    const dataStore: any = ['New Data', 1];
-    const buttons = mount(dataTable.getAddButtons(dataStore));
-    buttons.find('button[aria-label="Save"]').simulate('click');
-    expect(dataTable.isDataComplete).toBeCalled();
-    expect(dataTable.isDataComplete).toBeCalledWith(dataStore);
-    expect(dataTable.isValid).toBeCalled();
-    expect(dataTable.isValid).toBeCalledWith(dataStore);
-    expect(dataTable.addData).not.toBeCalled();
-  });
-
-  it('should save new row when save button is clicked if valid', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.isDataComplete.mockReturnValue(true);
-    dataTable.isValid.mockReturnValue(true);
-    dataTable.cancelAddingRow = jest.fn();
-
-    const dataStore: any = ['New Data', 1];
-    const buttons = mount(dataTable.getAddButtons(dataStore));
-    buttons.find('button[aria-label="Save"]').simulate('click');
-    expect(dataTable.isDataComplete).toBeCalled();
-    expect(dataTable.isDataComplete).toBeCalledWith(dataStore);
-    expect(dataTable.isValid).toBeCalled();
-    expect(dataTable.isValid).toBeCalledWith(dataStore);
-    expect(dataTable.addData).toBeCalled();
-    expect(dataTable.addData).toBeCalledWith(dataStore);
-    expect(dataTable.cancelAddingRow).toBeCalled();
-  });
-
-  it('should only render rows that match filter', () => {
-    let urlProps = getRouterProps('/table', { filter: 'Some' });
-    let props = { ...twoRows, ...urlProps };
-    let dataTable = shallow(<MockDataTable {...props} />);
-    expect(dataTable).toMatchSnapshot();
-
-    urlProps = getRouterProps('/table', { filter: 'More' });
-    props = { ...twoRows, ...urlProps };
-    dataTable = shallow(<MockDataTable {...props} />);
-    expect(dataTable).toMatchSnapshot();
-
-    urlProps = getRouterProps('/table', { filter: 'Data' });
-    props = { ...twoRows, ...urlProps };
-    dataTable = shallow(<MockDataTable {...props} />);
-    expect(dataTable).toMatchSnapshot();
-  });
-
-  it('should update page on set page', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.onPerPageSelect({}, 2, { page: '50', itemsPerPage: '1', filter: null, sortBy: null, asc: null });
-    expect(twoRows.history.push).toHaveBeenLastCalledWith('/table?page=25&itemsPerPage=2');
-  });
-
-  it('should update perPage on set per page', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.onPerPageSelect({}, 25, { page: '50', itemsPerPage: '1', filter: null, sortBy: null, asc: null });
-    expect(twoRows.history.push).toHaveBeenLastCalledWith('/table?page=2&itemsPerPage=25');
-  });
-
-  it('should only render data on page', () => {
-    let urlProps = getRouterProps('/table', { page: '1', perPage: '1' });
-    let props = { ...twoRows, ...urlProps };
-    let dataTable = shallow(<MockDataTable {...props} />);
-    expect(dataTable).toMatchSnapshot();
-
-    urlProps = getRouterProps('/table', { page: '2', perPage: '1' });
-    props = { ...twoRows, ...urlProps };
-    dataTable = shallow(<MockDataTable {...props} />);
-    expect(dataTable).toMatchSnapshot();
-  });
-
-  it('should update sortBy on sort', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.onSort({}, 0, 'asc');
-    expect(twoRows.history.push).toHaveBeenLastCalledWith('/table?sortBy=0&asc=true');
-  });
-
-  it('should render rows in sorted order when ascending', () => {
-    const urlProps = getRouterProps('/table', { sortBy: '1', asc: 'true' });
-    const props = { ...twoRows, ...urlProps };
-    const dataTable = shallow(<MockDataTable {...props} />);
-    expect(dataTable).toMatchSnapshot();
-  });
-
-  it('should render rows in reverse of sorted order when descending', () => {
-    const urlProps = getRouterProps('/table', { sortBy: '1', asc: 'false' });
-    const props = { ...twoRows, ...urlProps };
-    const dataTable = shallow(<MockDataTable {...props} />);
-    expect(dataTable).toMatchSnapshot();
+    setSorterInUrl(routerProps, { asc: 'false' }, 1, 1);
+    expect(routerProps.history.push).toBeCalledWith('/table?sortBy=1&asc=true');
   });
 });
-
-const noRows: DataTableProps<MockData> = {
-  ...useTranslation(),
-  tReady: true,
-  title: 'Data Table',
-  columnTitles: ['Column 1', 'Column 2'],
-  tableData: [],
-  ...getRouterProps<DataTableUrlProps>('/table', {}),
-};
-
-const twoRows: DataTableProps<MockData> = {
-  ...useTranslation(),
-  tReady: true,
-  title: 'Data Table',
-  columnTitles: ['Column 1', 'Column 2'],
-  tableData: [{ name: 'Some Data', number: 1 }, { name: 'More Data', number: 2 }],
-  ...getRouterProps<DataTableUrlProps>('/table', {}),
-};

@@ -4,32 +4,35 @@ exports[`Provision Shifts Modal should render correctly 1`] = `
 <Modal
   actions={
     Array [
-      <Unknown
+      <Button
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Unknown>,
-      <Unknown
+      </Button>,
+      <Button
         onClick={[Function]}
         variant="primary"
       >
         Trans(i18nKey=provisionShifts)
-      </Unknown>,
+      </Button>,
     ]
   }
-  appendTo={<body />}
-  ariaDescribedById=""
+  appendTo={[Function]}
+  aria-describedby=""
+  aria-label=""
+  aria-labelledby=""
   className=""
-  hideTitle={false}
-  isFooterLeftAligned={false}
-  isLarge={false}
+  hasNoBodyWrapper={false}
   isOpen={true}
-  isSmall={true}
   onClose={[MockFunction]}
+  ouiaSafe={true}
   showClose={true}
   title="Trans(i18nKey=provisionShifts)"
+  titleIconVariant={null}
+  titleLabel=""
+  variant="small"
 >
   <Form
     id="modal-element"
@@ -135,7 +138,7 @@ exports[`Provision Shifts Modal should render correctly 1`] = `
       <Label>
         Trans(i18nKey=startingFromRotationOffset)
       </Label>
-      <ForwardRef
+      <TextInput
         aria-label="Trans(i18nKey=startingFromRotationOffset)"
         onChange={[Function]}
         value={2}

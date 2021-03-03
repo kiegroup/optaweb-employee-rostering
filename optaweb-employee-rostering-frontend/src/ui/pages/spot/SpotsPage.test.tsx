@@ -13,173 +13,241 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
-import { Sorter } from 'types';
 import { Spot } from 'domain/Spot';
-import { act } from 'react-dom/test-utils';
-import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { SpotsPage, Props } from './SpotsPage';
+import { mockStore } from 'store/mockStore';
+import { Skill } from 'domain/Skill';
+import { Map } from 'immutable';
+import DomainObjectView from 'domain/DomainObjectView';
+import { spotOperations, spotSelectors } from 'store/spot';
+import { mockRedux } from 'setupTests';
+import { DataTable, RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
+import { doNothing } from 'types';
+import { Button, TextInput } from '@patternfly/react-core';
+import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
+import { skillSelectors } from 'store/skill';
+import { ArrowIcon } from '@patternfly/react-icons';
+import { SpotsPage, SpotRow, EditableSpotRow } from './SpotsPage';
+
+const noSpotsStore = mockStore({
+  spotList: {
+    isLoading: false,
+    spotMapById: Map(),
+  },
+}).store;
+
+const twoSpotsStore = mockStore({
+  skillList: {
+    isLoading: false,
+    skillMapById: Map<number, Skill>()
+      .set(0, {
+        id: 0,
+        version: 0,
+        tenantId: 0,
+        name: 'Skill 1',
+      }),
+  },
+  spotList: {
+    isLoading: false,
+    spotMapById: Map<number, DomainObjectView<Spot>>()
+      .set(1, {
+        id: 1,
+        version: 0,
+        tenantId: 0,
+        name: 'Spot 1',
+        requiredSkillSet: [],
+      })
+      .set(2, {
+        id: 2,
+        version: 0,
+        tenantId: 0,
+        name: 'Spot 2',
+        requiredSkillSet: [0],
+      }),
+  },
+}).store;
 
 describe('Spots page', () => {
+  const addSpot = (spot: Spot) => ['add', spot];
+  const updateSpot = (spot: Spot) => ['update', spot];
+  const removeSpot = (spot: Spot) => ['remove', spot];
+
+  beforeEach(() => {
+    jest.spyOn(spotOperations, 'addSpot').mockImplementation(spot => addSpot(spot) as any);
+    jest.spyOn(spotOperations, 'updateSpot').mockImplementation(spot => updateSpot(spot) as any);
+    jest.spyOn(spotOperations, 'removeSpot').mockImplementation(spot => removeSpot(spot) as any);
+    jest.spyOn(twoSpotsStore, 'dispatch').mockImplementation(doNothing);
+  });
+
   it('should render correctly with no spots', () => {
-    const spotsPage = shallow(<SpotsPage {...noSpots} />);
+    mockRedux(noSpotsStore);
+    const spotsPage = shallow(<SpotsPage {...getRouterProps('/0/spot', {})} />);
     expect(toJson(spotsPage)).toMatchSnapshot();
   });
 
   it('should render correctly with a few spots', () => {
-    const spotsPage = shallow(<SpotsPage {...twoSpots} />);
-    expect(toJson(spotsPage)).toMatchSnapshot();
+    mockRedux(twoSpotsStore);
+    const skillsPage = shallow(
+      <SpotsPage {...getRouterProps('/0/spot', {})} />,
+    );
+    expect(toJson(skillsPage)).toMatchSnapshot();
   });
 
   it('should render the viewer correctly', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const spot = twoSpots.tableData[1];
-    const viewer = shallow(spotsPage.renderViewer(spot));
+    const spot = spotSelectors.getSpotById(twoSpotsStore.getState(), 2);
+    mockRedux(twoSpotsStore);
+    getRouterProps('/0/spot', {});
+    const viewer = shallow(<SpotRow {...spot} />);
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
+  it('clicking on the arrow should take you to the Adjustment Page', () => {
+    const spot = spotSelectors.getSpotById(twoSpotsStore.getState(), 2);
+    mockRedux(twoSpotsStore);
+    const routerProps = getRouterProps('/0/spot', {});
+    const viewer = shallow(<SpotRow {...spot} />);
+    viewer.find(Button).filterWhere(wrapper => wrapper.contains(<ArrowIcon />)).simulate('click');
+    expect(routerProps.history.push).toBeCalledWith(`/${spot.tenantId}/adjust?spot=${encodeURIComponent(spot.name)}`);
+  });
+
+  it('clicking on the edit button should show editor', () => {
+    const spot = spotSelectors.getSpotById(twoSpotsStore.getState(), 2);
+    mockRedux(twoSpotsStore);
+    getRouterProps('/0/spot', {});
+    const viewer = shallow(<SpotRow {...spot} />);
+    viewer.find(RowViewButtons).simulate('edit');
+
+    expect(viewer).toMatchSnapshot();
+    viewer.find(EditableSpotRow).simulate('close');
+    expect(viewer).toMatchSnapshot();
+  });
+
   it('should render the editor correctly', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const spot = twoSpots.tableData[1];
-    const editor = shallow(spotsPage.renderEditor(spot));
+    const spot: Spot = {
+      tenantId: 0,
+      id: 1,
+      name: 'Spot',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const editor = shallow(<EditableSpotRow spot={spot} isNew={false} onClose={jest.fn()} />);
     expect(toJson(editor)).toMatchSnapshot();
   });
 
-  it('should update properties on change', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const setProperty = jest.fn();
-    const editor = spotsPage.editDataRow(spotsPage.getInitialStateForNewRow(), setProperty);
-    const nameCol = shallow(editor[0]);
-    nameCol.simulate('change', 'Test');
-    expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('name', 'Test');
-
-    setProperty.mockClear();
-    const requiredSkillSetCol = mount(editor[1]);
-    act(() => {
-      requiredSkillSetCol.find(MultiTypeaheadSelectInput).props().onChange([twoSpots.skillList[0]]);
-    });
-    expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('requiredSkillSet', [twoSpots.skillList[0]]);
+  it('no name should be invalid', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 1,
+      name: '',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const editor = shallow(<EditableSpotRow spot={spot} isNew={false} onClose={jest.fn()} />);
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(false);
   });
 
-  it('should call addSpot on addData', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const spot = { name: 'Spot', requiredSkillSet: [], tenantId: 0 };
-    spotsPage.addData(spot);
-    expect(twoSpots.addSpot).toBeCalled();
-    expect(twoSpots.addSpot).toBeCalledWith(spot);
+  it('duplicate name should be invalid', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 3,
+      name: 'Spot 1',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const editor = shallow(<EditableSpotRow spot={spot} isNew={false} onClose={jest.fn()} />);
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(false);
   });
 
-  it('should call updateSpot on updateData', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const spot = { name: 'Spot', requiredSkillSet: [], tenantId: 0, id: 1, version: 0 };
-    spotsPage.updateData(spot);
-    expect(twoSpots.updateSpot).toBeCalled();
-    expect(twoSpots.updateSpot).toBeCalledWith(spot);
+  it('saving new spot should call add spot', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      name: '',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const editor = shallow(<EditableSpotRow spot={spot} isNew onClose={jest.fn()} />);
+
+    const name = 'New Spot Name';
+    const requiredSkillSet = skillSelectors.getSkillList(twoSpotsStore.getState());
+    editor.find(TextInput).simulate('change', name);
+    editor.find(MultiTypeaheadSelectInput).simulate('change', requiredSkillSet);
+    editor.find(RowEditButtons).prop('onSave')();
+    const newSpot = { ...spot, name, requiredSkillSet };
+
+    expect(spotOperations.addSpot).toBeCalledWith(newSpot);
+    expect(twoSpotsStore.dispatch).toBeCalledWith(addSpot(newSpot));
   });
 
-  it('should call removeSpot on removeData', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const spot = { name: 'Spot', requiredSkillSet: [], tenantId: 0, id: 1, version: 0 };
-    spotsPage.removeData(spot);
-    expect(twoSpots.removeSpot).toBeCalled();
-    expect(twoSpots.removeSpot).toBeCalledWith(spot);
+  it('saving updated spot should call update spot', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 1,
+      name: 'Spot',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const editor = shallow(<EditableSpotRow spot={spot} isNew={false} onClose={jest.fn()} />);
+    editor.find(RowEditButtons).prop('onSave')();
+    expect(spotOperations.updateSpot).toBeCalledWith(spot);
+    expect(twoSpotsStore.dispatch).toBeCalledWith(updateSpot(spot));
   });
 
-  it('should return a filter that match by name and skill', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const filter = spotsPage.getFilter();
+  it('clicking on the edit button in the viewer should show the editor', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 1,
+      name: 'Spot',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const viewer = shallow(<SpotRow {...spot} />);
 
-    expect(twoSpots.tableData.filter(filter('1'))).toEqual([
-      twoSpots.tableData[0],
-      twoSpots.tableData[1],
-    ]);
-    expect(twoSpots.tableData.filter(filter('Spot 1'))).toEqual([twoSpots.tableData[0]]);
-    expect(twoSpots.tableData.filter(filter('2'))).toEqual([twoSpots.tableData[1]]);
-    expect(twoSpots.tableData.filter(filter('Skill'))).toEqual([twoSpots.tableData[1]]);
+    // Clicking the edit button should show the editor
+    viewer.find(RowViewButtons).prop('onEdit')();
+    expect(viewer).toMatchSnapshot();
+
+    // Clicking the close button should show the viwer
+    viewer.find(EditableSpotRow).prop('onClose')();
+    expect(viewer).toMatchSnapshot();
   });
 
-  it('should return a sorter that sort by name', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const sorter = spotsPage.getSorters()[0] as Sorter<Spot>;
-    const list = [twoSpots.tableData[1], twoSpots.tableData[0]];
-    expect(list.sort(sorter)).toEqual(twoSpots.tableData);
-    expect(spotsPage.getSorters()[1]).toBeNull();
+  it('deleting should call delete spot', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 1,
+      name: 'Spot',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const viewer = shallow(<SpotRow {...spot} />);
+    viewer.find(RowViewButtons).prop('onDelete')();
+    expect(spotOperations.removeSpot).toBeCalledWith(spot);
+    expect(twoSpotsStore.dispatch).toBeCalledWith(removeSpot(spot));
   });
 
-  it('should treat incomplete data as incomplete', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-
-    const noName = { tenantId: 0, requiredSkillSet: [] };
-    const result1 = spotsPage.isDataComplete(noName);
-    expect(result1).toEqual(false);
-
-    const noRequiredSkillSet = { tenantId: 0, name: 'Name' };
-    const result2 = spotsPage.isDataComplete(noRequiredSkillSet);
-    expect(result2).toEqual(false);
-
-    const completed = { tenantId: 0, name: 'Name', requiredSkillSet: [] };
-    const result3 = spotsPage.isDataComplete(completed);
-    expect(result3).toEqual(true);
+  it('DataTable rowWrapper should be SpotRow', () => {
+    const spot: Spot = {
+      tenantId: 0,
+      id: 1,
+      name: 'Spot',
+      requiredSkillSet: [],
+    };
+    mockRedux(twoSpotsStore);
+    const spotsPage = shallow(<SpotsPage {...getRouterProps('/0/spot', {})} />);
+    const rowWrapper = shallow(spotsPage.find(DataTable).prop('rowWrapper')(spot));
+    expect(rowWrapper).toMatchSnapshot();
   });
 
-  it('should treat empty name as invalid', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const components = { tenantId: 0, name: '', requiredSkillSet: [] };
-    const result = spotsPage.isValid(components);
-    expect(result).toEqual(false);
-  });
-
-  it('should treat non-empty name as valid', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const components = { tenantId: 0, name: 'Spot', requiredSkillSet: [] };
-    const result = spotsPage.isValid(components);
-    expect(result).toEqual(true);
+  it('DataTable newRowWrapper should be EditableSpotRow', () => {
+    mockRedux(twoSpotsStore);
+    const spotsPage = shallow(<SpotsPage {...getRouterProps('/0/skill', {})} />);
+    const removeRow = jest.fn();
+    const newRowWrapper = shallow((spotsPage.find(DataTable).prop('newRowWrapper') as any)(removeRow));
+    expect(newRowWrapper).toMatchSnapshot();
+    newRowWrapper.find(RowEditButtons).prop('onClose')();
+    expect(removeRow).toBeCalled();
   });
 });
-
-const noSpots: Props = {
-  ...useTranslation('SpotsPage'),
-  tReady: true,
-  tenantId: 0,
-  title: 'Spots',
-  columnTitles: ['Name'],
-  tableData: [],
-  skillList: [],
-  addSpot: jest.fn(),
-  updateSpot: jest.fn(),
-  removeSpot: jest.fn(),
-  ...getRouterProps('/spots', {}),
-};
-
-const twoSpots: Props = {
-  ...useTranslation('SpotsPage'),
-  tReady: true,
-  tenantId: 0,
-  title: 'Spots',
-  columnTitles: ['Name'],
-  tableData: [{
-    id: 0,
-    version: 0,
-    tenantId: 0,
-    name: 'Spot 1',
-    requiredSkillSet: [],
-  },
-  {
-    id: 1,
-    version: 0,
-    tenantId: 0,
-    name: 'Spot 2',
-    requiredSkillSet: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
-  }],
-  skillList: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
-  addSpot: jest.fn(),
-  updateSpot: jest.fn(),
-  removeSpot: jest.fn(),
-  ...getRouterProps('/spots', {}),
-};

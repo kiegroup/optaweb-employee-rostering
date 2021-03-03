@@ -1,0 +1,3 @@
+---
+skillEmptyNameError: Skill cannot have an empty name
+skillNameAlreadyTakenError: Name ({{name}}) is already taken by another skill

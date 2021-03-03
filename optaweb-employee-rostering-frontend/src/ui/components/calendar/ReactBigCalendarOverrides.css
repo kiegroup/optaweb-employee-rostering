@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
+/* The selector .pf-c-popover[data-popper-reference-hidden="true"]
+ * seems to be over-eagar; hides things that should be visible, so we need to
+ * disable it here so popover are shown properly
+ */
+ .pf-c-popover[data-popper-reference-hidden="true"] {
+     visibility: visible !important;
+ }
+
 /* Hack to hide vertical scrollbar on Firefox */
 .rbc-time-content {
     padding-bottom: 6px;

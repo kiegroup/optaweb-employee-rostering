@@ -3,6 +3,7 @@
 exports[`SeatJigsaw Component It should render correctly 1`] = `
 <Fragment>
   <Title
+    headingLevel="h1"
     size="lg"
     style={
       Object {
@@ -22,15 +23,13 @@ exports[`SeatJigsaw Component It should render correctly 1`] = `
   <Split>
     <SplitItem>
       <Flex
-        breakpointMods={
-          Array [
-            Object {
-              "modifier": "space-items-lg",
-            },
-          ]
-        }
         onMouseLeave={[Function]}
         onMouseUp={[Function]}
+        spaceItems={
+          Object {
+            "default": "spaceItemsLg",
+          }
+        }
       >
         <FlexItem
           key="0"
@@ -248,7 +247,7 @@ exports[`SeatJigsaw Component It should render correctly 1`] = `
       </Flex>
     </SplitItem>
     <SplitItem>
-      <Component
+      <Button
         onClick={[Function]}
         variant="link"
       >
@@ -256,12 +255,11 @@ exports[`SeatJigsaw Component It should render correctly 1`] = `
           color="currentColor"
           noVerticalAlign={false}
           size="sm"
-          title={null}
         />
          
         Trans(i18nKey=editTimeBucket)
-      </Component>
-      <Component
+      </Button>
+      <Button
         onClick={[MockFunction]}
         variant="link"
       >
@@ -269,11 +267,10 @@ exports[`SeatJigsaw Component It should render correctly 1`] = `
           color="currentColor"
           noVerticalAlign={false}
           size="sm"
-          title={null}
         />
          
         Trans(i18nKey=deleteTimeBucket)
-      </Component>
+      </Button>
     </SplitItem>
   </Split>
   <EditTimeBucketModal

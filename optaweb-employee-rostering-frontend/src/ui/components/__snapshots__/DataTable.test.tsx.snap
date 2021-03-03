@@ -1,3023 +1,785 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DataTable component should only render data on page 1`] = `
+exports[`DataTable component should render correctly when adding a row 1`] = `
 <Fragment>
-  <Level
-    gutter="sm"
-    style={
+  <PaginationControls
+    columns={
+      Array [
+        Object {
+          "name": "Name",
+        },
+        Object {
+          "name": "Number",
+          "sorter": [Function],
+        },
+      ]
+    }
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "name": "More Data",
+          "number": 2,
+        },
+        Object {
+          "name": "Some Data",
+          "number": 1,
+        },
+      ]
+    }
+    history={
       Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/table",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
       }
     }
-  >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
+    isCreatingNewRow={true}
+    isReversed={false}
+    itemsPerPage={5}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/table",
+        "search": "",
+        "state": undefined,
       }
-    >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/table",
+        "url": "localhost:8080/table",
+      }
+    }
+    newRowWrapper={[Function]}
+    numOfFilteredRows={2}
+    onCreateNewRow={[Function]}
+    onSorterChange={[MockFunction]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "name": "More Data",
+          "number": 2,
+        },
+        Object {
+          "name": "Some Data",
+          "number": 1,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Data Table"
+  />
+  <TableComposable>
+    <Caption>
+      Data Table
+    </Caption>
+    <Thead>
+      <Tr
+        role="row"
       >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Data Table"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 1",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 2",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={
-      Array [
-        Object {
-          "cells": Array [
+        <Th
+          key="Name"
+          role="columnheader"
+          scope="col"
+        >
+          Name
+        </Th>
+        <Th
+          key="Number"
+          role="columnheader"
+          scope="col"
+          sort={
             Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    Some Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    1
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    More Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    2
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-      ]
-    }
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 1,
-      }
-    }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+              "columnIndex": 1,
+              "onSort": [Function],
+              "sortBy": Object {
+                "direction": "asc",
+                "index": 0,
+              },
+            }
+          }
+        >
+          Number
+        </Th>
+        <Th
+          role="columnheader"
+          scope="col"
+        />
+      </Tr>
+    </Thead>
+    <Tbody>
+      <TableRow>
+        <TableCell
+          columnName="Name"
+        >
+          New Data Name
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          New Data Number
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          <Button
+            onClick={[Function]}
+          >
+            Remove
+          </Button>
+        </TableCell>
+      </TableRow>
+      <TableRow
+        key="More Data"
+      >
+        <TableCell
+          columnName="Name"
+        >
+          More Data
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          2
+        </TableCell>
+      </TableRow>
+      <TableRow
+        key="Some Data"
+      >
+        <TableCell
+          columnName="Name"
+        >
+          Some Data
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          1
+        </TableCell>
+      </TableRow>
+    </Tbody>
+  </TableComposable>
 </Fragment>
 `;
 
-exports[`DataTable component should only render data on page 2`] = `
+exports[`DataTable component should render correctly when adding a row 2`] = `
 <Fragment>
-  <Level
-    gutter="sm"
-    style={
+  <PaginationControls
+    columns={
+      Array [
+        Object {
+          "name": "Name",
+        },
+        Object {
+          "name": "Number",
+          "sorter": [Function],
+        },
+      ]
+    }
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "name": "More Data",
+          "number": 2,
+        },
+        Object {
+          "name": "Some Data",
+          "number": 1,
+        },
+      ]
+    }
+    history={
       Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/table",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
       }
     }
-  >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
+    isCreatingNewRow={false}
+    isReversed={false}
+    itemsPerPage={5}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/table",
+        "search": "",
+        "state": undefined,
       }
-    >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/table",
+        "url": "localhost:8080/table",
+      }
+    }
+    newRowWrapper={[Function]}
+    numOfFilteredRows={2}
+    onCreateNewRow={[Function]}
+    onSorterChange={[MockFunction]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "name": "More Data",
+          "number": 2,
+        },
+        Object {
+          "name": "Some Data",
+          "number": 1,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Data Table"
+  />
+  <TableComposable>
+    <Caption>
+      Data Table
+    </Caption>
+    <Thead>
+      <Tr
+        role="row"
       >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={2}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Data Table"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 1",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 2",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={Array []}
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 1,
-      }
-    }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
-</Fragment>
-`;
-
-exports[`DataTable component should only render rows that match filter 1`] = `
-<Fragment>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        filterText="Some"
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
+        <Th
+          key="Name"
+          role="columnheader"
+          scope="col"
+        >
+          Name
+        </Th>
+        <Th
+          key="Number"
+          role="columnheader"
+          scope="col"
+          sort={
+            Object {
+              "columnIndex": 1,
+              "onSort": [Function],
+              "sortBy": Object {
+                "direction": "asc",
+                "index": 0,
+              },
+            }
+          }
+        >
+          Number
+        </Th>
+        <Th
+          role="columnheader"
+          scope="col"
+        />
+      </Tr>
+    </Thead>
+    <Tbody>
+      <TableRow
+        key="More Data"
       >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Data Table"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 1",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 2",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={
-      Array [
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    Some Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    1
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    More Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    2
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-      ]
-    }
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 1,
-      }
-    }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
-</Fragment>
-`;
-
-exports[`DataTable component should only render rows that match filter 2`] = `
-<Fragment>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        filterText="More"
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
+        <TableCell
+          columnName="Name"
+        >
+          More Data
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          2
+        </TableCell>
+      </TableRow>
+      <TableRow
+        key="Some Data"
       >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Data Table"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 1",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 2",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={
-      Array [
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    Some Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    1
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    More Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    2
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-      ]
-    }
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 1,
-      }
-    }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
-</Fragment>
-`;
-
-exports[`DataTable component should only render rows that match filter 3`] = `
-<Fragment>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        filterText="Data"
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Data Table"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 1",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 2",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={
-      Array [
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    Some Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    1
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    More Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    2
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-      ]
-    }
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 1,
-      }
-    }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+        <TableCell
+          columnName="Name"
+        >
+          Some Data
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          1
+        </TableCell>
+      </TableRow>
+    </Tbody>
+  </TableComposable>
 </Fragment>
 `;
 
 exports[`DataTable component should render correctly with a few rows 1`] = `
 <Fragment>
-  <Level
-    gutter="sm"
-    style={
+  <PaginationControls
+    columns={
+      Array [
+        Object {
+          "name": "Name",
+        },
+        Object {
+          "name": "Number",
+          "sorter": [Function],
+        },
+      ]
+    }
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "name": "More Data",
+          "number": 2,
+        },
+        Object {
+          "name": "Some Data",
+          "number": 1,
+        },
+      ]
+    }
+    history={
       Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/table",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
       }
     }
-  >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
+    isCreatingNewRow={false}
+    isReversed={false}
+    itemsPerPage={5}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/table",
+        "search": "",
+        "state": undefined,
       }
-    >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/table",
+        "url": "localhost:8080/table",
+      }
+    }
+    newRowWrapper={[Function]}
+    numOfFilteredRows={2}
+    onCreateNewRow={[Function]}
+    onSorterChange={[MockFunction]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "name": "More Data",
+          "number": 2,
+        },
+        Object {
+          "name": "Some Data",
+          "number": 1,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Data Table"
+  />
+  <TableComposable>
+    <Caption>
+      Data Table
+    </Caption>
+    <Thead>
+      <Tr
+        role="row"
       >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Data Table"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 1",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 2",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={
-      Array [
-        Object {
-          "cells": Array [
+        <Th
+          key="Name"
+          role="columnheader"
+          scope="col"
+        >
+          Name
+        </Th>
+        <Th
+          key="Number"
+          role="columnheader"
+          scope="col"
+          sort={
             Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    Some Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    1
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    More Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    2
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-      ]
-    }
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 1,
-      }
-    }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+              "columnIndex": 1,
+              "onSort": [Function],
+              "sortBy": Object {
+                "direction": "asc",
+                "index": 0,
+              },
+            }
+          }
+        >
+          Number
+        </Th>
+        <Th
+          role="columnheader"
+          scope="col"
+        />
+      </Tr>
+    </Thead>
+    <Tbody>
+      <TableRow
+        key="More Data"
+      >
+        <TableCell
+          columnName="Name"
+        >
+          More Data
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          2
+        </TableCell>
+      </TableRow>
+      <TableRow
+        key="Some Data"
+      >
+        <TableCell
+          columnName="Name"
+        >
+          Some Data
+        </TableCell>
+        <TableCell
+          columnName="Number"
+        >
+          1
+        </TableCell>
+      </TableRow>
+    </Tbody>
+  </TableComposable>
 </Fragment>
 `;
 
 exports[`DataTable component should render correctly with no rows 1`] = `
 <Fragment>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={0}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Data Table"
-    cells={
+  <PaginationControls
+    columns={
       Array [
         Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 1",
-          "transforms": undefined,
+          "name": "Name",
         },
         Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 2",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
+          "name": "Number",
+          "sorter": [Function],
         },
       ]
     }
-    onSort={[Function]}
-    rows={Array []}
-    sortBy={
+    filterText=""
+    filteredRows={Immutable.List []}
+    history={
       Object {
-        "direction": "asc",
-        "index": 1,
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/table",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
       }
     }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+    isCreatingNewRow={false}
+    isReversed={false}
+    itemsPerPage={5}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/table",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/table",
+        "url": "localhost:8080/table",
+      }
+    }
+    newRowWrapper={[Function]}
+    numOfFilteredRows={0}
+    onCreateNewRow={[Function]}
+    onSorterChange={[MockFunction]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={Immutable.List []}
+    sortByIndex={0}
+    title="Data Table"
+  />
+  <TableComposable>
+    <Caption>
+      Data Table
+    </Caption>
+    <Thead>
+      <Tr
+        role="row"
+      >
+        <Th
+          key="Name"
+          role="columnheader"
+          scope="col"
+        >
+          Name
+        </Th>
+        <Th
+          key="Number"
+          role="columnheader"
+          scope="col"
+          sort={
+            Object {
+              "columnIndex": 1,
+              "onSort": [Function],
+              "sortBy": Object {
+                "direction": "asc",
+                "index": 0,
+              },
+            }
+          }
+        >
+          Number
+        </Th>
+        <Th
+          role="columnheader"
+          scope="col"
+        />
+      </Tr>
+    </Thead>
+    <Tbody />
+  </TableComposable>
 </Fragment>
 `;
 
-exports[`DataTable component should render editor for new row 1`] = `
-<div>
-  <Level
-    gutter="sm"
+exports[`PaginationControls should render correctly 1`] = `
+<Level
+  hasGutter={true}
+  style={
+    Object {
+      "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+      "padding": "5px 5px 5px 5px",
+    }
+  }
+>
+  <LevelItem>
+    <FilterComponent
+      filterText="My filter"
+      onChange={[Function]}
+    />
+  </LevelItem>
+  <LevelItem
     style={
       Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
+        "display": "flex",
       }
     }
   >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
+    <Button
+      isDisabled={false}
+      onClick={[MockFunction]}
+    >
+      Trans(i18nKey=add)
+    </Button>
+    <Pagination
+      className=""
+      defaultToFullPage={false}
+      firstPage={1}
+      isCompact={false}
+      isDisabled={false}
+      isSticky={false}
+      itemCount={100}
+      itemsEnd={null}
+      itemsStart={null}
+      offset={0}
+      onFirstClick={[Function]}
+      onLastClick={[Function]}
+      onNextClick={[Function]}
+      onPageInput={[Function]}
+      onPerPageSelect={[Function]}
+      onPreviousClick={[Function]}
+      onSetPage={[Function]}
+      ouiaSafe={true}
+      page={1}
+      perPage={10}
+      perPageOptions={
+        Array [
+          Object {
+            "title": "10",
+            "value": 10,
+          },
+          Object {
+            "title": "20",
+            "value": 20,
+          },
+          Object {
+            "title": "50",
+            "value": 50,
+          },
+          Object {
+            "title": "100",
+            "value": 100,
+          },
+        ]
+      }
+      titles={
         Object {
-          "display": "flex",
+          "currPage": "Current page",
+          "items": "",
+          "itemsPerPage": "Items per page",
+          "optionsToggle": "Items per page",
+          "page": "",
+          "paginationTitle": "Pagination",
+          "perPageSuffix": "per page",
+          "toFirstPage": "Go to first page",
+          "toLastPage": "Go to last page",
+          "toNextPage": "Go to next page",
+          "toPreviousPage": "Go to previous page",
         }
       }
-    >
-      <Component
-        isDisabled={true}
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Data Table"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 1",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 2",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={
-      Array [
-        Object {
-          "cells": Array [
-            Object {
-              "title": <input
-                id="editor"
-              />,
-            },
-            Object {
-              "title": <input />,
-            },
-            Object {
-              "title": <span>
-                <Unknown
-                  aria-label="Save"
-                  onClick={[Function]}
-                  variant="link"
-                >
-                  <SaveIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
-                <Unknown
-                  aria-label="Cancel"
-                  onClick={[Function]}
-                  variant="link"
-                >
-                  <CloseIcon
-                    color="currentColor"
-                    noVerticalAlign={false}
-                    size="sm"
-                    title={null}
-                  />
-                </Unknown>
-              </span>,
-            },
-          ],
-        },
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    Some Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    1
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    More Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    2
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-      ]
-    }
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 1,
-      }
-    }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
-</div>
+      toggleTemplate={[Function]}
+      variant="top"
+      widgetId="pagination-options-menu-top"
+    />
+  </LevelItem>
+</Level>
 `;
 
-exports[`DataTable component should render rows in reverse of sorted order when descending 1`] = `
-<Fragment>
-  <Level
-    gutter="sm"
+exports[`RowEditButtons should render correctly 1`] = `
+<Td
+  role="cell"
+>
+  <span
     style={
       Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
+        "display": "grid",
+        "gridColumnGap": "5px",
+        "gridTemplateColumns": "1fr auto auto",
       }
     }
   >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
+    <span />
+    <span>
+      <Button
         isDisabled={false}
         onClick={[Function]}
+        variant="link"
       >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Data Table"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 1",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 2",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={
-      Array [
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    More Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    2
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    Some Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    1
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-      ]
-    }
-    sortBy={
-      Object {
-        "direction": "desc",
-        "index": 1,
-      }
-    }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
-</Fragment>
+        <SaveIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Button>
+    </span>
+    <span>
+      <Button
+        onClick={[MockFunction]}
+        variant="link"
+      >
+        <CloseIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Button>
+    </span>
+  </span>
+</Td>
 `;
 
-exports[`DataTable component should render rows in sorted order when ascending 1`] = `
-<Fragment>
-  <Level
-    gutter="sm"
+exports[`RowViewButtons should render correctly 1`] = `
+<Td
+  role="cell"
+>
+  <span
     style={
       Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
+        "display": "grid",
+        "gridColumnGap": "5px",
+        "gridTemplateColumns": "1fr auto auto",
       }
     }
   >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
+    <span />
+    <span>
+      <Button
+        onClick={[MockFunction]}
+        variant="link"
       >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Data Table"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 1",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 2",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={
-      Array [
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    Some Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    1
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    More Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    2
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-      ]
-    }
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 1,
-      }
-    }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
-</Fragment>
-`;
-
-exports[`DataTable component should render viewer initially 1`] = `
-<div>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
+        <EditIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Button>
+    </span>
+    <span>
+      <Button
+        onClick={[MockFunction]}
+        variant="danger"
       >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Data Table"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 1",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Column 2",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={
-      Array [
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    Some Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    1
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <input
-                    id="editor"
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    id="viewer"
-                  >
-                    More Data
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={<input />}
-                isEditing={false}
-                viewer={
-                  <span>
-                    2
-                  </span>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-      ]
-    }
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 1,
-      }
-    }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
-</div>
+        <TrashIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Button>
+    </span>
+  </span>
+</Td>
 `;

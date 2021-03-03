@@ -1,690 +1,532 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Contracts page should render correctly with a few contracts 1`] = `
-<Fragment>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
+exports[`Contracts page DataTable newRowWrapper should be EditableContractRow 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
   >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
+    <TextInput
+      onChange={[Function]}
+      value=""
+    />
+    <InputGroupText
+      key="0"
     >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
+      <Tooltip
+        content={
+          <List
+            style={
+              Object {
+                "color": "white",
+              }
+            }
+          >
+            <ListItem>
+              Trans(i18nKey=contractEmptyNameError)
+            </ListItem>
+          </List>
+        }
       >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Contracts"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Name",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Max Hours Per Day",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Max Hours Per Week",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Max Hours Per Month",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Max Hours Per Year",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={
-      Array [
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <ForwardRef
-                    aria-label="Name"
-                    defaultValue="Contract 1"
-                    name="name"
-                    onChange={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    Contract 1
-                  </Text>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <OptionalInput
-                    defaultValue={null}
-                    isValid={[Function]}
-                    label="Trans(i18nKey=maxMinutesPerDay)"
-                    onChange={[Function]}
-                    valueMapper={[Function]}
-                    valueToString={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={<Text />}
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <OptionalInput
-                    defaultValue={null}
-                    isValid={[Function]}
-                    label="Trans(i18nKey=maxMinutesPerWeek)"
-                    onChange={[Function]}
-                    valueMapper={[Function]}
-                    valueToString={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={<Text />}
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <OptionalInput
-                    defaultValue={null}
-                    isValid={[Function]}
-                    label="Trans(i18nKey=maxMinutesPerMonth)"
-                    onChange={[Function]}
-                    valueMapper={[Function]}
-                    valueToString={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={<Text />}
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <OptionalInput
-                    defaultValue={null}
-                    isValid={[Function]}
-                    label="Trans(i18nKey=maxMinutesPerYear)"
-                    onChange={[Function]}
-                    valueMapper={[Function]}
-                    valueToString={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={<Text />}
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-        Object {
-          "cells": Array [
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <ForwardRef
-                    aria-label="Name"
-                    defaultValue="Contract 2"
-                    name="name"
-                    onChange={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    Contract 2
-                  </Text>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <OptionalInput
-                    defaultValue={1}
-                    isValid={[Function]}
-                    label="Trans(i18nKey=maxMinutesPerDay)"
-                    onChange={[Function]}
-                    valueMapper={[Function]}
-                    valueToString={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    1
-                  </Text>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <OptionalInput
-                    defaultValue={20}
-                    isValid={[Function]}
-                    label="Trans(i18nKey=maxMinutesPerWeek)"
-                    onChange={[Function]}
-                    valueMapper={[Function]}
-                    valueToString={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    20
-                  </Text>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <OptionalInput
-                    defaultValue={10}
-                    isValid={[Function]}
-                    label="Trans(i18nKey=maxMinutesPerMonth)"
-                    onChange={[Function]}
-                    valueMapper={[Function]}
-                    valueToString={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    10
-                  </Text>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <OptionalInput
-                    defaultValue={120}
-                    isValid={[Function]}
-                    label="Trans(i18nKey=maxMinutesPerYear)"
-                    onChange={[Function]}
-                    valueMapper={[Function]}
-                    valueToString={[Function]}
-                  />
-                }
-                isEditing={false}
-                viewer={
-                  <Text>
-                    120
-                  </Text>
-                }
-              />,
-            },
-            Object {
-              "title": <EditableComponent
-                editor={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Save"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <SaveIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Cancel"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <CloseIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-                isEditing={false}
-                viewer={
-                  <span
-                    style={
-                      Object {
-                        "display": "grid",
-                        "gridColumnGap": "5px",
-                        "gridTemplateColumns": "1fr auto auto",
-                      }
-                    }
-                  >
-                    <span />
-                    <Unknown
-                      aria-label="Edit"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <EditIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                    <Unknown
-                      aria-label="Delete"
-                      onClick={[Function]}
-                      variant="link"
-                    >
-                      <TrashIcon
-                        color="currentColor"
-                        noVerticalAlign={false}
-                        size="sm"
-                        title={null}
-                      />
-                    </Unknown>
-                  </span>
-                }
-              />,
-            },
-          ],
-        },
-      ]
-    }
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 0,
-      }
-    }
+        <WarningTriangleIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Tooltip>
+    </InputGroupText>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerDay)"
   >
-    <TableHeader />
-    <TableBody />
-  </Component>
-</Fragment>
+    <TextInput
+      min={0}
+      onChange={[Function]}
+      type="number"
+      value=""
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerWeek)"
+  >
+    <TextInput
+      min={0}
+      onChange={[Function]}
+      type="number"
+      value=""
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerMonth)"
+  >
+    <TextInput
+      min={0}
+      onChange={[Function]}
+      type="number"
+      value=""
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerYear)"
+  >
+    <TextInput
+      min={0}
+      onChange={[Function]}
+      type="number"
+      value=""
+    />
+  </TableCell>
+  <RowEditButtons
+    isValid={false}
+    onClose={[Function]}
+    onSave={[Function]}
+  />
+</TableRow>
 `;
 
-exports[`Contracts page should render correctly with no contracts 1`] = `
-<Fragment>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
+exports[`Contracts page DataTable rowWrapper should be ContractRow 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
   >
-    <LevelItem>
-      <FilterComponent
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        isDisabled={false}
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        itemCount={0}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Component
-    caption="Contracts"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Name",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Max Hours Per Day",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Max Hours Per Week",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Max Hours Per Month",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Max Hours Per Year",
-          "transforms": undefined,
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    onSort={[Function]}
-    rows={Array []}
-    sortBy={
-      Object {
-        "direction": "asc",
-        "index": 0,
-      }
-    }
+    <Text>
+      Contract 1
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerDay)"
   >
-    <TableHeader />
-    <TableBody />
-  </Component>
-</Fragment>
+    <Text>
+      1
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerWeek)"
+  >
+    <Text>
+      2
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerMonth)"
+  >
+    <Text />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerYear)"
+  >
+    <Text />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Contracts page clicking on the edit button in the viewer should show the editor 1`] = `
+<EditableContractRow
+  contract={
+    Object {
+      "id": 0,
+      "maximumMinutesPerDay": 1,
+      "maximumMinutesPerMonth": null,
+      "maximumMinutesPerWeek": 2,
+      "maximumMinutesPerYear": null,
+      "name": "Contract 1",
+      "tenantId": 0,
+      "version": 0,
+    }
+  }
+  isNew={false}
+  onClose={[Function]}
+/>
+`;
+
+exports[`Contracts page clicking on the edit button in the viewer should show the editor 2`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Text>
+      Contract 1
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerDay)"
+  >
+    <Text>
+      1
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerWeek)"
+  >
+    <Text>
+      2
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerMonth)"
+  >
+    <Text />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerYear)"
+  >
+    <Text />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Contracts page clicking on the edit button should show editor 1`] = `
+<EditableContractRow
+  contract={
+    Object {
+      "id": 0,
+      "maximumMinutesPerDay": 1,
+      "maximumMinutesPerMonth": null,
+      "maximumMinutesPerWeek": 2,
+      "maximumMinutesPerYear": null,
+      "name": "Contract 1",
+      "tenantId": 0,
+      "version": 0,
+    }
+  }
+  isNew={false}
+  onClose={[Function]}
+/>
+`;
+
+exports[`Contracts page clicking on the edit button should show editor 2`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Text>
+      Contract 1
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerDay)"
+  >
+    <Text>
+      1
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerWeek)"
+  >
+    <Text>
+      2
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerMonth)"
+  >
+    <Text />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerYear)"
+  >
+    <Text />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Contracts page should render correctly with a few skills 1`] = `
+<DataTable
+  columns={
+    Array [
+      Object {
+        "name": "Trans(i18nKey=name)",
+        "sorter": [Function],
+      },
+      Object {
+        "name": "Trans(i18nKey=maxMinutesPerDay)",
+      },
+      Object {
+        "name": "Trans(i18nKey=maxMinutesPerWeek)",
+      },
+      Object {
+        "name": "Trans(i18nKey=maxMinutesPerMonth)",
+      },
+      Object {
+        "name": "Trans(i18nKey=maxMinutesPerYear)",
+      },
+    ]
+  }
+  filterText=""
+  filteredRows={
+    Immutable.List [
+      Object {
+        "id": 0,
+        "maximumMinutesPerDay": 1,
+        "maximumMinutesPerMonth": null,
+        "maximumMinutesPerWeek": 2,
+        "maximumMinutesPerYear": null,
+        "name": "Contract 1",
+        "tenantId": 0,
+        "version": 0,
+      },
+      Object {
+        "id": 1,
+        "maximumMinutesPerDay": null,
+        "maximumMinutesPerMonth": 3,
+        "maximumMinutesPerWeek": null,
+        "maximumMinutesPerYear": 4,
+        "name": "Contract 2",
+        "tenantId": 0,
+        "version": 0,
+      },
+    ]
+  }
+  history={
+    Object {
+      "action": "PUSH",
+      "block": [MockFunction],
+      "createHref": [MockFunction],
+      "go": [MockFunction],
+      "goBack": [MockFunction],
+      "goForward": [MockFunction],
+      "length": 1,
+      "listen": [MockFunction],
+      "location": Object {
+        "hash": "",
+        "pathname": "/0/skill",
+        "search": "",
+        "state": undefined,
+      },
+      "push": [MockFunction],
+      "replace": [MockFunction],
+    }
+  }
+  isReversed={false}
+  itemsPerPage={10}
+  location={
+    Object {
+      "hash": "",
+      "pathname": "/0/skill",
+      "search": "",
+      "state": undefined,
+    }
+  }
+  match={
+    Object {
+      "isExact": true,
+      "params": Object {},
+      "path": "/0/skill",
+      "url": "localhost:8080/0/skill",
+    }
+  }
+  newRowWrapper={[Function]}
+  numOfFilteredRows={2}
+  onSorterChange={[Function]}
+  page={1}
+  rowWrapper={[Function]}
+  rowsInPage={
+    Immutable.List [
+      Object {
+        "id": 0,
+        "maximumMinutesPerDay": 1,
+        "maximumMinutesPerMonth": null,
+        "maximumMinutesPerWeek": 2,
+        "maximumMinutesPerYear": null,
+        "name": "Contract 1",
+        "tenantId": 0,
+        "version": 0,
+      },
+      Object {
+        "id": 1,
+        "maximumMinutesPerDay": null,
+        "maximumMinutesPerMonth": 3,
+        "maximumMinutesPerWeek": null,
+        "maximumMinutesPerYear": 4,
+        "name": "Contract 2",
+        "tenantId": 0,
+        "version": 0,
+      },
+    ]
+  }
+  sortByIndex={0}
+  title="Trans(i18nKey=contracts)"
+/>
+`;
+
+exports[`Contracts page should render correctly with no skills 1`] = `
+<DataTable
+  columns={
+    Array [
+      Object {
+        "name": "Trans(i18nKey=name)",
+        "sorter": [Function],
+      },
+      Object {
+        "name": "Trans(i18nKey=maxMinutesPerDay)",
+      },
+      Object {
+        "name": "Trans(i18nKey=maxMinutesPerWeek)",
+      },
+      Object {
+        "name": "Trans(i18nKey=maxMinutesPerMonth)",
+      },
+      Object {
+        "name": "Trans(i18nKey=maxMinutesPerYear)",
+      },
+    ]
+  }
+  filterText=""
+  filteredRows={Immutable.List []}
+  history={
+    Object {
+      "action": "PUSH",
+      "block": [MockFunction],
+      "createHref": [MockFunction],
+      "go": [MockFunction],
+      "goBack": [MockFunction],
+      "goForward": [MockFunction],
+      "length": 1,
+      "listen": [MockFunction],
+      "location": Object {
+        "hash": "",
+        "pathname": "/0/skill",
+        "search": "",
+        "state": undefined,
+      },
+      "push": [MockFunction],
+      "replace": [MockFunction],
+    }
+  }
+  isReversed={false}
+  itemsPerPage={10}
+  location={
+    Object {
+      "hash": "",
+      "pathname": "/0/skill",
+      "search": "",
+      "state": undefined,
+    }
+  }
+  match={
+    Object {
+      "isExact": true,
+      "params": Object {},
+      "path": "/0/skill",
+      "url": "localhost:8080/0/skill",
+    }
+  }
+  newRowWrapper={[Function]}
+  numOfFilteredRows={0}
+  onSorterChange={[Function]}
+  page={1}
+  rowWrapper={[Function]}
+  rowsInPage={Immutable.List []}
+  sortByIndex={0}
+  title="Trans(i18nKey=contracts)"
+/>
 `;
 
 exports[`Contracts page should render the editor correctly 1`] = `
-<tr>
-  <td
-    key="0"
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
   >
-    <ForwardRef
-      aria-label="Name"
-      defaultValue="Contract 2"
-      key="0"
-      name="name"
+    <TextInput
       onChange={[Function]}
+      value="Contract 1"
     />
-  </td>
-  <td
-    key="1"
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerDay)"
   >
-    <OptionalInput
-      defaultValue={1}
-      isValid={[Function]}
-      key="1"
-      label="Trans(i18nKey=maxMinutesPerDay)"
+    <TextInput
+      min={0}
       onChange={[Function]}
-      valueMapper={[Function]}
-      valueToString={[Function]}
+      type="number"
+      value={1}
     />
-  </td>
-  <td
-    key="2"
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerWeek)"
   >
-    <OptionalInput
-      defaultValue={20}
-      isValid={[Function]}
-      key="2"
-      label="Trans(i18nKey=maxMinutesPerWeek)"
+    <TextInput
+      min={0}
       onChange={[Function]}
-      valueMapper={[Function]}
-      valueToString={[Function]}
+      type="number"
+      value={2}
     />
-  </td>
-  <td
-    key="3"
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerMonth)"
   >
-    <OptionalInput
-      defaultValue={10}
-      isValid={[Function]}
-      key="3"
-      label="Trans(i18nKey=maxMinutesPerMonth)"
+    <TextInput
+      min={0}
       onChange={[Function]}
-      valueMapper={[Function]}
-      valueToString={[Function]}
+      type="number"
+      value=""
     />
-  </td>
-  <td
-    key="4"
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerYear)"
   >
-    <OptionalInput
-      defaultValue={120}
-      isValid={[Function]}
-      key="4"
-      label="Trans(i18nKey=maxMinutesPerYear)"
+    <TextInput
+      min={0}
       onChange={[Function]}
-      valueMapper={[Function]}
-      valueToString={[Function]}
+      type="number"
+      value=""
     />
-  </td>
-</tr>
+  </TableCell>
+  <RowEditButtons
+    isValid={true}
+    onClose={[Function]}
+    onSave={[Function]}
+  />
+</TableRow>
 `;
 
 exports[`Contracts page should render the viewer correctly 1`] = `
-<tr>
-  <td
-    key="0"
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
   >
-    <Text
-      key="0"
-    >
-      Contract 2
+    <Text>
+      Contract 1
     </Text>
-  </td>
-  <td
-    key="1"
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerDay)"
   >
-    <Text
-      key="1"
-    >
+    <Text>
       1
     </Text>
-  </td>
-  <td
-    key="2"
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerWeek)"
   >
-    <Text
-      key="2"
-    >
-      20
+    <Text>
+      2
     </Text>
-  </td>
-  <td
-    key="3"
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerMonth)"
   >
-    <Text
-      key="3"
-    >
-      10
-    </Text>
-  </td>
-  <td
-    key="4"
+    <Text />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=maxMinutesPerYear)"
   >
-    <Text
-      key="4"
-    >
-      120
-    </Text>
-  </td>
-</tr>
+    <Text />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
 `;
