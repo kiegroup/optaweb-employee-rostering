@@ -56,6 +56,7 @@ public class OptaWebEmployeeRosteringBenchmarkApplication implements QuarkusAppl
         Quarkus.run(args);
     }
 
+    @Override
     public int run(String... args) {
         List<Roster> rosterList = generateRosters();
 

@@ -30,16 +30,17 @@ import javax.servlet.http.HttpServletResponse;
 @WebFilter(urlPatterns = "/*")
 public class WebConfig extends HttpFilter {
 
+    @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         chain.doFilter(request, response);
 
-        final String PATH = request.getRequestURI();
-        if (!PATH.startsWith("/rest/") && response.getStatus() != 200 && !response.isCommitted()) {
+        final String path = request.getRequestURI();
+        if (!path.startsWith("/rest/") && response.getStatus() != 200 && !response.isCommitted()) {
             try {
                 response.setStatus(200);
-                if (PATH.startsWith("/assets/") || PATH.startsWith("/static/")) {
+                if (path.startsWith("/assets/") || path.startsWith("/static/")) {
                     request.getRequestDispatcher("/").forward(request, response);
                 } else {
                     response.setContentType("text/html");

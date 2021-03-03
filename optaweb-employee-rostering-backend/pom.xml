@@ -61,6 +61,12 @@
       <artifactId>quarkus-resteasy-multipart</artifactId>
     </dependency>
 
+    <!-- For H2 console -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-undertow</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-hibernate-orm-panache</artifactId>
