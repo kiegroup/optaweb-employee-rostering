@@ -45,7 +45,6 @@ public class ShiftController {
         this.shiftService = shiftService;
     }
 
-    // @ApiOperation("Get a list of all shifts")
     @GET
     @Path("/")
     @Operation(summary = "List Shifts", description = "Get a list of all shifts")
