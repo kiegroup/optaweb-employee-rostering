@@ -31,6 +31,6 @@ RUN mvn clean install -DskipTests
 
 FROM adoptopenjdk/openjdk11:ubi-minimal-jre
 RUN mkdir /opt/app
-COPY --from=builder /usr/src/optaweb/optaweb-employee-rostering-standalone/quarkus-app /opt/app/optaweb-employee-rostering
+COPY --from=builder /usr/src/optaweb/optaweb-employee-rostering-standalone/target/quarkus-app /opt/app/optaweb-employee-rostering
 CMD ["java", "-jar", "/opt/app/optaweb-employee-rostering/quarkus-run.jar"]
 EXPOSE 8080
