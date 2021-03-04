@@ -27,8 +27,19 @@ import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 @WebFilter(urlPatterns = "/*")
 public class WebConfig extends HttpFilter {
+
+    @ConfigProperty(name = "quarkus.swagger-ui.path")
+    String swaggerPath;
+
+    private boolean isBackendPath(String path) {
+        return path.startsWith("/rest/") || // REST methods
+                path.equals(swaggerPath) || // Swagger docs
+                path.startsWith("/q/"); // Quarkus pages (Swagger docs redirect to here)
+    }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -37,7 +48,7 @@ public class WebConfig extends HttpFilter {
         chain.doFilter(request, response);
 
         final String path = request.getRequestURI();
-        if (!path.startsWith("/rest/") && response.getStatus() != 200 && !response.isCommitted()) {
+        if (!isBackendPath(path) && response.getStatus() != 200 && !response.isCommitted()) {
             try {
                 response.setStatus(200);
                 if (path.startsWith("/assets/") || path.startsWith("/static/")) {
