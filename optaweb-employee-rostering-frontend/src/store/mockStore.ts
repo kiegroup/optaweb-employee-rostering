@@ -18,6 +18,7 @@ import * as Redux from 'react-redux';
 import createMockStore, { MockStoreCreator } from 'redux-mock-store';
 import thunk, { ThunkDispatch } from 'redux-thunk';
 import { resetRestClientMock } from 'store/rest/RestTestUtils';
+import { Map, List } from 'immutable';
 import RestServiceClient from './rest/RestServiceClient';
 import { TenantAction } from './tenant/types';
 import { SkillAction } from './skill/types';
@@ -38,28 +39,28 @@ export const mockStore = (state: Partial<AppState>) => {
   const out = { store: mockStoreCreator({
     tenantData: {
       currentTenantId: 0,
-      tenantList: [],
+      tenantList: List(),
       timezoneList: ['America/Toronto'],
     },
     employeeList: {
       isLoading: true,
-      employeeMapById: new Map(),
+      employeeMapById: Map(),
     },
     contractList: {
       isLoading: true,
-      contractMapById: new Map(),
+      contractMapById: Map(),
     },
     spotList: {
       isLoading: true,
-      spotMapById: new Map(),
+      spotMapById: Map(),
     },
     skillList: {
       isLoading: true,
-      skillMapById: new Map(),
+      skillMapById: Map(),
     },
     timeBucketList: {
       isLoading: true,
-      timeBucketMapById: new Map(),
+      timeBucketMapById: Map(),
     },
     rosterState: {
       isLoading: true,
@@ -74,10 +75,10 @@ export const mockStore = (state: Partial<AppState>) => {
       availabilityRosterView: null,
     },
     solverState: {
-      solverStatus: 'TERMINATED',
+      solverStatus: 'NOT_SOLVING',
     },
     alerts: {
-      alertList: [],
+      alertList: List(),
       idGeneratorIndex: 0,
     },
     isConnected: true,

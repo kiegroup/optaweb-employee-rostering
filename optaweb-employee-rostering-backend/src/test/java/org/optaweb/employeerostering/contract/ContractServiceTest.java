@@ -16,15 +16,13 @@
 
 package org.optaweb.employeerostering.contract;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
@@ -36,7 +34,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -44,7 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
@@ -59,12 +55,12 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
     @Autowired
     private ContractService contractService;
 
-    @Before
+    @BeforeEach
     public void setup() {
         createTestTenant();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         deleteTestTenant();
     }
@@ -313,11 +309,11 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
     @Test
     public void getOrCreateDefaultContractNotExistsTest() {
         Contract contract = contractService.getOrCreateDefaultContract(TENANT_ID);
-        assertEquals(contract.getName(), "Default Contract");
-        assertNull(contract.getMaximumMinutesPerDay());
-        assertNull(contract.getMaximumMinutesPerWeek());
-        assertNull(contract.getMaximumMinutesPerMonth());
-        assertNull(contract.getMaximumMinutesPerYear());
+        assertThat(contract.getName()).isEqualTo("Default Contract");
+        assertThat(contract.getMaximumMinutesPerDay()).isNull();
+        assertThat(contract.getMaximumMinutesPerWeek()).isNull();
+        assertThat(contract.getMaximumMinutesPerMonth()).isNull();
+        assertThat(contract.getMaximumMinutesPerYear()).isNull();
     }
 
     @Test
@@ -330,6 +326,6 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         Contract contract = contractService.createContract(TENANT_ID, contractView);
         Contract defaultContract = contractService.getOrCreateDefaultContract(TENANT_ID);
 
-        assertEquals(contract, defaultContract);
+        assertThat(defaultContract).isEqualTo(contract);
     }
 }

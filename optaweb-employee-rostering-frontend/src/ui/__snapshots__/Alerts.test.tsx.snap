@@ -18,8 +18,8 @@ exports[`Alerts should render correctly with alerts 1`] = `
     }
   }
 >
-  <Component
-    action={
+  <Alert
+    actionClose={
       <AlertActionCloseButton
         onClose={[Function]}
       />
@@ -64,9 +64,9 @@ exports[`Alerts should render correctly with alerts 1`] = `
       }
       values={Object {}}
     />
-  </Component>
-  <Component
-    action={
+  </Alert>
+  <Alert
+    actionClose={
       <AlertActionCloseButton
         onClose={[Function]}
       />
@@ -111,9 +111,9 @@ exports[`Alerts should render correctly with alerts 1`] = `
       }
       values={Object {}}
     />
-  </Component>
-  <Component
-    action={
+  </Alert>
+  <Alert
+    actionClose={
       <AlertActionCloseButton
         onClose={[Function]}
       />
@@ -158,7 +158,7 @@ exports[`Alerts should render correctly with alerts 1`] = `
       }
       values={Object {}}
     />
-  </Component>
+  </Alert>
 </div>
 `;
 
@@ -180,8 +180,8 @@ exports[`Alerts should render correctly with alerts with components 1`] = `
     }
   }
 >
-  <Component
-    action={
+  <Alert
+    actionClose={
       <AlertActionCloseButton
         onClose={[Function]}
       />
@@ -246,7 +246,7 @@ exports[`Alerts should render correctly with alerts with components 1`] = `
       }
       values={Object {}}
     />
-  </Component>
+  </Alert>
 </div>
 `;
 

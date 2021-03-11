@@ -97,7 +97,7 @@ export const ExportScheduleModal: React.FC<StateProps & OwnProps> = (props) => {
           </a>,
         ]
       }
-      isSmall
+      variant="small"
     >
       <Form id="modal-element" onSubmit={e => e.preventDefault()}>
         <InputGroup>
@@ -124,7 +124,7 @@ export const ExportScheduleModal: React.FC<StateProps & OwnProps> = (props) => {
             value={exportedSpots}
             options={props.spotList}
             optionToStringMap={spot => spot.name}
-            onChange={setExportedSpots}
+            onChange={newExportedSpots => setExportedSpots(newExportedSpots)}
           />
         </InputGroup>
       </Form>

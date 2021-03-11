@@ -23,6 +23,7 @@ import { SpinnerIcon } from '@patternfly/react-icons';
 import './index.css';
 import { I18nextProvider } from 'react-i18next';
 import { configureStore } from 'store';
+import { List } from 'immutable';
 import App from './ui/App';
 
 // import i18n (needs to be bundled)
@@ -39,7 +40,7 @@ const store = configureStore({
 }, {
   tenantData: {
     currentTenantId: windowTenantId,
-    tenantList: [],
+    tenantList: List(),
     timezoneList: [],
   },
 });

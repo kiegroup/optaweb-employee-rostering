@@ -20,10 +20,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.rotation.view.TimeBucketView;
@@ -40,9 +39,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureTestDatabase
 public class RosterGeneratorTest {
@@ -105,12 +102,12 @@ public class RosterGeneratorTest {
                 });
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         tenantId = rosterGenerator.generateRoster(2, 7).getTenantId();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         restTemplate.postForEntity(tenantPathURI + "remove/" + tenantId, null, Void.class);
     }

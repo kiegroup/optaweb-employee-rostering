@@ -13,218 +13,209 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import OptionalInput from 'ui/components/OptionalInput';
-import { Sorter } from 'types';
 import { Contract } from 'domain/Contract';
-import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { ContractsPage, Props } from './ContractsPage';
+import { mockStore } from 'store/mockStore';
+import { Map } from 'immutable';
+import { mockRedux, mockTranslate } from 'setupTests';
+import { DataTable, RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
+import { contractOperations } from 'store/contract';
+import { doNothing } from 'types';
+import { TextInput } from '@patternfly/react-core';
+import { ContractRow, ContractsPage, EditableContractRow } from './ContractsPage';
+
+const noContractsStore = mockStore({
+  contractList: {
+    isLoading: false,
+    contractMapById: Map(),
+  },
+}).store;
+
+const twoContractsStore = mockStore({
+  contractList: {
+    isLoading: false,
+    contractMapById: Map<number, Contract>()
+      .set(0, {
+        id: 0,
+        version: 0,
+        tenantId: 0,
+        name: 'Contract 1',
+        maximumMinutesPerDay: 1,
+        maximumMinutesPerWeek: 2,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null,
+      })
+      .set(1,
+        {
+          id: 1,
+          version: 0,
+          tenantId: 0,
+          name: 'Contract 2',
+          maximumMinutesPerDay: null,
+          maximumMinutesPerWeek: null,
+          maximumMinutesPerMonth: 3,
+          maximumMinutesPerYear: 4,
+        }),
+  },
+}).store;
 
 describe('Contracts page', () => {
-  it('should render correctly with no contracts', () => {
-    const contractsPage = shallow(<ContractsPage {...noContracts} />);
-    expect(toJson(contractsPage)).toMatchSnapshot();
+  const addContract = (contract: Contract) => ['add', contract];
+  const updateContract = (contract: Contract) => ['update', contract];
+  const removeContract = (contract: Contract) => ['remove', contract];
+
+  beforeEach(() => {
+    jest.spyOn(contractOperations, 'addContract').mockImplementation(contract => addContract(contract) as any);
+    jest.spyOn(contractOperations, 'updateContract').mockImplementation(contract => updateContract(contract) as any);
+    jest.spyOn(contractOperations, 'removeContract').mockImplementation(contract => removeContract(contract) as any);
+    jest.spyOn(twoContractsStore, 'dispatch').mockImplementation(doNothing);
   });
 
-  it('should render correctly with a few contracts', () => {
-    const contractsPage = shallow(<ContractsPage {...twoContracts} />);
-    expect(toJson(contractsPage)).toMatchSnapshot();
+  it('should render correctly with no skills', () => {
+    mockRedux(noContractsStore);
+    const skillsPage = shallow(<ContractsPage {...getRouterProps('/0/skill', {})} />);
+    expect(toJson(skillsPage)).toMatchSnapshot();
+  });
+
+  it('should render correctly with a few skills', () => {
+    mockRedux(twoContractsStore);
+    const skillsPage = shallow(
+      <ContractsPage {...getRouterProps('/0/skill', {})} />,
+    );
+    expect(toJson(skillsPage)).toMatchSnapshot();
   });
 
   it('should render the viewer correctly', () => {
-    const contractsPage = new ContractsPage(twoContracts);
-    const contract = twoContracts.tableData[1];
-    const viewer = shallow(contractsPage.renderViewer(contract));
+    const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
+    mockRedux(twoContractsStore);
+    const viewer = shallow(<ContractRow {...contract} />);
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
+  it('clicking on the edit button should show editor', () => {
+    const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
+    mockRedux(twoContractsStore);
+    const viewer = shallow(<ContractRow {...contract} />);
+    viewer.find(RowViewButtons).simulate('edit');
+
+    expect(viewer).toMatchSnapshot();
+    viewer.find(EditableContractRow).simulate('close');
+    expect(viewer).toMatchSnapshot();
+  });
+
   it('should render the editor correctly', () => {
-    const contractsPage = new ContractsPage(twoContracts);
-    const contract = twoContracts.tableData[1];
-    const editor = shallow(contractsPage.renderEditor(contract));
+    const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
+    mockRedux(twoContractsStore);
+    const editor = shallow(<EditableContractRow contract={contract} isNew={false} onClose={jest.fn()} />);
     expect(toJson(editor)).toMatchSnapshot();
   });
 
-  it('should update properties on change', () => {
-    const spotsPage = new ContractsPage(twoContracts);
-    const setProperty = jest.fn();
-    const editor = spotsPage.editDataRow(spotsPage.getInitialStateForNewRow(), setProperty);
-    const nameCol = shallow(editor[0]);
-    nameCol.simulate('change', 'Test');
-    expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('name', 'Test');
-
-    setProperty.mockClear();
-    const maxMinutesPerDayCol = mount(editor[1]).find(OptionalInput);
-    expect(maxMinutesPerDayCol.props().valueToString(10)).toEqual('10');
-    expect(maxMinutesPerDayCol.props().valueMapper('10')).toEqual(10);
-    expect(maxMinutesPerDayCol.props().isValid('10')).toEqual(true);
-    expect(maxMinutesPerDayCol.props().isValid('ab10')).toEqual(false);
-    expect(maxMinutesPerDayCol.props().isValid('-10')).toEqual(false);
-    maxMinutesPerDayCol.find(OptionalInput).props().onChange(10);
-    expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('maximumMinutesPerDay', 10);
-
-    setProperty.mockClear();
-    const maxMinutesPerWeekCol = mount(editor[2]).find(OptionalInput);
-    expect(maxMinutesPerWeekCol.props().valueToString(10)).toEqual('10');
-    expect(maxMinutesPerWeekCol.props().valueMapper('10')).toEqual(10);
-    expect(maxMinutesPerWeekCol.props().isValid('10')).toEqual(true);
-    expect(maxMinutesPerWeekCol.props().isValid('ab10')).toEqual(false);
-    expect(maxMinutesPerWeekCol.props().isValid('-10')).toEqual(false);
-    maxMinutesPerWeekCol.props().onChange(10);
-    expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('maximumMinutesPerWeek', 10);
-
-    setProperty.mockClear();
-    const maxMinutesPerMonthCol = mount(editor[3]).find(OptionalInput);
-    expect(maxMinutesPerMonthCol.props().valueToString(10)).toEqual('10');
-    expect(maxMinutesPerMonthCol.props().valueMapper('10')).toEqual(10);
-    expect(maxMinutesPerMonthCol.props().isValid('10')).toEqual(true);
-    expect(maxMinutesPerMonthCol.props().isValid('ab10')).toEqual(false);
-    expect(maxMinutesPerMonthCol.props().isValid('-10')).toEqual(false);
-    maxMinutesPerMonthCol.props().onChange(10);
-    expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('maximumMinutesPerMonth', 10);
-
-    setProperty.mockClear();
-    const maxMinutesPerYearCol = mount(editor[4]).find(OptionalInput);
-    expect(maxMinutesPerYearCol.props().valueToString(10)).toEqual('10');
-    expect(maxMinutesPerYearCol.props().valueMapper('10')).toEqual(10);
-    expect(maxMinutesPerYearCol.props().isValid('10')).toEqual(true);
-    expect(maxMinutesPerYearCol.props().isValid('ab10')).toEqual(false);
-    expect(maxMinutesPerYearCol.props().isValid('-10')).toEqual(false);
-    maxMinutesPerYearCol.props().onChange(10);
-    expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('maximumMinutesPerYear', 10);
+  it('no name should be invalid', () => {
+    const contract = {
+      ...twoContractsStore.getState().contractList.contractMapById.get(0) as Contract,
+      name: '',
+    };
+    mockRedux(twoContractsStore);
+    const editor = shallow(<EditableContractRow contract={contract} isNew={false} onClose={jest.fn()} />);
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(false);
   });
 
-  it('should call addContract on addData', () => {
-    const contractsPage = new ContractsPage(twoContracts);
-    const contract = twoContracts.tableData[1];
-    contractsPage.addData(contract);
-    expect(twoContracts.addContract).toBeCalled();
-    expect(twoContracts.addContract).toBeCalledWith(contract);
+  it('duplicate name should be invalid', () => {
+    const contract = {
+      ...twoContractsStore.getState().contractList.contractMapById.get(0) as Contract,
+      id: 3,
+      name: 'Contract 1',
+    };
+    mockRedux(twoContractsStore);
+    const editor = shallow(<EditableContractRow contract={contract} isNew={false} onClose={jest.fn()} />);
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(false);
   });
 
-  it('should call updateContract on updateData', () => {
-    const contractsPage = new ContractsPage(twoContracts);
-    const contract = twoContracts.tableData[1];
-    contractsPage.updateData(contract);
-    expect(twoContracts.updateContract).toBeCalled();
-    expect(twoContracts.updateContract).toBeCalledWith(contract);
+  it('saving new contract should call add contract', () => {
+    const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
+    mockRedux(twoContractsStore);
+    const editor = shallow(<EditableContractRow contract={contract} isNew onClose={jest.fn()} />);
+
+    const name = 'New Contract Name';
+    const maximumMinutesPerDay = 1;
+    const maximumMinutesPerWeek = 2;
+    const maximumMinutesPerMonth = 3;
+    const maximumMinutesPerYear = 4;
+
+    editor.find(`[columnName="${mockTranslate('name')}"]`).find(TextInput).simulate('change', name);
+    editor.find(`[columnName="${mockTranslate('maxMinutesPerDay')}"]`)
+      .find(TextInput).simulate('change', `${maximumMinutesPerDay}`);
+    editor.find(`[columnName="${mockTranslate('maxMinutesPerWeek')}"]`)
+      .find(TextInput).simulate('change', `${maximumMinutesPerWeek}`);
+    editor.find(`[columnName="${mockTranslate('maxMinutesPerMonth')}"]`)
+      .find(TextInput).simulate('change', `${maximumMinutesPerMonth}`);
+    editor.find(`[columnName="${mockTranslate('maxMinutesPerYear')}"]`)
+      .find(TextInput).simulate('change', `${maximumMinutesPerYear}`);
+
+    const newContract = {
+      ...contract,
+      name,
+      maximumMinutesPerDay,
+      maximumMinutesPerWeek,
+      maximumMinutesPerMonth,
+      maximumMinutesPerYear,
+    };
+
+    editor.find(RowEditButtons).prop('onSave')();
+    expect(contractOperations.addContract).toBeCalledWith(newContract);
+    expect(twoContractsStore.dispatch).toBeCalledWith(addContract(newContract));
   });
 
-  it('should call removeContract on removeData', () => {
-    const contractsPage = new ContractsPage(twoContracts);
-    const contract = twoContracts.tableData[1];
-    contractsPage.removeData(contract);
-    expect(twoContracts.removeContract).toBeCalled();
-    expect(twoContracts.removeContract).toBeCalledWith(contract);
+  it('saving updated contract should call update contract', () => {
+    const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
+    mockRedux(twoContractsStore);
+    const editor = shallow(<EditableContractRow contract={contract} isNew={false} onClose={jest.fn()} />);
+    editor.find(RowEditButtons).prop('onSave')();
+    expect(contractOperations.updateContract).toBeCalledWith(contract);
+    expect(twoContractsStore.dispatch).toBeCalledWith(updateContract(contract));
   });
 
-  it('should return a filter that match by name', () => {
-    const contractPage = new ContractsPage(twoContracts);
-    const filter = contractPage.getFilter();
+  it('clicking on the edit button in the viewer should show the editor', () => {
+    const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
+    mockRedux(twoContractsStore);
+    const viewer = shallow(<ContractRow {...contract} />);
 
-    expect(twoContracts.tableData.filter(filter('1'))).toEqual([twoContracts.tableData[0]]);
-    expect(twoContracts.tableData.filter(filter('2'))).toEqual([twoContracts.tableData[1]]);
+    // Clicking the edit button should show the editor
+    viewer.find(RowViewButtons).prop('onEdit')();
+    expect(viewer).toMatchSnapshot();
+
+    // Clicking the close button should show the viwer
+    viewer.find(EditableContractRow).prop('onClose')();
+    expect(viewer).toMatchSnapshot();
   });
 
-  it('should return a sorter that sort by name', () => {
-    const contractPage = new ContractsPage(twoContracts);
-    const sorter = contractPage.getSorters()[0] as Sorter<Contract>;
-    const list = [twoContracts.tableData[1], twoContracts.tableData[0]];
-    expect(list.sort(sorter)).toEqual(twoContracts.tableData);
+  it('deleting should call delete contract', () => {
+    const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
+    mockRedux(twoContractsStore);
+    const viewer = shallow(<ContractRow {...contract} />);
+    viewer.find(RowViewButtons).prop('onDelete')();
+    expect(contractOperations.removeContract).toBeCalledWith(contract);
+    expect(twoContractsStore.dispatch).toBeCalledWith(removeContract(contract));
   });
 
-  it('should treat incomplete data as incomplete', () => {
-    const contractsPage = new ContractsPage(twoContracts);
-
-    const noName = { ...twoContracts.tableData[1], name: undefined };
-    const result1 = contractsPage.isDataComplete(noName);
-    expect(result1).toEqual(false);
-
-    const noMaxHoursPerDay = { ...twoContracts.tableData[1], maximumMinutesPerDay: undefined };
-    const result2 = contractsPage.isDataComplete(noMaxHoursPerDay);
-    expect(result2).toEqual(false);
-
-    const noMaxHoursPerWeek = { ...twoContracts.tableData[1], maximumMinutesPerWeek: undefined };
-    const result3 = contractsPage.isDataComplete(noMaxHoursPerWeek);
-    expect(result3).toEqual(false);
-
-    const noMaxHoursPerMonth = { ...twoContracts.tableData[1], maximumMinutesPerMonth: undefined };
-    const result4 = contractsPage.isDataComplete(noMaxHoursPerMonth);
-    expect(result4).toEqual(false);
-
-    const noMaxHoursPerYear = { ...twoContracts.tableData[1], maximumMinutesPerYear: undefined };
-    const result5 = contractsPage.isDataComplete(noMaxHoursPerYear);
-    expect(result5).toEqual(false);
-
-    const completed = { ...twoContracts.tableData[1] };
-    const result6 = contractsPage.isDataComplete(completed);
-    expect(result6).toEqual(true);
+  it('DataTable rowWrapper should be ContractRow', () => {
+    const contract = twoContractsStore.getState().contractList.contractMapById.get(0) as Contract;
+    mockRedux(twoContractsStore);
+    const contractsPage = shallow(<ContractsPage {...getRouterProps('/0/contract', {})} />);
+    const rowWrapper = shallow(contractsPage.find(DataTable).prop('rowWrapper')(contract));
+    expect(rowWrapper).toMatchSnapshot();
   });
 
-  it('should treat empty name as invalid', () => {
-    const contractsPage = new ContractsPage(twoContracts);
-    const contract = { ...twoContracts.tableData[1], name: '' };
-    const result = contractsPage.isValid(contract);
-    expect(result).toEqual(false);
-  });
-
-  it('should treat non-empty name as valid', () => {
-    const contractsPage = new ContractsPage(twoContracts);
-    const contract = { ...twoContracts.tableData[1], name: 'Contract' };
-    const result = contractsPage.isValid(contract);
-    expect(result).toEqual(true);
+  it('DataTable newRowWrapper should be EditableContractRow', () => {
+    mockRedux(twoContractsStore);
+    const contractsPage = shallow(<ContractsPage {...getRouterProps('/0/contract', {})} />);
+    const removeRow = jest.fn();
+    const newRowWrapper = shallow((contractsPage.find(DataTable).prop('newRowWrapper') as any)(removeRow));
+    expect(newRowWrapper).toMatchSnapshot();
+    newRowWrapper.find(RowEditButtons).prop('onClose')();
+    expect(removeRow).toBeCalled();
   });
 });
-
-const noContracts: Props = {
-  ...useTranslation('ContractsPage'),
-  tReady: true,
-  tenantId: 0,
-  title: 'Contracts',
-  columnTitles: ['Name', 'Max Hours Per Day', 'Max Hours Per Week', 'Max Hours Per Month', 'Max Hours Per Year'],
-  tableData: [],
-  addContract: jest.fn(),
-  updateContract: jest.fn(),
-  removeContract: jest.fn(),
-  ...getRouterProps('/contacts', {}),
-};
-
-const twoContracts: Props = {
-  ...useTranslation('ContractsPage'),
-  tReady: true,
-  tenantId: 0,
-  title: 'Contracts',
-  columnTitles: ['Name', 'Max Hours Per Day', 'Max Hours Per Week', 'Max Hours Per Month', 'Max Hours Per Year'],
-  tableData: [{
-    id: 0,
-    version: 0,
-    tenantId: 0,
-    name: 'Contract 1',
-    maximumMinutesPerDay: null,
-    maximumMinutesPerWeek: null,
-    maximumMinutesPerMonth: null,
-    maximumMinutesPerYear: null,
-  },
-  {
-    id: 1,
-    version: 0,
-    tenantId: 0,
-    name: 'Contract 2',
-    maximumMinutesPerDay: 1,
-    maximumMinutesPerWeek: 20,
-    maximumMinutesPerMonth: 10,
-    maximumMinutesPerYear: 120,
-  }],
-  addContract: jest.fn(),
-  updateContract: jest.fn(),
-  removeContract: jest.fn(),
-  ...getRouterProps('/contacts', {}),
-};

@@ -112,13 +112,12 @@ AddAlertAction | TerminateSolvingRosterEarlyAction>) {
 const updateInterval = 1000;
 
 function refresh(dispatch: ThunkDispatch<AppState, RestServiceClient, any>) {
+  autoRefreshShiftRosterDuringSolvingIntervalTimeout = null;
   Promise.all([
     dispatch(operations.refreshShiftRoster()),
     dispatch(operations.refreshAvailabilityRoster()),
     dispatch(operations.getSolverStatus()),
-  ]).then(() => {
-    autoRefreshShiftRosterDuringSolvingIntervalTimeout = setTimeout(() => refresh(dispatch), updateInterval);
-  });
+  ]);
 }
 
 export const solveRoster:
@@ -162,9 +161,9 @@ ThunkCommandFactory<void, AddAlertAction | UpdateSolverStatusAction> = () => (di
   const tenantId = state().tenantData.currentTenantId;
   return client.get<SolverStatus>(`/tenant/${tenantId}/roster/status`).then((status) => {
     dispatch(actions.updateSolverStatus({ solverStatus: status }));
-    if (status === 'TERMINATED' && autoRefreshShiftRosterDuringSolvingIntervalTimeout !== null) {
+    if (status === 'NOT_SOLVING' && autoRefreshShiftRosterDuringSolvingIntervalTimeout !== null) {
       stopSolvingRoster(dispatch);
-    } else if (status === 'SOLVING' && autoRefreshShiftRosterDuringSolvingIntervalTimeout === null) {
+    } else if (status === 'SOLVING_ACTIVE' && autoRefreshShiftRosterDuringSolvingIntervalTimeout === null) {
       autoRefreshShiftRosterDuringSolvingIntervalTimeout = setTimeout(() => refresh(dispatch), updateInterval);
     }
   });

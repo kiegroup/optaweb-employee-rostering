@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { BackgroundImage, BackgroundImageSrc } from '@patternfly/react-core';
-import filter from '@patternfly/react-core/dist/styles/assets/images/background-filter.svg';
+import { BackgroundImage, BackgroundImageSrcMap } from '@patternfly/react-core';
 /* eslint-disable camelcase */
 import pfbg_1200 from '@patternfly/react-core/dist/styles/assets/images/pfbg_1200.jpg';
 import pfbg_576 from '@patternfly/react-core/dist/styles/assets/images/pfbg_576.jpg';
@@ -25,13 +24,12 @@ import pfbg_768_2x from '@patternfly/react-core/dist/styles/assets/images/pfbg_7
 import * as React from 'react';
 /* eslint-enable camelcase */
 
-const bgImages = {
-  [BackgroundImageSrc.lg]: pfbg_1200,
-  [BackgroundImageSrc.sm]: pfbg_768,
-  [BackgroundImageSrc.sm2x]: pfbg_768_2x,
-  [BackgroundImageSrc.xs]: pfbg_576,
-  [BackgroundImageSrc.xs2x]: pfbg_576_2x,
-  [BackgroundImageSrc.filter]: `${filter}#image_overlay`,
+const bgImages: BackgroundImageSrcMap = {
+  lg: pfbg_1200,
+  sm: pfbg_768,
+  sm2x: pfbg_768_2x,
+  xs: pfbg_576,
+  xs2x: pfbg_576_2x,
 };
 
 const Background: React.FC = () => (

@@ -3,35 +3,39 @@
 exports[`ServerSideExceptionDialog should render an ServerSideException Alert correctly 1`] = `
 <Fragment>
   Trans(i18nKey=error1, {"0":"hi","joinArrays":"\\n"})
-  <Component
+  <Button
     aria-label="Show Stack Trace"
     onClick={[Function]}
     variant="link"
   >
     Show Stack Trace
-  </Component>
+  </Button>
   <Modal
     actions={
-      <Unknown
+      <Button
         aria-label="Close"
         onClick={[Function]}
       >
         Trans(i18nKey=close)
-      </Unknown>
+      </Button>
     }
-    appendTo={<body />}
-    ariaDescribedById=""
+    appendTo={[Function]}
+    aria-describedby=""
+    aria-label=""
+    aria-labelledby=""
     className=""
-    hideTitle={false}
-    isFooterLeftAligned={false}
-    isLarge={false}
+    hasNoBodyWrapper={false}
     isOpen={false}
-    isSmall={false}
     onClose={[Function]}
+    ouiaSafe={true}
     showClose={true}
     title="Trans(i18nKey=serverSideError)"
+    titleIconVariant={null}
+    titleLabel=""
+    variant="default"
   >
     <Title
+      headingLevel="h1"
       size="md"
     >
       Error1: message1
@@ -51,6 +55,7 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Alert co
       Caused By
     </Text>
     <Title
+      headingLevel="h1"
       size="md"
     >
       Error2: message2
@@ -73,35 +78,39 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Alert co
 exports[`ServerSideExceptionDialog should render an ServerSideException Modal correctly 1`] = `
 <Fragment>
   Trans(i18nKey=error1, {"0":"hi","joinArrays":"\\n"})
-  <Component
+  <Button
     aria-label="Show Stack Trace"
     onClick={[Function]}
     variant="link"
   >
     Show Stack Trace
-  </Component>
+  </Button>
   <Modal
     actions={
-      <Unknown
+      <Button
         aria-label="Close"
         onClick={[Function]}
       >
         Trans(i18nKey=close)
-      </Unknown>
+      </Button>
     }
-    appendTo={<body />}
-    ariaDescribedById=""
+    appendTo={[Function]}
+    aria-describedby=""
+    aria-label=""
+    aria-labelledby=""
     className=""
-    hideTitle={false}
-    isFooterLeftAligned={false}
-    isLarge={false}
+    hasNoBodyWrapper={false}
     isOpen={true}
-    isSmall={false}
     onClose={[Function]}
+    ouiaSafe={true}
     showClose={true}
     title="Trans(i18nKey=serverSideError)"
+    titleIconVariant={null}
+    titleLabel=""
+    variant="default"
   >
     <Title
+      headingLevel="h1"
       size="md"
     >
       Error1: message1
@@ -121,6 +130,7 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Modal co
       Caused By
     </Text>
     <Title
+      headingLevel="h1"
       size="md"
     >
       Error2: message2

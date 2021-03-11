@@ -14,159 +14,210 @@
  * limitations under the License.
  */
 
-import * as React from 'react';
-import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
-import { contractSelectors, contractOperations } from 'store/contract';
-import { AppState } from 'store/types';
+import React, { useState } from 'react';
+import {
+  TableRow, TableCell, RowViewButtons, RowEditButtons,
+  DataTableUrlProps, setSorterInUrl, DataTable,
+} from 'ui/components/DataTable';
 import { TextInput, Text } from '@patternfly/react-core';
-import { connect } from 'react-redux';
-import { Contract } from 'domain/Contract';
-import OptionalInput from 'ui/components/OptionalInput';
-import { Predicate, Sorter, ReadonlyPartial } from 'types';
+import { useDispatch, useSelector } from 'react-redux';
+import { Sorter } from 'types';
 import { stringSorter } from 'util/CommonSorters';
-import { stringFilter } from 'util/CommonFilters';
-import { withTranslation, WithTranslation } from 'react-i18next';
-import { withRouter } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { tenantSelectors } from 'store/tenant';
+import { useValidators } from 'util/ValidationUtils';
+import { getPropsFromUrl } from 'util/BookmarkableUtils';
+import { usePageableData } from 'util/FunctionalComponentUtils';
+import { contractOperations, contractSelectors } from 'store/contract';
+import { Contract } from 'domain/Contract';
 
-interface StateProps extends DataTableProps<Contract> {
-  tenantId: number;
-}
+export type Props = RouteComponentProps;
 
-const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
-  ...ownProps,
-  title: ownProps.t('contracts'),
-  columnTitles: [ownProps.t('name'), ownProps.t('maxMinutesPerDay'), ownProps.t('maxMinutesPerWeek'),
-    ownProps.t('maxMinutesPerMonth'), ownProps.t('maxMinutesPerYear')],
-  tableData: contractSelectors.getContractList(state),
-  tenantId: state.tenantData.currentTenantId,
-});
+export const ContractRow = (contract: Contract) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const dispatch = useDispatch();
+  const { t } = useTranslation('ContractsPage');
 
-export interface DispatchProps {
-  addContract: typeof contractOperations.addContract;
-  updateContract: typeof contractOperations.updateContract;
-  removeContract: typeof contractOperations.removeContract;
-}
+  if (isEditing) {
+    return (<EditableContractRow contract={contract} isNew={false} onClose={() => setIsEditing(false)} />);
+  }
 
-const mapDispatchToProps: DispatchProps = {
-  addContract: contractOperations.addContract,
-  updateContract: contractOperations.updateContract,
-  removeContract: contractOperations.removeContract,
+  return (
+    <TableRow>
+      <TableCell columnName={t('name')}>
+        <Text>{contract.name}</Text>
+      </TableCell>
+      <TableCell columnName={t('maxMinutesPerDay')}>
+        <Text>{contract.maximumMinutesPerDay}</Text>
+      </TableCell>
+      <TableCell columnName={t('maxMinutesPerWeek')}>
+        <Text>{contract.maximumMinutesPerWeek}</Text>
+      </TableCell>
+      <TableCell columnName={t('maxMinutesPerMonth')}>
+        <Text>{contract.maximumMinutesPerMonth}</Text>
+      </TableCell>
+      <TableCell columnName={t('maxMinutesPerYear')}>
+        <Text>{contract.maximumMinutesPerYear}</Text>
+      </TableCell>
+      <RowViewButtons
+        onEdit={() => setIsEditing(true)}
+        onDelete={() => dispatch(contractOperations.removeContract(contract))}
+      />
+    </TableRow>
+  );
 };
 
-export type Props = StateProps & DispatchProps & WithTranslation;
+export const EditableContractRow = (props: { contract: Contract; isNew: boolean; onClose: () => void }) => {
+  const [name, setName] = useState(props.contract.name);
+  const [maximumMinutesPerDay, setMaximumMinutesPerDay] = useState(props.contract.maximumMinutesPerDay);
+  const [maximumMinutesPerWeek, setMaximumMinutesPerWeek] = useState(props.contract.maximumMinutesPerWeek);
+  const [maximumMinutesPerMonth, setMaximumMinutesPerMonth] = useState(props.contract.maximumMinutesPerMonth);
+  const [maximumMinutesPerYear, setMaximumMinutesPerYear] = useState(props.contract.maximumMinutesPerYear);
 
+  const dispatch = useDispatch();
+  const contractList = useSelector(contractSelectors.getContractList);
+  const { t } = useTranslation('ContractsPage');
 
-// TODO: Refactor DataTable to use props instead of methods
-/* eslint-disable class-methods-use-this */
-export class ContractsPage extends DataTable<Contract, Props> {
-  constructor(props: Props) {
-    super(props);
-    this.addData = this.addData.bind(this);
-    this.updateData = this.updateData.bind(this);
-    this.removeData = this.removeData.bind(this);
-  }
+  const validators = {
+    nameMustNotBeEmpty: {
+      predicate: (contract: Contract) => contract.name.length > 0,
+      errorMsg: () => t('contractEmptyNameError'),
+    },
+    nameAlreadyTaken: {
+      predicate: (contract: Contract) => contractList.filter(otherContract => otherContract.name === contract.name
+        && otherContract.id !== contract.id).length === 0,
+      errorMsg: (contract: Contract) => t('contractNameAlreadyTakenError', { name: contract.name }),
+    },
+  };
 
-  displayDataRow(data: Contract): JSX.Element[] {
-    return [
-      <Text key={0}>{data.name}</Text>,
-      <Text key={1}>{data.maximumMinutesPerDay}</Text>,
-      <Text key={2}>{data.maximumMinutesPerWeek}</Text>,
-      <Text key={3}>{data.maximumMinutesPerMonth}</Text>,
-      <Text key={4}>{data.maximumMinutesPerYear}</Text>,
-    ];
-  }
+  const updatedContract: Contract = {
+    ...props.contract,
+    name,
+    maximumMinutesPerDay,
+    maximumMinutesPerWeek,
+    maximumMinutesPerMonth,
+    maximumMinutesPerYear,
+  };
 
-  getInitialStateForNewRow(): Partial<Contract> {
-    return {
-      maximumMinutesPerDay: null,
-      maximumMinutesPerWeek: null,
-      maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null,
-    };
-  }
+  const validationErrors = useValidators(updatedContract, validators);
 
-  editDataRow(data: ReadonlyPartial<Contract>, setProperty: PropertySetter<Contract>): JSX.Element[] {
-    const { t } = this.props;
-    return [
-      <TextInput
-        key={0}
-        name="name"
-        defaultValue={data.name}
-        aria-label="Name"
-        onChange={value => setProperty('name', value)}
-      />,
-      <OptionalInput
-        key={1}
-        label={t('maxMinutesPerDay')}
-        valueToString={value => value.toString()}
-        defaultValue={data.maximumMinutesPerDay ? data.maximumMinutesPerDay : null}
-        onChange={value => setProperty('maximumMinutesPerDay', value)}
-        isValid={value => /^\d+$/.test(value)}
-        valueMapper={value => parseInt(value, 10)}
-      />,
-      <OptionalInput
-        key={2}
-        label={t('maxMinutesPerWeek')}
-        valueToString={value => value.toString()}
-        defaultValue={data.maximumMinutesPerWeek ? data.maximumMinutesPerWeek : null}
-        onChange={value => setProperty('maximumMinutesPerWeek', value)}
-        isValid={value => /^\d+$/.test(value)}
-        valueMapper={value => parseInt(value, 10)}
-      />,
-      <OptionalInput
-        key={3}
-        label={t('maxMinutesPerMonth')}
-        valueToString={value => value.toString()}
-        defaultValue={data.maximumMinutesPerMonth ? data.maximumMinutesPerMonth : null}
-        onChange={value => setProperty('maximumMinutesPerMonth', value)}
-        isValid={value => /^\d+$/.test(value)}
-        valueMapper={value => parseInt(value, 10)}
-      />,
-      <OptionalInput
-        key={4}
-        label={t('maxMinutesPerYear')}
-        valueToString={value => value.toString()}
-        defaultValue={data.maximumMinutesPerYear ? data.maximumMinutesPerYear : null}
-        onChange={value => setProperty('maximumMinutesPerYear', value)}
-        isValid={value => /^\d+$/.test(value)}
-        valueMapper={value => parseInt(value, 10)}
-      />,
-    ];
-  }
+  return (
+    <TableRow>
+      <TableCell columnName={t('name')}>
+        <TextInput value={name} onChange={setName} />
+        {validationErrors.showValidationErrors('nameMustNotBeEmpty', 'nameAlreadyTaken')}
+      </TableCell>
+      <TableCell columnName={t('maxMinutesPerDay')}>
+        <TextInput
+          value={maximumMinutesPerDay || ''}
+          onChange={(value) => {
+            setMaximumMinutesPerDay(value ? parseInt(value, 10) : null);
+          }}
+          type="number"
+          min={0}
+        />
+      </TableCell>
+      <TableCell columnName={t('maxMinutesPerWeek')}>
+        <TextInput
+          value={maximumMinutesPerWeek || ''}
+          onChange={(value) => {
+            setMaximumMinutesPerWeek(value ? parseInt(value, 10) : null);
+          }}
+          type="number"
+          min={0}
+        />
+      </TableCell>
+      <TableCell columnName={t('maxMinutesPerMonth')}>
+        <TextInput
+          value={maximumMinutesPerMonth || ''}
+          onChange={(value) => {
+            setMaximumMinutesPerMonth(value ? parseInt(value, 10) : null);
+          }}
+          type="number"
+          min={0}
+        />
+      </TableCell>
+      <TableCell columnName={t('maxMinutesPerYear')}>
+        <TextInput
+          value={maximumMinutesPerYear || ''}
+          onChange={(value) => {
+            setMaximumMinutesPerYear(value ? parseInt(value, 10) : null);
+          }}
+          type="number"
+          min={0}
+        />
+      </TableCell>
+      <RowEditButtons
+        isValid={validationErrors.isValid}
+        onSave={() => {
+          if (props.isNew) {
+            dispatch(contractOperations.addContract(updatedContract));
+          } else {
+            dispatch(contractOperations.updateContract(updatedContract));
+          }
+        }}
+        onClose={() => props.onClose()}
+      />
+    </TableRow>
+  );
+};
 
-  isDataComplete(editedValue: ReadonlyPartial<Contract>): editedValue is Contract {
-    return editedValue.name !== undefined
-      && editedValue.maximumMinutesPerDay !== undefined
-      && editedValue.maximumMinutesPerWeek !== undefined
-      && editedValue.maximumMinutesPerMonth !== undefined
-      && editedValue.maximumMinutesPerYear !== undefined;
-  }
+export const ContractsPage: React.FC<Props> = (props) => {
+  const contractList = useSelector(contractSelectors.getContractList);
+  const tenantId = useSelector(tenantSelectors.getTenantId);
 
-  isValid(editedValue: Contract): boolean {
-    return editedValue.name.trim().length > 0;
-  }
+  const { t } = useTranslation('ContractsPage');
 
-  getFilter(): (filter: string) => Predicate<Contract> {
-    return stringFilter(contract => contract.name);
-  }
+  const columns = [
+    { name: t('name'), sorter: stringSorter<Contract>(spot => spot.name) },
+    { name: t('maxMinutesPerDay') },
+    { name: t('maxMinutesPerWeek') },
+    { name: t('maxMinutesPerMonth') },
+    { name: t('maxMinutesPerYear') },
+  ];
 
-  getSorters(): (Sorter<Contract> | null)[] {
-    return [stringSorter(c => c.name), null, null, null, null];
-  }
+  const urlProps = getPropsFromUrl<DataTableUrlProps>(props, {
+    page: '1',
+    itemsPerPage: '10',
+    filter: null,
+    sortBy: '0',
+    asc: 'true',
+  });
 
-  updateData(data: Contract): void {
-    this.props.updateContract(data);
-  }
+  const sortBy = parseInt(urlProps.sortBy || '-1', 10);
+  const sorter = columns[sortBy].sorter as Sorter<Contract>;
 
-  addData(data: Contract): void {
-    this.props.addContract({ ...data, tenantId: this.props.tenantId });
-  }
+  const pageableData = usePageableData(urlProps, contractList, contract => [contract.name,
+    `${contract.maximumMinutesPerDay || ''}`, `${contract.maximumMinutesPerWeek || ''}`,
+    `${contract.maximumMinutesPerMonth || ''}`, `${contract.maximumMinutesPerYear || ''}`],
+  sorter);
 
-  removeData(data: Contract): void {
-    this.props.removeContract(data);
-  }
-}
+  return (
+    <DataTable
+      {...props}
+      {...pageableData}
+      title={t('contracts')}
+      columns={columns}
+      rowWrapper={contract => (<ContractRow key={contract.id} {...contract} />)}
+      sortByIndex={sortBy}
+      onSorterChange={index => setSorterInUrl(props, urlProps, sortBy, index)}
+      newRowWrapper={removeRow => (
+        <EditableContractRow
+          isNew
+          onClose={removeRow}
+          contract={{
+            tenantId,
+            name: '',
+            maximumMinutesPerDay: null,
+            maximumMinutesPerWeek: null,
+            maximumMinutesPerMonth: null,
+            maximumMinutesPerYear: null,
+          }}
+        />
+      )}
+    />
+  );
+};
 
-export default withTranslation('ContractsPage')(connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(ContractsPage),
-));
+export default withRouter(ContractsPage);

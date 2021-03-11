@@ -16,12 +16,12 @@
 
 package org.optaweb.employeerostering.exception;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.*;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.RollbackException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.optaweb.employeerostering.ExceptionDataMapper;
 import org.optaweb.employeerostering.domain.exception.ConstraintViolatedException;
 
@@ -32,19 +32,19 @@ public class ExceptionDataMapperTest {
     @Test
     public void testGetExceptionDataForExceptionClass() {
         tested = new ExceptionDataMapper();
-        assertEquals(ExceptionDataMapper.ExceptionData.GENERIC_EXCEPTION,
-                tested.getExceptionDataForExceptionClass(Throwable.class));
-        assertEquals(ExceptionDataMapper.ExceptionData.ENTITY_CONSTRAINT_VIOLATION,
-                tested.getExceptionDataForExceptionClass(ConstraintViolatedException.class));
-        assertEquals(ExceptionDataMapper.ExceptionData.GENERIC_EXCEPTION,
-                tested.getExceptionDataForExceptionClass(IllegalStateException.class));
-        assertEquals(ExceptionDataMapper.ExceptionData.ILLEGAL_ARGUMENT,
-                tested.getExceptionDataForExceptionClass(IllegalArgumentException.class));
-        assertEquals(ExceptionDataMapper.ExceptionData.NULL_POINTER,
-                tested.getExceptionDataForExceptionClass(NullPointerException.class));
-        assertEquals(ExceptionDataMapper.ExceptionData.ENTITY_NOT_FOUND,
-                tested.getExceptionDataForExceptionClass(EntityNotFoundException.class));
-        assertEquals(ExceptionDataMapper.ExceptionData.GENERIC_EXCEPTION,
-                tested.getExceptionDataForExceptionClass(RollbackException.class));
+        assertThat(tested.getExceptionDataForExceptionClass(Throwable.class))
+                .isEqualTo(ExceptionDataMapper.ExceptionData.GENERIC_EXCEPTION);
+        assertThat(tested.getExceptionDataForExceptionClass(ConstraintViolatedException.class))
+                .isEqualTo(ExceptionDataMapper.ExceptionData.ENTITY_CONSTRAINT_VIOLATION);
+        assertThat(tested.getExceptionDataForExceptionClass(IllegalStateException.class))
+                .isEqualTo(ExceptionDataMapper.ExceptionData.GENERIC_EXCEPTION);
+        assertThat(tested.getExceptionDataForExceptionClass(IllegalArgumentException.class))
+                .isEqualTo(ExceptionDataMapper.ExceptionData.ILLEGAL_ARGUMENT);
+        assertThat(tested.getExceptionDataForExceptionClass(NullPointerException.class))
+                .isEqualTo(ExceptionDataMapper.ExceptionData.NULL_POINTER);
+        assertThat(tested.getExceptionDataForExceptionClass(EntityNotFoundException.class))
+                .isEqualTo(ExceptionDataMapper.ExceptionData.ENTITY_NOT_FOUND);
+        assertThat(tested.getExceptionDataForExceptionClass(RollbackException.class))
+                .isEqualTo(ExceptionDataMapper.ExceptionData.GENERIC_EXCEPTION);
     }
 }

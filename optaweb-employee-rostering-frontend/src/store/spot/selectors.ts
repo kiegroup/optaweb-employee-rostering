@@ -16,6 +16,7 @@
 import { skillSelectors } from 'store/skill';
 import { Spot } from 'domain/Spot';
 import DomainObjectView from 'domain/DomainObjectView';
+import { Map } from 'immutable';
 import { AppState } from '../types';
 
 export const getSpotById = (state: AppState, id: number): Spot => {
@@ -40,10 +41,10 @@ export const getSpotList = (state: AppState): Spot[] => {
     return spotListForOldSpotMapById;
   }
 
-  const out: Spot[] = [];
-  state.spotList.spotMapById.forEach((value, key) => out.push(getSpotById(state, key)));
+  const out = state.spotList.spotMapById.keySeq().map(key => getSpotById(state, key))
+    .sortBy(spot => spot.name).toList();
 
   oldSpotMapById = state.spotList.spotMapById;
-  spotListForOldSpotMapById = out;
-  return out;
+  spotListForOldSpotMapById = out.toArray();
+  return spotListForOldSpotMapById;
 };

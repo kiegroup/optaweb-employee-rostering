@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { withElement, withoutElement } from 'util/ImmutableCollectionOperations';
+import { List } from 'immutable';
 import { ActionType, TenantData, TenantAction, ConnectAction, ConnectionActionType } from './types';
 
 const initialState: TenantData = {
   currentTenantId: 0,
-  tenantList: [],
+  tenantList: List(),
   timezoneList: [],
 };
 
@@ -31,13 +31,13 @@ const tenantReducer = (state = initialState, action: TenantAction): TenantData =
       return { ...state, currentTenantId: action.tenantId };
     }
     case ActionType.REFRESH_TENANT_LIST: {
-      return { ...state, currentTenantId: action.tenantId, tenantList: action.tenantList };
+      return { ...state, currentTenantId: action.tenantId, tenantList: List(action.tenantList) };
     }
     case ActionType.ADD_TENANT: {
-      return { ...state, tenantList: withElement(state.tenantList, action.tenant) };
+      return { ...state, tenantList: state.tenantList.push(action.tenant) };
     }
     case ActionType.REMOVE_TENANT: {
-      return { ...state, tenantList: withoutElement(state.tenantList, action.tenant) };
+      return { ...state, tenantList: state.tenantList.filterNot(tenant => tenant.id === action.tenant.id) };
     }
     case ActionType.REFRESH_SUPPORTED_TIMEZONES: {
       return { ...state, timezoneList: action.timezoneList };

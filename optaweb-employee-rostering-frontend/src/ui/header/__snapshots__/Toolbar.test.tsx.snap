@@ -1,8 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Toolbar Component should render correctly when tenant select is open 1`] = `
-<Toolbar>
-  <ToolbarGroup>
+<Toolbar
+  style={
+    Object {
+      "backgroundColor": "#0000",
+    }
+  }
+>
+  <ForwardRef>
     <ToolbarItem>
       <Dropdown
         dropdownItems={
@@ -32,10 +38,10 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
         }
       />
     </ToolbarItem>
-  </ToolbarGroup>
-  <ToolbarGroup>
+  </ForwardRef>
+  <ForwardRef>
     <ToolbarItem>
-      <Component
+      <Button
         aria-label="Notifications"
         variant="plain"
       >
@@ -43,12 +49,11 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
           color="currentColor"
           noVerticalAlign={false}
           size="sm"
-          title={null}
         />
-      </Component>
+      </Button>
     </ToolbarItem>
     <ToolbarItem>
-      <Component
+      <Button
         aria-label="Settings"
         data-cy="settings"
         onClick={[Function]}
@@ -58,34 +63,38 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
           color="currentColor"
           noVerticalAlign={false}
           size="sm"
-          title={null}
         />
-      </Component>
+      </Button>
     </ToolbarItem>
     <ToolbarItem>
       <a
         aria-label="REST Reference"
         href="backend/swagger-ui.html"
       >
-        <Component
+        <Button
           variant="plain"
         >
           <BookIcon
             color="currentColor"
             noVerticalAlign={false}
             size="sm"
-            title={null}
           />
-        </Component>
+        </Button>
       </a>
     </ToolbarItem>
-  </ToolbarGroup>
+  </ForwardRef>
 </Toolbar>
 `;
 
 exports[`Toolbar Component should render correctly with a few tenants 1`] = `
-<Toolbar>
-  <ToolbarGroup>
+<Toolbar
+  style={
+    Object {
+      "backgroundColor": "#0000",
+    }
+  }
+>
+  <ForwardRef>
     <ToolbarItem>
       <Dropdown
         dropdownItems={
@@ -115,10 +124,10 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
         }
       />
     </ToolbarItem>
-  </ToolbarGroup>
-  <ToolbarGroup>
+  </ForwardRef>
+  <ForwardRef>
     <ToolbarItem>
-      <Component
+      <Button
         aria-label="Notifications"
         variant="plain"
       >
@@ -126,12 +135,11 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
           color="currentColor"
           noVerticalAlign={false}
           size="sm"
-          title={null}
         />
-      </Component>
+      </Button>
     </ToolbarItem>
     <ToolbarItem>
-      <Component
+      <Button
         aria-label="Settings"
         data-cy="settings"
         onClick={[Function]}
@@ -141,37 +149,41 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
           color="currentColor"
           noVerticalAlign={false}
           size="sm"
-          title={null}
         />
-      </Component>
+      </Button>
     </ToolbarItem>
     <ToolbarItem>
       <a
         aria-label="REST Reference"
         href="backend/swagger-ui.html"
       >
-        <Component
+        <Button
           variant="plain"
         >
           <BookIcon
             color="currentColor"
             noVerticalAlign={false}
             size="sm"
-            title={null}
           />
-        </Component>
+        </Button>
       </a>
     </ToolbarItem>
-  </ToolbarGroup>
+  </ForwardRef>
 </Toolbar>
 `;
 
 exports[`Toolbar Component should render correctly with no tenants 1`] = `
-<Toolbar>
-  <ToolbarGroup />
-  <ToolbarGroup>
+<Toolbar
+  style={
+    Object {
+      "backgroundColor": "#0000",
+    }
+  }
+>
+  <ForwardRef />
+  <ForwardRef>
     <ToolbarItem>
-      <Component
+      <Button
         aria-label="Notifications"
         variant="plain"
       >
@@ -179,12 +191,11 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
           color="currentColor"
           noVerticalAlign={false}
           size="sm"
-          title={null}
         />
-      </Component>
+      </Button>
     </ToolbarItem>
     <ToolbarItem>
-      <Component
+      <Button
         aria-label="Settings"
         data-cy="settings"
         onClick={[Function]}
@@ -194,27 +205,25 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
           color="currentColor"
           noVerticalAlign={false}
           size="sm"
-          title={null}
         />
-      </Component>
+      </Button>
     </ToolbarItem>
     <ToolbarItem>
       <a
         aria-label="REST Reference"
         href="backend/swagger-ui.html"
       >
-        <Component
+        <Button
           variant="plain"
         >
           <BookIcon
             color="currentColor"
             noVerticalAlign={false}
             size="sm"
-            title={null}
           />
-        </Component>
+        </Button>
       </a>
     </ToolbarItem>
-  </ToolbarGroup>
+  </ForwardRef>
 </Toolbar>
 `;

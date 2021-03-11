@@ -17,9 +17,12 @@ import { configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import MockDate from 'mockdate';
 import moment from 'moment';
+import { Store } from 'redux';
 
 // @ts-ignore
 import setTZ from 'set-tz';
+import { AppState } from 'store/types';
+import * as redux from 'react-redux';
 
 setTZ('UTC');
 configure({ adapter: new Adapter() });
@@ -67,3 +70,22 @@ function mockFunctions() {
 
 jest.mock('react-responsive', () => mockFunctions());
 jest.mock('util/BookmarkableUtils');
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom') as any,
+  __esModule: true,
+  useHistory: () => ({
+    push: jest.fn(),
+  }),
+}));
+
+
+export function mockRedux(store: Store<AppState>) {
+  jest
+    .spyOn(redux, 'useSelector')
+    .mockImplementation(callback => callback(store.getState()));
+
+  jest
+    .spyOn(redux, 'useDispatch')
+    .mockImplementation(() => store.dispatch);
+}

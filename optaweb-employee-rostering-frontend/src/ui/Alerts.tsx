@@ -35,7 +35,7 @@ interface DispatchProps {
 }
 
 const mapStateToProps = (state: AppState): StateProps => ({
-  alerts: state.alerts.alertList,
+  alerts: state.alerts.alertList.toArray(),
 });
 
 const mapDispatchToProps: DispatchProps = {
@@ -106,7 +106,7 @@ const Alerts: React.FC<Props> = (props) => {
           onMouseEnter={() => {
             hoveredOverAlertsSetter(hoveredOverAlerts.concat([alert.id as number]));
           }}
-          action={(
+          actionClose={(
             <AlertActionCloseButton
               onClose={() => props.removeAlert(alert)}
             />

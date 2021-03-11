@@ -177,7 +177,7 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
             </Button>,
           ])
         }
-        isSmall
+        variant="small"
       >
         <Form id="modal-element" key={this.state.resetCount} onSubmit={e => e.preventDefault()}>
           <InputGroup>

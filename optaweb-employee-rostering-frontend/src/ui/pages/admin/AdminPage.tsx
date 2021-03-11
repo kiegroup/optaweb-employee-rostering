@@ -15,51 +15,62 @@
  */
 
 import * as React from 'react';
-import { AppState } from 'store/types';
-import { Text, Level, LevelItem, Pagination, Button } from '@patternfly/react-core';
-import { connect } from 'react-redux';
-import { DataTableUrlProps } from 'ui/components/DataTable';
-import { Stream } from 'util/ImmutableCollectionOperations';
-import { stringFilter } from 'util/CommonFilters';
+import { Text, Button } from '@patternfly/react-core';
+import { DataTableUrlProps, setSorterInUrl, TableCell, TableRow, DataTable } from 'ui/components/DataTable';
 import { Tenant } from 'domain/Tenant';
-import { tenantOperations } from 'store/tenant';
-import * as adminOperations from 'store/admin/operations';
-import FilterComponent from 'ui/components/FilterComponent';
-import { Table, IRow, TableHeader, TableBody } from '@patternfly/react-table';
 import { TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ConfirmDialog } from 'ui/components/ConfirmDialog';
-import { getPropsFromUrl, setPropsInUrl } from 'util/BookmarkableUtils';
+import { getPropsFromUrl } from 'util/BookmarkableUtils';
 import { withRouter, RouteComponentProps } from 'react-router';
+import { usePageableData } from 'util/FunctionalComponentUtils';
+import { stringSorter } from 'util/CommonSorters';
+import { tenantOperations, tenantSelectors } from 'store/tenant';
+import { useDispatch, useSelector } from 'react-redux';
+import { resetApplication } from 'store/admin/operations';
 import NewTenantFormModal from './NewTenantFormModal';
 
-interface StateProps {
-  tenantId: number;
-  tenantList: Tenant[];
-}
-
-const mapStateToProps = (state: AppState): StateProps => ({
-  tenantId: state.tenantData.currentTenantId,
-  tenantList: state.tenantData.tenantList,
-});
-
-export interface DispatchProps {
-  removeTenant: typeof tenantOperations.removeTenant;
-  resetApplication: typeof adminOperations.resetApplication;
-}
-
-const mapDispatchToProps: DispatchProps = {
-  removeTenant: tenantOperations.removeTenant,
-  resetApplication: adminOperations.resetApplication,
-};
-
-export type Props = StateProps & DispatchProps & RouteComponentProps;
+export type Props = RouteComponentProps;
 export interface State {
   isEditingOrCreatingTenant: boolean;
 }
 
+export const TenantRow = (tenant: Tenant) => {
+  const currentTenantId = useSelector(tenantSelectors.getTenantId);
+  const dispatch = useDispatch();
+  const { t } = useTranslation('AdminPage');
+  return (
+    <TableRow>
+      <TableCell columnName={t('name')}>
+        <Text>{tenant.name}</Text>
+      </TableCell>
+      <TableCell columnName="">
+        <span
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr auto',
+            gridColumnGap: '5px',
+          }}
+        >
+          <span />
+          <span title={(currentTenantId === tenant.id) ? t('cannotDeleteCurrentTenant') : undefined}>
+            <Button
+              variant="danger"
+              onClick={() => dispatch(tenantOperations.removeTenant(tenant))}
+              isDisabled={currentTenantId === tenant.id}
+            >
+              <TrashIcon />
+            </Button>
+          </span>
+        </span>
+      </TableCell>
+    </TableRow>
+  );
+};
+
 export const AdminPage: React.FC<Props> = (props) => {
-  const { tenantId, tenantList } = props;
+  const tenantList = useSelector(tenantSelectors.getTenantList);
+  const dispatch = useDispatch();
   const { t } = useTranslation('AdminPage');
   const [isCreatingTenant, setIsCreatingTenant] = React.useState(false);
   const [isResetDialogOpen, setIsResetDialogOpen] = React.useState(false);
@@ -68,22 +79,17 @@ export const AdminPage: React.FC<Props> = (props) => {
     page: '1',
     itemsPerPage: '10',
     filter: null,
-    sortBy: null,
+    sortBy: '0',
     asc: 'true',
   });
 
-  const filterText = urlProps.filter || '';
-  const page = parseInt(urlProps.page as string, 10);
-  const itemsPerPage = parseInt(urlProps.itemsPerPage as string, 10);
-  const filter = stringFilter((tenant: Tenant) => tenant.name)(filterText);
-  const filteredRows = new Stream(tenantList)
-    .filter(filter);
+  const sortBy = parseInt(urlProps.sortBy || '-1', 10);
+  const pageableData = usePageableData(urlProps, tenantList.toArray(), tenant => [tenant.name],
+    stringSorter<Tenant>(tenant => tenant.name));
 
-  const numOfFilteredRows = filteredRows.collect(c => c.length);
-
-  const rowsInPage = filteredRows
-    .page(page, itemsPerPage)
-    .collect(c => c);
+  const columns = [
+    { name: t('name'), sorter: stringSorter<Tenant>(tenant => tenant.name) },
+  ];
 
   return (
     <>
@@ -100,90 +106,27 @@ export const AdminPage: React.FC<Props> = (props) => {
         title={t('confirmResetTitle')}
         isOpen={isResetDialogOpen}
         onClose={() => setIsResetDialogOpen(false)}
-        onConfirm={() => props.resetApplication()}
+        onConfirm={() => dispatch(resetApplication())}
       >
         {t('confirmResetBody')}
       </ConfirmDialog>
-
-      <Level
-        gutter="sm"
-        style={{
-          padding: '5px 5px 5px 5px',
-          backgroundColor: 'var(--pf-global--BackgroundColor--200)',
-        }}
-      >
-        <LevelItem>
-          <FilterComponent
-            aria-label="Filter by Name"
-            filterText={urlProps.filter || ''}
-            onChange={newFilterText => setPropsInUrl<DataTableUrlProps>(props, { page: '1', filter: newFilterText })}
-          />
-        </LevelItem>
-        <LevelItem style={{ display: 'flex' }}>
-          <Button
-            aria-label="Add Tenant"
-            data-cy="add-tenant"
-            onClick={() => setIsCreatingTenant(true)}
-          >
-            {t('add')}
-          </Button>
-          <Pagination
-            aria-label="Change Page"
-            itemCount={numOfFilteredRows}
-            perPage={itemsPerPage}
-            page={page}
-            onSetPage={(e, newPage) => setPropsInUrl<DataTableUrlProps>(props, { page: String(newPage) })}
-            widgetId="pagination-options-menu-top"
-            onPerPageSelect={(e, newItemsPerPage) => setPropsInUrl<DataTableUrlProps>(props, {
-              itemsPerPage: String(newItemsPerPage),
-            })}
-          />
-        </LevelItem>
-      </Level>
       <NewTenantFormModal
         aria-label="Add Tenant Modal"
         isOpen={isCreatingTenant}
         onClose={() => setIsCreatingTenant(false)}
       />
-      <Table
-        caption={t('tenants')}
-        cells={[t('name'), '']}
-        rows={
-          rowsInPage.map<IRow>(tenant => (
-            {
-              cells: [
-                (<td key={0}><Text>{tenant.name}</Text></td>),
-                (
-                  <td key={1}>
-                    <span
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr auto',
-                        gridColumnGap: '5px',
-                      }}
-                    >
-                      <span />
-                      <span title={(tenantId === tenant.id) ? t('cannotDeleteCurrentTenant') : undefined}>
-                        <Button
-                          variant="danger"
-                          onClick={() => props.removeTenant(tenant)}
-                          isDisabled={tenantId === tenant.id}
-                        >
-                          <TrashIcon />
-                        </Button>
-                      </span>
-                    </span>
-                  </td>
-                ),
-              ],
-            }))
-        }
-      >
-        <TableHeader />
-        <TableBody />
-      </Table>
+      <DataTable
+        {...props}
+        {...pageableData}
+        title={t('tenants')}
+        columns={columns}
+        sortByIndex={sortBy}
+        onSorterChange={index => setSorterInUrl(props, urlProps, sortBy, index)}
+        onAddButtonClick={() => setIsCreatingTenant(true)}
+        rowWrapper={tenant => <TenantRow {...tenant} />}
+      />
     </>
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AdminPage));
+export default withRouter(AdminPage);

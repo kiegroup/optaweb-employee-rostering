@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.service.solver;
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const cypress = require('cypress');
 
-// TODO replace by SolverStatus of optaplanner-core
-public enum SolverStatus {
-    SCHEDULED,
-    SOLVING,
-    TERMINATED
+async function cypressRunWithCiArgs() {
+  const runOptions = await cypress.cli.parseRunArguments(process.argv.slice(2));
+  await cypress.run(runOptions)
+    .then(() => {
+      process.exit(0);
+    })
+    .catch(() => {
+      process.exit(1);
+    });
 }
+cypressRunWithCiArgs();

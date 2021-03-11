@@ -1,0 +1,792 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Employees page DataTable newRowWrapper should be EditableEmployeeRow 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <TextInput
+      onChange={[Function]}
+      value=""
+    />
+    <InputGroupText
+      key="0"
+    >
+      <Tooltip
+        content={
+          <List
+            style={
+              Object {
+                "color": "white",
+              }
+            }
+          >
+            <ListItem>
+              Trans(i18nKey=employeeEmptyNameError)
+            </ListItem>
+          </List>
+        }
+      >
+        <WarningTriangleIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+        />
+      </Tooltip>
+    </InputGroupText>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=contract)"
+  >
+    <TypeaheadSelectInput
+      emptyText="Trans(i18nKey=selectAContract)"
+      noClearButton={true}
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
+          Object {
+            "id": 0,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract",
+            "tenantId": 0,
+          },
+        ]
+      }
+      value={
+        Object {
+          "id": 0,
+          "maximumMinutesPerDay": null,
+          "maximumMinutesPerMonth": null,
+          "maximumMinutesPerWeek": null,
+          "maximumMinutesPerYear": null,
+          "name": "Contract",
+          "tenantId": 0,
+        }
+      }
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=skillProficiencies)"
+  >
+    <MultiTypeaheadSelectInput
+      emptyText="Trans(i18nKey=selectSkillProficiencies)"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
+          Object {
+            "id": 0,
+            "name": "Skill 1",
+            "tenantId": 0,
+          },
+        ]
+      }
+      value={Array []}
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=shortId)"
+  >
+    <TextInput
+      onChange={[Function]}
+      value=""
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=color)"
+  >
+    <ColorPicker
+      currentColor="#040404"
+      onChangeColor={[Function]}
+    />
+  </TableCell>
+  <RowEditButtons
+    isValid={false}
+    onClose={[Function]}
+    onSave={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Employees page DataTable rowWrapper should be EmployeeRow 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Flex>
+      <FlexItem>
+        <Text>
+          Employee 2
+        </Text>
+      </FlexItem>
+      <FlexItem>
+        <Button
+          onClick={[Function]}
+          variant="link"
+        >
+          <ArrowIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+          />
+        </Button>
+      </FlexItem>
+    </Flex>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=contract)"
+  >
+    <Text>
+      Contract
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=skillProficiencies)"
+  >
+    <ChipGroup
+      aria-label="Chip group category"
+      categoryName=""
+      closeBtnAriaLabel="Close chip group"
+      collapsedText="\${remaining} more"
+      defaultIsOpen={false}
+      expandedText="Show Less"
+      isClosable={false}
+      numChips={3}
+      onClick={[Function]}
+      onOverflowChipClick={[Function]}
+      tooltipPosition="top"
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=shortId)"
+  >
+    <Text>
+      E2
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=color)"
+  >
+    <ColorPicker
+      currentColor="#00FF00"
+      isDisabled={true}
+      onChangeColor={[Function]}
+    />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Employees page clicking on the edit button in the viewer should show the editor 1`] = `
+<EditableEmployeeRow
+  employee={
+    Object {
+      "color": "#00FF00",
+      "contract": Object {
+        "id": 0,
+        "maximumMinutesPerDay": null,
+        "maximumMinutesPerMonth": null,
+        "maximumMinutesPerWeek": null,
+        "maximumMinutesPerYear": null,
+        "name": "Contract",
+        "tenantId": 0,
+      },
+      "id": 2,
+      "name": "Employee 2",
+      "shortId": "E2",
+      "skillProficiencySet": Array [],
+      "tenantId": 0,
+    }
+  }
+  isNew={false}
+  onClose={[Function]}
+/>
+`;
+
+exports[`Employees page clicking on the edit button in the viewer should show the editor 2`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Flex>
+      <FlexItem>
+        <Text>
+          Employee 2
+        </Text>
+      </FlexItem>
+      <FlexItem>
+        <Button
+          onClick={[Function]}
+          variant="link"
+        >
+          <ArrowIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+          />
+        </Button>
+      </FlexItem>
+    </Flex>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=contract)"
+  >
+    <Text>
+      Contract
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=skillProficiencies)"
+  >
+    <ChipGroup
+      aria-label="Chip group category"
+      categoryName=""
+      closeBtnAriaLabel="Close chip group"
+      collapsedText="\${remaining} more"
+      defaultIsOpen={false}
+      expandedText="Show Less"
+      isClosable={false}
+      numChips={3}
+      onClick={[Function]}
+      onOverflowChipClick={[Function]}
+      tooltipPosition="top"
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=shortId)"
+  >
+    <Text>
+      E2
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=color)"
+  >
+    <ColorPicker
+      currentColor="#00FF00"
+      isDisabled={true}
+      onChangeColor={[Function]}
+    />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Employees page clicking on the edit button should show editor 1`] = `
+<EditableEmployeeRow
+  employee={
+    Object {
+      "color": "#00FF00",
+      "contract": Object {
+        "id": 0,
+        "maximumMinutesPerDay": null,
+        "maximumMinutesPerMonth": null,
+        "maximumMinutesPerWeek": null,
+        "maximumMinutesPerYear": null,
+        "name": "Contract",
+        "tenantId": 0,
+      },
+      "id": 2,
+      "name": "Employee 2",
+      "shortId": "E2",
+      "skillProficiencySet": Array [],
+      "tenantId": 0,
+    }
+  }
+  isNew={false}
+  onClose={[Function]}
+/>
+`;
+
+exports[`Employees page clicking on the edit button should show editor 2`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Flex>
+      <FlexItem>
+        <Text>
+          Employee 2
+        </Text>
+      </FlexItem>
+      <FlexItem>
+        <Button
+          onClick={[Function]}
+          variant="link"
+        >
+          <ArrowIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+          />
+        </Button>
+      </FlexItem>
+    </Flex>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=contract)"
+  >
+    <Text>
+      Contract
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=skillProficiencies)"
+  >
+    <ChipGroup
+      aria-label="Chip group category"
+      categoryName=""
+      closeBtnAriaLabel="Close chip group"
+      collapsedText="\${remaining} more"
+      defaultIsOpen={false}
+      expandedText="Show Less"
+      isClosable={false}
+      numChips={3}
+      onClick={[Function]}
+      onOverflowChipClick={[Function]}
+      tooltipPosition="top"
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=shortId)"
+  >
+    <Text>
+      E2
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=color)"
+  >
+    <ColorPicker
+      currentColor="#00FF00"
+      isDisabled={true}
+      onChangeColor={[Function]}
+    />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Employees page should render correctly with a few employees 1`] = `
+<Fragment>
+  <div>
+    <FileUpload
+      dropzoneProps={
+        Object {
+          "accept": ".xlsx",
+        }
+      }
+      id="file"
+      name="file"
+      onChange={[Function]}
+    />
+  </div>
+  <DataTable
+    columns={
+      Array [
+        Object {
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
+        },
+        Object {
+          "name": "Trans(i18nKey=contract)",
+          "sorter": [Function],
+        },
+        Object {
+          "name": "Trans(i18nKey=skillProficiencies)",
+        },
+        Object {
+          "name": "Trans(i18nKey=shortId)",
+          "sorter": [Function],
+        },
+        Object {
+          "name": "Trans(i18nKey=color)",
+        },
+      ]
+    }
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "color": "#FF0000",
+          "contract": Object {
+            "id": 0,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract",
+            "tenantId": 0,
+          },
+          "id": 1,
+          "name": "Employee 1",
+          "shortId": "E1",
+          "skillProficiencySet": Array [],
+          "tenantId": 0,
+        },
+        Object {
+          "color": "#00FF00",
+          "contract": Object {
+            "id": 0,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract",
+            "tenantId": 0,
+          },
+          "id": 2,
+          "name": "Employee 2",
+          "shortId": "E2",
+          "skillProficiencySet": Array [],
+          "tenantId": 0,
+        },
+      ]
+    }
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/0/employee",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isReversed={false}
+    itemsPerPage={10}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/0/employee",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/0/employee",
+        "url": "localhost:8080/0/employee",
+      }
+    }
+    newRowWrapper={[Function]}
+    numOfFilteredRows={2}
+    onSorterChange={[Function]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "color": "#FF0000",
+          "contract": Object {
+            "id": 0,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract",
+            "tenantId": 0,
+          },
+          "id": 1,
+          "name": "Employee 1",
+          "shortId": "E1",
+          "skillProficiencySet": Array [],
+          "tenantId": 0,
+        },
+        Object {
+          "color": "#00FF00",
+          "contract": Object {
+            "id": 0,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract",
+            "tenantId": 0,
+          },
+          "id": 2,
+          "name": "Employee 2",
+          "shortId": "E2",
+          "skillProficiencySet": Array [],
+          "tenantId": 0,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Trans(i18nKey=employees)"
+  />
+</Fragment>
+`;
+
+exports[`Employees page should render correctly with no employees 1`] = `
+<Fragment>
+  <div>
+    <FileUpload
+      dropzoneProps={
+        Object {
+          "accept": ".xlsx",
+        }
+      }
+      id="file"
+      name="file"
+      onChange={[Function]}
+    />
+  </div>
+  <DataTable
+    columns={
+      Array [
+        Object {
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
+        },
+        Object {
+          "name": "Trans(i18nKey=contract)",
+          "sorter": [Function],
+        },
+        Object {
+          "name": "Trans(i18nKey=skillProficiencies)",
+        },
+        Object {
+          "name": "Trans(i18nKey=shortId)",
+          "sorter": [Function],
+        },
+        Object {
+          "name": "Trans(i18nKey=color)",
+        },
+      ]
+    }
+    filterText=""
+    filteredRows={Immutable.List []}
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/0/employee",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isReversed={false}
+    itemsPerPage={10}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/0/employee",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/0/employee",
+        "url": "localhost:8080/0/employee",
+      }
+    }
+    newRowWrapper={[Function]}
+    numOfFilteredRows={0}
+    onSorterChange={[Function]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={Immutable.List []}
+    sortByIndex={0}
+    title="Trans(i18nKey=employees)"
+  />
+</Fragment>
+`;
+
+exports[`Employees page should render the editor correctly 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <TextInput
+      onChange={[Function]}
+      value="Employee 2"
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=contract)"
+  >
+    <TypeaheadSelectInput
+      emptyText="Trans(i18nKey=selectAContract)"
+      noClearButton={true}
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
+          Object {
+            "id": 0,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract",
+            "tenantId": 0,
+          },
+        ]
+      }
+      value={
+        Object {
+          "id": 0,
+          "maximumMinutesPerDay": null,
+          "maximumMinutesPerMonth": null,
+          "maximumMinutesPerWeek": null,
+          "maximumMinutesPerYear": null,
+          "name": "Contract",
+          "tenantId": 0,
+        }
+      }
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=skillProficiencies)"
+  >
+    <MultiTypeaheadSelectInput
+      emptyText="Trans(i18nKey=selectSkillProficiencies)"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
+          Object {
+            "id": 0,
+            "name": "Skill 1",
+            "tenantId": 0,
+          },
+        ]
+      }
+      value={Array []}
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=shortId)"
+  >
+    <TextInput
+      onChange={[Function]}
+      value="E2"
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=color)"
+  >
+    <ColorPicker
+      currentColor="#00FF00"
+      onChangeColor={[Function]}
+    />
+  </TableCell>
+  <RowEditButtons
+    isValid={true}
+    onClose={[Function]}
+    onSave={[Function]}
+  />
+</TableRow>
+`;
+
+exports[`Employees page should render the viewer correctly 1`] = `
+<TableRow>
+  <TableCell
+    columnName="Trans(i18nKey=name)"
+  >
+    <Flex>
+      <FlexItem>
+        <Text>
+          Employee 2
+        </Text>
+      </FlexItem>
+      <FlexItem>
+        <Button
+          onClick={[Function]}
+          variant="link"
+        >
+          <ArrowIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+          />
+        </Button>
+      </FlexItem>
+    </Flex>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=contract)"
+  >
+    <Text>
+      Contract
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=skillProficiencies)"
+  >
+    <ChipGroup
+      aria-label="Chip group category"
+      categoryName=""
+      closeBtnAriaLabel="Close chip group"
+      collapsedText="\${remaining} more"
+      defaultIsOpen={false}
+      expandedText="Show Less"
+      isClosable={false}
+      numChips={3}
+      onClick={[Function]}
+      onOverflowChipClick={[Function]}
+      tooltipPosition="top"
+    />
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=shortId)"
+  >
+    <Text>
+      E2
+    </Text>
+  </TableCell>
+  <TableCell
+    columnName="Trans(i18nKey=color)"
+  >
+    <ColorPicker
+      currentColor="#00FF00"
+      isDisabled={true}
+      onChangeColor={[Function]}
+    />
+  </TableCell>
+  <RowViewButtons
+    onDelete={[Function]}
+    onEdit={[Function]}
+  />
+</TableRow>
+`;

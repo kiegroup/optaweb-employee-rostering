@@ -17,150 +17,169 @@ import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { Skill } from 'domain/Skill';
-import { Sorter, ReadonlyPartial } from 'types';
-import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { SkillsPage, Props } from './SkillsPage';
+import { mockStore } from 'store/mockStore';
+import { Map } from 'immutable';
+import { mockRedux } from 'setupTests';
+import { DataTable, RowEditButtons, RowViewButtons } from 'ui/components/DataTable';
+import { skillOperations } from 'store/skill';
+import { doNothing } from 'types';
+import { TextInput } from '@patternfly/react-core';
+import { SkillsPage, SkillRow, EditableSkillRow } from './SkillsPage';
+
+const noSkillsStore = mockStore({
+  skillList: {
+    isLoading: false,
+    skillMapById: Map(),
+  },
+}).store;
+
+const twoSkillsStore = mockStore({
+  skillList: {
+    isLoading: false,
+    skillMapById: Map<number, Skill>()
+      .set(0, {
+        id: 0,
+        version: 0,
+        tenantId: 0,
+        name: 'Skill 1',
+      })
+      .set(1,
+        {
+          id: 1,
+          version: 0,
+          tenantId: 0,
+          name: 'Skill 2',
+        }),
+  },
+}).store;
 
 describe('Skills page', () => {
+  const addSkill = (skill: Skill) => ['add', skill];
+  const updateSkill = (skill: Skill) => ['update', skill];
+  const removeSkill = (skill: Skill) => ['remove', skill];
+
+  beforeEach(() => {
+    jest.spyOn(skillOperations, 'addSkill').mockImplementation(skill => addSkill(skill) as any);
+    jest.spyOn(skillOperations, 'updateSkill').mockImplementation(skill => updateSkill(skill) as any);
+    jest.spyOn(skillOperations, 'removeSkill').mockImplementation(skill => removeSkill(skill) as any);
+    jest.spyOn(twoSkillsStore, 'dispatch').mockImplementation(doNothing);
+  });
+
   it('should render correctly with no skills', () => {
-    const skillsPage = shallow(<SkillsPage {...noSkills} />);
+    mockRedux(noSkillsStore);
+    const skillsPage = shallow(<SkillsPage {...getRouterProps('/0/skill', {})} />);
     expect(toJson(skillsPage)).toMatchSnapshot();
   });
 
   it('should render correctly with a few skills', () => {
-    const skillsPage = shallow(<SkillsPage {...twoSkills} />);
+    mockRedux(twoSkillsStore);
+    const skillsPage = shallow(
+      <SkillsPage {...getRouterProps('/0/skill', {})} />,
+    );
     expect(toJson(skillsPage)).toMatchSnapshot();
   });
 
   it('should render the viewer correctly', () => {
-    const skillsPage = new SkillsPage(twoSkills);
     const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
-    const viewer = shallow(skillsPage.renderViewer(skill));
+    mockRedux(twoSkillsStore);
+    const viewer = shallow(<SkillRow {...skill} />);
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
+  it('clicking on the edit button should show editor', () => {
+    const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
+    mockRedux(twoSkillsStore);
+    const viewer = shallow(<SkillRow {...skill} />);
+    viewer.find(RowViewButtons).simulate('edit');
+
+    expect(viewer).toMatchSnapshot();
+    viewer.find(EditableSkillRow).simulate('close');
+    expect(viewer).toMatchSnapshot();
+  });
+
   it('should render the editor correctly', () => {
-    const skillsPage = new SkillsPage(twoSkills);
     const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
-    const editor = shallow(skillsPage.renderEditor(skill));
+    mockRedux(twoSkillsStore);
+    const editor = shallow(<EditableSkillRow skill={skill} isNew={false} onClose={jest.fn()} />);
     expect(toJson(editor)).toMatchSnapshot();
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(true);
   });
 
-  it('should update properties on change', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const setProperty = jest.fn();
-    const editor = skillsPage.editDataRow({}, setProperty);
-    const nameCol = shallow(editor[0]);
-    nameCol.simulate('change', 'Test');
-    expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith('name', 'Test');
+  it('no name should be invalid', () => {
+    const skill = { name: '', tenantId: 0, id: 1, version: 0 };
+    mockRedux(twoSkillsStore);
+    const editor = shallow(<EditableSkillRow skill={skill} isNew={false} onClose={jest.fn()} />);
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(false);
   });
 
-  it('should an empty object on getInitialStateForNewRow', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    expect(skillsPage.getInitialStateForNewRow()).toEqual({});
+  it('duplicate name should be invalid', () => {
+    const skill = { name: 'Skill 1', tenantId: 0, id: 2, version: 0 };
+    mockRedux(twoSkillsStore);
+    const editor = shallow(<EditableSkillRow skill={skill} isNew={false} onClose={jest.fn()} />);
+    expect(editor.find(RowEditButtons).prop('isValid')).toBe(false);
   });
 
-  it('should call addSkill on addData', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const skill = { name: 'Skill', tenantId: 0 };
-    skillsPage.addData(skill);
-    expect(twoSkills.addSkill).toBeCalled();
-    expect(twoSkills.addSkill).toBeCalledWith(skill);
+  it('saving new skill should call add skill', () => {
+    const skill = { name: 'New Skill', tenantId: 0 };
+    mockRedux(twoSkillsStore);
+    const editor = shallow(<EditableSkillRow skill={skill} isNew onClose={jest.fn()} />);
+    const name = 'New Skill Name';
+    editor.find(TextInput).simulate('change', name);
+    editor.find(RowEditButtons).prop('onSave')();
+    const newSkill = { ...skill, name };
+    editor.find(RowEditButtons).prop('onSave')();
+    expect(skillOperations.addSkill).toBeCalledWith(newSkill);
+    expect(twoSkillsStore.dispatch).toBeCalledWith(addSkill(newSkill));
   });
 
-  it('should call updateSkill on updateData', () => {
-    const skillsPage = new SkillsPage(twoSkills);
+  it('saving updated skill should call update skill', () => {
+    const skill = { name: 'Updated Skill', tenantId: 0, id: 0, version: 0 };
+    mockRedux(twoSkillsStore);
+    const editor = shallow(<EditableSkillRow skill={skill} isNew={false} onClose={jest.fn()} />);
+    editor.find(RowEditButtons).prop('onSave')();
+    expect(skillOperations.updateSkill).toBeCalledWith(skill);
+    expect(twoSkillsStore.dispatch).toBeCalledWith(updateSkill(skill));
+  });
+
+  it('clicking on the edit button in the viewer should show the editor', () => {
+    const skill = { name: 'Updated Skill', tenantId: 0, id: 0, version: 0 };
+    mockRedux(twoSkillsStore);
+    const viewer = shallow(<SkillRow {...skill} />);
+
+    // Clicking the edit button should show the editor
+    viewer.find(RowViewButtons).prop('onEdit')();
+    expect(viewer).toMatchSnapshot();
+
+    // Clicking the close button should show the viwer
+    viewer.find(EditableSkillRow).prop('onClose')();
+    expect(viewer).toMatchSnapshot();
+  });
+
+  it('deleting should call delete skill', () => {
     const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
-    skillsPage.updateData(skill);
-    expect(twoSkills.updateSkill).toBeCalled();
-    expect(twoSkills.updateSkill).toBeCalledWith(skill);
+    mockRedux(twoSkillsStore);
+    const viewer = shallow(<SkillRow {...skill} />);
+    viewer.find(RowViewButtons).prop('onDelete')();
+    expect(skillOperations.removeSkill).toBeCalledWith(skill);
+    expect(twoSkillsStore.dispatch).toBeCalledWith(removeSkill(skill));
   });
 
-  it('should call removeSkill on removeData', () => {
-    const skillsPage = new SkillsPage(twoSkills);
+  it('DataTable rowWrapper should be SkillRow', () => {
     const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
-    skillsPage.removeData(skill);
-    expect(twoSkills.removeSkill).toBeCalled();
-    expect(twoSkills.removeSkill).toBeCalledWith(skill);
+    mockRedux(twoSkillsStore);
+    const skillsPage = shallow(<SkillsPage {...getRouterProps('/0/skill', {})} />);
+    const rowWrapper = shallow(skillsPage.find(DataTable).prop('rowWrapper')(skill));
+    expect(rowWrapper).toMatchSnapshot();
   });
 
-  it('should return a filter that match by name', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const filter = skillsPage.getFilter();
-
-    expect(twoSkills.tableData.filter(filter('1'))).toEqual([twoSkills.tableData[0]]);
-    expect(twoSkills.tableData.filter(filter('2'))).toEqual([twoSkills.tableData[1]]);
-  });
-
-  it('should return a sorter that sort by name', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const sorter = skillsPage.getSorters()[0] as Sorter<Skill>;
-    const list = [twoSkills.tableData[1], twoSkills.tableData[0]];
-    expect(list.sort(sorter)).toEqual(twoSkills.tableData);
-  });
-
-  it('should treat incomplete data as incomplete', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-
-    const noName: ReadonlyPartial<Skill> = { tenantId: 0 };
-    const result1 = skillsPage.isDataComplete(noName);
-    expect(result1).toEqual(false);
-
-    const completed: ReadonlyPartial<Skill> = { tenantId: 0, name: 'Name' };
-    const result2 = skillsPage.isDataComplete(completed);
-    expect(result2).toEqual(true);
-  });
-
-  it('should treat empty name as invalid', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const components: Skill = { tenantId: 0, name: '' };
-    const result = skillsPage.isValid(components);
-    expect(result).toEqual(false);
-  });
-
-  it('should treat non-empty name as valid', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const components: Skill = { tenantId: 0, name: 'Skill' };
-    const result = skillsPage.isValid(components);
-    expect(result).toEqual(true);
+  it('DataTable newRowWrapper should be EditableSkillRow', () => {
+    mockRedux(twoSkillsStore);
+    const skillsPage = shallow(<SkillsPage {...getRouterProps('/0/skill', {})} />);
+    const removeRow = jest.fn();
+    const newRowWrapper = shallow((skillsPage.find(DataTable).prop('newRowWrapper') as any)(removeRow));
+    expect(newRowWrapper).toMatchSnapshot();
+    newRowWrapper.find(RowEditButtons).prop('onClose')();
+    expect(removeRow).toBeCalled();
   });
 });
-
-const noSkills: Props = {
-  ...useTranslation(),
-  tReady: true,
-  tenantId: 0,
-  title: 'Skills',
-  columnTitles: ['Name'],
-  tableData: [],
-  addSkill: jest.fn(),
-  updateSkill: jest.fn(),
-  removeSkill: jest.fn(),
-  ...getRouterProps('/skills', {}),
-};
-
-const twoSkills: Props = {
-  ...useTranslation(),
-  tReady: true,
-  tenantId: 0,
-  title: 'Skills',
-  columnTitles: ['Name'],
-  tableData: [{
-    id: 0,
-    version: 0,
-    tenantId: 0,
-    name: 'Skill 1',
-  },
-  {
-    id: 1,
-    version: 0,
-    tenantId: 0,
-    name: 'Skill 2',
-  }],
-  addSkill: jest.fn(),
-  updateSkill: jest.fn(),
-  removeSkill: jest.fn(),
-  ...getRouterProps('/skills', {}),
-};

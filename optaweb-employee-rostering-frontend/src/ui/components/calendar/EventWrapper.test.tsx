@@ -26,6 +26,7 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
+        boundary={{ current: undefined }}
         style={{ top: '50%', height: '25%', color: 'white' }}
       />,
     );
@@ -40,6 +41,7 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
+        boundary={{ current: undefined }}
         style={{ top: '0%', height: '25%', color: 'white' }}
       />,
     );
@@ -54,6 +56,7 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
+        boundary={{ current: undefined }}
         style={{ top: '75%', height: '25%', color: 'white' }}
       />,
     );
@@ -68,6 +71,7 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
+        boundary={{ current: undefined }}
         style={{ top: '0%', height: '100%', color: 'white' }}
       />,
     );
@@ -82,6 +86,7 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
+        boundary={{ current: undefined }}
         style={{ color: 'white' }}
       />,
     );
@@ -96,6 +101,7 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
+        boundary={{ current: undefined }}
       />,
     );
     expect(eventWrapper).toMatchSnapshot();
@@ -109,6 +115,7 @@ describe('EventWrapper', () => {
         className=""
         popoverHeader="Title"
         popoverBody="Body"
+        boundary={{ current: undefined }}
         style={{ top: '50%', height: '25%', color: 'white' }}
       />,
     );

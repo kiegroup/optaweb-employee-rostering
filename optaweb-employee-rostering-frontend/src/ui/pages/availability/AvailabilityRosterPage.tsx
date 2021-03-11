@@ -69,7 +69,7 @@ let lastShownEmployeeList: Employee[] = [];
 // eslint-disable-next-line no-return-assign
 const mapStateToProps = (state: AppState): StateProps => ({
   tenantId: state.tenantData.currentTenantId,
-  isSolving: state.solverState.solverStatus === 'SOLVING',
+  isSolving: state.solverState.solverStatus !== 'NOT_SOLVING',
   isLoading: rosterSelectors.isAvailabilityRosterLoading(state),
   allEmployeeList: employeeSelectors.getEmployeeList(state),
   shownEmployeeList: lastShownEmployeeList = rosterSelectors.isAvailabilityRosterLoading(state)
@@ -291,7 +291,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     });
     const changedTenant = this.props.shownEmployeeList.length === 0
       || (urlProps.employee !== null
-      && this.props.tenantId !== this.props.shownEmployeeList[0].tenantId);
+      && this.props.tenantId !== (this.props.shownEmployeeList[0]).tenantId);
 
     if (this.props.shownEmployeeList.length === 0 || changedTenant || this.props.rosterState === null) {
       return (

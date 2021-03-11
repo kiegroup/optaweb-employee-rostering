@@ -23,10 +23,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
@@ -39,9 +38,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureTestDatabase
 public class TenantRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
@@ -78,12 +75,12 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
         return restTemplate.getForEntity(tenantPathURI + "supported/timezones", List.class);
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         createTestTenant();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         deleteTestTenant();
     }

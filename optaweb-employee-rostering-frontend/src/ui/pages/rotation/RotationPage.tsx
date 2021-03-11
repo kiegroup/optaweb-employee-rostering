@@ -19,7 +19,7 @@ import { spotSelectors } from 'store/spot';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Button, EmptyState, EmptyStateVariant,
-  EmptyStateIcon, Title, EmptyStateBody, Flex, FlexModifiers, FlexItem,
+  EmptyStateIcon, Title, EmptyStateBody, Flex, FlexItem,
 } from '@patternfly/react-core';
 
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
@@ -52,7 +52,8 @@ export const RotationPage: React.FC<{}> = () => {
   const [selectedStub, setSelectedStub] = useState<Stub>('NO_SHIFT');
   const [isEditingTimeBuckets, setIsEditingTimeBuckets] = useState(false);
 
-  const [shownSpotName, setShownSpotName] = useUrlState('spot', (spotList.length > 0) ? spotList[0].name : undefined);
+  const [shownSpotName, setShownSpotName] = useUrlState('spot', (spotList.length > 0)
+    ? spotList[0].name : undefined);
   const shownSpot = spotList.find(s => s.name === shownSpotName);
   const shownTimeBuckets = shownSpot ? timeBucketList.filter(tb => tb.spot.id === shownSpot.id) : [];
   const oldShownTimeBuckets = useRef(shownTimeBuckets.map(tb => tb.id).join(','));
@@ -71,7 +72,7 @@ export const RotationPage: React.FC<{}> = () => {
 
   React.useEffect(() => {
     if (shownSpot === undefined && spotList.length > 0) {
-      setShownSpotName(spotList[0].name);
+      setShownSpotName((spotList[0]).name);
     }
   }, [spotList, shownSpot, setShownSpotName]);
 
@@ -109,7 +110,7 @@ export const RotationPage: React.FC<{}> = () => {
   }
   return (
     <>
-      <Title size="2xl">{t('rotation')}</Title>
+      <Title headingLevel="h1" size="2xl">{t('rotation')}</Title>
       <TypeaheadSelectInput
         aria-label="Select Spot"
         emptyText={t('selectSpot')}
@@ -128,7 +129,7 @@ export const RotationPage: React.FC<{}> = () => {
         onUpdateStubList={setStubList}
       />
 
-      <Flex breakpointMods={[{ modifier: FlexModifiers.column }]}>
+      <Flex direction={{ default: 'column' }}>
         {shownTimeBuckets.map(timeBucket => (
           <FlexItem key={timeBucket.id}>
             <SeatJigsaw

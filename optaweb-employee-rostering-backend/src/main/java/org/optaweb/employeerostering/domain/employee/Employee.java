@@ -17,7 +17,6 @@
 package org.optaweb.employeerostering.domain.employee;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -91,14 +90,6 @@ public class Employee extends AbstractPersistable {
         this.color = color;
         this.contract = contract;
         this.skillProficiencySet = skillProficiencySet;
-    }
-
-    public boolean hasSkill(Skill skill) {
-        return skillProficiencySet.contains(skill);
-    }
-
-    public boolean hasSkills(Collection<Skill> skills) {
-        return skillProficiencySet.containsAll(skills);
     }
 
     @Override

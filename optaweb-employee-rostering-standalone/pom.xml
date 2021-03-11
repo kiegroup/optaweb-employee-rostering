@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.optaweb.employeerostering</groupId>
     <artifactId>optaweb-employee-rostering</artifactId>
-    <version>7.44.0-SNAPSHOT</version>
+    <version>8.4.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>optaweb-employee-rostering-standalone</artifactId>
@@ -17,6 +17,7 @@
   <properties>
     <application.port>8180</application.port>
     <frontend.project.name>optaweb-employee-rostering-frontend</frontend.project.name>
+    <java.module.name>org.optaweb.employeerostering</java.module.name>
     <version.cypress.docker>4.12.1</version.cypress.docker>
     <!-- Override to run with Podman -->
     <container.runtime>docker</container.runtime>
@@ -37,6 +38,17 @@
       <groupId>org.optaweb.employeerostering</groupId>
       <artifactId>optaweb-employee-rostering-backend</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.optaweb.employeerostering</groupId>
+      <artifactId>optaweb-employee-rostering-frontend</artifactId>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.optaweb.employeerostering</groupId>
+      <artifactId>optaweb-employee-rostering-frontend</artifactId>
+      <type>zip</type>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -180,11 +192,11 @@
                     <argument>-w</argument>
                     <argument>/e2e</argument>
                     <argument>--entrypoint</argument>
-                    <argument>cypress</argument>
+                    <argument>node</argument>
                     <argument>cypress/included:${version.cypress.docker}</argument>
-                    <argument>run</argument> <!-- Executing cypress:run -->
-                    <argument>--project</argument>
-                    <argument>.</argument>
+                    <argument>./cypress/test_runners/nodeTestRunner.js</argument> <!--Run all integration specs in node-->
+                    <argument>cypress</argument>
+                    <argument>run</argument>
                     <argument>--config</argument>
                     <argument>baseUrl=http://localhost:${application.port}</argument>
                   </arguments>

@@ -2,7 +2,7 @@
 
 exports[`Admin Page should close the modal when the modal is closed 1`] = `
 <Fragment>
-  <Component
+  <Button
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -14,7 +14,7 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Component>
+  </Button>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -23,148 +23,101 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
   >
     Trans(i18nKey=confirmResetBody)
   </ConfirmDialog>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        aria-label="Filter by Name"
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        aria-label="Add Tenant"
-        data-cy="add-tenant"
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        aria-label="Change Page"
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
   <Connect(NewTenantFormModal)
     aria-label="Add Tenant Modal"
     isOpen={false}
     onClose={[Function]}
   />
-  <Component
-    caption="Trans(i18nKey=tenants)"
-    cells={
-      Array [
-        "Trans(i18nKey=name)",
-        "",
-      ]
-    }
-    rows={
+  <DataTable
+    columns={
       Array [
         Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 1
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span
-                  title="Trans(i18nKey=cannotDeleteCurrentTenant)"
-                >
-                  <Unknown
-                    isDisabled={true}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 2
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
         },
       ]
     }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 1,
+          "name": "Tenant 2",
+          "version": 0,
+        },
+      ]
+    }
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/admin",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isReversed={false}
+    itemsPerPage={10}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/admin",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/admin",
+        "url": "localhost:8080/admin",
+      }
+    }
+    numOfFilteredRows={2}
+    onAddButtonClick={[Function]}
+    onSorterChange={[Function]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 1,
+          "name": "Tenant 2",
+          "version": 0,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Trans(i18nKey=tenants)"
+  />
 </Fragment>
 `;
 
 exports[`Admin Page should display modal when the Add Tenant button is clicked 1`] = `
 <Fragment>
-  <Component
+  <Button
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -176,7 +129,7 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Component>
+  </Button>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -185,148 +138,101 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
   >
     Trans(i18nKey=confirmResetBody)
   </ConfirmDialog>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        aria-label="Filter by Name"
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        aria-label="Add Tenant"
-        data-cy="add-tenant"
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        aria-label="Change Page"
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
   <Connect(NewTenantFormModal)
     aria-label="Add Tenant Modal"
     isOpen={true}
     onClose={[Function]}
   />
-  <Component
-    caption="Trans(i18nKey=tenants)"
-    cells={
-      Array [
-        "Trans(i18nKey=name)",
-        "",
-      ]
-    }
-    rows={
+  <DataTable
+    columns={
       Array [
         Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 1
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span
-                  title="Trans(i18nKey=cannotDeleteCurrentTenant)"
-                >
-                  <Unknown
-                    isDisabled={true}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 2
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
         },
       ]
     }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 1,
+          "name": "Tenant 2",
+          "version": 0,
+        },
+      ]
+    }
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/admin",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isReversed={false}
+    itemsPerPage={10}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/admin",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/admin",
+        "url": "localhost:8080/admin",
+      }
+    }
+    numOfFilteredRows={2}
+    onAddButtonClick={[Function]}
+    onSorterChange={[Function]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 1,
+          "name": "Tenant 2",
+          "version": 0,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Trans(i18nKey=tenants)"
+  />
 </Fragment>
 `;
 
 exports[`Admin Page should filter by name 1`] = `
 <Fragment>
-  <Component
+  <Button
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -338,7 +244,7 @@ exports[`Admin Page should filter by name 1`] = `
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Component>
+  </Button>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -347,146 +253,101 @@ exports[`Admin Page should filter by name 1`] = `
   >
     Trans(i18nKey=confirmResetBody)
   </ConfirmDialog>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        aria-label="Filter by Name"
-        filterText="5"
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        aria-label="Add Tenant"
-        data-cy="add-tenant"
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        aria-label="Change Page"
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
   <Connect(NewTenantFormModal)
     aria-label="Add Tenant Modal"
     isOpen={false}
     onClose={[Function]}
   />
-  <Component
-    caption="Trans(i18nKey=tenants)"
-    cells={
-      Array [
-        "Trans(i18nKey=name)",
-        "",
-      ]
-    }
-    rows={
+  <DataTable
+    columns={
       Array [
         Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 5
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 15
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
         },
       ]
     }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+    filterText="5"
+    filteredRows={
+      Immutable.List [
+        Object {
+          "id": 14,
+          "name": "Tenant 15",
+          "version": 0,
+        },
+        Object {
+          "id": 4,
+          "name": "Tenant 5",
+          "version": 0,
+        },
+      ]
+    }
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/admin",
+          "search": "?filter=5",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isReversed={false}
+    itemsPerPage={10}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/admin",
+        "search": "?filter=5",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/admin",
+        "url": "localhost:8080/admin",
+      }
+    }
+    numOfFilteredRows={2}
+    onAddButtonClick={[Function]}
+    onSorterChange={[Function]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "id": 14,
+          "name": "Tenant 15",
+          "version": 0,
+        },
+        Object {
+          "id": 4,
+          "name": "Tenant 5",
+          "version": 0,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Trans(i18nKey=tenants)"
+  />
 </Fragment>
 `;
 
 exports[`Admin Page should go to the correct page when the page is changed 1`] = `
 <Fragment>
-  <Component
+  <Button
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -498,7 +359,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Component>
+  </Button>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -507,434 +368,231 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
   >
     Trans(i18nKey=confirmResetBody)
   </ConfirmDialog>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        aria-label="Filter by Name"
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        aria-label="Add Tenant"
-        data-cy="add-tenant"
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        aria-label="Change Page"
-        itemCount={20}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={2}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
   <Connect(NewTenantFormModal)
     aria-label="Add Tenant Modal"
     isOpen={false}
     onClose={[Function]}
   />
-  <Component
-    caption="Trans(i18nKey=tenants)"
-    cells={
-      Array [
-        "Trans(i18nKey=name)",
-        "",
-      ]
-    }
-    rows={
+  <DataTable
+    columns={
       Array [
         Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 11
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 12
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 13
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 14
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 15
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 16
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 17
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 18
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 19
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 20
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
         },
       ]
     }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 9,
+          "name": "Tenant 10",
+          "version": 0,
+        },
+        Object {
+          "id": 10,
+          "name": "Tenant 11",
+          "version": 0,
+        },
+        Object {
+          "id": 11,
+          "name": "Tenant 12",
+          "version": 0,
+        },
+        Object {
+          "id": 12,
+          "name": "Tenant 13",
+          "version": 0,
+        },
+        Object {
+          "id": 13,
+          "name": "Tenant 14",
+          "version": 0,
+        },
+        Object {
+          "id": 14,
+          "name": "Tenant 15",
+          "version": 0,
+        },
+        Object {
+          "id": 15,
+          "name": "Tenant 16",
+          "version": 0,
+        },
+        Object {
+          "id": 16,
+          "name": "Tenant 17",
+          "version": 0,
+        },
+        Object {
+          "id": 17,
+          "name": "Tenant 18",
+          "version": 0,
+        },
+        Object {
+          "id": 18,
+          "name": "Tenant 19",
+          "version": 0,
+        },
+        Object {
+          "id": 1,
+          "name": "Tenant 2",
+          "version": 0,
+        },
+        Object {
+          "id": 19,
+          "name": "Tenant 20",
+          "version": 0,
+        },
+        Object {
+          "id": 2,
+          "name": "Tenant 3",
+          "version": 0,
+        },
+        Object {
+          "id": 3,
+          "name": "Tenant 4",
+          "version": 0,
+        },
+        Object {
+          "id": 4,
+          "name": "Tenant 5",
+          "version": 0,
+        },
+        Object {
+          "id": 5,
+          "name": "Tenant 6",
+          "version": 0,
+        },
+        Object {
+          "id": 6,
+          "name": "Tenant 7",
+          "version": 0,
+        },
+        Object {
+          "id": 7,
+          "name": "Tenant 8",
+          "version": 0,
+        },
+        Object {
+          "id": 8,
+          "name": "Tenant 9",
+          "version": 0,
+        },
+      ]
+    }
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/admin",
+          "search": "?page=2",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isReversed={false}
+    itemsPerPage={10}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/admin",
+        "search": "?page=2",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/admin",
+        "url": "localhost:8080/admin",
+      }
+    }
+    numOfFilteredRows={20}
+    onAddButtonClick={[Function]}
+    onSorterChange={[Function]}
+    page={2}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "id": 18,
+          "name": "Tenant 19",
+          "version": 0,
+        },
+        Object {
+          "id": 1,
+          "name": "Tenant 2",
+          "version": 0,
+        },
+        Object {
+          "id": 19,
+          "name": "Tenant 20",
+          "version": 0,
+        },
+        Object {
+          "id": 2,
+          "name": "Tenant 3",
+          "version": 0,
+        },
+        Object {
+          "id": 3,
+          "name": "Tenant 4",
+          "version": 0,
+        },
+        Object {
+          "id": 4,
+          "name": "Tenant 5",
+          "version": 0,
+        },
+        Object {
+          "id": 5,
+          "name": "Tenant 6",
+          "version": 0,
+        },
+        Object {
+          "id": 6,
+          "name": "Tenant 7",
+          "version": 0,
+        },
+        Object {
+          "id": 7,
+          "name": "Tenant 8",
+          "version": 0,
+        },
+        Object {
+          "id": 8,
+          "name": "Tenant 9",
+          "version": 0,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Trans(i18nKey=tenants)"
+  />
 </Fragment>
 `;
 
 exports[`Admin Page should render correctly with 2 tenants 1`] = `
 <Fragment>
-  <Component
+  <Button
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -946,7 +604,7 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Component>
+  </Button>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -955,148 +613,101 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
   >
     Trans(i18nKey=confirmResetBody)
   </ConfirmDialog>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        aria-label="Filter by Name"
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        aria-label="Add Tenant"
-        data-cy="add-tenant"
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        aria-label="Change Page"
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
   <Connect(NewTenantFormModal)
     aria-label="Add Tenant Modal"
     isOpen={false}
     onClose={[Function]}
   />
-  <Component
-    caption="Trans(i18nKey=tenants)"
-    cells={
-      Array [
-        "Trans(i18nKey=name)",
-        "",
-      ]
-    }
-    rows={
+  <DataTable
+    columns={
       Array [
         Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 1
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span
-                  title="Trans(i18nKey=cannotDeleteCurrentTenant)"
-                >
-                  <Unknown
-                    isDisabled={true}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 2
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
         },
       ]
     }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 1,
+          "name": "Tenant 2",
+          "version": 0,
+        },
+      ]
+    }
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/admin",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isReversed={false}
+    itemsPerPage={10}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/admin",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/admin",
+        "url": "localhost:8080/admin",
+      }
+    }
+    numOfFilteredRows={2}
+    onAddButtonClick={[Function]}
+    onSorterChange={[Function]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 1,
+          "name": "Tenant 2",
+          "version": 0,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Trans(i18nKey=tenants)"
+  />
 </Fragment>
 `;
 
 exports[`Admin Page should render correctly with many tenants 1`] = `
 <Fragment>
-  <Component
+  <Button
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -1108,7 +719,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Component>
+  </Button>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -1117,436 +728,231 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
   >
     Trans(i18nKey=confirmResetBody)
   </ConfirmDialog>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        aria-label="Filter by Name"
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        aria-label="Add Tenant"
-        data-cy="add-tenant"
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        aria-label="Change Page"
-        itemCount={20}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
   <Connect(NewTenantFormModal)
     aria-label="Add Tenant Modal"
     isOpen={false}
     onClose={[Function]}
   />
-  <Component
-    caption="Trans(i18nKey=tenants)"
-    cells={
-      Array [
-        "Trans(i18nKey=name)",
-        "",
-      ]
-    }
-    rows={
+  <DataTable
+    columns={
       Array [
         Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 1
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span
-                  title="Trans(i18nKey=cannotDeleteCurrentTenant)"
-                >
-                  <Unknown
-                    isDisabled={true}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 2
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 3
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 4
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 5
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 6
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 7
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 8
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 9
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 10
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
         },
       ]
     }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 9,
+          "name": "Tenant 10",
+          "version": 0,
+        },
+        Object {
+          "id": 10,
+          "name": "Tenant 11",
+          "version": 0,
+        },
+        Object {
+          "id": 11,
+          "name": "Tenant 12",
+          "version": 0,
+        },
+        Object {
+          "id": 12,
+          "name": "Tenant 13",
+          "version": 0,
+        },
+        Object {
+          "id": 13,
+          "name": "Tenant 14",
+          "version": 0,
+        },
+        Object {
+          "id": 14,
+          "name": "Tenant 15",
+          "version": 0,
+        },
+        Object {
+          "id": 15,
+          "name": "Tenant 16",
+          "version": 0,
+        },
+        Object {
+          "id": 16,
+          "name": "Tenant 17",
+          "version": 0,
+        },
+        Object {
+          "id": 17,
+          "name": "Tenant 18",
+          "version": 0,
+        },
+        Object {
+          "id": 18,
+          "name": "Tenant 19",
+          "version": 0,
+        },
+        Object {
+          "id": 1,
+          "name": "Tenant 2",
+          "version": 0,
+        },
+        Object {
+          "id": 19,
+          "name": "Tenant 20",
+          "version": 0,
+        },
+        Object {
+          "id": 2,
+          "name": "Tenant 3",
+          "version": 0,
+        },
+        Object {
+          "id": 3,
+          "name": "Tenant 4",
+          "version": 0,
+        },
+        Object {
+          "id": 4,
+          "name": "Tenant 5",
+          "version": 0,
+        },
+        Object {
+          "id": 5,
+          "name": "Tenant 6",
+          "version": 0,
+        },
+        Object {
+          "id": 6,
+          "name": "Tenant 7",
+          "version": 0,
+        },
+        Object {
+          "id": 7,
+          "name": "Tenant 8",
+          "version": 0,
+        },
+        Object {
+          "id": 8,
+          "name": "Tenant 9",
+          "version": 0,
+        },
+      ]
+    }
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/admin",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isReversed={false}
+    itemsPerPage={10}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/admin",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/admin",
+        "url": "localhost:8080/admin",
+      }
+    }
+    numOfFilteredRows={20}
+    onAddButtonClick={[Function]}
+    onSorterChange={[Function]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 9,
+          "name": "Tenant 10",
+          "version": 0,
+        },
+        Object {
+          "id": 10,
+          "name": "Tenant 11",
+          "version": 0,
+        },
+        Object {
+          "id": 11,
+          "name": "Tenant 12",
+          "version": 0,
+        },
+        Object {
+          "id": 12,
+          "name": "Tenant 13",
+          "version": 0,
+        },
+        Object {
+          "id": 13,
+          "name": "Tenant 14",
+          "version": 0,
+        },
+        Object {
+          "id": 14,
+          "name": "Tenant 15",
+          "version": 0,
+        },
+        Object {
+          "id": 15,
+          "name": "Tenant 16",
+          "version": 0,
+        },
+        Object {
+          "id": 16,
+          "name": "Tenant 17",
+          "version": 0,
+        },
+        Object {
+          "id": 17,
+          "name": "Tenant 18",
+          "version": 0,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Trans(i18nKey=tenants)"
+  />
 </Fragment>
 `;
 
 exports[`Admin Page should render correctly with no tenants 1`] = `
 <Fragment>
-  <Component
+  <Button
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -1558,7 +964,7 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Component>
+  </Button>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -1567,71 +973,75 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
   >
     Trans(i18nKey=confirmResetBody)
   </ConfirmDialog>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        aria-label="Filter by Name"
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        aria-label="Add Tenant"
-        data-cy="add-tenant"
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        aria-label="Change Page"
-        itemCount={0}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
   <Connect(NewTenantFormModal)
     aria-label="Add Tenant Modal"
     isOpen={false}
     onClose={[Function]}
   />
-  <Component
-    caption="Trans(i18nKey=tenants)"
-    cells={
+  <DataTable
+    columns={
       Array [
-        "Trans(i18nKey=name)",
-        "",
+        Object {
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
+        },
       ]
     }
-    rows={Array []}
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+    filterText=""
+    filteredRows={Immutable.List []}
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/admin",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isReversed={false}
+    itemsPerPage={10}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/admin",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/admin",
+        "url": "localhost:8080/admin",
+      }
+    }
+    numOfFilteredRows={0}
+    onAddButtonClick={[Function]}
+    onSorterChange={[Function]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={Immutable.List []}
+    sortByIndex={0}
+    title="Trans(i18nKey=tenants)"
+  />
 </Fragment>
 `;
 
 exports[`Admin Page should show confirm dialog when the reset button is clicked 1`] = `
 <Fragment>
-  <Component
+  <Button
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -1643,7 +1053,7 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Component>
+  </Button>
   <ConfirmDialog
     isOpen={true}
     onClose={[Function]}
@@ -1652,148 +1062,101 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
   >
     Trans(i18nKey=confirmResetBody)
   </ConfirmDialog>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        aria-label="Filter by Name"
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        aria-label="Add Tenant"
-        data-cy="add-tenant"
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        aria-label="Change Page"
-        itemCount={2}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
   <Connect(NewTenantFormModal)
     aria-label="Add Tenant Modal"
     isOpen={false}
     onClose={[Function]}
   />
-  <Component
-    caption="Trans(i18nKey=tenants)"
-    cells={
-      Array [
-        "Trans(i18nKey=name)",
-        "",
-      ]
-    }
-    rows={
+  <DataTable
+    columns={
       Array [
         Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 1
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span
-                  title="Trans(i18nKey=cannotDeleteCurrentTenant)"
-                >
-                  <Unknown
-                    isDisabled={true}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 2
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
         },
       ]
     }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 1,
+          "name": "Tenant 2",
+          "version": 0,
+        },
+      ]
+    }
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/admin",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isReversed={false}
+    itemsPerPage={10}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/admin",
+        "search": "",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/admin",
+        "url": "localhost:8080/admin",
+      }
+    }
+    numOfFilteredRows={2}
+    onAddButtonClick={[Function]}
+    onSorterChange={[Function]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 1,
+          "name": "Tenant 2",
+          "version": 0,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Trans(i18nKey=tenants)"
+  />
 </Fragment>
 `;
 
 exports[`Admin Page should show the desired number of tenants per page 1`] = `
 <Fragment>
-  <Component
+  <Button
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -1805,7 +1168,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Component>
+  </Button>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -1814,249 +1177,199 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
   >
     Trans(i18nKey=confirmResetBody)
   </ConfirmDialog>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
-  >
-    <LevelItem>
-      <FilterComponent
-        aria-label="Filter by Name"
-        filterText=""
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Component
-        aria-label="Add Tenant"
-        data-cy="add-tenant"
-        onClick={[Function]}
-      >
-        Trans(i18nKey=add)
-      </Component>
-      <Component
-        aria-label="Change Page"
-        itemCount={20}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={5}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
   <Connect(NewTenantFormModal)
     aria-label="Add Tenant Modal"
     isOpen={false}
     onClose={[Function]}
   />
-  <Component
-    caption="Trans(i18nKey=tenants)"
-    cells={
-      Array [
-        "Trans(i18nKey=name)",
-        "",
-      ]
-    }
-    rows={
+  <DataTable
+    columns={
       Array [
         Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 1
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span
-                  title="Trans(i18nKey=cannotDeleteCurrentTenant)"
-                >
-                  <Unknown
-                    isDisabled={true}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 2
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 3
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 4
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
-        },
-        Object {
-          "cells": Array [
-            <td>
-              <Text>
-                Tenant 5
-              </Text>
-            </td>,
-            <td>
-              <span
-                style={
-                  Object {
-                    "display": "grid",
-                    "gridColumnGap": "5px",
-                    "gridTemplateColumns": "1fr auto",
-                  }
-                }
-              >
-                <span />
-                <span>
-                  <Unknown
-                    isDisabled={false}
-                    onClick={[Function]}
-                    variant="danger"
-                  >
-                    <TrashIcon
-                      color="currentColor"
-                      noVerticalAlign={false}
-                      size="sm"
-                      title={null}
-                    />
-                  </Unknown>
-                </span>
-              </span>
-            </td>,
-          ],
+          "name": "Trans(i18nKey=name)",
+          "sorter": [Function],
         },
       ]
     }
-  >
-    <TableHeader />
-    <TableBody />
-  </Component>
+    filterText=""
+    filteredRows={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 9,
+          "name": "Tenant 10",
+          "version": 0,
+        },
+        Object {
+          "id": 10,
+          "name": "Tenant 11",
+          "version": 0,
+        },
+        Object {
+          "id": 11,
+          "name": "Tenant 12",
+          "version": 0,
+        },
+        Object {
+          "id": 12,
+          "name": "Tenant 13",
+          "version": 0,
+        },
+        Object {
+          "id": 13,
+          "name": "Tenant 14",
+          "version": 0,
+        },
+        Object {
+          "id": 14,
+          "name": "Tenant 15",
+          "version": 0,
+        },
+        Object {
+          "id": 15,
+          "name": "Tenant 16",
+          "version": 0,
+        },
+        Object {
+          "id": 16,
+          "name": "Tenant 17",
+          "version": 0,
+        },
+        Object {
+          "id": 17,
+          "name": "Tenant 18",
+          "version": 0,
+        },
+        Object {
+          "id": 18,
+          "name": "Tenant 19",
+          "version": 0,
+        },
+        Object {
+          "id": 1,
+          "name": "Tenant 2",
+          "version": 0,
+        },
+        Object {
+          "id": 19,
+          "name": "Tenant 20",
+          "version": 0,
+        },
+        Object {
+          "id": 2,
+          "name": "Tenant 3",
+          "version": 0,
+        },
+        Object {
+          "id": 3,
+          "name": "Tenant 4",
+          "version": 0,
+        },
+        Object {
+          "id": 4,
+          "name": "Tenant 5",
+          "version": 0,
+        },
+        Object {
+          "id": 5,
+          "name": "Tenant 6",
+          "version": 0,
+        },
+        Object {
+          "id": 6,
+          "name": "Tenant 7",
+          "version": 0,
+        },
+        Object {
+          "id": 7,
+          "name": "Tenant 8",
+          "version": 0,
+        },
+        Object {
+          "id": 8,
+          "name": "Tenant 9",
+          "version": 0,
+        },
+      ]
+    }
+    history={
+      Object {
+        "action": "PUSH",
+        "block": [MockFunction],
+        "createHref": [MockFunction],
+        "go": [MockFunction],
+        "goBack": [MockFunction],
+        "goForward": [MockFunction],
+        "length": 1,
+        "listen": [MockFunction],
+        "location": Object {
+          "hash": "",
+          "pathname": "/admin",
+          "search": "?itemsPerPage=5",
+          "state": undefined,
+        },
+        "push": [MockFunction],
+        "replace": [MockFunction],
+      }
+    }
+    isReversed={false}
+    itemsPerPage={5}
+    location={
+      Object {
+        "hash": "",
+        "pathname": "/admin",
+        "search": "?itemsPerPage=5",
+        "state": undefined,
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {},
+        "path": "/admin",
+        "url": "localhost:8080/admin",
+      }
+    }
+    numOfFilteredRows={20}
+    onAddButtonClick={[Function]}
+    onSorterChange={[Function]}
+    page={1}
+    rowWrapper={[Function]}
+    rowsInPage={
+      Immutable.List [
+        Object {
+          "id": 0,
+          "name": "Tenant 1",
+          "version": 0,
+        },
+        Object {
+          "id": 9,
+          "name": "Tenant 10",
+          "version": 0,
+        },
+        Object {
+          "id": 10,
+          "name": "Tenant 11",
+          "version": 0,
+        },
+        Object {
+          "id": 11,
+          "name": "Tenant 12",
+          "version": 0,
+        },
+        Object {
+          "id": 12,
+          "name": "Tenant 13",
+          "version": 0,
+        },
+      ]
+    }
+    sortByIndex={0}
+    title="Trans(i18nKey=tenants)"
+  />
 </Fragment>
 `;

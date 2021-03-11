@@ -17,6 +17,7 @@
 import { Action } from 'redux';
 import { Spot } from 'domain/Spot';
 import DomainObjectView from 'domain/DomainObjectView';
+import { Map } from 'immutable';
 
 export enum ActionType {
   ADD_SPOT = 'ADD_SPOT',

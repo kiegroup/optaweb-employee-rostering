@@ -15,10 +15,7 @@
  */
 
 import { alert } from 'store/alert';
-import {
-  createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement,
-} from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
 import { Contract } from 'domain/Contract';
 import { mockStore } from '../mockStore';
@@ -29,8 +26,8 @@ import reducer, { contractSelectors, contractOperations } from './index';
 const state: Partial<AppState> = {
   contractList: {
     isLoading: false,
-    contractMapById: new Map([
-      [0, {
+    contractMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 0,
         version: 0,
@@ -39,8 +36,8 @@ const state: Partial<AppState> = {
         maximumMinutesPerWeek: null,
         maximumMinutesPerMonth: null,
         maximumMinutesPerYear: null,
-      }],
-      [1, {
+      },
+      {
         tenantId: 0,
         id: 1,
         version: 0,
@@ -49,8 +46,8 @@ const state: Partial<AppState> = {
         maximumMinutesPerWeek: 100,
         maximumMinutesPerMonth: null,
         maximumMinutesPerYear: null,
-      }],
-      [2, {
+      },
+      {
         tenantId: 0,
         id: 2,
         version: 0,
@@ -59,7 +56,7 @@ const state: Partial<AppState> = {
         maximumMinutesPerWeek: null,
         maximumMinutesPerMonth: null,
         maximumMinutesPerYear: 100,
-      }],
+      },
     ]),
   },
 };
@@ -220,19 +217,19 @@ describe('Contract reducers', () => {
     expect(
       reducer(state.contractList, actions.addContract(addedContract)),
     ).toEqual({ ...state.contractList,
-      contractMapById: mapWithElement(storeState.contractList.contractMapById, addedContract) });
+      contractMapById: storeState.contractList.contractMapById.set(addedContract.id as number, addedContract) });
   });
   it('remove contract', () => {
     expect(
       reducer(state.contractList, actions.removeContract(deletedContract)),
     ).toEqual({ ...state.contractList,
-      contractMapById: mapWithoutElement(storeState.contractList.contractMapById, deletedContract) });
+      contractMapById: storeState.contractList.contractMapById.delete(deletedContract.id as number) });
   });
   it('update contract', () => {
     expect(
       reducer(state.contractList, actions.updateContract(updatedContract)),
     ).toEqual({ ...state.contractList,
-      contractMapById: mapWithUpdatedElement(storeState.contractList.contractMapById, updatedContract) });
+      contractMapById: storeState.contractList.contractMapById.set(updatedContract.id as number, updatedContract) });
   });
   it('refresh contract list', () => {
     expect(

@@ -20,7 +20,7 @@
     "skipLibCheck": true
   },
   "include": [
-    "fixtures", "integration", "plugins"
+    "fixtures", "integration", "plugins", "test_runners"
   ],
   "exclude": [
     "build",

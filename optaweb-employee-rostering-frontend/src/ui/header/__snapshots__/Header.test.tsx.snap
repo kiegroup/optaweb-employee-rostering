@@ -2,10 +2,11 @@
 
 exports[`Header component should render correctly on a desktop 1`] = `
 <PageHeader
+  headerTools={<UNDEFINED />}
   logo={
     <Brand
       alt="OptaPlanner Logo"
-      src="/assets/images/optaPlannerLogo200px.png"
+      src="/assets/images/optaPlannerLogoDarkBackground200px.png"
     />
   }
   logoProps={
@@ -17,7 +18,11 @@ exports[`Header component should render correctly on a desktop 1`] = `
   }
   onNavToggle={[MockFunction]}
   showNavToggle={false}
-  toolbar={<UNDEFINED />}
+  style={
+    Object {
+      "backgroundColor": "#0000",
+    }
+  }
   topNav={
     <UNDEFINED
       variant="horizontal"
@@ -28,10 +33,11 @@ exports[`Header component should render correctly on a desktop 1`] = `
 
 exports[`Header component should render correctly on a mobile 1`] = `
 <PageHeader
+  headerTools={<UNDEFINED />}
   logo={
     <Brand
       alt="OptaPlanner Logo"
-      src="/assets/images/optaPlannerLogo200px.png"
+      src="/assets/images/optaPlannerLogoDarkBackground200px.png"
     />
   }
   logoProps={
@@ -43,7 +49,11 @@ exports[`Header component should render correctly on a mobile 1`] = `
   }
   onNavToggle={[MockFunction]}
   showNavToggle={true}
-  toolbar={<UNDEFINED />}
+  style={
+    Object {
+      "backgroundColor": "#0000",
+    }
+  }
   topNav={false}
 />
 `;

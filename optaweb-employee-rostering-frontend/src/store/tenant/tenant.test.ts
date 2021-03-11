@@ -21,10 +21,11 @@ import { Tenant } from 'domain/Tenant';
 import moment from 'moment';
 import { timeBucketOperations } from 'store/rotation';
 import { RosterState } from 'domain/RosterState';
-import * as immutableOperations from 'util/ImmutableCollectionOperations';
 import { flushPromises } from 'setupTests';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
-import { doNothing } from 'types';
+import { doNothing, error } from 'types';
+import { Map, List } from 'immutable';
+import { createIdMapFromList } from 'util/ImmutableCollectionOperations';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
@@ -43,7 +44,7 @@ import reducer, { tenantOperations } from './index';
 const state: Partial<AppState> = {
   tenantData: {
     currentTenantId: 0,
-    tenantList: [
+    tenantList: List([
       {
         id: 0,
         version: 0,
@@ -54,7 +55,7 @@ const state: Partial<AppState> = {
         version: 0,
         name: 'Tenant 1',
       },
-    ],
+    ]),
     timezoneList: ['America/Toronto'],
   },
   isConnected: true,
@@ -250,7 +251,7 @@ describe('Tenant operations', () => {
     const newState: AppState = {
       tenantData: {
         currentTenantId: 0,
-        tenantList: [
+        tenantList: List([
           {
             id: 0,
             version: 0,
@@ -261,13 +262,13 @@ describe('Tenant operations', () => {
             version: 0,
             name: 'Tenant 1',
           },
-        ],
+        ]),
         timezoneList: ['America/Toronto'],
       },
       employeeList: {
         isLoading: false,
-        employeeMapById: new Map([
-          [10, {
+        employeeMapById: createIdMapFromList([
+          {
             tenantId: 0,
             id: 10,
             version: 0,
@@ -276,24 +277,24 @@ describe('Tenant operations', () => {
             skillProficiencySet: [],
             shortId: 'A',
             color: '#FFFFFF',
-          }],
+          },
         ]),
       },
       contractList: {
         isLoading: false,
-        contractMapById: new Map(),
+        contractMapById: Map(),
       },
       spotList: {
         isLoading: false,
-        spotMapById: new Map(),
+        spotMapById: Map(),
       },
       skillList: {
         isLoading: false,
-        skillMapById: new Map(),
+        skillMapById: Map(),
       },
       timeBucketList: {
         isLoading: false,
-        timeBucketMapById: new Map(),
+        timeBucketMapById: Map(),
       },
       rosterState: {
         isLoading: false,
@@ -318,10 +319,10 @@ describe('Tenant operations', () => {
         availabilityRosterView: null,
       },
       solverState: {
-        solverStatus: 'TERMINATED',
+        solverStatus: 'NOT_SOLVING',
       },
       alerts: {
-        alertList: [],
+        alertList: List(),
         idGeneratorIndex: 0,
       },
       isConnected: true,
@@ -468,7 +469,7 @@ describe('Tenant reducers', () => {
   it('refresh tenant list', () => {
     expect(
       reducer(storeState.tenantData, actions.refreshTenantList({ currentTenantId: 1, tenantList: newTenantList })),
-    ).toEqual({ ...storeState.tenantData, currentTenantId: 1, tenantList: newTenantList });
+    ).toEqual({ ...storeState.tenantData, currentTenantId: 1, tenantList: List(newTenantList) });
   });
   it('change tenant', () => {
     expect(
@@ -479,15 +480,14 @@ describe('Tenant reducers', () => {
     expect(
       reducer(storeState.tenantData, actions.addTenant(newTenantList[2])),
     ).toEqual({ ...storeState.tenantData,
-      tenantList: immutableOperations.withElement(storeState.tenantData.tenantList, newTenantList[2]) });
+      tenantList: storeState.tenantData.tenantList.set(2, newTenantList[2]) });
   });
   it('removeTenant', () => {
     expect(
-      reducer(storeState.tenantData, actions.removeTenant(storeState.tenantData.tenantList[0])),
+      reducer(storeState.tenantData, actions.removeTenant(storeState.tenantData.tenantList.get(0) ?? error())),
     ).toEqual({
       ...storeState.tenantData,
-      tenantList: immutableOperations.withoutElement(storeState.tenantData.tenantList,
-        storeState.tenantData.tenantList[0]),
+      tenantList: storeState.tenantData.tenantList.delete(0),
     });
   });
 });

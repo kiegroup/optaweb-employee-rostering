@@ -17,7 +17,7 @@
 import React from 'react';
 import {
   Modal, Text, Title, Flex, FlexItem, InputGroup, TextInput,
-  InputGroupText, Button, FlexModifiers, Bullseye, GridItem, Grid,
+  InputGroupText, Button, Bullseye, GridItem, Grid,
 } from '@patternfly/react-core';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import { skillSelectors } from 'store/skill';
@@ -45,8 +45,8 @@ export const TimeBucketEditor: React.FC<TimeBucketEditorProps> = (props) => {
   const TIME_FORMAT = 'HH:mm';
   return (
     <>
-      <Title size="lg">{props.name}</Title>
-      <Flex breakpointMods={[{ modifier: FlexModifiers.column }, { modifier: FlexModifiers['space-items-md'] }]}>
+      <Title headingLevel="h1" size="lg">{props.name}</Title>
+      <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsMd' }}>
         <FlexItem>
           <InputGroup>
             <TextInput
@@ -77,7 +77,7 @@ export const TimeBucketEditor: React.FC<TimeBucketEditorProps> = (props) => {
           </InputGroup>
         </FlexItem>
         <FlexItem>
-          <Grid gutter="md">
+          <Grid hasGutter>
             <GridItem span={4}>
               <Text>
                 Additional Skills
@@ -171,7 +171,7 @@ export const EditTimeBucketModal: React.FC<EditTimeBucketModalProps> = (props) =
       title="Create Working Time Bucket"
       isOpen={props.isOpen}
       onClose={props.onClose}
-      isSmall
+      variant="small"
       actions={[
         (
           <Button

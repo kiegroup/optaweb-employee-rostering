@@ -14,39 +14,9 @@ exports[`EventWrapper should render correctly when the event continues both befo
   }
 >
   <Popover
-    appendTo={[Function]}
-    aria-label=""
     bodyContent="Body"
-    boundary="viewport"
-    className=""
-    closeBtnAriaLabel="Close"
-    distance={25}
-    enableFlip={true}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    footerContent={null}
     headerContent="Title"
-    hideOnOutsideClick={true}
-    isVisible={null}
-    maxWidth="calc(2rem + 18.75rem)"
-    onHidden={[Function]}
-    onHide={[Function]}
-    onMount={[Function]}
-    onShow={[Function]}
-    onShown={[Function]}
-    position="top"
-    shouldClose={[Function]}
-    tippyProps={Object {}}
-    zIndex={9999}
+    zIndex={1000001}
   >
     <div
       style={
@@ -73,39 +43,9 @@ exports[`EventWrapper should render correctly when the event continues from earl
   }
 >
   <Popover
-    appendTo={[Function]}
-    aria-label=""
     bodyContent="Body"
-    boundary="viewport"
-    className=""
-    closeBtnAriaLabel="Close"
-    distance={25}
-    enableFlip={true}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    footerContent={null}
     headerContent="Title"
-    hideOnOutsideClick={true}
-    isVisible={null}
-    maxWidth="calc(2rem + 18.75rem)"
-    onHidden={[Function]}
-    onHide={[Function]}
-    onMount={[Function]}
-    onShow={[Function]}
-    onShown={[Function]}
-    position="top"
-    shouldClose={[Function]}
-    tippyProps={Object {}}
-    zIndex={9999}
+    zIndex={1000001}
   >
     <div
       style={
@@ -132,39 +72,9 @@ exports[`EventWrapper should render correctly when the event continues later 1`]
   }
 >
   <Popover
-    appendTo={[Function]}
-    aria-label=""
     bodyContent="Body"
-    boundary="viewport"
-    className=""
-    closeBtnAriaLabel="Close"
-    distance={25}
-    enableFlip={true}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    footerContent={null}
     headerContent="Title"
-    hideOnOutsideClick={true}
-    isVisible={null}
-    maxWidth="calc(2rem + 18.75rem)"
-    onHidden={[Function]}
-    onHide={[Function]}
-    onMount={[Function]}
-    onShow={[Function]}
-    onShown={[Function]}
-    position="top"
-    shouldClose={[Function]}
-    tippyProps={Object {}}
-    zIndex={9999}
+    zIndex={1000001}
   >
     <div
       style={
@@ -191,39 +101,9 @@ exports[`EventWrapper should render correctly when the event does not have a cla
   }
 >
   <Popover
-    appendTo={[Function]}
-    aria-label=""
     bodyContent="Body"
-    boundary="viewport"
-    className=""
-    closeBtnAriaLabel="Close"
-    distance={25}
-    enableFlip={true}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    footerContent={null}
     headerContent="Title"
-    hideOnOutsideClick={true}
-    isVisible={null}
-    maxWidth="calc(2rem + 18.75rem)"
-    onHidden={[Function]}
-    onHide={[Function]}
-    onMount={[Function]}
-    onShow={[Function]}
-    onShown={[Function]}
-    position="top"
-    shouldClose={[Function]}
-    tippyProps={Object {}}
-    zIndex={9999}
+    zIndex={1000001}
   >
     <div
       style={
@@ -250,39 +130,9 @@ exports[`EventWrapper should render correctly when the event does not span multi
   }
 >
   <Popover
-    appendTo={[Function]}
-    aria-label=""
     bodyContent="Body"
-    boundary="viewport"
-    className=""
-    closeBtnAriaLabel="Close"
-    distance={25}
-    enableFlip={true}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    footerContent={null}
     headerContent="Title"
-    hideOnOutsideClick={true}
-    isVisible={null}
-    maxWidth="calc(2rem + 18.75rem)"
-    onHidden={[Function]}
-    onHide={[Function]}
-    onMount={[Function]}
-    onShow={[Function]}
-    onShown={[Function]}
-    position="top"
-    shouldClose={[Function]}
-    tippyProps={Object {}}
-    zIndex={9999}
+    zIndex={1000001}
   >
     <div
       style={
@@ -307,39 +157,9 @@ exports[`EventWrapper should render correctly when the event has no height or to
   }
 >
   <Popover
-    appendTo={[Function]}
-    aria-label=""
     bodyContent="Body"
-    boundary="viewport"
-    className=""
-    closeBtnAriaLabel="Close"
-    distance={25}
-    enableFlip={true}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    footerContent={null}
     headerContent="Title"
-    hideOnOutsideClick={true}
-    isVisible={null}
-    maxWidth="calc(2rem + 18.75rem)"
-    onHidden={[Function]}
-    onHide={[Function]}
-    onMount={[Function]}
-    onShow={[Function]}
-    onShown={[Function]}
-    position="top"
-    shouldClose={[Function]}
-    tippyProps={Object {}}
-    zIndex={9999}
+    zIndex={1000001}
   >
     <div
       style={
@@ -363,39 +183,9 @@ exports[`EventWrapper should render correctly without a style 1`] = `
   }
 >
   <Popover
-    appendTo={[Function]}
-    aria-label=""
     bodyContent="Body"
-    boundary="viewport"
-    className=""
-    closeBtnAriaLabel="Close"
-    distance={25}
-    enableFlip={true}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    footerContent={null}
     headerContent="Title"
-    hideOnOutsideClick={true}
-    isVisible={null}
-    maxWidth="calc(2rem + 18.75rem)"
-    onHidden={[Function]}
-    onHide={[Function]}
-    onMount={[Function]}
-    onShow={[Function]}
-    onShown={[Function]}
-    position="top"
-    shouldClose={[Function]}
-    tippyProps={Object {}}
-    zIndex={9999}
+    zIndex={1000001}
   >
     <div
       style={

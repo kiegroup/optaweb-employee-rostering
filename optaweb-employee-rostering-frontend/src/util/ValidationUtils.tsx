@@ -45,7 +45,8 @@ export function useValidators<K extends string, T>(value: T, validators: Validat
   const showValidationErrors = (...shownValidatorGroups: K[]) => {
     const invalidatedShownValidatorGroups = shownValidatorGroups.filter(group => validationErrors.includes(group));
     if (invalidatedShownValidatorGroups.length === 0) {
-      // null is rendered as null
+      // If there are no validation errors within the specified validation groups,
+      // then nothing is rendered
       return null;
     }
 

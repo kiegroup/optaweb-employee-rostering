@@ -63,6 +63,10 @@ export const defaultColorList = [
   '#009596', // Light Cyan
 ];
 
+export function getRandomColor() {
+  return defaultColorList[Math.floor(Math.random() * defaultColorList.length)];
+}
+
 export function getColor(color: string): Color {
   if (color.startsWith('var')) {
     // CSS variable
@@ -78,23 +82,7 @@ export interface ColorPickerProps {
   currentColor: string;
   onChangeColor: (newColor: string) => void;
 }
-export const StatefulColorPicker: React.FC<ColorPickerProps> = (props) => {
-  const [color, setColor] = useState(props.currentColor);
-  React.useEffect(() => {
-    setColor(props.currentColor);
-  }, [setColor, props.currentColor]);
 
-  return (
-    <ColorPicker
-      isDisabled={props.isDisabled}
-      onChangeColor={(newColor) => {
-        setColor(newColor);
-        props.onChangeColor(newColor);
-      }}
-      currentColor={color}
-    />
-  );
-};
 export const ColorPicker: React.FC<ColorPickerProps> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   return (

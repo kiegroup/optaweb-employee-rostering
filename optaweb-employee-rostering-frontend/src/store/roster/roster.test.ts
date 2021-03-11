@@ -24,11 +24,12 @@ import { Spot } from 'domain/Spot';
 import { ShiftRosterView } from 'domain/ShiftRosterView';
 import { AvailabilityRosterView } from 'domain/AvailabilityRosterView';
 import { Employee } from 'domain/Employee';
-import DomainObjectView from 'domain/DomainObjectView';
 import { RosterState } from 'domain/RosterState';
 import { serializeLocalDate } from 'store/rest/DataSerialization';
 import { flushPromises } from 'setupTests';
 import { doNothing } from 'types';
+import { Map, List } from 'immutable';
+import { createIdMapFromList } from 'util/ImmutableCollectionOperations';
 import { availabilityRosterReducer } from './reducers';
 import { rosterStateReducer, shiftRosterViewReducer, rosterSelectors, rosterOperations, solverReducer } from './index';
 import * as actions from './actions';
@@ -196,13 +197,13 @@ const mockAvailabilityRoster: AvailabilityRosterView = {
 const state: Partial<AppState> = {
   tenantData: {
     currentTenantId: 0,
-    tenantList: [],
+    tenantList: List(),
     timezoneList: ['America/Toronto'],
   },
   employeeList: {
     isLoading: false,
-    employeeMapById: new Map([[
-      20, {
+    employeeMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 20,
         version: 0,
@@ -212,12 +213,12 @@ const state: Partial<AppState> = {
         shortId: 'e',
         color: '#FFFFFF',
       },
-    ]]),
+    ]),
   },
   contractList: {
     isLoading: false,
-    contractMapById: new Map([[
-      30, {
+    contractMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 30,
         version: 0,
@@ -227,19 +228,19 @@ const state: Partial<AppState> = {
         maximumMinutesPerMonth: null,
         maximumMinutesPerYear: null,
       },
-    ]]),
+    ]),
   },
   spotList: {
     isLoading: false,
-    spotMapById: new Map([[
-      10, {
+    spotMapById: createIdMapFromList([
+      {
         tenantId: 0,
         id: 10,
         version: 0,
         name: 'Spot',
         requiredSkillSet: [],
       },
-    ]]),
+    ]),
   },
   rosterState: {
     isLoading: false,
@@ -255,7 +256,7 @@ const state: Partial<AppState> = {
   },
   skillList: {
     isLoading: false,
-    skillMapById: new Map(),
+    skillMapById: Map(),
   },
 };
 
@@ -288,7 +289,7 @@ describe('Roster operations', () => {
   });
 
   it('should not dispatch actions or call client if tenantId is negative', async () => {
-    const { store, client } = mockStore({ tenantData: { currentTenantId: -1, tenantList: [], timezoneList: [] } });
+    const { store, client } = mockStore({ tenantData: { currentTenantId: -1, tenantList: List(), timezoneList: [] } });
     const pagination = {
       pageNumber: 0,
       itemsPerPage: 10,
@@ -381,10 +382,10 @@ describe('Roster operations', () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
 
-    onGet(`/tenant/${tenantId}/roster/status`, 'SOLVING');
+    onGet(`/tenant/${tenantId}/roster/status`, 'SOLVING_ACTIVE');
     await store.dispatch(rosterOperations.getSolverStatus());
     expect(store.getActions()).toEqual([
-      actions.updateSolverStatus({ solverStatus: 'SOLVING' }),
+      actions.updateSolverStatus({ solverStatus: 'SOLVING_ACTIVE' }),
     ]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/roster/status`);
@@ -397,10 +398,10 @@ describe('Roster operations', () => {
     mockRefreshShiftRoster.mockClear();
     store.clearActions();
 
-    onGet(`/tenant/${tenantId}/roster/status`, 'TERMINATED');
+    onGet(`/tenant/${tenantId}/roster/status`, 'NOT_SOLVING');
     await store.dispatch(rosterOperations.getSolverStatus());
     expect(store.getActions()).toEqual([
-      actions.updateSolverStatus({ solverStatus: 'TERMINATED' }),
+      actions.updateSolverStatus({ solverStatus: 'NOT_SOLVING' }),
       actions.terminateSolvingRosterEarly(),
     ]);
 
@@ -695,7 +696,7 @@ describe('Roster operations', () => {
     const { store, client } = mockStore({
       ...state,
       spotList: {
-        spotMapById: new Map<number, DomainObjectView<Spot>>(),
+        spotMapById: Map(),
         isLoading: false,
       },
     });
@@ -857,7 +858,7 @@ describe('Roster operations', () => {
     const { store, client } = mockStore({
       ...state,
       employeeList: {
-        employeeMapById: new Map<number, DomainObjectView<Employee>>(),
+        employeeMapById: Map(),
         isLoading: false,
       },
     });
@@ -1069,7 +1070,7 @@ describe('Roster reducers', () => {
     expect(
       solverReducer(state.solverState, actions.solveRoster()),
     ).toEqual({
-      solverStatus: 'SOLVING',
+      solverStatus: 'SOLVING_ACTIVE',
     });
   });
 
@@ -1077,7 +1078,7 @@ describe('Roster reducers', () => {
     expect(
       solverReducer(state.solverState, actions.terminateSolvingRosterEarly()),
     ).toEqual({
-      solverStatus: 'TERMINATED',
+      solverStatus: 'NOT_SOLVING',
     });
   });
 });

@@ -17,6 +17,7 @@ import { contractSelectors } from 'store/contract';
 import { skillSelectors } from 'store/skill';
 import { Employee } from 'domain/Employee';
 import DomainObjectView from 'domain/DomainObjectView';
+import { Map } from 'immutable';
 import { AppState } from '../types';
 
 export const getEmployeeById = (state: AppState, id: number): Employee => {
@@ -42,10 +43,10 @@ export const getEmployeeList = (state: AppState): Employee[] => {
     return employeeListForOldEmployeeMapById;
   }
 
-  const out: Employee[] = [];
-  state.employeeList.employeeMapById.forEach((value, key) => out.push(getEmployeeById(state, key)));
+  const out = state.employeeList.employeeMapById.keySeq().map(id => getEmployeeById(state, id))
+    .sortBy(employee => employee.name).toList();
 
   oldEmployeeMapById = state.employeeList.employeeMapById;
-  employeeListForOldEmployeeMapById = out;
-  return out;
+  employeeListForOldEmployeeMapById = out.toArray();
+  return employeeListForOldEmployeeMapById;
 };

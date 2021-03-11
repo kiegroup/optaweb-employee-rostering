@@ -25,7 +25,7 @@ export const ConnectionStatus: React.FC<{}> = () => {
   const { t } = useTranslation('ConnectionStatus');
   const isConnected = useSelector((state: AppState) => state.isConnected);
   return (
-    <Modal title={t('cannotConnect')} isOpen={!isConnected} isSmall>
+    <Modal title={t('cannotConnect')} isOpen={!isConnected} variant="small">
       <TextContent>
         <Text component={TextVariants.h3}>
           <UnpluggedIcon />

@@ -4,40 +4,41 @@ exports[`EditEmployeeStubListModal component should render correctly 1`] = `
 <Modal
   actions={
     Array [
-      <Unknown
+      <Button
         onClick={[MockFunction]}
         variant="secondary"
       >
         Cancel
-      </Unknown>,
-      <Unknown
+      </Button>,
+      <Button
         isDisabled={false}
         onClick={[Function]}
         variant="primary"
       >
         Save
-      </Unknown>,
+      </Button>,
     ]
   }
-  appendTo={<body />}
-  ariaDescribedById=""
+  appendTo={[Function]}
+  aria-describedby=""
+  aria-label=""
+  aria-labelledby=""
   className=""
-  hideTitle={false}
-  isFooterLeftAligned={false}
-  isLarge={false}
+  hasNoBodyWrapper={false}
   isOpen={true}
-  isSmall={true}
   onClose={[MockFunction]}
+  ouiaSafe={true}
   showClose={true}
   title="Trans(i18nKey=editEmployeeStubList)"
+  titleIconVariant={null}
+  titleLabel=""
+  variant="small"
 >
   <Flex
-    breakpointMods={
-      Array [
-        Object {
-          "modifier": "column",
-        },
-      ]
+    direction={
+      Object {
+        "default": "column",
+      }
     }
   >
     <FlexItem
@@ -51,7 +52,6 @@ exports[`EditEmployeeStubListModal component should render correctly 1`] = `
                 color="currentColor"
                 noVerticalAlign={false}
                 size="sm"
-                title={null}
               />
             </InputGroupText>
             <span
@@ -139,7 +139,7 @@ exports[`EditEmployeeStubListModal component should render correctly 1`] = `
           <span />
         </SplitItem>
         <SplitItem>
-          <Component
+          <Button
             onClick={[Function]}
             variant="link"
           >
@@ -147,19 +147,18 @@ exports[`EditEmployeeStubListModal component should render correctly 1`] = `
               color="currentColor"
               noVerticalAlign={false}
               size="sm"
-              title={null}
             />
-          </Component>
+          </Button>
         </SplitItem>
       </Split>
     </FlexItem>
     <FlexItem>
-      <Component
+      <Button
         onClick={[Function]}
         variant="link"
       >
         + Trans(i18nKey=addEmployee)
-      </Component>
+      </Button>
     </FlexItem>
   </Flex>
 </Modal>
@@ -283,25 +282,15 @@ exports[`EmployeeStubList Component should render correctly 1`] = `
         color="currentColor"
         noVerticalAlign={false}
         size="sm"
-        title={null}
       />
     </FlexItem>
     <FlexItem>
       <Text>
         Trans(i18nKey=employeeStub)
-        :
       </Text>
     </FlexItem>
     <FlexItem>
-      <Flex
-        breakpointMods={
-          Array [
-            Object {
-              "modifier": "align-items-stretch",
-            },
-          ]
-        }
-      >
+      <Flex>
         <FlexItem>
           <EmployeeStub
             color="gray"
@@ -381,7 +370,7 @@ exports[`EmployeeStubList Component should render correctly 1`] = `
       </Flex>
     </FlexItem>
     <FlexItem>
-      <Component
+      <Button
         onClick={[Function]}
         variant="link"
       >
@@ -391,9 +380,8 @@ exports[`EmployeeStubList Component should render correctly 1`] = `
           color="currentColor"
           noVerticalAlign={false}
           size="sm"
-          title={null}
         />
-      </Component>
+      </Button>
     </FlexItem>
   </Flex>
   <EditEmployeeStubListModal

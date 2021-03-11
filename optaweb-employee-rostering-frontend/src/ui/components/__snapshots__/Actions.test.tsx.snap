@@ -17,7 +17,7 @@ exports[`Actions component should render as all buttons when given enough space 
     }
   />
   <span>
-    <Component
+    <Button
       aria-label="Action 1"
       isDisabled={false}
       key="Action 1"
@@ -29,8 +29,8 @@ exports[`Actions component should render as all buttons when given enough space 
       }
     >
       Action 1
-    </Component>
-    <Component
+    </Button>
+    <Button
       aria-label="Action 2"
       isDisabled={false}
       key="Action 2"
@@ -42,8 +42,8 @@ exports[`Actions component should render as all buttons when given enough space 
       }
     >
       Action 2
-    </Component>
-    <Component
+    </Button>
+    <Button
       aria-label="Action 3"
       isDisabled={false}
       key="Action 3"
@@ -55,7 +55,7 @@ exports[`Actions component should render as all buttons when given enough space 
       }
     >
       Action 3
-    </Component>
+    </Button>
   </span>
 </span>
 `;
@@ -128,7 +128,7 @@ exports[`Actions component should render as both buttons and dropdown when given
     }
   />
   <span>
-    <Component
+    <Button
       aria-label="Action 1"
       isDisabled={false}
       key="Action 1"
@@ -140,8 +140,8 @@ exports[`Actions component should render as both buttons and dropdown when given
       }
     >
       Action 1
-    </Component>
-    <Component
+    </Button>
+    <Button
       aria-label="Action 2"
       isDisabled={false}
       key="Action 2"
@@ -153,7 +153,7 @@ exports[`Actions component should render as both buttons and dropdown when given
       }
     >
       Action 2
-    </Component>
+    </Button>
     <Dropdown
       dropdownItems={
         Array [

@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-import {
-  createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement,
-} from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapDomainObjectToView } from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
 import { TimeBucket } from 'domain/TimeBucket';
+import { Map } from 'immutable';
 import { ActionType, TimeBucketList, TimeBucketAction } from './types';
 
 export const initialState: TimeBucketList = {
   isLoading: true,
-  timeBucketMapById: new Map<number, DomainObjectView<TimeBucket>>(),
+  timeBucketMapById: Map<number, DomainObjectView<TimeBucket>>(),
 };
 
 const timeBucketReducer = (state = initialState, action: TimeBucketAction): TimeBucketList => {
@@ -32,16 +30,14 @@ const timeBucketReducer = (state = initialState, action: TimeBucketAction): Time
     case ActionType.SET_TIME_BUCKET_LIST_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_TIME_BUCKET: {
-      return { ...state, timeBucketMapById: mapWithElement(state.timeBucketMapById, action.timeBucket) };
-    }
-    case ActionType.REMOVE_TIME_BUCKET: {
-      return { ...state, timeBucketMapById: mapWithoutElement(state.timeBucketMapById, action.timeBucket) };
-    }
+    case ActionType.ADD_TIME_BUCKET:
     case ActionType.UPDATE_TIME_BUCKET: {
       return { ...state,
-        timeBucketMapById: mapWithUpdatedElement(state.timeBucketMapById,
-          action.timeBucket) };
+        timeBucketMapById: state.timeBucketMapById.set(action.timeBucket.id as number,
+          mapDomainObjectToView(action.timeBucket)) };
+    }
+    case ActionType.REMOVE_TIME_BUCKET: {
+      return { ...state, timeBucketMapById: state.timeBucketMapById.remove(action.timeBucket.id as number) };
     }
     case ActionType.REFRESH_TIME_BUCKET_LIST: {
       return { ...state, timeBucketMapById: createIdMapFromList(action.timeBucketList) };

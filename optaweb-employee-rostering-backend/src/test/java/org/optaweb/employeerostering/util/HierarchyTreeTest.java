@@ -16,18 +16,16 @@
 
 package org.optaweb.employeerostering.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.*;
 
-import java.util.Optional;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HierarchyTreeTest {
 
     private HierarchyTree<Integer, String> tested;
 
-    @Before
+    @BeforeEach
     public void setup() {
         // tested is the divisibility Hierarchy Tree;
         // a is above b iff a divides b
@@ -46,33 +44,33 @@ public class HierarchyTreeTest {
 
     @Test
     public void testPutInHierarchyAndGetHierarchyClassValue() {
-        assertEquals(Optional.empty(), tested.getHierarchyClassValue(2));
-        assertEquals(Optional.empty(), tested.getHierarchyClassValue(4));
-        assertEquals(Optional.empty(), tested.getHierarchyClassValue(6));
-        assertEquals(Optional.empty(), tested.getHierarchyClassValue(3));
+        assertThat(tested.getHierarchyClassValue(2)).isEmpty();
+        assertThat(tested.getHierarchyClassValue(4)).isEmpty();
+        assertThat(tested.getHierarchyClassValue(6)).isEmpty();
+        assertThat(tested.getHierarchyClassValue(3)).isEmpty();
 
         tested.putInHierarchy(4, "4");
-        assertEquals(Optional.empty(), tested.getHierarchyClassValue(2));
-        assertEquals(Optional.of("4"), tested.getHierarchyClassValue(4));
-        assertEquals(Optional.of("4"), tested.getHierarchyClassValue(12));
-        assertEquals(Optional.empty(), tested.getHierarchyClassValue(3));
+        assertThat(tested.getHierarchyClassValue(2)).isEmpty();
+        assertThat(tested.getHierarchyClassValue(4)).hasValue("4");
+        assertThat(tested.getHierarchyClassValue(12)).hasValue("4");
+        assertThat(tested.getHierarchyClassValue(3)).isEmpty();
 
         tested.putInHierarchy(12, "12");
-        assertEquals(Optional.empty(), tested.getHierarchyClassValue(2));
-        assertEquals(Optional.of("4"), tested.getHierarchyClassValue(4));
-        assertEquals(Optional.of("12"), tested.getHierarchyClassValue(12));
-        assertEquals(Optional.empty(), tested.getHierarchyClassValue(3));
+        assertThat(tested.getHierarchyClassValue(2)).isEmpty();
+        assertThat(tested.getHierarchyClassValue(4)).hasValue("4");
+        assertThat(tested.getHierarchyClassValue(12)).hasValue("12");
+        assertThat(tested.getHierarchyClassValue(3)).isEmpty();
 
         tested.putInHierarchy(3, "3");
-        assertEquals(Optional.empty(), tested.getHierarchyClassValue(2));
-        assertEquals(Optional.of("4"), tested.getHierarchyClassValue(4));
-        assertEquals(Optional.of("12"), tested.getHierarchyClassValue(12));
-        assertEquals(Optional.of("3"), tested.getHierarchyClassValue(3));
+        assertThat(tested.getHierarchyClassValue(2)).isEmpty();
+        assertThat(tested.getHierarchyClassValue(4)).hasValue("4");
+        assertThat(tested.getHierarchyClassValue(12)).hasValue("12");
+        assertThat(tested.getHierarchyClassValue(3)).hasValue("3");
 
         tested.putInHierarchy(2, "2");
-        assertEquals(Optional.of("2"), tested.getHierarchyClassValue(2));
-        assertEquals(Optional.of("4"), tested.getHierarchyClassValue(4));
-        assertEquals(Optional.of("12"), tested.getHierarchyClassValue(12));
-        assertEquals(Optional.of("3"), tested.getHierarchyClassValue(3));
+        assertThat(tested.getHierarchyClassValue(2)).hasValue("2");
+        assertThat(tested.getHierarchyClassValue(4)).hasValue("4");
+        assertThat(tested.getHierarchyClassValue(12)).hasValue("12");
+        assertThat(tested.getHierarchyClassValue(3)).hasValue("3");
     }
 }

@@ -259,24 +259,40 @@ exports[`ConstraintMatches component should display each constraint with impact 
 
 exports[`ScoreDisplay component should renderCorrectly when closed 1`] = `
 <span>
-  <Component
+  <Chip
+    className=""
+    closeBtnAriaLabel="close"
+    component="div"
+    isOverflowChip={false}
     isReadOnly={true}
+    onClick={[Function]}
+    tooltipPosition="top"
   >
     Trans(i18nKey=hardScore, {"hardScore":-10})
-  </Component>
-  <Component
+  </Chip>
+  <Chip
+    className=""
+    closeBtnAriaLabel="close"
+    component="div"
+    isOverflowChip={false}
     isReadOnly={true}
+    onClick={[Function]}
+    tooltipPosition="top"
   >
     Trans(i18nKey=mediumScore, {"mediumScore":-5})
-  </Component>
-  <Component
+  </Chip>
+  <Chip
+    className=""
+    closeBtnAriaLabel="close"
+    component="div"
+    isOverflowChip={false}
     isReadOnly={true}
+    onClick={[Function]}
+    tooltipPosition="top"
   >
     Trans(i18nKey=softScore, {"softScore":20})
-  </Component>
+  </Chip>
   <Popover
-    appendTo={[Function]}
-    aria-label=""
     bodyContent={
       <ConstraintMatches
         indictmentSummary={
@@ -382,37 +398,12 @@ exports[`ScoreDisplay component should renderCorrectly when closed 1`] = `
       />
     }
     boundary="viewport"
-    className=""
-    closeBtnAriaLabel="Close"
-    distance={25}
-    enableFlip={true}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    footerContent={null}
     headerContent="Constraint Matches"
-    hideOnOutsideClick={true}
     isVisible={false}
     maxWidth="800px"
-    onHidden={[Function]}
-    onHide={[Function]}
-    onMount={[Function]}
-    onShow={[Function]}
-    onShown={[Function]}
-    position="top"
     shouldClose={[Function]}
-    tippyProps={Object {}}
-    zIndex={9999}
   >
-    <Component
+    <Button
       onClick={[Function]}
       variant="plain"
     >
@@ -420,9 +411,8 @@ exports[`ScoreDisplay component should renderCorrectly when closed 1`] = `
         color="currentColor"
         noVerticalAlign={false}
         size="sm"
-        title={null}
       />
-    </Component>
+    </Button>
   </Popover>
   Stand by while resolving hard constraint violations...
 </span>
@@ -430,24 +420,40 @@ exports[`ScoreDisplay component should renderCorrectly when closed 1`] = `
 
 exports[`ScoreDisplay component should renderCorrectly when open 1`] = `
 <span>
-  <Component
+  <Chip
+    className=""
+    closeBtnAriaLabel="close"
+    component="div"
+    isOverflowChip={false}
     isReadOnly={true}
+    onClick={[Function]}
+    tooltipPosition="top"
   >
     Trans(i18nKey=hardScore, {"hardScore":-10})
-  </Component>
-  <Component
+  </Chip>
+  <Chip
+    className=""
+    closeBtnAriaLabel="close"
+    component="div"
+    isOverflowChip={false}
     isReadOnly={true}
+    onClick={[Function]}
+    tooltipPosition="top"
   >
     Trans(i18nKey=mediumScore, {"mediumScore":-5})
-  </Component>
-  <Component
+  </Chip>
+  <Chip
+    className=""
+    closeBtnAriaLabel="close"
+    component="div"
+    isOverflowChip={false}
     isReadOnly={true}
+    onClick={[Function]}
+    tooltipPosition="top"
   >
     Trans(i18nKey=softScore, {"softScore":20})
-  </Component>
+  </Chip>
   <Popover
-    appendTo={[Function]}
-    aria-label=""
     bodyContent={
       <ConstraintMatches
         indictmentSummary={
@@ -553,37 +559,12 @@ exports[`ScoreDisplay component should renderCorrectly when open 1`] = `
       />
     }
     boundary="viewport"
-    className=""
-    closeBtnAriaLabel="Close"
-    distance={25}
-    enableFlip={true}
-    flipBehavior={
-      Array [
-        "top",
-        "right",
-        "bottom",
-        "left",
-        "top",
-        "right",
-        "bottom",
-      ]
-    }
-    footerContent={null}
     headerContent="Constraint Matches"
-    hideOnOutsideClick={true}
     isVisible={true}
     maxWidth="800px"
-    onHidden={[Function]}
-    onHide={[Function]}
-    onMount={[Function]}
-    onShow={[Function]}
-    onShown={[Function]}
-    position="top"
     shouldClose={[Function]}
-    tippyProps={Object {}}
-    zIndex={9999}
   >
-    <Component
+    <Button
       onClick={[Function]}
       variant="plain"
     >
@@ -591,9 +572,8 @@ exports[`ScoreDisplay component should renderCorrectly when open 1`] = `
         color="currentColor"
         noVerticalAlign={false}
         size="sm"
-        title={null}
       />
-    </Component>
+    </Button>
   </Popover>
   Stand by while resolving hard constraint violations...
 </span>

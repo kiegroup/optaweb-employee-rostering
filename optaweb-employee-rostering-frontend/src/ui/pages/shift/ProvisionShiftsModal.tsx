@@ -185,7 +185,7 @@ export const ProvisionShiftsModal: React.FC<ProvisionShiftsModalProps> = (props)
           </Button>,
         ]
       }
-      isSmall
+      variant="small"
     >
       <Form id="modal-element" onSubmit={e => e.preventDefault()}>
         <InputGroup>

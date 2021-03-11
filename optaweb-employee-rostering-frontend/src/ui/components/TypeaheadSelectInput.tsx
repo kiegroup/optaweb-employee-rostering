@@ -28,22 +28,7 @@ export interface TypeaheadSelectProps<T> {
   valueComponent?: React.FC<CommonProps<{ value: T}> & { data: {value: T}}>;
 }
 
-const StatefulTypeaheadSelectInput: React.FC<TypeaheadSelectProps<any>> = (props) => {
-  const [value, setValue] = React.useState(props.value);
-  return (
-    <TypeaheadSelectInput
-      {...props}
-      value={value}
-      onChange={(v) => { props.onChange(v); setValue(v); }}
-    />
-  );
-};
-
-export { StatefulTypeaheadSelectInput };
-
-export default class TypeaheadSelectInput<T> extends React.Component<
-TypeaheadSelectProps<T>
-> {
+export default class TypeaheadSelectInput<T> extends React.Component<TypeaheadSelectProps<T>> {
   constructor(props: TypeaheadSelectProps<T>) {
     super(props);
     this.onSelect = this.onSelect.bind(this);

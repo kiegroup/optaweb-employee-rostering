@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import * as React from 'react';
-import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
+import React, { useState } from 'react';
 import { employeeSelectors, employeeOperations } from 'store/employee';
 import { alert } from 'store/alert';
 import { contractSelectors } from 'store/contract';
 import { skillSelectors } from 'store/skill';
 import { Employee } from 'domain/Employee';
-import { AppState } from 'store/types';
 import {
   TextInput,
   Text,
@@ -35,250 +32,286 @@ import {
   Button,
   ButtonVariant,
   FileUpload,
+  FlexItem, Flex,
 } from '@patternfly/react-core';
-import { connect } from 'react-redux';
-import { Skill } from 'domain/Skill';
-import { Contract } from 'domain/Contract';
-import { StatefulTypeaheadSelectInput } from 'ui/components/TypeaheadSelectInput';
-import { Predicate, Sorter, ReadonlyPartial, doNothing } from 'types';
+import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
+import { Sorter, doNothing } from 'types';
 import { stringSorter } from 'util/CommonSorters';
-import { stringFilter } from 'util/CommonFilters';
-import { StatefulMultiTypeaheadSelectInput } from 'ui/components/MultiTypeaheadSelectInput';
 import { CubesIcon, ArrowIcon } from '@patternfly/react-icons';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { withTranslation, WithTranslation, Trans } from 'react-i18next';
-import moment from 'moment';
-import { ColorPicker, StatefulColorPicker, defaultColorList } from 'ui/components/ColorPicker';
+import { Trans, useTranslation } from 'react-i18next';
 
-interface StateProps extends DataTableProps<Employee> {
-  tenantId: number;
-  skillList: Skill[];
-  contractList: Contract[];
-}
+// Need module import so we can mock getRandomColor in tests
+import * as ColorPicker from 'ui/components/ColorPicker';
+import {
+  TableRow, TableCell, RowViewButtons, RowEditButtons, DataTableUrlProps,
+  setSorterInUrl, DataTable,
+} from 'ui/components/DataTable';
+import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 
-const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
-  ...ownProps,
-  title: ownProps.t('employees'),
-  columnTitles: [
-    ownProps.t('name'),
-    ownProps.t('contract'),
-    ownProps.t('skillProficiencies'),
-    ownProps.t('shortId'),
-    ownProps.t('color'),
-  ],
-  tableData: employeeSelectors.getEmployeeList(state),
-  skillList: skillSelectors.getSkillList(state),
-  contractList: contractSelectors.getContractList(state),
-  tenantId: state.tenantData.currentTenantId,
-});
+import { useDispatch, useSelector } from 'react-redux';
 
-export interface DispatchProps {
-  addEmployee: typeof employeeOperations.addEmployee;
-  updateEmployee: typeof employeeOperations.updateEmployee;
-  removeEmployee: typeof employeeOperations.removeEmployee;
-  uploadEmployeeList: typeof employeeOperations.uploadEmployeeList;
-  showErrorMessage: typeof alert.showErrorMessage;
-}
+import * as router from 'react-router';
+import { tenantSelectors } from 'store/tenant';
+import { useValidators } from 'util/ValidationUtils';
+import { getPropsFromUrl } from 'util/BookmarkableUtils';
+import { usePageableData } from 'util/FunctionalComponentUtils';
 
-const mapDispatchToProps: DispatchProps = {
-  addEmployee: employeeOperations.addEmployee,
-  updateEmployee: employeeOperations.updateEmployee,
-  removeEmployee: employeeOperations.removeEmployee,
-  uploadEmployeeList: employeeOperations.uploadEmployeeList,
-  showErrorMessage: alert.showErrorMessage,
+export type Props = RouteComponentProps;
+
+export const EmployeeRow = (employee: Employee) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const dispatch = useDispatch();
+  const tenantId = useSelector(tenantSelectors.getTenantId);
+  const history = router.useHistory();
+  const { t } = useTranslation('EmployeesPage');
+
+  if (isEditing) {
+    return (<EditableEmployeeRow employee={employee} isNew={false} onClose={() => setIsEditing(false)} />);
+  }
+
+  return (
+    <TableRow>
+      <TableCell columnName={t('name')}>
+        <Flex>
+          <FlexItem>
+            <Text>{employee.name}</Text>
+          </FlexItem>
+          <FlexItem>
+            <Button
+              variant={ButtonVariant.link}
+              onClick={() => {
+                history.push(`/${tenantId}/availability?employee=${encodeURIComponent(employee.name)}`);
+              }}
+            >
+              <ArrowIcon />
+            </Button>
+          </FlexItem>
+        </Flex>
+      </TableCell>
+      <TableCell columnName={t('contract')}>
+        <Text>{employee.contract.name}</Text>
+      </TableCell>
+      <TableCell columnName={t('skillProficiencies')}>
+        <ChipGroup>
+          {employee.skillProficiencySet.map(skill => (
+            <Chip key={skill.name} isReadOnly>
+              {skill.name}
+            </Chip>
+          ))}
+        </ChipGroup>
+      </TableCell>
+      <TableCell columnName={t('shortId')}>
+        <Text>{employee.shortId}</Text>
+      </TableCell>
+      <TableCell columnName={t('color')}>
+        <ColorPicker.ColorPicker
+          currentColor={employee.color}
+          onChangeColor={doNothing}
+          isDisabled
+        />
+      </TableCell>
+      <RowViewButtons
+        onEdit={() => setIsEditing(true)}
+        onDelete={() => dispatch(employeeOperations.removeEmployee(employee))}
+      />
+    </TableRow>
+  );
 };
 
-export type Props = RouteComponentProps & StateProps & DispatchProps & WithTranslation;
+export const EditableEmployeeRow = (props: { employee: Employee; isNew: boolean; onClose: () => void }) => {
+  const [name, setName] = useState(props.employee.name);
+  const [contract, setContract] = useState(props.employee.contract);
+  const [skillProficiencySet, setSkillProficiencySet] = useState(props.employee.skillProficiencySet);
+  const [shortId, setShortId] = useState(props.employee.shortId);
+  const [color, setColor] = useState(props.employee.color);
 
-// TODO: Refactor DataTable to use props instead of methods
-/* eslint-disable class-methods-use-this */
-export class EmployeesPage extends DataTable<Employee, Props> {
-  constructor(props: Props) {
-    super(props);
-    this.addData = this.addData.bind(this);
-    this.updateData = this.updateData.bind(this);
-    this.removeData = this.removeData.bind(this);
-  }
+  const employeeList = useSelector(employeeSelectors.getEmployeeList);
+  const contractList = useSelector(contractSelectors.getContractList);
+  const skillList = useSelector(skillSelectors.getSkillList);
+  const dispatch = useDispatch();
+  const { t } = useTranslation('EmployeesPage');
 
-  displayDataRow(data: Employee): JSX.Element[] {
-    return [
-      <span style={{ display: 'grid', gridTemplateColumns: 'max-content min-content' }}>
-        <Text key={0}>{data.name}</Text>
-        <Button
-          variant={ButtonVariant.link}
-          onClick={() => {
-            this.props.history.push(`/${this.props.tenantId}/availability?employee=${data.name}`
-            + `&week=${moment().startOf('week').format('YYYY-MM-DD')}`);
+  const validators = {
+    nameMustNotBeEmpty: {
+      predicate: (employee: Employee) => employee.name.length > 0,
+      errorMsg: () => t('employeeEmptyNameError'),
+    },
+    nameAlreadyTaken: {
+      predicate: (employee: Employee) => employeeList.filter(otherEmployee => otherEmployee.name === employee.name
+        && otherEmployee.id !== employee.id).length === 0,
+      errorMsg: (employee: Employee) => t('employeeNameAlreadyTakenError', { name: employee.name }),
+    },
+  };
+
+  const updatedEmployee: Employee = {
+    ...props.employee,
+    name,
+    contract,
+    skillProficiencySet,
+    shortId,
+    color,
+  };
+  const validationErrors = useValidators(updatedEmployee, validators);
+
+  return (
+    <TableRow>
+      <TableCell columnName={t('name')}>
+        <TextInput value={name} onChange={setName} />
+        {validationErrors.showValidationErrors('nameMustNotBeEmpty', 'nameAlreadyTaken')}
+      </TableCell>
+      <TableCell columnName={t('contract')}>
+        <TypeaheadSelectInput
+          value={contract}
+          options={contractList}
+          optionToStringMap={newContract => newContract.name}
+          onChange={(newContract) => {
+            if (newContract) {
+              setContract(newContract);
+            }
           }}
-        >
-          <ArrowIcon />
-        </Button>
-      </span>,
-      <Text key={1}>{data.contract.name}</Text>,
-      <ChipGroup key={2}>
-        {data.skillProficiencySet.map(skill => (
-          <Chip key={skill.name} isReadOnly>
-            {skill.name}
-          </Chip>
-        ))}
-      </ChipGroup>,
-      <Text key={3}>{data.shortId}</Text>,
-      <ColorPicker
-        key={4}
-        currentColor={data.color}
-        onChangeColor={doNothing}
-        isDisabled
-      />,
-    ];
-  }
-
-  getInitialStateForNewRow(): Partial<Employee> {
-    return {
-      skillProficiencySet: [],
-      color: defaultColorList[Math.floor(Math.random() * defaultColorList.length)],
-    };
-  }
-
-  editDataRow(data: ReadonlyPartial<Employee>, setProperty: PropertySetter<Employee>): React.ReactNode[] {
-    const shortIdInputRef = React.createRef<HTMLInputElement>();
-    return [
-      <TextInput
-        key={0}
-        name="name"
-        defaultValue={data.name}
-        aria-label="Name"
-        onChange={(value) => {
-          setProperty('name', value);
-          if (shortIdInputRef.current === null || shortIdInputRef.current.value === '') {
-            const shortIdFull = value.split(' ').map(s => s.charAt(0)).join('');
-            const shortId = shortIdFull.substring(0, Math.min(3, shortIdFull.length));
-            setProperty('shortId', shortId);
+          noClearButton
+          emptyText={t('selectAContract')}
+        />
+      </TableCell>
+      <TableCell columnName={t('skillProficiencies')}>
+        <MultiTypeaheadSelectInput
+          value={skillProficiencySet}
+          options={skillList}
+          optionToStringMap={skill => skill.name}
+          onChange={newSkillList => setSkillProficiencySet(newSkillList)}
+          emptyText={t('selectSkillProficiencies')}
+        />
+      </TableCell>
+      <TableCell columnName={t('shortId')}>
+        <TextInput value={shortId} onChange={setShortId} />
+      </TableCell>
+      <TableCell columnName={t('color')}>
+        <ColorPicker.ColorPicker
+          currentColor={color}
+          onChangeColor={setColor}
+        />
+      </TableCell>
+      <RowEditButtons
+        isValid={validationErrors.isValid}
+        onSave={() => {
+          if (props.isNew) {
+            dispatch(employeeOperations.addEmployee(updatedEmployee));
+          } else {
+            dispatch(employeeOperations.updateEmployee(updatedEmployee));
           }
         }}
-      />,
-      <StatefulTypeaheadSelectInput
-        key={1}
-        emptyText={this.props.t('selectAContract')}
-        optionToStringMap={c => c.name}
-        value={data.contract}
-        options={this.props.contractList}
-        onChange={contract => setProperty('contract', contract)}
-      />,
-      <StatefulMultiTypeaheadSelectInput
-        key={2}
-        emptyText={this.props.t('selectSkillProficiencies')}
-        options={this.props.skillList}
-        optionToStringMap={skill => skill.name}
-        value={data.skillProficiencySet ? data.skillProficiencySet : []}
-        onChange={selected => setProperty('skillProficiencySet', selected)}
-      />,
-      <TextInput
-        ref={shortIdInputRef}
-        key={3}
-        name="shortId"
-        defaultValue={data.shortId}
-        aria-label="shortId"
-        onChange={(value) => {
-          setProperty('shortId', value);
+        onClose={() => props.onClose()}
+      />
+    </TableRow>
+  );
+};
+
+export const EmployeesPage: React.FC<Props> = (props) => {
+  const employeeList = useSelector(employeeSelectors.getEmployeeList);
+  const contractList = useSelector(contractSelectors.getContractList);
+  const tenantId = useSelector(tenantSelectors.getTenantId);
+  const history = router.useHistory();
+  const dispatch = useDispatch();
+
+  const { t } = useTranslation('EmployeesPage');
+
+  const columns = [
+    { name: t('name'), sorter: stringSorter<Employee>(employee => employee.name) },
+    { name: t('contract'), sorter: stringSorter<Employee>(employee => employee.contract.name) },
+    { name: t('skillProficiencies') },
+    { name: t('shortId'), sorter: stringSorter<Employee>(employee => employee.shortId) },
+    { name: t('color') },
+  ];
+
+  const urlProps = getPropsFromUrl<DataTableUrlProps>(props, {
+    page: '1',
+    itemsPerPage: '10',
+    filter: null,
+    sortBy: '0',
+    asc: 'true',
+  });
+
+  const sortBy = parseInt(urlProps.sortBy || '-1', 10);
+  const sorter = columns[sortBy].sorter as Sorter<Employee>;
+
+  const pageableData = usePageableData(urlProps, employeeList, employee => [employee.name,
+    employee.contract.name,
+    ...employee.skillProficiencySet.map(skill => skill.name),
+    employee.shortId], sorter);
+
+  const importElement = (
+    <div>
+      <FileUpload
+        id="file"
+        name="file"
+        dropzoneProps={{
+          accept: '.xlsx',
         }}
-      />,
-      <StatefulColorPicker
-        key={4}
-        currentColor={data.color ? data.color : '#FFFFFF'}
-        onChangeColor={(value) => {
-          setProperty('color', value);
-        }}
-      />,
-    ];
-  }
-
-  isDataComplete(editedValue: ReadonlyPartial<Employee>): editedValue is Employee {
-    return editedValue.name !== undefined
-      && editedValue.contract !== undefined
-      && editedValue.skillProficiencySet !== undefined
-      && editedValue.shortId !== undefined
-      && editedValue.color !== undefined;
-  }
-
-  isValid(editedValue: Employee): boolean {
-    return editedValue.name.trim().length > 0;
-  }
-
-  getFilter(): (filter: string) => Predicate<Employee> {
-    return stringFilter(employee => employee.name,
-      employee => employee.contract.name,
-      employee => employee.skillProficiencySet.map(skill => skill.name));
-  }
-
-  getSorters(): (Sorter<Employee> | null)[] {
-    return [stringSorter(e => e.name), stringSorter(e => e.contract.name), null, null, null];
-  }
-
-  updateData(data: Employee): void {
-    this.props.updateEmployee(data);
-  }
-
-  addData(data: Employee): void {
-    this.props.addEmployee({ ...data, tenantId: this.props.tenantId });
-  }
-
-  removeData(data: Employee): void {
-    this.props.removeEmployee(data);
-  }
-
-  render(): JSX.Element {
-    const importElement = (
-      <div>
-        <FileUpload
-          id="file"
-          name="file"
-          dropzoneProps={{
-            accept: '.xlsx',
+        onChange={
+          (file) => {
+            if (file instanceof File) {
+              dispatch(employeeOperations.uploadEmployeeList(file));
+            } else {
+              // If a file with the wrong file extension is selected,
+              // file is the empty string instead of a File object
+              dispatch(alert.showErrorMessage('badFileType', { fileTypes: 'Excel (.xlsx)' }));
+            }
           }}
-          onChange={
-            (file) => {
-              if (file instanceof File) {
-                this.props.uploadEmployeeList(file);
-              } else {
-                // If a file with the wrong file extension is selected,
-                // file is the empty string instead of a File object
-                this.props.showErrorMessage('badFileType', { fileTypes: 'Excel (.xlsx)' });
-              }
-            }}
-        />
-      </div>
-    );
-    if (this.props.contractList.length === 0) {
-      return (
-        <EmptyState variant={EmptyStateVariant.full}>
-          {importElement}
-          <EmptyStateIcon icon={CubesIcon} />
-          <Trans
-            t={this.props.t}
-            i18nKey="noContracts"
-            components={[
-              <Title headingLevel="h5" size="lg" key={0} />,
-              <EmptyStateBody key={1} />,
-              <Button
-                key={2}
-                aria-label="Contracts Page"
-                variant="primary"
-                onClick={() => this.props.history.push(`/${this.props.tenantId}/contracts`)}
-              />,
-            ]}
-          />
-        </EmptyState>
-      );
-    }
+      />
+    </div>
+  );
+
+  if (contractList.length > 0) {
     return (
-      <div>
+      <>
         {importElement}
-        {super.render()}
-      </div>
+        <DataTable
+          {...props}
+          {...pageableData}
+          title={t('employees')}
+          columns={columns}
+          rowWrapper={employee => (<EmployeeRow key={employee.id} {...employee} />)}
+          sortByIndex={sortBy}
+          onSorterChange={index => setSorterInUrl(props, urlProps, sortBy, index)}
+          newRowWrapper={removeRow => (
+            <EditableEmployeeRow
+              isNew
+              onClose={removeRow}
+              employee={{
+                tenantId,
+                name: '',
+                contract: contractList[0],
+                skillProficiencySet: [],
+                shortId: '',
+                color: ColorPicker.getRandomColor(),
+              }}
+            />
+          )}
+        />
+      </>
     );
   }
-}
+  return (
+    <EmptyState variant={EmptyStateVariant.full}>
+      {importElement}
+      <EmptyStateIcon icon={CubesIcon} />
+      <Trans
+        t={t}
+        i18nKey="noContracts"
+        components={[
+          <Title headingLevel="h5" size="lg" key={0} />,
+          <EmptyStateBody key={1} />,
+          <Button
+            key={2}
+            aria-label="Contracts Page"
+            variant="primary"
+            onClick={() => history.push(`/${tenantId}/contracts`)}
+          />,
+        ]}
+      />
+    </EmptyState>
+  );
+};
 
-export default withTranslation('EmployeesPage')(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(EmployeesPage)),
-);
+export default withRouter(EmployeesPage);

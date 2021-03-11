@@ -31,10 +31,11 @@ import { connect } from 'react-redux';
 import { tenantOperations } from 'store/tenant';
 import { AppState } from 'store/types';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { List } from 'immutable';
 
 interface StateProps {
   currentTenantId: number;
-  tenantList: Tenant[];
+  tenantList: List<Tenant>;
 }
 
 const mapStateToProps = ({ tenantData }: AppState): StateProps => ({
@@ -116,40 +117,38 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
     );
     const { tenantList, currentTenantId } = this.props;
     const { isTenantSelectOpen } = this.state;
-    if (tenantList.length === 0) {
-      return (
-        <Toolbar>
-          <ToolbarGroup />
-          {bellAndCog}
-        </Toolbar>
-      );
-    }
-
-    const currentTenant = tenantList.find(t => t.id === currentTenantId) as Tenant;
+    const currentTenantName = tenantList.find(t => t.id === currentTenantId)?.name ?? 'TENANT ERROR';
+    const tenantDropdown = (tenantList.size > 0) ? (
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Dropdown
+            isPlain
+            position="right"
+            onSelect={event => event && this.setCurrentTenant(
+              parseInt((event.target as HTMLElement).dataset.tenantid as string, 10),
+            )}
+            isOpen={isTenantSelectOpen}
+            toggle={(
+              <DropdownToggle onToggle={() => this.setIsTenantSelectOpen(!isTenantSelectOpen)}>
+                {currentTenantName}
+              </DropdownToggle>
+            )}
+            dropdownItems={tenantList.map(tenant => (
+              <DropdownItem data-tenantid={tenant.id} key={tenant.id}>
+                {tenant.name}
+              </DropdownItem>
+            )).toArray()}
+          />
+        </ToolbarItem>
+      </ToolbarGroup>
+    ) : <ToolbarGroup />;
     return (
-      <Toolbar>
-        <ToolbarGroup>
-          <ToolbarItem>
-            <Dropdown
-              isPlain
-              position="right"
-              onSelect={event => event && this.setCurrentTenant(
-                parseInt((event.target as HTMLElement).dataset.tenantid as string, 10),
-              )}
-              isOpen={isTenantSelectOpen}
-              toggle={(
-                <DropdownToggle onToggle={() => this.setIsTenantSelectOpen(!isTenantSelectOpen)}>
-                  {currentTenant.name}
-                </DropdownToggle>
-              )}
-              dropdownItems={tenantList.map(tenant => (
-                <DropdownItem data-tenantid={tenant.id} key={tenant.id}>
-                  {tenant.name}
-                </DropdownItem>
-              ))}
-            />
-          </ToolbarItem>
-        </ToolbarGroup>
+      <Toolbar
+        style={{
+          backgroundColor: '#0000', // transparent background for background image
+        }}
+      >
+        {tenantDropdown}
         {bellAndCog}
       </Toolbar>
     );

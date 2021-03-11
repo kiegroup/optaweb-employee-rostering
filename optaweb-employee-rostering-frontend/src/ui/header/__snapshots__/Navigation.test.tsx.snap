@@ -1,14 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Navigation should activate a navigation link matching the current path 1`] = `
-<Component
+<Nav
   aria-label="Nav"
+  onSelect={[Function]}
+  onToggle={[Function]}
+  ouiaSafe={true}
+  theme="dark"
+  variant="horizontal"
 >
   <NavList
     ariaLeftScroll="Scroll left"
     ariaRightScroll="Scroll right"
-    className=""
-    variant="horizontal"
   >
     <NavItem
       isActive={true}
@@ -99,5 +102,5 @@ exports[`Navigation should activate a navigation link matching the current path 
       </Link>
     </NavItem>
   </NavList>
-</Component>
+</Nav>
 `;
