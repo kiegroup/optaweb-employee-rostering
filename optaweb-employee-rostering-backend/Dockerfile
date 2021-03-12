@@ -1,5 +1,5 @@
-FROM adoptopenjdk/openjdk8:ubi-minimal-jre
-COPY target/*-exec.jar /opt/app/optaweb-employee-rostering.jar
+FROM adoptopenjdk/maven-openjdk11:latest
+COPY target/quarkus-app /opt/app
 WORKDIR /opt/app
-CMD ["java", "-jar", "optaweb-employee-rostering.jar"]
+CMD ["java", "-jar", "quarkus-run.jar"]
 EXPOSE 8080
