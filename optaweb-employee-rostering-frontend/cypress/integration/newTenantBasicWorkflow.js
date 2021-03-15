@@ -36,8 +36,8 @@ function gotoPage(page) {
 }
 
 function dragCreateShift(day, from, to) {
-  cy.contains('2:00 AM').then((firstTimeEle) => {
-    cy.contains('4:00 AM').then((secondTimeEle) => {
+  cy.get('.rbc-time-slot').eq(0).then((firstTimeEle) => {
+    cy.get('.rbc-time-slot').eq(1).then((secondTimeEle) => {
       // Apparently the difference between two labels is double the length of one timeslot
       const twoHourYDiff = (secondTimeEle[0].offsetTop - firstTimeEle[0].offsetTop) / 2;
       const reference = Cypress.moment('2018-01-01T00:00');
@@ -71,7 +71,7 @@ describe('A new tenant can be created, who can have their own employees, spots, 
   it('basic tenant workflow', () => {
     // Create a tenant
     cy.get('[data-cy=settings]').click();
-    cy.get('[data-cy=add-tenant]').click();
+    cy.get('[data-cy=data-table-add]').click();
     cy.get('[data-cy=name]').type('Test Tenant');
     cy.get('[data-cy=schedule-start-date]').type('2018-01-01');
     cy.get('[data-cy=draft-length]').type('7');
@@ -88,33 +88,33 @@ describe('A new tenant can be created, who can have their own employees, spots, 
 
     // Create a new skill
     gotoPage('skills');
-    cy.get('button').contains('Add').click();
-    cy.get('[aria-label="Name"]').type('New Skill');
-    cy.get('[aria-label="Save"]').click();
+    cy.get('[data-cy=data-table-add]').click();
+    cy.get('[data-label="Name"]>input').type('New Skill');
+    cy.get('[data-cy=data-table-save]').click();
     closeAlerts();
 
     // Create a spot
     gotoPage('spots');
-    cy.get('button').contains('Add').click();
-    cy.get('[aria-label="Name"]').type('Required Skill Spot');
+    cy.get('[data-cy=data-table-add]').click();
+    cy.get('[data-label="Name"]>input').type('Required Skill Spot');
     selectValue('Select required skills...', 'New Skill');
-    cy.get('[aria-label="Save"]').click();
+    cy.get('[data-cy=data-table-save]').click();
     closeAlerts();
 
     // Create a contract
     gotoPage('contracts');
-    cy.get('button').contains('Add').click();
-    cy.get('[aria-label="Name"]').type('New Contract');
-    cy.get('[aria-label="Save"]').click();
+    cy.get('[data-cy=data-table-add]').click();
+    cy.get('[data-label="Name"]').type('New Contract');
+    cy.get('[data-cy=data-table-save]').click();
     closeAlerts();
 
     // Create a employee
     gotoPage('employees');
-    cy.get('button').contains('Add').click();
-    cy.get('[aria-label="Name"]').type('Employee with Skills');
+    cy.get('[data-cy=data-table-add]').click();
+    cy.get('[data-label="Name"]').type('Employee with Skills');
     selectValue('Select a contract...', 'New Contract');
     selectValue('Select skill proficiencies...', 'New Skill');
-    cy.get('[aria-label="Save"]').click();
+    cy.get('[data-cy=data-table-save]').click();
     closeAlerts();
 
     // Create a shifts
@@ -136,6 +136,6 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     closeAlerts();
 
     // Verify the shift is assigned to our created employee
-    cy.contains('Employee with Skills').should('exist');
+    cy.get('.rbc-event-content').contains('Employee with Skills');
   });
 });

@@ -195,10 +195,14 @@ export const EditableEmployeeRow = (props: { employee: Employee; isNew: boolean;
       <RowEditButtons
         isValid={validationErrors.isValid}
         onSave={() => {
+          const savedEmployee = {
+            ...updatedEmployee,
+            shortId: updatedEmployee.shortId || updatedEmployee.name.substring(0, 3),
+          };
           if (props.isNew) {
-            dispatch(employeeOperations.addEmployee(updatedEmployee));
+            dispatch(employeeOperations.addEmployee(savedEmployee));
           } else {
-            dispatch(employeeOperations.updateEmployee(updatedEmployee));
+            dispatch(employeeOperations.updateEmployee(savedEmployee));
           }
         }}
         onClose={() => props.onClose()}

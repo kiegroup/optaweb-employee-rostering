@@ -49,6 +49,7 @@ export const RowViewButtons = (props: { onEdit: () => void; onDelete: () => void
       <span>
         <Button
           variant="link"
+          data-cy="data-table-edit"
           onClick={props.onEdit}
         >
           <EditIcon />
@@ -57,6 +58,7 @@ export const RowViewButtons = (props: { onEdit: () => void; onDelete: () => void
       <span>
         <Button
           variant="danger"
+          data-cy="data-table-delete"
           onClick={props.onDelete}
         >
           <TrashIcon />
@@ -79,6 +81,7 @@ export const RowEditButtons = (props: { isValid: boolean; onClose: () => void; o
       <span>
         <Button
           variant="link"
+          data-cy="data-table-save"
           isDisabled={!props.isValid}
           onClick={() => {
             props.onSave();
@@ -91,6 +94,7 @@ export const RowEditButtons = (props: { isValid: boolean; onClose: () => void; o
       <span>
         <Button
           variant="link"
+          data-cy="data-table-close"
           onClick={props.onClose}
         >
           <CloseIcon />
@@ -135,6 +139,7 @@ export const PaginationControls = (props: PaginationData<any> & RouteComponentPr
       </LevelItem>
       <LevelItem style={{ display: 'flex' }}>
         <Button
+          data-cy="data-table-add"
           isDisabled={props.isCreatingNewRow}
           onClick={props.onCreateNewRow}
         >
