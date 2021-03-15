@@ -630,6 +630,7 @@ exports[`PaginationControls should render correctly 1`] = `
     }
   >
     <Button
+      data-cy="data-table-add"
       isDisabled={false}
       onClick={[MockFunction]}
     >
@@ -715,6 +716,7 @@ exports[`RowEditButtons should render correctly 1`] = `
     <span />
     <span>
       <Button
+        data-cy="data-table-save"
         isDisabled={false}
         onClick={[Function]}
         variant="link"
@@ -728,6 +730,7 @@ exports[`RowEditButtons should render correctly 1`] = `
     </span>
     <span>
       <Button
+        data-cy="data-table-close"
         onClick={[MockFunction]}
         variant="link"
       >
@@ -758,6 +761,7 @@ exports[`RowViewButtons should render correctly 1`] = `
     <span />
     <span>
       <Button
+        data-cy="data-table-edit"
         onClick={[MockFunction]}
         variant="link"
       >
@@ -770,6 +774,7 @@ exports[`RowViewButtons should render correctly 1`] = `
     </span>
     <span>
       <Button
+        data-cy="data-table-delete"
         onClick={[MockFunction]}
         variant="danger"
       >
