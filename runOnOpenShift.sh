@@ -1,22 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
-readonly dir_backend=optaweb-employee-rostering-backend
-readonly dir_frontend=optaweb-employee-rostering-frontend
+readonly dir_standalone=optaweb-employee-rostering-standalone-postgres
 
 # Change dir to the project root (where the script is located) to correctly resolve module paths.
 # This is needed in case the script was called from a different location than the project root.
 cd "$(dirname "$(readlink -f "$0")")"
 
 # Fail fast if the project hasn't been built
-if ! stat -t ${dir_backend}/target/*.jar > /dev/null 2>&1
+if ! stat -t ${dir_standalone}/target/quarkus-app/quarkus-run.jar > /dev/null 2>&1
 then
-  echo >&2 "ERROR: Backend not built! Build the project before running this script."
-  exit 1
-fi
-if [[ ! -d ${dir_frontend}/docker/build ]]
-then
-  echo >&2 "ERROR: Frontend not built! Build the project before running this script."
+  echo >&2 "ERROR: Standalone not built! Build the project before running this script."
   exit 1
 fi
 
@@ -66,28 +60,16 @@ read -r -p "Do you want to continue? [y/N]: " "answer_continue"
 # Set up PostgreSQL
 oc new-app --name postgresql postgresql-persistent
 
-# Backend
+# Standalone
 # -- binary build (upload local artifacts + Dockerfile)
-oc new-build --name backend --strategy=docker --binary
-oc start-build backend --from-dir=${dir_backend} --follow
+oc new-build --name standalone --strategy=docker --binary
+oc start-build standalone --from-dir=${dir_standalone} --follow
 # -- new app
-oc new-app backend
+oc new-app standalone
 # -- use PostgreSQL secret
-oc set env deployment/backend --from=secret/postgresql
-# -- activate production profile
-oc set env deployment/backend SPRING_PROFILES_ACTIVE=production
-
-# Frontend
-# -- binary build
-oc new-build --name frontend --strategy=docker --binary
-oc start-build frontend --from-dir=${dir_frontend}/docker --follow
-# -- new app
-oc new-app frontend
-# -- expose the service
-oc expose svc/frontend
-# -- change target port to 8080
-oc patch route frontend -p '{"spec":{"port":{"targetPort":"8080-tcp"}}}'
+oc set env deployment/standalone --from=secret/postgresql
+oc expose service/standalone
 
 echo
-echo "You can access the application at http://$(oc get route frontend -o custom-columns=:spec.host | tr -d '\n') \
+echo "You can access the application at http://$(oc get route standalone -o custom-columns=:spec.host | tr -d '\n') \
 once the deployment is done."
