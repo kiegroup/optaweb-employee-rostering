@@ -67,7 +67,6 @@
     <module>optaweb-employee-rostering-docs</module>
     <module>optaweb-employee-rostering-distribution</module>
     <module>optaweb-employee-rostering-standalone</module>
-    <module>optaweb-employee-rostering-standalone-postgres</module>
   </modules>
 
   <dependencyManagement>

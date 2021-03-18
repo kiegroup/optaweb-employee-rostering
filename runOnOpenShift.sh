@@ -1,16 +1,25 @@
 #!/usr/bin/env bash
 set -e
 
-readonly dir_standalone=optaweb-employee-rostering-standalone-postgres
+readonly dir_frontend=optaweb-employee-rostering-frontend
+readonly dir_backend=optaweb-employee-rostering-backend
+readonly dir_standalone=optaweb-employee-rostering-standalone
 
 # Change dir to the project root (where the script is located) to correctly resolve module paths.
 # This is needed in case the script was called from a different location than the project root.
 cd "$(dirname "$(readlink -f "$0")")"
 
 # Fail fast if the project hasn't been built
-if ! stat -t ${dir_standalone}/target/quarkus-app/quarkus-run.jar > /dev/null 2>&1
+if [[ ! -d ${dir_frontend}/docker/build ]]
 then
-  echo >&2 "ERROR: Standalone not built! Build the project before running this script."
+  echo >&2 "ERROR: Frontend not built! Build the project before running this script."
+  exit 1
+fi
+
+
+if ! stat -t ${dir_backend}/target/quarkus-app/quarkus-run.jar > /dev/null 2>&1
+then
+  echo >&2 "ERROR: Backend not built! Build the project before running this script."
   exit 1
 fi
 
@@ -57,13 +66,21 @@ read -r -p "Do you want to continue? [y/N]: " "answer_continue"
   exit 0
 }
 
+# Build custom standalone that works with Postgres
+cd ${dir_standalone}
+mvn clean install -DskipTests -Dquarkus.profile=postgres
+if [[ "$?" -ne 0 ]] ; then
+  echo "Standalone Postgres build failed; check the logs above."
+  exit 1
+fi
+
 # Set up PostgreSQL
 oc new-app --name postgresql postgresql-persistent
 
 # Standalone
 # -- binary build (upload local artifacts + Dockerfile)
 oc new-build --name standalone --strategy=docker --binary
-oc start-build standalone --from-dir=${dir_standalone} --follow
+oc start-build standalone --from-dir=. --follow
 # -- new app
 oc new-app standalone
 # -- use PostgreSQL secret
