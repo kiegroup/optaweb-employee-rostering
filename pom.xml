@@ -110,13 +110,6 @@
         <type>zip</type>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>optaweb-employee-rostering-standalone-postgres</artifactId>
-        <classifier>quarkus-app</classifier>
-        <type>zip</type>
-        <version>${project.version}</version>
-      </dependency>
 
       <!-- BOMs -->
       <dependency>
