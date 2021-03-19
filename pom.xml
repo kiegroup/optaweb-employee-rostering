@@ -325,6 +325,30 @@
                   <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
                 </configuration>
               </execution>
+              <execution>
+                <id>merge-results</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>merge</goal>
+                </goals>
+                <configuration>
+                  <fileSets>
+                    <fileSet>
+                      <directory>${project.build.directory}</directory>
+                      <includes>
+                        <include>*.exec</include>
+                      </includes>
+                    </fileSet>
+                    <fileSet>
+                      <directory>${project.root.dir}/target</directory>
+                      <includes>
+                        <include>*.exec</include>
+                      </includes>
+                    </fileSet>
+                  </fileSets>
+                  <destFile>${jacoco.exec.file}</destFile>
+                </configuration>
+              </execution>
             </executions>
           </plugin>
         </plugins>
