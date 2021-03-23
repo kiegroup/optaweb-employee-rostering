@@ -27,7 +27,7 @@ mvn clean install -DskipTests
 Compile and run the backend:
 
 ----
-mvn spring-boot:run
+mvn quarkus:dev
 ----
 
 Once the application starts, open http://localhost:8080/swagger-ui.html to test the REST API.

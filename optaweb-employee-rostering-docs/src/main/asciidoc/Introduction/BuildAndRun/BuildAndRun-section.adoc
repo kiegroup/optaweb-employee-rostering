@@ -19,11 +19,11 @@ java -jar optaweb-employee-rostering-standalone/target/optaweb-employee-rosterin
 Then open http://localhost:8080/ to see the web application.
 
 Alternatively, run `npm start` in the `optaweb-employee-rostering-frontend` directory to start the frontend in one terminal,
-and run `mvn spring-boot:run` in the `optaweb-employee-rostering-backend` directory to start the backend in another terminal.
+and run `mvn quarkus:dev` in the `optaweb-employee-rostering-backend` directory to start the backend in another terminal.
 
-To run on another port, use `--server.port=...​`:
+To run on another port, use `-Dquarkus.http.port=...​`:
 
 [source,shell]
 ----
-java -jar optaweb-employee-rostering-standalone/target/optaweb-employee-rostering-standalone-*-exec.jar --server.port=18080
+java -Dquarkus.http.port=18080 -jar optaweb-employee-rostering-standalone/target/quarkus-app/quarkus-run.jar
 ----

@@ -7,7 +7,7 @@ If the application isn't running, run the following in the `optaweb-employee-ros
 
 [source,shell]
 ----
-mvn spring-boot:run
+mvn quarkus:dev
 ----
 
 Go to http://localhost:8080/h2-console to view the H2 database console.

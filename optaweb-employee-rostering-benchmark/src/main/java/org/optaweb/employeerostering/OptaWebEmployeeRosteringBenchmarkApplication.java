@@ -53,7 +53,8 @@ public class OptaWebEmployeeRosteringBenchmarkApplication implements QuarkusAppl
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public static void main(String[] args) {
-        Quarkus.run(args);
+        Quarkus.run(OptaWebEmployeeRosteringBenchmarkApplication.class,
+                args);
     }
 
     @Override

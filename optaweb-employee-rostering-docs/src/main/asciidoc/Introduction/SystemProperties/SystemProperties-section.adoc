@@ -3,7 +3,7 @@
 :imagesdir: ../..
 
 These system properties can overwrite default properties of the application,
-for example, by passing `-Doptaweb.generator.zoneId="America/New_York"` to Spring Boot.
+for example, by passing `-Doptaweb.generator.zoneId="America/New_York"` to Quarkus.
 These system properties might also be exposed as OpenShift template parameters.
 
 * *optaweb.generator.timeZoneId*:

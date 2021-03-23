@@ -9,7 +9,7 @@
 
 The project is structured in the following folders:
 
-* *optaweb-employee-rostering-backend* core planning domain model and backend REST api implemented with Spring Boot
+* *optaweb-employee-rostering-backend* core planning domain model and backend REST api implemented with Quarkus
 * *optaweb-employee-rostering-benchmark* solution benchmark
 * *optaweb-employee-rostering-distribution* assembly logic for the deployment assets
 * *optaweb-employee-rostering-docs* this documentation

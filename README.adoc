@@ -37,21 +37,21 @@ After building the project, run the application with:
 
 [source,shell]
 ----
-java -jar optaweb-employee-rostering-standalone/target/optaweb-employee-rostering-standalone-*-exec.jar
+java -jar optaweb-employee-rostering-standalone/target/quarkus-app/quarkus-run.jar
 ----
 
 Then open http://localhost:8080/ to see the web application.
 
 Alternatively, run `npm start` in `optaweb-employee-rostering-frontend` to start the frontend in one terminal,
-and run `mvn spring-boot:run` in `optaweb-employee-rostering-backend` to start the backend in another terminal.
+and run `mvn quarkus:dev` in `optaweb-employee-rostering-backend` to start the backend in another terminal.
 
 === Use a different port
 
-To run on an another port use `--server.port=...`:
+To run on an another port use `-Dquarkus.http.port=...`:
 
 [source,shell]
 ----
-java -jar optaweb-employee-rostering-standalone/target/optaweb-employee-rostering-standalone-*-exec.jar --server.port=18080
+java -Dquarkus.http.port=18080 -jar optaweb-employee-rostering-standalone/target/quarkus-app/quarkus-run.jar
 ----
 
 == Benchmark Application
@@ -60,7 +60,7 @@ After building the project above, run the benchmark application with:
 
 [source,shell]
 ----
-java -jar optaweb-employee-rostering-benchmark/target/optaweb-employee-rostering-benchmark-*.jar
+java -jar optaweb-employee-rostering-benchmark/target/quarkus-app/quarkus-run.jar
 ----
 
 Note: make sure to run the project application and benchmark application on different ports if they are run
