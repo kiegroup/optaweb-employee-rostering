@@ -223,7 +223,6 @@
               -->
               <avoidCallsTo>java.lang.StringBuilder</avoidCallsTo>
               <avoidCallsTo>org.slf4j</avoidCallsTo>
-              <avoidCallsTo>org.springframework.boot.SpringApplication</avoidCallsTo>
             </avoidCallsTo>
             <excludedClasses>
               <excludedClass>*Config</excludedClass>
