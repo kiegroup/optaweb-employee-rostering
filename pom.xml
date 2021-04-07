@@ -57,10 +57,6 @@
     <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
     <version.org.mockito>3.7.0</version.org.mockito>
     <version.org.hibernate>5.4.28.Final</version.org.hibernate>
-
-    <!-- TODO: Remove me when optaplanner-build-parent upgrade to 1.11.1.Final or above -->
-    <!-- (Jacoco does not work if below 1.11.1.Final) -->
-    <version.io.quarkus>1.11.1.Final</version.io.quarkus>
   </properties>
 
   <modules>
