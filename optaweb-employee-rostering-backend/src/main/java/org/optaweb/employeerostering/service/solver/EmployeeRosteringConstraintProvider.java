@@ -238,7 +238,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
 
     Constraint employeeNotRotationEmployee(ConstraintFactory constraintFactory) {
         return getAssignedShiftConstraintStream(constraintFactory)
-                .filter(shift -> !Objects.equals(shift.getRotationEmployee(), shift.getEmployee()))
+                .filter(shift -> shift.getRotationEmployee() != null && shift.getRotationEmployee() != shift.getEmployee())
                 .penalizeConfigurableLong(CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE, Shift::getLengthInMinutes);
     }
 }

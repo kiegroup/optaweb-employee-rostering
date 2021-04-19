@@ -616,6 +616,10 @@ public abstract class AbstractSolverTest {
 
         shift.setEmployee(rotationEmployee);
         constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
+
+        shift.setEmployee(employeeA);
+        shift.setRotationEmployee(null);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
     }
 
     protected RosterGenerator buildRosterGenerator() {
