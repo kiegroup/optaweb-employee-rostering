@@ -59,11 +59,11 @@ function standalone_jar_or_maven() {
 }
 
 function run_optaweb() {
-  java -jar "$jar"
+  java "$@" -jar "$jar"
 }
 
 # Change dir to the project root (where the script is located).
 cd -P "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 
 standalone_jar_or_maven
-run_optaweb
+run_optaweb "$@"
