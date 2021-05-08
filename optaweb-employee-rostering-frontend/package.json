@@ -5,7 +5,7 @@
     "@patternfly/patternfly": "^2.71.5",
     "@patternfly/react-core": "^4.90.2",
     "@patternfly/react-icons": "^4.8.4",
-    "@patternfly/react-table": "^4.20.15",
+    "@patternfly/react-table": "^4.26.2",
     "axios": "^0.21.1",
     "color": "^3.1.2",
     "date-fns": "^2.9.0",
