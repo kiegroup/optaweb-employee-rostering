@@ -9,7 +9,7 @@
     "axios": "^0.21.1",
     "color": "^3.1.2",
     "date-fns": "^2.9.0",
-    "i18next": "^19.1.0",
+    "i18next": "^19.9.2",
     "i18next-browser-languagedetector": "^4.0.1",
     "i18next-xhr-backend": "^3.2.2",
     "immutable": "^4.0.0-rc.12",
