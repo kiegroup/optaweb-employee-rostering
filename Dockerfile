@@ -29,7 +29,7 @@ WORKDIR /usr/src/optaweb
 COPY . .
 RUN mvn clean install -DskipTests
 
-FROM adoptopenjdk/openjdk11:ubi-minimal-jre
+FROM adoptopenjdk/openjdk11:ubi-minimal
 RUN mkdir /opt/app
 COPY --from=builder /usr/src/optaweb/optaweb-employee-rostering-standalone/target/quarkus-app /opt/app/optaweb-employee-rostering
 CMD ["java", "-jar", "/opt/app/optaweb-employee-rostering/quarkus-run.jar"]
