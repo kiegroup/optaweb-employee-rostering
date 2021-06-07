@@ -15,6 +15,13 @@ image:{david-devDeps}["devDependencies Status", link="{david-link}&type=dev"]
 
 In the project directory, you can run:
 
+[[npm-install]]
+=== `npm install`
+
+Downloads all of the needed node dependencies.
+
+This will create `node_modules` directory.
+
 [[npm-start]]
 === `npm start`
 
