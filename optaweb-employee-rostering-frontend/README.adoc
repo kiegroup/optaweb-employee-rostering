@@ -20,7 +20,7 @@ In the project directory, you can run:
 
 Downloads all of the needed node dependencies.
 
-This will create `node_modules` directory.
+This will create the `node_modules` directory.
 
 [[npm-start]]
 === `npm start`
