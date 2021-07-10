@@ -22,7 +22,7 @@
 # docker run -p 8080:8080 --rm -it optaweb/employee-rostering
 #
 # Run the image with production profile (using PostgreSQL database):
-# docker run -p 8080:8080 --rm -it -e QUARKUS_PROFILE=production optaweb/employee-rostering
+# docker run -p 8080:8080 --rm -it -e QUARKUS_PROFILE=postgres optaweb/employee-rostering
 
 FROM adoptopenjdk/maven-openjdk11:latest as builder
 WORKDIR /usr/src/optaweb
