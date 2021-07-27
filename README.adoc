@@ -33,11 +33,11 @@ mvn clean install -DskipTests -DskipITs
 
 == Running
 
-After building the project, run the application with:
+Run the application with the `runLocally.sh` script:
 
 [source,shell]
 ----
-java -jar optaweb-employee-rostering-standalone/target/quarkus-app/quarkus-run.jar
+./runLocally.sh
 ----
 
 Then open http://localhost:8080/ to see the web application.
@@ -51,7 +51,7 @@ To run on an another port use `-Dquarkus.http.port=...`:
 
 [source,shell]
 ----
-java -Dquarkus.http.port=18080 -jar optaweb-employee-rostering-standalone/target/quarkus-app/quarkus-run.jar
+./runLocally.sh -Dquarkus.http.port=18080
 ----
 
 == Benchmark Application
