@@ -4,7 +4,7 @@
 
 = Employee Rostering Optimization as a Service
 
-image:https://travis-ci.com/kiegroup/optaweb-employee-rostering.svg?branch=master[
+image:https://travis-ci.com/kiegroup/optaweb-employee-rostering.svg?branch=main[
 "Build Status", link="https://travis-ci.com/kiegroup/optaweb-employee-rostering"]
 image:https://img.shields.io/badge/stackoverflow-ask_question-orange.svg?logo=stackoverflow[
 "Ask question on Stack Overflow", link="https://stackoverflow.com/questions/tagged/optaweb-employee-rostering"]
@@ -142,7 +142,7 @@ oc start-build frontend --from-dir=docker --follow
 
 === Code formatter
 
-Both IntelliJ and Eclipse formatters are available here: https://github.com/kiegroup/droolsjbpm-build-bootstrap/tree/master/ide-configuration
+Both IntelliJ and Eclipse formatters are available here: https://github.com/kiegroup/droolsjbpm-build-bootstrap/tree/main/ide-configuration
 
 === Backend
 
