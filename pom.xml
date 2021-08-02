@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.kie</groupId>
     <artifactId>kie-parent</artifactId>
-    <version>7.58.0-SNAPSHOT</version>
+    <version>7.59.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.optaweb.employeerostering</groupId>
@@ -197,7 +197,7 @@
       <!--
         TODO: For moving the coverage measurement from Travis to Jenkins, add the repository name to
         SONARCLOUD_ENABLED_REPOSITORIES in
-        https://github.com/kiegroup/kie-jenkins-scripts/blob/master/job-dsls/jobs/pr_jobs.groovy
+        https://github.com/kiegroup/kie-jenkins-scripts/blob/main/job-dsls/jobs/pr_jobs.groovy
       -->
       <id>run-code-coverage</id>
       <build>
