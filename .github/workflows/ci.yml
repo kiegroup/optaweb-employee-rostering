@@ -1,6 +1,29 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    paths-ignore:
+      - 'LICENSE*'
+      - '.gitattributes'
+      - '.gitignore'
+      - '*.md'
+      - '*.adoc'
+      - '*.txt'
+      - 'runLocally.sh'
+      - 'runOnOpenShift.sh'
+      - '.ci/**'
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - 'LICENSE*'
+      - '.gitattributes'
+      - '.gitignore'
+      - '*.md'
+      - '*.adoc'
+      - '*.txt'
+      - 'runLocally.sh'
+      - 'runOnOpenShift.sh'
+      - '.ci/**'
 
 defaults:
   run:
