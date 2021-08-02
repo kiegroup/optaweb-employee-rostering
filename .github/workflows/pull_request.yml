@@ -12,6 +12,7 @@ on:
       - '*.txt'
       - 'runLocally.sh'
       - 'runOnOpenShift.sh'
+      - '.ci/**'      
 
 jobs:
   build-chain:
