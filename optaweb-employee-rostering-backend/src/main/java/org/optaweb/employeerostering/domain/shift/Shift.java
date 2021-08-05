@@ -49,7 +49,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @PlanningEntity(pinningFilter = PinningShiftFilter.class)
 public class Shift extends AbstractPersistable {
     @Transient
-    private final AtomicLong lengthInMinutes = new AtomicLong(-1);
+    private AtomicLong lengthInMinutes = new AtomicLong(-1);
     @ManyToOne
     private Employee rotationEmployee;
     @NotNull
