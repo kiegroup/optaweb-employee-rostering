@@ -232,19 +232,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <!-- Skip Sonar plugin execution if SONARCLOUD_TOKEN is not set. -->
-      <id>skipSonar</id>
-      <activation>
-        <property>
-          <name>!env.SONARCLOUD_TOKEN</name>
-        </property>
-      </activation>
-      <properties>
-        <sonar.skip>true</sonar.skip>
-      </properties>
-    </profile>
-
     <!-- TODO: Remove me when Quarkus upgraded to 1.13 -->
     <!-- See https://github.com/quarkusio/quarkus/pull/14384 for details -->
     <profile>
