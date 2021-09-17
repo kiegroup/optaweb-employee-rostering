@@ -17,7 +17,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         # TODO: update each time a new major Java version is released.
-        java-version: [8, 11, 14]
+        java-version: [8, 11]
         maven-version: ['3.8.1']
     runs-on: ${{ matrix.os }}
     steps:
