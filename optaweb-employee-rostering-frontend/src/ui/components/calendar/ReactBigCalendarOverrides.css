@@ -15,11 +15,12 @@
  */
 
 /* The selector .pf-c-popover[data-popper-reference-hidden="true"]
- * seems to be over-eagar; hides things that should be visible, so we need to
+ * seems to be over-eager; hides things that should be visible, so we need to
  * disable it here so popover are shown properly
  */
  .pf-c-popover[data-popper-reference-hidden="true"] {
      visibility: visible !important;
+     pointer-events: auto;
  }
 
 /* Hack to hide vertical scrollbar on Firefox */
