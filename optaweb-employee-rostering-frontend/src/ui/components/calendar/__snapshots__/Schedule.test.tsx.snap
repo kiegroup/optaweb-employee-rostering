@@ -18,14 +18,6 @@ exports[`Schedule wrapper component should defer to prop 1`] = `
     bodyContent="Body"
     headerContent="Title"
     zIndex={1000001}
-  >
-    <div
-      style={
-        Object {
-          "maxHeight": "200px",
-        }
-      }
-    />
-  </Popover>
+  />
 </div>
 `;
