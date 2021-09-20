@@ -17,15 +17,7 @@ exports[`EventWrapper should render correctly when the event continues both befo
     bodyContent="Body"
     headerContent="Title"
     zIndex={1000001}
-  >
-    <div
-      style={
-        Object {
-          "maxHeight": "200px",
-        }
-      }
-    />
-  </Popover>
+  />
 </div>
 `;
 
@@ -46,15 +38,7 @@ exports[`EventWrapper should render correctly when the event continues from earl
     bodyContent="Body"
     headerContent="Title"
     zIndex={1000001}
-  >
-    <div
-      style={
-        Object {
-          "maxHeight": "200px",
-        }
-      }
-    />
-  </Popover>
+  />
 </div>
 `;
 
@@ -75,15 +59,7 @@ exports[`EventWrapper should render correctly when the event continues later 1`]
     bodyContent="Body"
     headerContent="Title"
     zIndex={1000001}
-  >
-    <div
-      style={
-        Object {
-          "maxHeight": "200px",
-        }
-      }
-    />
-  </Popover>
+  />
 </div>
 `;
 
@@ -104,15 +80,7 @@ exports[`EventWrapper should render correctly when the event does not have a cla
     bodyContent="Body"
     headerContent="Title"
     zIndex={1000001}
-  >
-    <div
-      style={
-        Object {
-          "maxHeight": "200px",
-        }
-      }
-    />
-  </Popover>
+  />
 </div>
 `;
 
@@ -133,15 +101,7 @@ exports[`EventWrapper should render correctly when the event does not span multi
     bodyContent="Body"
     headerContent="Title"
     zIndex={1000001}
-  >
-    <div
-      style={
-        Object {
-          "maxHeight": "200px",
-        }
-      }
-    />
-  </Popover>
+  />
 </div>
 `;
 
@@ -160,15 +120,7 @@ exports[`EventWrapper should render correctly when the event has no height or to
     bodyContent="Body"
     headerContent="Title"
     zIndex={1000001}
-  >
-    <div
-      style={
-        Object {
-          "maxHeight": "200px",
-        }
-      }
-    />
-  </Popover>
+  />
 </div>
 `;
 
@@ -186,14 +138,6 @@ exports[`EventWrapper should render correctly without a style 1`] = `
     bodyContent="Body"
     headerContent="Title"
     zIndex={1000001}
-  >
-    <div
-      style={
-        Object {
-          "maxHeight": "200px",
-        }
-      }
-    />
-  </Popover>
+  />
 </div>
 `;

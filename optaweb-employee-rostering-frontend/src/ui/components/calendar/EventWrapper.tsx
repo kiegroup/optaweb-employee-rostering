@@ -61,7 +61,7 @@ export default function EventWrapper(props: React.PropsWithChildren<{
         appendTo={props.boundary.current}
         zIndex={1000001}
       >
-        <div style={{ maxHeight: '200px' }}>{props.children as React.ReactElement}</div>
+        {props.children as React.ReactElement}
       </Popover>
     </div>
   );
