@@ -5,11 +5,11 @@ on: [pull_request]
 jobs:
   build-chain:
     concurrency:
-      group: pull_request-${{ github.head_ref }}
+      group: pull_request-${{ github.event_name }}-${{ github.head_ref }}-${{ matrix.os }}-${{ matrix.java-version }}
       cancel-in-progress: true
     strategy:
       matrix:
-        java-version: [11]
+        java-version: [11, 17]
         maven-version: ['3.8.1']
       fail-fast: false
     runs-on: ubuntu-latest
@@ -35,7 +35,7 @@ jobs:
           restore-keys: ${{ runner.os }}-${{ matrix.java-version }}-maven${{ matrix.maven-version }}-m2
       - name: Build Chain ${{ matrix.java-version }}. Maven ${{ matrix.maven-version }}
         id: build-chain
-        uses: kiegroup/github-action-build-chain@v2.6.4
+        uses: kiegroup/github-action-build-chain@v2.6.8
         with:
           # OptaWeb has a different branching model than the rest of KIE. Every OptaWeb 8.x branch maps to main branch
           # in KIE, therefore "main" is hard-coded in the URL below. Once the branching model is unified and there is
