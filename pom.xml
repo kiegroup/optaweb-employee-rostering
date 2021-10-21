@@ -46,7 +46,6 @@
     <sonar.projectKey>optaweb-employee-rostering</sonar.projectKey>
     <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
 
-    <version.com.sun.xml.bind>2.3.0.1</version.com.sun.xml.bind>
     <version.frontend-maven-plugin>1.8.0</version.frontend-maven-plugin>
     <version.io.springfox>2.9.2</version.io.springfox>
     <version.javax.activation>1.1.1</version.javax.activation>
@@ -54,7 +53,6 @@
     <version.node>v12.16.2</version.node>
     <version.npm>6.14.4</version.npm>
     <version.org.apache.poi>4.1.2</version.org.apache.poi>
-    <version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>1.0.1.Final</version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec>
   </properties>
 
   <modules>
@@ -174,26 +172,10 @@
 
       <!-- Required for Java 11 -->
       <dependency>
-        <groupId>org.jboss.spec.javax.xml.bind</groupId>
-        <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-        <version>${version.org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-core</artifactId>
-        <version>${version.com.sun.xml.bind}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-impl</artifactId>
-        <version>${version.com.sun.xml.bind}</version>
-      </dependency>
-      <dependency>
         <groupId>javax.activation</groupId>
         <artifactId>activation</artifactId>
         <version>${version.javax.activation}</version>
       </dependency>
-
 
       <dependency>
         <groupId>org.jacoco</groupId>
