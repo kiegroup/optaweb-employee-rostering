@@ -20,6 +20,7 @@ import static org.optaplanner.core.api.score.stream.ConstraintCollectors.sumDura
 import static org.optaplanner.core.api.score.stream.Joiners.equal;
 import static org.optaplanner.core.api.score.stream.Joiners.greaterThan;
 import static org.optaplanner.core.api.score.stream.Joiners.lessThan;
+import static org.optaplanner.core.api.score.stream.Joiners.overlapping;
 import static org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState.DESIRED;
 import static org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState.UNAVAILABLE;
 import static org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState.UNDESIRED;
@@ -51,7 +52,6 @@ import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
 import org.optaplanner.core.api.score.stream.bi.BiConstraintStream;
-import org.optaplanner.core.api.score.stream.uni.UniConstraintStream;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
@@ -66,17 +66,12 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
 
     private static BiConstraintStream<EmployeeAvailability, Shift> getConstraintStreamWithAvailabilityIntersections(
             ConstraintFactory constraintFactory, EmployeeAvailabilityState employeeAvailabilityState) {
-        return constraintFactory.from(EmployeeAvailability.class)
+        return constraintFactory.forEach(EmployeeAvailability.class)
                 .filter(employeeAvailability -> employeeAvailability.getState() == employeeAvailabilityState)
                 .join(Shift.class,
                         equal(EmployeeAvailability::getEmployee, Shift::getEmployee),
                         lessThan(EmployeeAvailability::getStartDateTime, Shift::getEndDateTime),
                         greaterThan(EmployeeAvailability::getEndDateTime, Shift::getStartDateTime));
-    }
-
-    private static UniConstraintStream<Shift> getAssignedShiftConstraintStream(ConstraintFactory constraintFactory) {
-        return constraintFactory.fromUnfiltered(Shift.class) // To match DRL
-                .filter(shift -> shift.getEmployee() != null);
     }
 
     private static LocalDate extractFirstDayOfWeek(DayOfWeek weekStarting, OffsetDateTime date) {
@@ -104,7 +99,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     }
 
     Constraint requiredSkillForShift(ConstraintFactory constraintFactory) {
-        return getAssignedShiftConstraintStream(constraintFactory)
+        return constraintFactory.forEach(Shift.class)
                 .filter(shift -> !shift.hasRequiredSkills())
                 .penalizeConfigurableLong(CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT, Shift::getLengthInMinutes);
     }
@@ -116,22 +111,18 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     }
 
     Constraint noOverlappingShifts(ConstraintFactory constraintFactory) {
-        return getAssignedShiftConstraintStream(constraintFactory)
-                .join(Shift.class,
-                        equal(Shift::getEmployee),
-                        lessThan(Shift::getStartDateTime, Shift::getEndDateTime),
-                        greaterThan(Shift::getEndDateTime, Shift::getStartDateTime))
-                .filter((shift, otherShift) -> !Objects.equals(shift, otherShift))
+        return constraintFactory.forEachUniquePair(Shift.class,
+                equal(Shift::getEmployee),
+                overlapping(Shift::getStartDateTime, Shift::getEndDateTime))
                 .penalizeConfigurableLong(CONSTRAINT_NO_OVERLAPPING_SHIFTS,
                         (shift, otherShift) -> otherShift.getLengthInMinutes());
     }
 
     Constraint noMoreThanTwoConsecutiveShifts(ConstraintFactory constraintFactory) {
-        return getAssignedShiftConstraintStream(constraintFactory)
+        return constraintFactory.forEach(Shift.class)
                 .join(Shift.class,
                         equal(Shift::getEmployee),
                         equal(Shift::getEndDateTime, Shift::getStartDateTime))
-                .filter((s1, s2) -> !Objects.equals(s1, s2))
                 .join(Shift.class,
                         equal((s1, s2) -> s2.getEmployee(), Shift::getEmployee),
                         equal((s1, s2) -> s2.getEndDateTime(), Shift::getStartDateTime))
@@ -140,7 +131,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     }
 
     Constraint breakBetweenNonConsecutiveShiftsIsAtLeastTenHours(ConstraintFactory constraintFactory) {
-        return getAssignedShiftConstraintStream(constraintFactory)
+        return constraintFactory.forEach(Shift.class)
                 .join(Shift.class,
                         equal(Shift::getEmployee),
                         lessThan(Shift::getEndDateTime, Shift::getStartDateTime))
@@ -153,7 +144,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     }
 
     Constraint dailyMinutesMustNotExceedContractMaximum(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(Employee.class)
+        return constraintFactory.forEach(Employee.class)
                 .filter(employee -> employee.getContract().getMaximumMinutesPerDay() != null)
                 .join(Shift.class, equal(Function.identity(), Shift::getEmployee))
                 .groupBy((employee, shift) -> employee,
@@ -167,7 +158,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     }
 
     Constraint weeklyMinutesMustNotExceedContractMaximum(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(RosterConstraintConfiguration.class)
+        return constraintFactory.forEach(RosterConstraintConfiguration.class)
                 .join(Employee.class)
                 .filter((configuration, employee) -> employee.getContract().getMaximumMinutesPerWeek() != null)
                 .join(Shift.class, equal((configuration, employee) -> employee, Shift::getEmployee))
@@ -184,7 +175,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     }
 
     Constraint monthlyMinutesMustNotExceedContractMaximum(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(Employee.class)
+        return constraintFactory.forEach(Employee.class)
                 .filter(employee -> employee.getContract().getMaximumMinutesPerMonth() != null)
                 .join(Shift.class, equal(Function.identity(), Shift::getEmployee))
                 .groupBy((employee, shift) -> employee,
@@ -198,7 +189,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     }
 
     Constraint yearlyMinutesMustNotExceedContractMaximum(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(Employee.class)
+        return constraintFactory.forEach(Employee.class)
                 .filter(employee -> employee.getContract().getMaximumMinutesPerYear() != null)
                 .join(Shift.class, equal(Function.identity(), Shift::getEmployee))
                 .groupBy((employee, shift) -> employee,
@@ -212,13 +203,13 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     }
 
     Constraint assignEveryShift(ConstraintFactory constraintFactory) {
-        return constraintFactory.fromUnfiltered(Shift.class) // To match DRL.
+        return constraintFactory.forEachIncludingNullVars(Shift.class)
                 .filter(shift -> shift.getEmployee() == null)
                 .penalizeConfigurable(CONSTRAINT_ASSIGN_EVERY_SHIFT);
     }
 
     Constraint employeeIsNotOriginalEmployee(ConstraintFactory constraintFactory) {
-        return getAssignedShiftConstraintStream(constraintFactory)
+        return constraintFactory.forEach(Shift.class)
                 .filter(shift -> shift.getOriginalEmployee() != null)
                 .filter(shift -> !Objects.equals(shift.getEmployee(), shift.getOriginalEmployee()))
                 .penalizeConfigurableLong(CONSTRAINT_EMPLOYEE_IS_NOT_ORIGINAL_EMPLOYEE, Shift::getLengthInMinutes);
@@ -237,7 +228,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     }
 
     Constraint employeeNotRotationEmployee(ConstraintFactory constraintFactory) {
-        return getAssignedShiftConstraintStream(constraintFactory)
+        return constraintFactory.forEach(Shift.class)
                 .filter(shift -> shift.getRotationEmployee() != null && shift.getRotationEmployee() != shift.getEmployee())
                 .penalizeConfigurableLong(CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE, Shift::getLengthInMinutes);
     }
