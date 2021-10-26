@@ -20,6 +20,7 @@ import static org.optaplanner.core.api.score.stream.ConstraintCollectors.sumDura
 import static org.optaplanner.core.api.score.stream.Joiners.equal;
 import static org.optaplanner.core.api.score.stream.Joiners.greaterThan;
 import static org.optaplanner.core.api.score.stream.Joiners.lessThan;
+import static org.optaplanner.core.api.score.stream.Joiners.overlapping;
 import static org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState.DESIRED;
 import static org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState.UNAVAILABLE;
 import static org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState.UNDESIRED;
@@ -110,12 +111,9 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     }
 
     Constraint noOverlappingShifts(ConstraintFactory constraintFactory) {
-        return constraintFactory.forEach(Shift.class)
-                .join(Shift.class,
-                        equal(Shift::getEmployee),
-                        lessThan(Shift::getStartDateTime, Shift::getEndDateTime),
-                        greaterThan(Shift::getEndDateTime, Shift::getStartDateTime))
-                .filter((shift, otherShift) -> !Objects.equals(shift, otherShift))
+        return constraintFactory.forEachUniquePair(Shift.class,
+                equal(Shift::getEmployee),
+                overlapping(Shift::getStartDateTime, Shift::getEndDateTime))
                 .penalizeConfigurableLong(CONSTRAINT_NO_OVERLAPPING_SHIFTS,
                         (shift, otherShift) -> otherShift.getLengthInMinutes());
     }
@@ -125,7 +123,6 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                 .join(Shift.class,
                         equal(Shift::getEmployee),
                         equal(Shift::getEndDateTime, Shift::getStartDateTime))
-                .filter((s1, s2) -> !Objects.equals(s1, s2))
                 .join(Shift.class,
                         equal((s1, s2) -> s2.getEmployee(), Shift::getEmployee),
                         equal((s1, s2) -> s2.getEndDateTime(), Shift::getStartDateTime))
