@@ -51,6 +51,16 @@
             </goals>
           </execution>
           <execution>
+            <id>npm install lock-treatment-tool and run-node</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install @kie/lock-treatment-tool</arguments>
+            </configuration>
+          </execution>
+          <execution>
             <id>lock-treatment-tool execution</id>
             <phase>initialize</phase>
             <goals>
