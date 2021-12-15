@@ -133,6 +133,11 @@
       <artifactId>optaplanner-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.drools</groupId>
+      <artifactId>drools-wiring-dynamic</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>io.quarkus</groupId>
