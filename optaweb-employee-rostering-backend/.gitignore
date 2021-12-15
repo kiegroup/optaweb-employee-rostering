@@ -1,6 +1,8 @@
 /target
 /local
 
+/panache-archive.marker
+
 # Eclipse, Netbeans and IntelliJ files
 /.*
 !.gitignore
