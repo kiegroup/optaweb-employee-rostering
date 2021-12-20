@@ -1,7 +1,11 @@
+import org.kie.jenkins.jobdsl.model.Folder
 import org.kie.jenkins.jobdsl.templates.KogitoJobTemplate
+import org.kie.jenkins.jobdsl.KogitoJobUtils
 
-def getDefaultJobParams(String repoName = 'optaweb-employee-rostering') {
-    return KogitoJobTemplate.getDefaultJobParams(this, repoName)
+OPTAWEB_EMPLOYEE_ROSTERING = 'optaweb-employee-rostering'
+
+def getDefaultJobParams() {
+    return KogitoJobUtils.getDefaultJobParams(this, OPTAWEB_EMPLOYEE_ROSTERING)
 }
 
 Map getMultijobPRConfig() {
@@ -10,29 +14,15 @@ Map getMultijobPRConfig() {
         buildchain: true,
         jobs : [
             [
-                id: 'optaweb-employee-rostering',
+                id: OPTAWEB_EMPLOYEE_ROSTERING,
                 primary: true,
             ]
         ],
     ]
 }
 
-setupMultijobPrDefaultChecks()
-// setupMultijobPrNativeChecks() // There is no requirement for Native support; there is no Native setup in this repo.
-setupMultijobPrLTSChecks()
+// PR checks
+KogitoJobUtils.createAllEnvsPerRepoPRJobs(this, { jobFolder -> getMultijobPRConfig() }, { return getDefaultJobParams() })
 
-/////////////////////////////////////////////////////////////////
-// Methods
-/////////////////////////////////////////////////////////////////
-
-void setupMultijobPrDefaultChecks() {
-    KogitoJobTemplate.createMultijobPRJobs(this, getMultijobPRConfig()) { return getDefaultJobParams() }
-}
-
-void setupMultijobPrNativeChecks() {
-    KogitoJobTemplate.createMultijobNativePRJobs(this, getMultijobPRConfig()) { return getDefaultJobParams() }
-}
-
-void setupMultijobPrLTSChecks() {
-    KogitoJobTemplate.createMultijobLTSPRJobs(this, getMultijobPRConfig()) { return getDefaultJobParams() }
-}
+// Create all Nightly/Release jobs
+KogitoJobUtils.createAllJobsForArtifactsRepository(this, OPTAWEB_EMPLOYEE_ROSTERING, ['optaplanner'])
