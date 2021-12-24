@@ -31,6 +31,7 @@ Build Chain tool does "simple" maven build(s), the builds are just Maven command
 [build-chain tool](https://github.com/kiegroup/github-action-build-chain) is a build tool which can be used on command line locally or in Github Actions workflow(s), in case you need to change multiple repositories and send multiple dependent pull requests related with a change you can easily reproduce the same build by executing it on Github hosted environment or locally in your development environment. See [local execution](https://github.com/kiegroup/github-action-build-chain#local-execution) details to get more information about it.
 </details>
 
+
 <details>
 <summary>
 How to retest this PR or trigger a specific build:
@@ -38,7 +39,9 @@ How to retest this PR or trigger a specific build:
 
 * for a <b>pull request build</b> please add comment: <b>Jenkins retest this</b>
 * for a <b>specific pull request build</b> please add comment: <b>Jenkins (re)run [optaweb-employee-rostering] tests</b>
-* for a <b>full downstream build</b> please add comment: <b>Jenkins run fdb</b>
+* for a <b>full downstream build</b> 
+  * for <b>jenkins</b> job: please add comment: <b>Jenkins run fdb</b>
+  * for <b>github actions</b> job: add the label `run_fdb`
 * for a <b>compile downstream build</b> please add comment: <b>Jenkins run cdb</b>
 * for a <b>full production downstream build</b> please add comment: <b>Jenkins execute product fdb</b>
 * for an <b>upstream build</b> please add comment: <b>Jenkins run upstream</b>
