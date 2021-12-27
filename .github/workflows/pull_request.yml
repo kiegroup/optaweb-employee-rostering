@@ -9,11 +9,12 @@ jobs:
       cancel-in-progress: true
     strategy:
       matrix:
+        os: [ubuntu-latest]
         java-version: [11, 17]
         maven-version: ['3.8.1']
       fail-fast: false
-    runs-on: ubuntu-latest
-    name: Maven Build
+    runs-on: ${{ matrix.os }}
+    name: Maven - ${{ matrix.os }} - ${{ matrix.java-version }}
     steps:
       - name: Clean Disk Space
         uses: kiegroup/kogito-pipelines/.ci/actions/ubuntu-disk-space@main
