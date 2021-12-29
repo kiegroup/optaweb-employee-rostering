@@ -1,7 +1,17 @@
 name: Build Chain
 
-on: [pull_request]
-
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'LICENSE*'
+      - '.gitignore'
+      - '*.md'
+      - '*.adoc'
+      - '*.txt'
+      - 'runOnOpenShift.sh'
+      - 'ide-configuration/**'
 jobs:
   build-chain:
     concurrency:
