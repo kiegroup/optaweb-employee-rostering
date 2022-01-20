@@ -18,7 +18,7 @@
     <application.port>8180</application.port>
     <frontend.project.name>optaweb-employee-rostering-frontend</frontend.project.name>
     <java.module.name>org.optaweb.employeerostering</java.module.name>
-    <version.cypress.docker>4.12.1</version.cypress.docker>
+    <version.cypress.docker>7.0.1</version.cypress.docker>
     <!-- Override to run with Podman -->
     <container.runtime>docker</container.runtime>
   </properties>
@@ -187,7 +187,7 @@
                     <argument>${user.name.group}</argument>
                     <argument>--entrypoint</argument>
                     <argument>cypress</argument>
-                    <argument>cypress/included:${version.cypress.docker}</argument>
+                    <argument>docker.io/cypress/included:${version.cypress.docker}</argument>
                     <argument>run</argument> <!-- Executing cypress:run -->
                     <argument>--project</argument>
                     <argument>.</argument>

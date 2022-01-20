@@ -40,13 +40,10 @@ function dragCreateShift(day, from, to) {
     cy.get('.rbc-time-slot').eq(1).then((secondTimeEle) => {
       // Apparently the difference between two labels is double the length of one timeslot
       const twoHourYDiff = (secondTimeEle[0].offsetTop - firstTimeEle[0].offsetTop) / 2;
-      const reference = Cypress.moment('2018-01-01T00:00');
-      const fromDate = Cypress.moment(`2018-01-01T${from}`);
-      const toDate = Cypress.moment(`2018-01-01T${to}`);
 
       // Add 10px, since the timeslots are slightly misaligned due to CSS
-      const startLocation = (Cypress.moment.duration(fromDate.diff(reference)).asHours() / 2) * twoHourYDiff + 10;
-      const endLocation = (Cypress.moment.duration(toDate.diff(reference)).asHours() / 2) * twoHourYDiff + 10;
+      const startLocation = (from / 2) * twoHourYDiff + 10;
+      const endLocation = (to / 2) * twoHourYDiff + 10;
       cy.get('.rbc-events-container').eq(day).trigger('mousedown', { force: true, x: 100, y: startLocation });
       cy.get('.rbc-events-container').eq(day).trigger('mousemove', { force: true, x: 100, y: endLocation });
       cy.get('.rbc-events-container').eq(day).trigger('mouseup', { force: true, x: 100, y: endLocation });
@@ -124,7 +121,7 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     cy.wait(1500);
     // Plan for the next week
     cy.get('[aria-label="Next Week"]').click({ force: true });
-    dragCreateShift(3, '00:00', '06:00');
+    dragCreateShift(3, 0, 6);
 
     // Schedule for 5 seconds
     cy.get('[aria-label="Actions"]').click();
