@@ -46,8 +46,3 @@ jobs:
 
       - name: Build with Maven to measure code coverage
         run: mvn -B --fail-at-end clean install -Prun-code-coverage
-      - name: Run SonarCloud analysis
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-        run: mvn -B --fail-at-end validate -Psonarcloud-analysis -Dsonar.login=${{ env.SONARCLOUD_TOKEN }}
