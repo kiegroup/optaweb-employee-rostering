@@ -36,12 +36,14 @@ import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.optaweb.employeerostering.service.common.IndictmentUtils;
 import org.optaweb.employeerostering.service.employee.EmployeeRepository;
 import org.optaweb.employeerostering.service.roster.RosterService;
 import org.optaweb.employeerostering.service.skill.SkillService;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
+import org.optaweb.employeerostering.service.tenant.RosterConstraintConfigurationRepository;
 
 @ApplicationScoped
 public class ShiftService extends AbstractRestService {
@@ -56,28 +58,35 @@ public class ShiftService extends AbstractRestService {
 
     RosterService rosterService;
 
+    RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository;
+
     IndictmentUtils indictmentUtils;
 
     @Inject
     public ShiftService(Validator validator,
             ShiftRepository shiftRepository, SpotRepository spotRepository,
             SkillService skillService, EmployeeRepository employeeRepository,
-            RosterService rosterService, IndictmentUtils indictmentUtils) {
+            RosterService rosterService,
+            RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
+            IndictmentUtils indictmentUtils) {
         super(validator);
         this.shiftRepository = shiftRepository;
         this.spotRepository = spotRepository;
         this.skillService = skillService;
         this.employeeRepository = employeeRepository;
         this.rosterService = rosterService;
+        this.rosterConstraintConfigurationRepository = rosterConstraintConfigurationRepository;
         this.indictmentUtils = indictmentUtils;
     }
 
     public List<ShiftView> getShiftList(Integer tenantId) {
         Map<Object, Indictment<HardMediumSoftLongScore>> indictmentMap = indictmentUtils.getIndictmentMapForRoster(
                 rosterService.buildRoster(tenantId));
+        RosterConstraintConfiguration configuration = rosterConstraintConfigurationRepository.findByTenantId(tenantId).get();
         return getAllShifts(tenantId).stream()
                 .map(s -> indictmentUtils.getShiftViewWithIndictment(
-                        rosterService.getRosterState(tenantId).getTimeZone(), s, indictmentMap.get(s)))
+                        rosterService.getRosterState(tenantId).getTimeZone(), s, configuration, indictmentMap.get(s),
+                        (s.getEmployee() != null) ? indictmentMap.get(s.getEmployee()) : null))
                 .collect(Collectors.toList());
     }
 
@@ -92,10 +101,15 @@ public class ShiftService extends AbstractRestService {
                 .orElseThrow(() -> new EntityNotFoundException("No Shift entity found with ID (" + id + ")."));
 
         validateBean(tenantId, shift);
-        Indictment<HardMediumSoftLongScore> indictment = indictmentUtils.getIndictmentMapForRoster(
-                rosterService.buildRoster(tenantId)).get(shift);
+        Map<Object, Indictment<HardMediumSoftLongScore>> indictmentMap = indictmentUtils.getIndictmentMapForRoster(
+                rosterService.buildRoster(tenantId));
+        RosterConstraintConfiguration configuration = rosterConstraintConfigurationRepository.findByTenantId(tenantId).get();
+        Indictment<HardMediumSoftLongScore> shiftIndictment = indictmentMap.get(shift);
+        Indictment<HardMediumSoftLongScore> employeeIndictment =
+                (shift.getEmployee() != null) ? indictmentMap.get(shift.getEmployee()) : null;
+
         return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(), shift,
-                indictment);
+                configuration, shiftIndictment, employeeIndictment);
     }
 
     private Shift convertFromView(Integer tenantId, ShiftView shiftView) {
@@ -160,10 +174,14 @@ public class ShiftService extends AbstractRestService {
         Shift shift = convertFromView(tenantId, shiftView);
         shiftRepository.persist(shift);
 
-        Indictment<HardMediumSoftLongScore> indictment = indictmentUtils.getIndictmentMapForRoster(
-                rosterService.buildRoster(tenantId)).get(shift);
+        Map<Object, Indictment<HardMediumSoftLongScore>> indictmentMap = indictmentUtils.getIndictmentMapForRoster(
+                rosterService.buildRoster(tenantId));
+        RosterConstraintConfiguration configuration = rosterConstraintConfigurationRepository.findByTenantId(tenantId).get();
+        Indictment<HardMediumSoftLongScore> shiftIndictment = indictmentMap.get(shift);
+        Indictment<HardMediumSoftLongScore> employeeIndictment =
+                (shift.getEmployee() != null) ? indictmentMap.get(shift.getEmployee()) : null;
         return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(),
-                shift, indictment);
+                shift, configuration, shiftIndictment, employeeIndictment);
     }
 
     @Transactional
@@ -191,10 +209,14 @@ public class ShiftService extends AbstractRestService {
         // Flush to increase version number before we duplicate it to ShiftView
         shiftRepository.persistAndFlush(oldShift);
 
-        Indictment<HardMediumSoftLongScore> indictment = indictmentUtils.getIndictmentMapForRoster(
-                rosterService.buildRoster(tenantId)).get(oldShift);
+        Map<Object, Indictment<HardMediumSoftLongScore>> indictmentMap = indictmentUtils.getIndictmentMapForRoster(
+                rosterService.buildRoster(tenantId));
+        RosterConstraintConfiguration configuration = rosterConstraintConfigurationRepository.findByTenantId(tenantId).get();
+        Indictment<HardMediumSoftLongScore> shiftIndictment = indictmentMap.get(newShift);
+        Indictment<HardMediumSoftLongScore> employeeIndictment =
+                (newShift.getEmployee() != null) ? indictmentMap.get(newShift.getEmployee()) : null;
         return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(),
-                oldShift, indictment);
+                oldShift, configuration, shiftIndictment, employeeIndictment);
     }
 
     @Transactional

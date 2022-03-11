@@ -74,7 +74,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                         greaterThan(EmployeeAvailability::getEndDateTime, Shift::getStartDateTime));
     }
 
-    private static LocalDate extractFirstDayOfWeek(DayOfWeek weekStarting, OffsetDateTime date) {
+    public static LocalDate extractFirstDayOfWeek(DayOfWeek weekStarting, OffsetDateTime date) {
         return date.with(TemporalAdjusters.previousOrSame(weekStarting)).toLocalDate();
     }
 
