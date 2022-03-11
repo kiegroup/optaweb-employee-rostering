@@ -201,11 +201,14 @@ public class RosterService extends AbstractRestService {
         //  score might be inaccurate
         Roster roster = buildRoster(tenantId);
         Map<Object, Indictment<HardMediumSoftLongScore>> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
-
+        RosterConstraintConfiguration configuration = rosterConstraintConfigurationRepository.findByTenantId(tenantId).get();
         for (Shift shift : shiftList) {
-            Indictment<HardMediumSoftLongScore> indictment = indictmentMap.get(shift);
+            Employee employee = shift.getEmployee();
+            Indictment<HardMediumSoftLongScore> shiftIndictment = indictmentMap.get(shift);
+            Indictment<HardMediumSoftLongScore> employeeIndictment = (employee != null) ? indictmentMap.get(employee) : null;
             spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>())
-                    .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+                    .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, configuration, shiftIndictment,
+                            employeeIndictment));
         }
         shiftRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewListMap);
 
@@ -286,15 +289,19 @@ public class RosterService extends AbstractRestService {
 
         Roster roster = buildRoster(tenantId);
         Map<Object, Indictment<HardMediumSoftLongScore>> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
+        RosterConstraintConfiguration configuration = rosterConstraintConfigurationRepository.findByTenantId(tenantId).get();
 
         for (Shift shift : shiftList) {
-            Indictment<HardMediumSoftLongScore> indictment = indictmentMap.get(shift);
+            Indictment<HardMediumSoftLongScore> shiftIndictment = indictmentMap.get(shift);
             if (shift.getEmployee() != null) {
+                Indictment<HardMediumSoftLongScore> employeeIndictment = indictmentMap.get(shift.getEmployee());
                 employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(),
                         k -> new ArrayList<>())
-                        .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+                        .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, configuration, shiftIndictment,
+                                employeeIndictment));
             } else {
-                unassignedShiftViewList.add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+                unassignedShiftViewList
+                        .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, configuration, shiftIndictment, null));
             }
         }
         availabilityRosterView.setEmployeeIdToShiftViewListMap(employeeIdToShiftViewListMap);

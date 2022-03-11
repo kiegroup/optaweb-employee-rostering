@@ -32,18 +32,24 @@ import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfig
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.service.solver.EmployeeRosteringConstraintProvider.extractFirstDayOfWeek;
 
+import java.time.Duration;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import org.optaplanner.core.api.score.constraint.ConstraintMatch;
 import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
 import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaweb.employeerostering.domain.employee.Employee;
@@ -51,6 +57,7 @@ import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.roster.Roster;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.domain.violation.ContractMinutesViolation;
 import org.optaweb.employeerostering.domain.violation.DesiredTimeslotForEmployeeReward;
 import org.optaweb.employeerostering.domain.violation.IndictmentSummary;
@@ -91,19 +98,30 @@ public class IndictmentUtils {
         return out;
     }
 
-    public ShiftView getShiftViewWithIndictment(ZoneId zoneId, Shift shift, Indictment<HardMediumSoftLongScore> indictment) {
+    public ShiftView getShiftViewWithIndictment(ZoneId zoneId, Shift shift, RosterConstraintConfiguration configuration,
+            Indictment<HardMediumSoftLongScore> shiftIndictment,
+            Indictment<HardMediumSoftLongScore> employeeIndictment) {
+        List<ContractMinutesViolation> contractMinutesViolationList =
+                getContractMinutesViolationList(shift, configuration, employeeIndictment);
+        HardMediumSoftLongScore totalImpactOnScore = HardMediumSoftLongScore.ZERO;
+        if (shiftIndictment != null) {
+            totalImpactOnScore = shiftIndictment.getScore();
+        }
+        for (ContractMinutesViolation contractMinutesViolation : contractMinutesViolationList) {
+            totalImpactOnScore = totalImpactOnScore.add(contractMinutesViolation.getScore());
+        }
         return new ShiftView(zoneId, shift,
-                getRequiredSkillViolationList(indictment),
-                getUnavailableEmployeeViolationList(indictment),
-                getShiftEmployeeConflictList(indictment),
-                getDesiredTimeslotForEmployeeRewardList(indictment),
-                getUndesiredTimeslotForEmployeePenaltyList(indictment),
-                getRotationViolationPenaltyList(indictment),
-                getUnassignedShiftPenaltyList(indictment),
-                getContractMinutesViolationList(indictment),
-                getNoBreakViolationList(indictment),
-                getPublishedShiftReassignedPenaltyList(indictment),
-                (indictment != null) ? indictment.getScore() : HardMediumSoftLongScore.ZERO);
+                getRequiredSkillViolationList(shiftIndictment),
+                getUnavailableEmployeeViolationList(shiftIndictment),
+                getShiftEmployeeConflictList(shiftIndictment),
+                getDesiredTimeslotForEmployeeRewardList(shiftIndictment),
+                getUndesiredTimeslotForEmployeePenaltyList(shiftIndictment),
+                getRotationViolationPenaltyList(shiftIndictment),
+                getUnassignedShiftPenaltyList(shiftIndictment),
+                contractMinutesViolationList,
+                getNoBreakViolationList(shiftIndictment),
+                getPublishedShiftReassignedPenaltyList(shiftIndictment),
+                totalImpactOnScore);
     }
 
     public List<RequiredSkillViolation> getRequiredSkillViolationList(Indictment<HardMediumSoftLongScore> indictment) {
@@ -215,11 +233,38 @@ public class IndictmentUtils {
                 .collect(toList());
     }
 
-    public List<ContractMinutesViolation> getContractMinutesViolationList(Indictment<HardMediumSoftLongScore> indictment) {
+    private static Predicate<ConstraintMatch> shiftImpactsConstraintMatch(Shift shift,
+            RosterConstraintConfiguration configuration) {
+        return constraintMatch -> {
+            Object groupKey;
+            switch (constraintMatch.getConstraintName()) {
+                case CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM:
+                    groupKey = shift.getStartDateTime().toLocalDate();
+                    break;
+                case CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM:
+                    groupKey = extractFirstDayOfWeek(configuration.getWeekStartDay(),
+                            shift.getStartDateTime());
+                    break;
+                case CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM:
+                    groupKey = YearMonth.from(shift.getStartDateTime());
+                    break;
+                case CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM:
+                    groupKey = shift.getStartDateTime().getYear();
+                    break;
+                default:
+                    throw new IllegalStateException("Unhandled constraint (" + constraintMatch.getConstraintName() + ").");
+            }
+            return constraintMatch.getJustificationList().get(1).equals(groupKey);
+        };
+    }
+
+    public List<ContractMinutesViolation> getContractMinutesViolationList(
+            Shift shift,
+            RosterConstraintConfiguration configuration,
+            Indictment<HardMediumSoftLongScore> indictment) {
         if (indictment == null) {
             return Collections.emptyList();
         }
-        // getJustificationList() was not consistent; sometimes employee was first, other times minutes worked was first
         List<String> contractMinutesConstraintNameList = Arrays.asList(
                 CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                 CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
@@ -228,17 +273,12 @@ public class IndictmentUtils {
         return indictment.getConstraintMatchSet().stream()
                 .filter(constraintMatch -> constraintMatch.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         contractMinutesConstraintNameList.contains(constraintMatch.getConstraintName()))
-                .map(constraintMatch -> new ContractMinutesViolation((Employee) constraintMatch.getJustificationList()
-                        .stream()
-                        .filter(o -> o instanceof Employee)
-                        .findFirst().get(),
+                .filter(shiftImpactsConstraintMatch(shift, configuration))
+                .map(constraintMatch -> new ContractMinutesViolation((Employee) constraintMatch.getJustificationList().get(0),
                         ContractMinutesViolation.Type.getTypeForViolation(constraintMatch.getConstraintName()),
-                        (Long) constraintMatch.getJustificationList()
-                                .stream()
-                                .filter(o -> o instanceof Long)
-                                .findFirst().get(),
+                        ((Duration) constraintMatch.getJustificationList().get(2)).toMinutes(),
                         constraintMatch.getScore()))
-                .collect(toList());
+                .collect(Collectors.toList());
     }
 
     public List<PublishedShiftReassignedPenalty>
