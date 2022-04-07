@@ -36,14 +36,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/shift")
 @CrossOrigin
 @Validated
-@Api(tags = "Shift")
 public class ShiftController {
 
     private final ShiftService shiftService;
@@ -53,32 +49,27 @@ public class ShiftController {
         Assert.notNull(shiftService, "shiftService must not be null.");
     }
 
-    @ApiOperation("Get a list of all shifts")
     @GetMapping("/")
     public ResponseEntity<List<ShiftView>> getShiftList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(shiftService.getShiftList(tenantId), HttpStatus.OK);
     }
 
-    @ApiOperation("Get a shift by id")
     @GetMapping("/{id}")
     public ResponseEntity<ShiftView> getShift(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(shiftService.getShift(tenantId, id), HttpStatus.OK);
     }
 
-    @ApiOperation("Delete a shift")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteShift(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(shiftService.deleteShift(tenantId, id), HttpStatus.OK);
     }
 
-    @ApiOperation("Add a new shift")
     @PostMapping("/add")
     public ResponseEntity<ShiftView> createShift(@PathVariable @Min(0) Integer tenantId,
             @RequestBody @Valid ShiftView shiftView) {
         return new ResponseEntity<>(shiftService.createShift(tenantId, shiftView), HttpStatus.OK);
     }
 
-    @ApiOperation("Update a shift")
     @PutMapping("/update")
     public ResponseEntity<ShiftView> updateShift(@PathVariable @Min(0) Integer tenantId,
             @RequestBody @Valid ShiftView shiftView) {

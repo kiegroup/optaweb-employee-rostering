@@ -25,14 +25,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 @RestController
 @RequestMapping("/rest/admin")
 @CrossOrigin
 @Validated
-@Api(tags = "Admin")
 public class AdminController {
 
     private final AdminService adminService;
@@ -42,7 +38,6 @@ public class AdminController {
         Assert.notNull(adminService, "adminService must not be null.");
     }
 
-    @ApiOperation("Reset the application")
     @PostMapping("/reset")
     public ResponseEntity<Void> resetApplication() {
         adminService.resetApplication();

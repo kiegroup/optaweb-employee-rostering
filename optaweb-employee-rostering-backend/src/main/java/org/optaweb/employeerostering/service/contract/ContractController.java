@@ -36,14 +36,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/contract")
 @CrossOrigin
 @Validated
-@Api(tags = "Contract")
 public class ContractController {
 
     private final ContractService contractService;
@@ -53,34 +49,29 @@ public class ContractController {
         Assert.notNull(contractService, "contractService must not be null.");
     }
 
-    @ApiOperation("Get a list of all contracts")
     @GetMapping("/")
     public ResponseEntity<List<Contract>> getContractList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(contractService.getContractList(tenantId), HttpStatus.OK);
     }
 
-    @ApiOperation("Get a contract by id")
     @GetMapping("/{id}")
     public ResponseEntity<Contract> getContract(@PathVariable @Min(0) Integer tenantId,
             @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(contractService.getContract(tenantId, id), HttpStatus.OK);
     }
 
-    @ApiOperation("Delete a contract")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteContract(@PathVariable @Min(0) Integer tenantId,
             @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(contractService.deleteContract(tenantId, id), HttpStatus.OK);
     }
 
-    @ApiOperation("Add a new contract")
     @PostMapping("/add")
     public ResponseEntity<Contract> createContract(@PathVariable @Min(0) Integer tenantId,
             @RequestBody @Valid ContractView contractView) {
         return new ResponseEntity<>(contractService.createContract(tenantId, contractView), HttpStatus.OK);
     }
 
-    @ApiOperation("Update a contract")
     @PostMapping("/update")
     public ResponseEntity<Contract> updateContract(@PathVariable @Min(0) Integer tenantId,
             @RequestBody @Valid ContractView contractView) {

@@ -36,14 +36,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/spot")
 @CrossOrigin
 @Validated
-@Api(tags = "Spot")
 public class SpotController {
 
     private final SpotService spotService;
@@ -53,32 +49,27 @@ public class SpotController {
         Assert.notNull(spotService, "spotService must not be null.");
     }
 
-    @ApiOperation("Get a list of all spots")
     @GetMapping("/")
     public ResponseEntity<List<Spot>> getSpotList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(spotService.getSpotList(tenantId), HttpStatus.OK);
     }
 
-    @ApiOperation("Get a spot by id")
     @GetMapping("/{id}")
     public ResponseEntity<Spot> getSpot(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(spotService.getSpot(tenantId, id), HttpStatus.OK);
     }
 
-    @ApiOperation("Delete a spot")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteSpot(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(spotService.deleteSpot(tenantId, id), HttpStatus.OK);
     }
 
-    @ApiOperation("Add a new spot")
     @PostMapping("/add")
     public ResponseEntity<Spot> createSpot(@PathVariable @Min(0) Integer tenantId,
             @RequestBody @Valid SpotView spotView) {
         return new ResponseEntity<>(spotService.createSpot(tenantId, spotView), HttpStatus.OK);
     }
 
-    @ApiOperation("Update a spot")
     @PostMapping("/update")
     public ResponseEntity<Spot> updateSpot(@PathVariable @Min(0) Integer tenantId,
             @RequestBody @Valid SpotView spotView) {

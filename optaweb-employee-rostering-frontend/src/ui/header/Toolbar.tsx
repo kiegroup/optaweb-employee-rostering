@@ -24,7 +24,7 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { BellIcon, CogIcon, BookIcon } from '@patternfly/react-icons';
+import { BellIcon, CogIcon } from '@patternfly/react-icons';
 import { Tenant } from 'domain/Tenant';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -99,18 +99,6 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
           >
             <CogIcon />
           </Button>
-        </ToolbarItem>
-        <ToolbarItem>
-          <a
-            aria-label="REST Reference"
-            href={`${process.env.REACT_APP_BACKEND_URL}/swagger-ui.html`}
-          >
-            <Button
-              variant={ButtonVariant.plain}
-            >
-              <BookIcon />
-            </Button>
-          </a>
         </ToolbarItem>
       </ToolbarGroup>
     );

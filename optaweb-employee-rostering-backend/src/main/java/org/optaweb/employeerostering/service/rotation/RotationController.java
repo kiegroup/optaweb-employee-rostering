@@ -36,14 +36,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/rotation")
 @CrossOrigin
 @Validated
-@Api(tags = "Rotation")
 public class RotationController {
 
     private final RotationService rotationService;
@@ -53,34 +49,29 @@ public class RotationController {
         Assert.notNull(rotationService, "rotationService must not be null.");
     }
 
-    @ApiOperation("Get a list of all shift templates")
     @GetMapping("/")
     public ResponseEntity<List<TimeBucketView>> getTimeBucketList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(rotationService.getTimeBucketList(tenantId), HttpStatus.OK);
     }
 
-    @ApiOperation("Get a shift template by id")
     @GetMapping("/{id}")
     public ResponseEntity<TimeBucketView> getTimeBucket(@PathVariable @Min(0) Integer tenantId,
             @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(rotationService.getTimeBucket(tenantId, id), HttpStatus.OK);
     }
 
-    @ApiOperation("Delete a shift template")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteTimeBucket(@PathVariable @Min(0) Integer tenantId,
             @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(rotationService.deleteTimeBucket(tenantId, id), HttpStatus.OK);
     }
 
-    @ApiOperation("Add a new shift template")
     @PostMapping("/add")
     public ResponseEntity<TimeBucketView> createTimeBucket(@PathVariable @Min(0) Integer tenantId,
             @RequestBody @Valid TimeBucketView timeBucketView) {
         return new ResponseEntity<>(rotationService.createTimeBucket(tenantId, timeBucketView), HttpStatus.OK);
     }
 
-    @ApiOperation("Update a shift template")
     @PutMapping("/update")
     public ResponseEntity<TimeBucketView> updateTimeBucket(@PathVariable @Min(0) Integer tenantId,
             @RequestBody @Valid TimeBucketView timeBucketView) {

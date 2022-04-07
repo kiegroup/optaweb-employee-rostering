@@ -62,23 +62,6 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
         />
       </Component>
     </ToolbarItem>
-    <ToolbarItem>
-      <a
-        aria-label="REST Reference"
-        href="backend/swagger-ui.html"
-      >
-        <Component
-          variant="plain"
-        >
-          <BookIcon
-            color="currentColor"
-            noVerticalAlign={false}
-            size="sm"
-            title={null}
-          />
-        </Component>
-      </a>
-    </ToolbarItem>
   </ToolbarGroup>
 </Toolbar>
 `;
@@ -145,23 +128,6 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
         />
       </Component>
     </ToolbarItem>
-    <ToolbarItem>
-      <a
-        aria-label="REST Reference"
-        href="backend/swagger-ui.html"
-      >
-        <Component
-          variant="plain"
-        >
-          <BookIcon
-            color="currentColor"
-            noVerticalAlign={false}
-            size="sm"
-            title={null}
-          />
-        </Component>
-      </a>
-    </ToolbarItem>
   </ToolbarGroup>
 </Toolbar>
 `;
@@ -197,23 +163,6 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
           title={null}
         />
       </Component>
-    </ToolbarItem>
-    <ToolbarItem>
-      <a
-        aria-label="REST Reference"
-        href="backend/swagger-ui.html"
-      >
-        <Component
-          variant="plain"
-        >
-          <BookIcon
-            color="currentColor"
-            noVerticalAlign={false}
-            size="sm"
-            title={null}
-          />
-        </Component>
-      </a>
     </ToolbarItem>
   </ToolbarGroup>
 </Toolbar>
