@@ -47,8 +47,6 @@
     <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
 
     <version.frontend-maven-plugin>1.11.3</version.frontend-maven-plugin>
-    <version.javax.activation>1.1.1</version.javax.activation>
-    <version.javax.validation>2.0.1.Final</version.javax.validation>
     <version.node>v12.16.2</version.node>
     <version.npm>7.15.1</version.npm>
     <version.org.apache.poi>4.1.2</version.org.apache.poi>
@@ -114,19 +112,6 @@
         <scope>import</scope>
       </dependency>
 
-      <!-- Other dependencies -->
-      <dependency>
-        <groupId>javax.validation</groupId>
-        <artifactId>validation-api</artifactId>
-        <version>${version.javax.validation}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-annotations</artifactId>
-        <version>1.5.20</version>
-      </dependency>
-
       <!-- Excel -->
       <dependency>
         <groupId>org.apache.poi</groupId>
@@ -137,13 +122,6 @@
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-ooxml</artifactId>
         <version>${version.org.apache.poi}</version>
-      </dependency>
-
-      <!-- Required for Java 11 -->
-      <dependency>
-        <groupId>javax.activation</groupId>
-        <artifactId>activation</artifactId>
-        <version>${version.javax.activation}</version>
       </dependency>
 
       <dependency>
