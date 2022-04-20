@@ -12,10 +12,9 @@ then
     user_command="${user_command} --userns=keep-id"
 fi
 
-echo "$CONTAINER_RUNTIME run --network=host \
+$CONTAINER_RUNTIME run --network=host \
                           -v $FRONTEND_PROJECT_PATH:/e2e:Z \
                           $user_command \
                           -w /e2e --entrypoint cypress docker.io/cypress/included:$VERSION_CYPRESS \
-                          run --project . --config baseUrl=http://localhost:$APPLICATION_PORT" > cypress-test-run.sh
-sh cypress-test-run.sh
+                          run --project . --config baseUrl=http://localhost:$APPLICATION_PORT
 
