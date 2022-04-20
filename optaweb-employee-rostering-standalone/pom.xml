@@ -175,7 +175,7 @@
                 </goals>
                 <configuration>
                   <skip>${skipITs}</skip>
-                  <executable>${project.basedir}/run_tests.sh</executable>
+                  <executable>${project.basedir}/run_cypress_tests.sh</executable>
                   <arguments>
                     <argument>${container.runtime}</argument>
                     <argument>${maven.multiModuleProjectDirectory}${file.separator}${frontend.project.name}</argument>
