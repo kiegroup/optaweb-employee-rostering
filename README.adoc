@@ -20,7 +20,7 @@ image:https://img.shields.io/badge/zulip-join_chat-brightgreen.svg?logo=zulip[
 
 An end-to-end https://www.optaplanner.org/[OptaPlanner] web application ready to deploy on https://www.openshift.com/[OpenShift 4].
 
-See https://www.youtube.com/watch?v=sOWC4qrXxFk[the video demo].
+See https://youtu.be/3CvadujUN1k[the video demo].
 
 == Building
 
