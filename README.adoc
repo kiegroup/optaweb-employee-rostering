@@ -152,4 +152,4 @@ Configure your IDE to run the main class, which is in
 
 === Frontend
 
-Run `npm install` and then `npm start` in the `optaweb-employee-rostering-frontend` directory. You can run `npm run lint locally` to see all code style issues and it`s details. You can run `npm run lint:fix` to reformat the code and fix issues without using an IDE.
+Run `npm install` and then `npm start` in the `optaweb-employee-rostering-frontend` directory. You can run `npm run lint` locally to see all code style issues and it`s details. You can run `npm run lint:fix` to reformat the code and fix issues without using an IDE.
