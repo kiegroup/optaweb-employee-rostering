@@ -66,10 +66,11 @@ describe('A new tenant can be created, who can have their own employees, spots, 
   });
 
   it('basic tenant workflow', () => {
+    const uniqueTenantName = 'Test Tenant ' + new Date().getTime() ;
     // Create a tenant
     cy.get('[data-cy=settings]').click();
     cy.get('[data-cy=data-table-add]').click();
-    cy.get('[data-cy=name]').type('Test Tenant');
+    cy.get('[data-cy=name]').type(uniqueTenantName);
     cy.get('[data-cy=schedule-start-date]').type('2018-01-01');
     cy.get('[data-cy=draft-length]').type('7');
     cy.get('[data-cy=publish-notice]').type('7');
@@ -81,7 +82,7 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     cy.get('[data-cy=save]').click();
     closeAlerts();
 
-    changeToTenant('Test Tenant');
+    changeToTenant(uniqueTenantName);
 
     // Create a new skill
     gotoPage('skills');
