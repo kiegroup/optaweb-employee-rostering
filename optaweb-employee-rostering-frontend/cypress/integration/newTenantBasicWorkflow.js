@@ -66,7 +66,7 @@ describe('A new tenant can be created, who can have their own employees, spots, 
   });
 
   it('basic tenant workflow', () => {
-    const uniqueTenantName = 'Test Tenant ' + new Date().getTime() ;
+    const uniqueTenantName = `Test Tenant ${new Date().getTime()}`;
     // Create a tenant
     cy.get('[data-cy=settings]').click();
     cy.get('[data-cy=data-table-add]').click();
