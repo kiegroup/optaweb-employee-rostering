@@ -50,6 +50,7 @@
     <formatter.goal>format</formatter.goal>
     <!-- TODO name impsort should indicate it's related to formatting -->
     <impsort.goal>sort</impsort.goal>
+    <version.io.springfox>2.9.2</version.io.springfox>
   </properties>
 
   <modules>
@@ -124,6 +125,20 @@
         <artifactId>drools-mvel</artifactId>
         <version>${version.org.kie}</version>
       </dependency>
+
+      <!-- Springfox Swagger -->
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger2</artifactId>
+        <version>${version.io.springfox}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger-ui</artifactId>
+        <version>${version.io.springfox}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
