@@ -126,7 +126,7 @@
         <version>${version.org.kie}</version>
       </dependency>
 
-      <!-- Spring fox -->
+      <!-- Springfox Swagger -->
       <dependency>
         <groupId>io.springfox</groupId>
         <artifactId>springfox-swagger2</artifactId>
