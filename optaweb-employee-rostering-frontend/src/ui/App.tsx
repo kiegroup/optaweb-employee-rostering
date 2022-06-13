@@ -1,7 +1,6 @@
 import { Page, PageSection, PageSidebar } from '@patternfly/react-core';
 import React, { useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import './App.css';
 import { useMediaQuery } from 'react-responsive';
 import Background from './components/Background';
 import Header from './header/Header';
