@@ -14,7 +14,6 @@
     "i18next-xhr-backend": "^3.2.2",
     "immutable": "^4.0.0-rc.12",
     "moment": "^2.29.2",
-    "sass": "^1.49.0",
     "react": "^16.13.1",
     "react-big-calendar": "^0.23.0",
     "react-color": "2.18.1",
@@ -33,6 +32,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "sass": "^1.49.0",
     "uuid": "^7.0.2",
     "yaml": "^1.7.2"
   },
@@ -60,6 +60,7 @@
     "ancestorSeparator": "."
   },
   "devDependencies": {
+    "@kie/lock-treatment-tool": "^0.1.0",
     "@types/color": "^3.0.1",
     "@types/enzyme": "^3.9.3",
     "@types/enzyme-adapter-react-16": "^1.0.5",
@@ -90,14 +91,12 @@
     "enzyme-to-json": "^3.3.5",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-cypress": "^2.7.0",
-    "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-import": "^2.17.3",
     "eslint-plugin-jest": "^22.6.4",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.13.0",
     "history": "^4.9.0",
     "jest-junit": "^8.0.0",
-    "@kie/lock-treatment-tool": "^0.1.0",
     "mockdate": "^2.0.3",
     "moment-timezone": "^0.5.26",
     "react-test-renderer": "^16.8.6",
