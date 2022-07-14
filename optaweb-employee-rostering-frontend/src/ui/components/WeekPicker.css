@@ -15,6 +15,7 @@
  */
  .week-picker-container {
     background-color: var(--pf-global--BackgroundColor--100);
+     width: max-content;
  }
 
 .week-picker {
