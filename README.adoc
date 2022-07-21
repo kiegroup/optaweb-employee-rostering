@@ -1,27 +1,16 @@
 :projectKey: optaweb-employee-rostering
-:sonarBadge: image:https://sonarcloud.io/api/project_badges/measure?project={projectKey}
-:sonarLink: link="https://sonarcloud.io/dashboard?id={projectKey}"
+
+*This project is no longer maintained.*
+Visit https://github.com/kiegroup/optaplanner-quickstarts/[OptaPlanner Quickstarts] to see how to integrate https://www.optaplanner.org/[OptaPlanner] in your application.
+
 
 = Employee Rostering Optimization as a Service
 
-image:https://img.shields.io/badge/stackoverflow-ask_question-orange.svg?logo=stackoverflow&style=for-the-badge["Ask question on Stack Overflow", link="https://stackoverflow.com/questions/tagged/optaweb-employee-rostering"]
 image:https://img.shields.io/badge/zulip-join_chat-brightgreen.svg?logo=zulip&style=for-the-badge[
 "Join Zulip Chat", link="https://kie.zulipchat.com/#narrow/stream/232679-optaplanner"]
-image:https://img.shields.io/github/commit-activity/m/kiegroup/optaweb-employee-rostering?label=commits&style=for-the-badge["Commit Activity", link="https://github.com/kiegroup/optaweb-employee-rostering/pulse"]
 image:https://img.shields.io/github/license/kiegroup/optaweb-employee-rostering?style=for-the-badge&logo=apache["License", link="https://www.apache.org/licenses/LICENSE-2.0"]
-image:https://img.shields.io/badge/JVM-11-green?style=for-the-badge["JVM support", link="https://github.com/dupliaka/optaweb-employee-rostering/actions"]
-image:https://img.shields.io/badge/Maven-3.x-blue?style=for-the-badge["Maven",link="https://maven.apache.org/install.html"]
-
-{sonarBadge}&metric=alert_status["Quality Gate Status", {sonarLink}]
-{sonarBadge}&metric=reliability_rating["Reliability Rating", {sonarLink}]
-{sonarBadge}&metric=security_rating["Security Rating", {sonarLink}]
-{sonarBadge}&metric=sqale_rating["Maintainability Rating", {sonarLink}]
-{sonarBadge}&metric=ncloc["Lines of Code", {sonarLink}]
-{sonarBadge}&metric=coverage["Coverage", {sonarLink}]
 
 An end-to-end https://www.optaplanner.org/[OptaPlanner] web application ready to deploy on https://www.openshift.com/[OpenShift 4].
-
-See https://youtu.be/3CvadujUN1k[the video demo].
 
 == Building
 
