@@ -1,7 +1,7 @@
 :projectKey: optaweb-employee-rostering
 
 *This project is no longer maintained.*
-Visit https://github.com/kiegroup/optaplanner-quickstarts/[OptaPlanner Quickstarts] to see how to integrate https://www.optaplanner.org/[OptaPlanner] in your application.
+Visit https://github.com/kiegroup/optaplanner-quickstarts/tree/stable/use-cases/employee-scheduling[OptaPlanner Employee Rostering Quickstart] to see how to integrate https://www.optaplanner.org/[OptaPlanner] in your application.
 
 
 = Employee Rostering Optimization as a Service
