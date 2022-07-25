@@ -13,7 +13,7 @@
     "i18next-browser-languagedetector": "^4.0.1",
     "i18next-xhr-backend": "^3.2.2",
     "immutable": "^4.0.0-rc.12",
-    "moment": "^2.29.2",
+    "moment": "^2.29.4",
     "react": "^16.13.1",
     "react-big-calendar": "^0.23.0",
     "react-color": "2.18.1",
