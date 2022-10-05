@@ -59,7 +59,7 @@
     "ancestorSeparator": "."
   },
   "devDependencies": {
-    "@kie/lock-treatment-tool": "^0.0.2",
+    "@kie/lock-treatment-tool": "^0.2.1",
     "@types/color": "^3.0.1",
     "@types/enzyme": "^3.9.3",
     "@types/enzyme-adapter-react-16": "^1.0.5",
