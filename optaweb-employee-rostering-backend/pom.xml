@@ -185,7 +185,7 @@
         <plugin>
           <groupId>org.pitest</groupId>
           <artifactId>pitest-maven</artifactId>
-          <version>1.4.10</version>
+          <version>1.9.11</version>
           <configuration>
             <reportsDirectory>local/pit-reports</reportsDirectory>
             <timestampedReports>true</timestampedReports>
