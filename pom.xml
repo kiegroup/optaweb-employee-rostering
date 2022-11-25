@@ -50,7 +50,7 @@
     <version.frontend-maven-plugin>1.12.1</version.frontend-maven-plugin>
     <version.node>v16.2.0</version.node>
     <version.npm>7.15.1</version.npm>
-    <version.org.apache.poi>4.1.2</version.org.apache.poi>
+    <version.org.apache.poi>5.2.3</version.org.apache.poi>
   </properties>
 
   <modules>
