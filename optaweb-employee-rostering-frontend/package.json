@@ -98,7 +98,7 @@
     "history": "^4.9.0",
     "jest-junit": "^8.0.0",
     "mockdate": "^2.0.3",
-    "moment-timezone": "^0.5.26",
+    "moment-timezone": "^0.5.35",
     "react-test-renderer": "^16.8.6",
     "redux-mock-store": "^1.5.3",
     "rimraf": "^3.0.0",
