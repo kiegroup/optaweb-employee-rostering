@@ -12,6 +12,10 @@ Map getMultijobPRConfig() {
             [
                 id: 'optaweb-employee-rostering',
                 primary: true,
+                env : [
+                    // Disable Sonarcloud analysis.
+                    DISABLE_SONARCLOUD: true                    
+                ]
             ]
         ],
     ]
