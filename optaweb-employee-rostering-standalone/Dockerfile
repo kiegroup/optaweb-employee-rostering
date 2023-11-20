@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:ubi-minimal
+FROM docker.io/adoptopenjdk/openjdk11:ubi-minimal
 COPY target/quarkus-app /opt/app
 WORKDIR /opt/app
 CMD ["java", "-jar", "quarkus-run.jar"]
